@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Vitrio.Domain/Vitrio.Domain.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Vitrio.Domain.Tests/Vitrio.Domain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/solution items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+</Solution>
