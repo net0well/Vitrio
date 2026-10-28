@@ -12,7 +12,8 @@ public sealed class SecurityHeadersMiddleware(RequestDelegate next)
             headers.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'";
             headers["Referrer-Policy"] = "no-referrer";
 
-            if (context.User.Identity?.IsAuthenticated == true || context.Request.Headers.Authorization.Count > 0)
+            var authenticated = context.User.Identity?.IsAuthenticated == true || context.Request.Headers.Authorization.Count > 0;
+            if (authenticated || string.IsNullOrEmpty(headers.CacheControl))
             {
                 headers.CacheControl = "no-store";
             }
