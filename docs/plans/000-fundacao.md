@@ -1,10 +1,10 @@
 # Plano: Fundação
 
-**Status:** Em andamento (backend pronto; app e CI a seguir)
+**Status:** Em andamento (backend, app e CI prontos; falta o passo 11)
 **Origem:** [07-roadmap.md](../07-roadmap.md), bloco Fundação (sem spec de funcionalidade)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:** todas (projetos novos), `infra/`
-**Recorte atual:** backend. O app Flutter e o CI entram em seguida, neste mesmo plano.
+**Recorte atual:** Dockerfile da API e configuração de produção (passo 11).
 
 ## Decisões tomadas para a Fundação
 
@@ -64,15 +64,15 @@
    - Interceptor grava eventos de domínio na outbox na mesma transação.
    - Testes de unidade do limitador encadeado e do mascaramento de dados pessoais nos logs.
 
-## Passos do app (próximo recorte)
+## Passos do app (feito)
 
-7. Projeto Flutter em `mobile/` com flavors `dev`, `staging`, `prod`, Riverpod, go_router e `ApiClient` com refresh e ProblemDetails.
+7. Projeto Flutter em `mobile/` com flavors Android `dev`, `staging`, `prod` (iOS fica para o lançamento iOS), Riverpod, go_router e `ApiClient` com refresh e ProblemDetails.
 8. Design system em `core/design_system/` conforme [design-system/flutter.md](../design-system/flutter.md), fontes, ícones e ícone do app.
 9. Telas base: boas-vindas e esqueleto das abas.
 
-## Passos de entrega (próximo recorte)
+## Passos de entrega
 
-10. GitHub Actions: build, testes com Testcontainers, `dotnet format --verify-no-changes`, `dotnet list package --vulnerable --include-transitive`, CodeQL, gitleaks, `flutter analyze` e `flutter test`.
+10. (Feito) GitHub Actions: build, testes com Testcontainers, `dotnet format --verify-no-changes`, `dotnet list package --vulnerable --include-transitive`, CodeQL, gitleaks, `flutter analyze`, `flutter test`, conferência do código gerado e build do APK de dev; Dependabot semanal. O repositório é privado e sem code scanning, então o CodeQL analisa sem enviar e falha o job quando encontra alerta.
 11. Dockerfile da API e serviço da API no compose. Na configuração de produção:
     - `ForwardedHeaders:KnownProxies` com o IP do Caddy; sem isso todo cliente cai no mesmo balde de rate limit por IP;
     - `AllowedHosts` com o domínio real da API em vez de `*`;
