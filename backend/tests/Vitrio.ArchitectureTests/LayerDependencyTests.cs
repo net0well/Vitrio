@@ -45,6 +45,28 @@ public sealed class LayerDependencyTests
         AssertSuccessful(result);
     }
 
+    [Fact]
+    public void NoLayer_UsesMappingLibraries()
+    {
+        var result = Types.InAssemblies([Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api])
+            .ShouldNot()
+            .HaveDependencyOnAny("AutoMapper", "Mapster", "Riok.Mapperly", "AgileObjects.AgileMapper", "ExpressMapper", "Nelibur.ObjectMapper")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void NoLayer_UsesMediatR()
+    {
+        var result = Types.InAssemblies([Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api])
+            .ShouldNot()
+            .HaveDependencyOn("MediatR")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
     private static void AssertSuccessful(NetArchTest.Rules.TestResult result) =>
         Assert.True(result.IsSuccessful, $"Violations: {string.Join(", ", result.FailingTypeNames ?? [])}");
 }
