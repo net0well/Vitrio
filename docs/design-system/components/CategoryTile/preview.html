@@ -1,0 +1,20 @@
+<!-- @dsCard group="Exibição" height=230 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>CategoryTile — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h('div', { className: 'vt-cat-grid' },
+    h(V.CategoryTile, { icon: 'bolt', label: 'Elétrica' }),
+    h(V.CategoryTile, { icon: 'droplet', label: 'Hidráulica' }),
+    h(V.CategoryTile, { icon: 'brick', label: 'Pedreiro' }),
+    h(V.CategoryTile, { icon: 'roller', label: 'Pintura' }),
+    h(V.CategoryTile, { icon: 'broom', label: 'Diarista' }),
+    h(V.CategoryTile, { icon: 'leaf', label: 'Jardinagem' }),
+    h(V.CategoryTile, { icon: 'wrench', label: 'Montagem' }),
+    h(V.CategoryTile, { icon: 'grid', label: 'Mais', more: true }))));
+</script>
+</body>
+</html>

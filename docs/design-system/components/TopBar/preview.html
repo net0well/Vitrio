@@ -1,0 +1,14 @@
+<!-- @dsCard group="Navegação" height=96 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>TopBar — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' },
+    h(V.TopBar, { title: 'Pedir orçamento', backHref: '#' }),
+    h(V.TopBar, { title: 'Avaliar serviço', backHref: '#', backIcon: 'x', backLabel: 'Fechar' })));
+</script>
+</body>
+</html>

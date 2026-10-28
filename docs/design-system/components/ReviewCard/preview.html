@@ -1,0 +1,12 @@
+<!-- @dsCard group="Exibição" height=320 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>ReviewCard — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h(V.ReviewCard, { author: 'Beatriz F.', initials: 'BF', date: 'há 2 dias', service: 'Instalação de chuveiro', rating: 5, text: 'Chegou no horário, explicou o problema antes de mexer e deixou tudo limpo. Recomendo muito!', tags: ['Pontual', 'Explicou bem', 'Deixou tudo limpo'], reply: { author: 'Carlos', text: 'Obrigado, Beatriz! Qualquer coisa é só chamar.' } })));
+</script>
+</body>
+</html>

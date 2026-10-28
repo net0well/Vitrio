@@ -1,0 +1,15 @@
+<!-- @dsCard group="Entradas" height=330 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>TextField — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' },
+    h(V.TextField, { label: 'Valor recebido', prefix: 'R$', inputMode: 'decimal', defaultValue: '180,00', hint: 'Igual ao orçamento aceito.' }),
+    h(V.TextField, { label: 'WhatsApp para contato', icon: 'message', inputMode: 'tel', defaultValue: '(16) 9 8123-4567' }),
+    h(V.TextField, { label: 'CNPJ', inputMode: 'numeric', defaultValue: '12.345.678/0001', error: 'CNPJ inválido. Confira os 14 números.' })));
+</script>
+</body>
+</html>

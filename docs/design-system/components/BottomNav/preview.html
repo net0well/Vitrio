@@ -1,0 +1,16 @@
+<!-- @dsCard group="Navegação" height=110 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>BottomNav — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(V.BottomNav, { items: [
+    { icon: 'home', label: 'Início', current: true },
+    { icon: 'search', label: 'Buscar' },
+    { icon: 'orders', label: 'Pedidos' },
+    { icon: 'user', label: 'Conta' }] }));
+</script>
+</body>
+</html>

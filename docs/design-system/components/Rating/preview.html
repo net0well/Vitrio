@@ -1,0 +1,15 @@
+<!-- @dsCard group="Exibição" height=110 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>Rating — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' },
+    h(V.Rating, { value: 4.9, count: 127, meta: '1,2 km · Vila Serra' }),
+    h(V.Rating, { value: 4.6, variant: 'stars', size: 16 }),
+    h(V.Rating, { value: 3.4, variant: 'stars', size: 16 })));
+</script>
+</body>
+</html>

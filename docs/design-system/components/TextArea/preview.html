@@ -1,0 +1,13 @@
+<!-- @dsCard group="Entradas" height=250 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>TextArea — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' },
+    h(V.TextArea, { label: 'Descreva o que precisa', hint: 'Quanto mais detalhes, mais preciso o orçamento.', defaultValue: 'O chuveiro desarma o disjuntor quando ligo no modo inverno. Já troquei a resistência e continua igual.' })));
+</script>
+</body>
+</html>

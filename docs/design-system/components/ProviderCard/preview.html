@@ -1,0 +1,12 @@
+<!-- @dsCard group="Exibição" height=240 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>ProviderCard — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h(V.ProviderCard, { name: 'Carlos Menezes', initials: 'CM', verified: true, profession: 'Eletricista residencial e predial', rating: 4.9, reviews: 127, distance: '1,2 km', neighborhood: 'Vila Serra', priceFrom: 80, badges: [{ tone: 'verified', label: 'MEI verificado' }, { tone: 'brand', label: 'Atende hoje' }, { tone: 'neutral', label: 'Responde em ~15 min' }] })));
+</script>
+</body>
+</html>

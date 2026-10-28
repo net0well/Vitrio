@@ -1,0 +1,17 @@
+<!-- @dsCard group="Pedido e pagamento" height=300 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>StatusTimeline — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h(V.StatusTimeline, { steps: [
+    { title: 'Pedido enviado', sub: 'Hoje, 09:12', state: 'done' },
+    { title: 'Orçamento recebido', sub: 'Hoje, 09:30', state: 'done' },
+    { title: 'Serviço agendado', sub: 'Amanhã, 14:00–15:00', state: 'done' },
+    { title: 'Serviço concluído', sub: 'Carlos vai confirmar o pagamento', state: 'current' },
+    { title: 'Pagamento confirmado', sub: 'Depois você avalia o profissional', state: 'pending' }] })));
+</script>
+</body>
+</html>

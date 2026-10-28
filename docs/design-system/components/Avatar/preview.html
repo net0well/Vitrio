@@ -1,0 +1,18 @@
+<!-- @dsCard group="Exibição" height=130 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>Avatar — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo-row' },
+    h(V.Avatar, { initials: 'CM', name: 'Carlos Menezes', size: 96 }),
+    h(V.Avatar, { initials: 'RS', name: 'Rafael Souza', tone: 'green', size: 60 }),
+    h(V.Avatar, { initials: 'JL', name: 'José Lima', tone: 'amber', size: 48 }),
+    h(V.Avatar, { initials: 'AL', name: 'Ana Lúcia', tone: 'info', size: 44 }),
+    h(V.Avatar, { initials: 'BF', name: 'Beatriz F.', tone: 'info', size: 40, kind: 'client' }),
+    h(V.Avatar, { initials: 'MA', name: 'Mariana A.', tone: 'green', size: 40, kind: 'client' })));
+</script>
+</body>
+</html>

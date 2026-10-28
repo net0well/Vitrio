@@ -1,0 +1,60 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.rsuser
+.vs/
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+BenchmarkDotNet.Artifacts/
+*.nupkg
+artifacts/
+
+# Flutter e Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/android/app/upload-keystore.jks
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Runner/GoogleService-Info.plist
+**/android/app/google-services.json
+*.iml
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Segredos e ambiente local
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+appsettings.*.local.json
+firebase-service-account*.json
+
+# Infra local
+infra/**/data/
+infra/ibge/cache/

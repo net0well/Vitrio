@@ -1,0 +1,12 @@
+<!-- @dsCard group="Pedido e pagamento" height=360 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>QuoteCard — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h(V.QuoteCard, { from: 'Carlos', price: 180, validity: 'Válido por 48 h', rows: [{ icon: 'calendar', text: 'Visita amanhã, 14:00–15:00' }, { icon: 'check', text: 'Material incluso (disjuntor 40 A)' }], message: 'Pelo que descreveu, o disjuntor está abaixo do que o chuveiro pede. Troco e reviso a fiação.' })));
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!-- @dsCard group="Entradas" height=150 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>SegmentedControl — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' },
+    h(V.SegmentedControl, { label: 'Dia', options: [{ value: 'hoje', label: 'Hoje' }, { value: 'amanha', label: 'Amanhã' }, { value: 'data', label: 'Escolher data' }], defaultValue: 'amanha' }),
+    h(V.SegmentedControl, { label: 'Tipo de orçamento', options: [{ value: 'fechado', label: 'Valor fechado' }, { value: 'visita', label: 'Visita técnica' }] })));
+</script>
+</body>
+</html>

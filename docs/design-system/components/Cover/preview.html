@@ -1,0 +1,55 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Vitrio</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--surface); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .slab { fill:var(--plum); rx:var(--radius-hero); }
+  .pane { rx:var(--radius-md); }
+  .lime { fill:var(--lime); }
+  .soft { fill:var(--plum-soft); }
+  .ok { fill:var(--green); rx:12px; }
+  .words { position:absolute; left:var(--sp-24); bottom:var(--sp-24); max-width:440px; }
+  .name { margin:0; font-family:var(--font-display); font-size:112px; line-height:.92; font-weight:800; letter-spacing:-.03em; color:var(--ink); }
+  .tag { margin:var(--sp-8) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      plum slab 480×264 bled off the top and right edges, radius-hero (the brand, ~42%) · lime and plum-soft panes cut into it · green 64×24 pill once below (it only ever means verified/confirmed)
+  arrangement one large slab bleeding top-right, four vitrine units inside on a diagonal, one satellite pill under the slab
+  pattern     tiles cut by radius-md, merged two-tall like the tall pane of the vitrine mark — chosen from "retângulos arredondados para o que se lê" and the shop-window brand
+  scales      tiles 48 (2×sp-24), gaps sp-8 (pitch 56), corners radius-md and radius-hero, pill rx 12 = half of size-badge-ish 24
+-->
+<rect class="slab" x="24" y="-24" width="480" height="264" rx="22"/>
+<rect class="pane lime" x="48" y="8" width="48" height="104" rx="12"/>
+<rect class="pane soft" x="104" y="8" width="48" height="48" rx="12"/>
+<rect class="pane soft" x="104" y="64" width="48" height="48" rx="12"/>
+<rect class="pane soft" x="160" y="120" width="48" height="104" rx="12"/>
+<rect class="pane lime" x="216" y="120" width="48" height="48" rx="12"/>
+<rect class="pane soft" x="216" y="176" width="48" height="48" rx="12"/>
+<rect class="pane soft" x="272" y="8" width="48" height="104" rx="12"/>
+<rect class="pane lime" x="328" y="8" width="48" height="48" rx="12"/>
+<rect class="pane soft" x="328" y="64" width="48" height="48" rx="12"/>
+<rect class="pane lime" x="384" y="120" width="48" height="104" rx="12"/>
+<rect class="pane soft" x="440" y="120" width="48" height="48" rx="12"/>
+<rect class="pane soft" x="440" y="176" width="48" height="48" rx="12"/>
+<rect class="ok" x="24" y="256" width="64" height="24" rx="12"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Vitrio</h1>
+<p class="tag">Os profissionais da sua cidade, numa vitrine só.</p>
+</div>
+</div>
+</body>
+</html>

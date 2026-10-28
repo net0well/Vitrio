@@ -1,0 +1,12 @@
+<!-- @dsCard group="Exibição" height=240 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>HeroCard — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h(V.HeroCard, { tag: 'Disponíveis agora', title: 'Imprevisto em casa?', text: 'Veja quem atende hoje perto de você, com nota e preço.', actionLabel: 'Ver disponíveis', icon: 'bolt' })));
+</script>
+</body>
+</html>

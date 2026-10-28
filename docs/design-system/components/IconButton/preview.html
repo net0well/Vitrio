@@ -1,0 +1,17 @@
+<!-- @dsCard group="Ações" height=96 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>IconButton — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo-row' },
+    h(V.IconButton, { icon: 'chevron-left', label: 'Voltar' }),
+    h(V.IconButton, { icon: 'bell', label: 'Notificações', dot: true }),
+    h(V.IconButton, { icon: 'heart', label: 'Salvar nos favoritos' }),
+    h(V.IconButton, { icon: 'message', label: 'Conversar com Carlos', variant: 'soft' }),
+    h(V.IconButton, { icon: 'sliders', label: 'Filtros', variant: 'solid' })));
+</script>
+</body>
+</html>

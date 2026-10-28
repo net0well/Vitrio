@@ -1,0 +1,12 @@
+<!-- @dsCard group="Pedido e pagamento" height=290 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>PaymentMethodPicker — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo' }, h(V.PaymentMethodPicker, { defaultValue: 'pix' })));
+</script>
+</body>
+</html>

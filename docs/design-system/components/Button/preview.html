@@ -1,0 +1,21 @@
+<!-- @dsCard group="Ações" height=190 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>Button — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', null,
+    h('div', { className: 'vt-demo-row' },
+      h(V.Button, { size: 'lg', trailingIcon: 'send' }, 'Enviar pedido'),
+      h(V.Button, { variant: 'secondary' }, 'Recusar'),
+      h(V.Button, { variant: 'ghost' }, 'Ver todas'),
+      h(V.Button, { variant: 'danger', icon: 'x' }, 'Cancelar pedido'),
+      h(V.Button, { disabled: true }, 'Enviar orçamento')),
+    h('div', { className: 'vt-demo-row vt-demo-hero' },
+      h(V.Button, { variant: 'accent', size: 'lg', trailingIcon: 'arrow-right' }, 'Encontrar um profissional'),
+      h(V.Button, { variant: 'on-hero', size: 'lg' }, 'Quero oferecer meus serviços'))));
+</script>
+</body>
+</html>

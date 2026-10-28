@@ -1,0 +1,19 @@
+<!-- @dsCard group="Exibição" height=120 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>Badge — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo-row' },
+    h(V.Badge, { tone: 'verified', icon: 'shield-check' }, 'MEI verificado'),
+    h(V.Badge, { tone: 'brand', dot: true }, 'Atende hoje'),
+    h(V.Badge, { tone: 'neutral', icon: 'clock' }, 'Responde em ~15 min'),
+    h(V.Badge, { tone: 'warning' }, 'Válido por 48 h'),
+    h(V.Badge, { tone: 'accent', dot: true }, 'Novo'),
+    h(V.Badge, { tone: 'info' }, 'Aguardando orçamento'),
+    h(V.Badge, { tone: 'danger', icon: 'x' }, 'Cancelado')));
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!-- @dsCard group="Fundamentos" height=330 -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>Icon — Vitrio</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var V = window.Vitrio, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'vt-demo-row' }, V.ICON_NAMES.map(function (n) {
+    return h('span', { key: n, style: { display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6, width: 76, fontSize: 11, fontWeight: 600, color: 'var(--ink-muted)' } },
+      h(V.Icon, { name: n, size: 24, style: { color: 'var(--ink)' } }), n);
+  })));
+</script>
+</body>
+</html>
