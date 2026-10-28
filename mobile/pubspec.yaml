@@ -1,0 +1,55 @@
+name: vitrio
+description: Encontre, contrate e avalie profissionais perto de você.
+publish_to: none
+
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
+  go_router: ^18.1.1
+  http: ^1.6.0
+  flutter_secure_storage: ^11.2.0
+  flutter_svg: ^2.3.0
+  shared_preferences: ^2.5.6
+  intl: ^0.20.3
+  uuid: ^4.6.0
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  riverpod_generator: ^4.0.9
+  build_runner: ^2.16.2
+  flutter_launcher_icons: ^0.14.4
+  go_router_builder: ^4.5.2
+
+flutter:
+  uses-material-design: true
+  generate: true
+  default-flavor: dev
+  assets:
+    - assets/icons/
+    - assets/brand/
+  fonts:
+    - family: BricolageGrotesque
+      fonts:
+        - asset: assets/fonts/BricolageGrotesque-Variable.ttf
+    - family: PlusJakartaSans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans-Variable.ttf
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/launcher/vitrio-app-icon-1024.png
+  adaptive_icon_background: "#3E1F57"
+  adaptive_icon_foreground: assets/launcher/vitrio-app-icon-adaptive-1024.png
+  remove_alpha_ios: true
