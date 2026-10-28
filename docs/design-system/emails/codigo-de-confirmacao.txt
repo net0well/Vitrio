@@ -1,0 +1,11 @@
+Confirme seu e-mail
+
+Olá, {{firstName}}. Digite este código no app para terminar seu cadastro.
+
+    {{code}}
+
+O código vale por 10 minutos. Se você não criou uma conta no Vitrio, ignore este e-mail: nada é criado sem o código.
+
+--
+O Vitrio nunca pede sua senha nem códigos por e-mail, telefone ou WhatsApp. Este é um e-mail automático; respostas não são lidas.
+Vitrio · vitrio.app

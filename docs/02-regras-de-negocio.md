@@ -6,8 +6,10 @@ As regras abaixo valem para app, API e moderação. Quando uma spec contradisser
 
 - Uma conta pode ser **cliente** e **prestador** ao mesmo tempo. O papel de prestador nasce quando a pessoa cria a vitrine.
 - Papéis de sistema: `customer` (todos), `provider` (quem tem vitrine), `admin` (equipe Vitrio). `admin` nunca é atribuído pelo app.
-- Login só por provedor externo: Google no lançamento (Android); Apple chega junto com o app iOS. O vínculo é pelo identificador do provedor, não pelo e-mail.
-- E-mail é único por conta. Se o e-mail de um novo login já pertence a uma conta de outro provedor, as contas só são vinculadas quando os dois provedores informam o e-mail como verificado; caso contrário, o login é recusado com orientação para entrar pelo provedor usado antes (`account.email_in_use`).
+- **Cadastro e login próprios**, sem provedor externo: nome, e-mail e senha. O e-mail é confirmado com um código de 6 dígitos (10 min, 5 tentativas) antes do primeiro acesso; conta não confirmada em 24 h é apagada.
+- E-mail é único por conta. Cadastro, reenvio de código e "Esqueci a senha" respondem igual exista o e-mail ou não, e o login erra sempre com a mesma mensagem, para ninguém descobrir quais e-mails têm conta.
+- Senha de 10 a 128 caracteres, sem regra de maiúscula ou símbolo, recusando senhas comuns. Cinco erros em 15 min bloqueiam o login da conta por 15 min; redefinir a senha desbloqueia.
+- **Continuar conectado:** a sessão é renovada pelo app e só expira depois de 60 dias sem uso ou 1 ano desde o login. Sair, trocar ou redefinir a senha, desconectar o aparelho em "Aparelhos conectados", suspensão e exclusão encerram a sessão antes.
 - Conta suspensa não entra e todas as sessões dela são revogadas; a vitrine some da busca e os pedidos abertos (`Sent`, `Quoted`, `Scheduled`) em que a pessoa é cliente ou prestador são cancelados com motivo "Conta suspensa".
 - Excluir conta: dados pessoais apagados ou anonimizados em até 30 dias; avaliações feitas permanecem com autor "Usuário removido"; registros de pagamento confirmados e a auditoria deles são mantidos anonimizados por 5 anos.
 - A exclusão é bloqueada (409) enquanto houver pedido `Scheduled` ou contestação de pagamento aberta, como cliente ou como prestador. Pedidos `Sent` e `Quoted` são cancelados com motivo "Conta excluída".

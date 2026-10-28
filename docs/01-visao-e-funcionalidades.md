@@ -33,14 +33,18 @@
 
 Legenda: **MVP** entra na primeira versão publicada; **Depois** fica no backlog.
 
-**Plataformas:** o primeiro lançamento é só **Android** (Google Play). O app iOS vem depois, com o mesmo código Flutter, e traz junto o login com Apple (exigido pela App Store quando há login social).
+**Plataformas:** o primeiro lançamento é só **Android** (Google Play). O app iOS vem depois, com o mesmo código Flutter. Como o cadastro e o login são próprios, sem login social, a App Store não exige login com Apple.
 
 ### 1. Conta e acesso
 
 | Funcionalidade | Descrição | Quando |
 | --- | --- | --- |
-| Entrar com Google | Login social; cria a conta no primeiro acesso | MVP |
-| Entrar com Apple | Obrigatório no iOS quando há login social | Com o app iOS |
+| Criar conta | Cadastro próprio com nome, e-mail e senha; o e-mail é confirmado com um código de 6 dígitos antes do primeiro acesso | MVP |
+| Entrar | E-mail e senha; erro genérico que não revela se o e-mail tem conta | MVP |
+| Continuar conectado | O app renova a sessão sozinho; só pede login de novo depois de 60 dias sem uso, 1 ano desde o login ou se a sessão for encerrada | MVP |
+| Esqueci a senha | Código por e-mail e senha nova; desconecta todos os aparelhos | MVP |
+| Trocar senha | Em Conta, com a senha atual; desconecta os outros aparelhos | MVP |
+| Aparelhos conectados | Lista de sessões em Conta, com "Desconectar" e "Sair de todos os aparelhos" | MVP |
 | Navegar sem conta | Busca, perfis e avaliações abertos; login só para pedir orçamento, favoritar, avaliar ou anunciar | MVP |
 | Dados básicos | Nome de exibição, foto opcional, telefone (opcional para cliente) | MVP |
 | Endereços salvos | Casa, trabalho etc., cadastrados por CEP com número e complemento | MVP |
@@ -156,7 +160,8 @@ Legenda: **MVP** entra na primeira versão publicada; **Depois** fica no backlog
 | --- | --- | --- |
 | Push | Novo pedido, orçamento recebido e aceito, lembrete, concluído, pagamento confirmado, convite para avaliar, nova avaliação, resposta | MVP |
 | Central de notificações | Lista no app com lidas e não lidas | MVP |
-| E-mail transacional | Boas-vindas e avisos de conta | Depois |
+| E-mails de conta | Código de confirmação, código de redefinição de senha, aviso de senha alterada e de tentativa de cadastro, no layout de [design-system/emails.md](design-system/emails.md) | MVP |
+| Outros e-mails | Boas-vindas, resumo de pedidos e avisos que hoje vão por push | Depois |
 
 ### 10. Confiança, segurança e moderação
 
@@ -175,11 +180,11 @@ Nada é cobrado no MVP. Caminhos previstos, sempre do lado do prestador e nunca 
 
 ## Fora do MVP
 
-App iOS e login com Apple, pagamento dentro do app, chat interno, remarcação com proposta, mapa, programa de indicação, painel administrativo web, avaliação de clientes, verificação de telefone, outros idiomas e versão web para clientes.
+App iOS, login social (Google, Apple), pagamento dentro do app, chat interno, remarcação com proposta, mapa, programa de indicação, painel administrativo web, avaliação de clientes, verificação de telefone, outros idiomas e versão web para clientes.
 
 ## Indicadores
 
 - **Norte:** pedidos com pagamento confirmado por semana.
-- **Funil do cliente:** busca → perfil → login → pedido → orçamento recebido → aceito → concluído → avaliado. O abandono no login decide se entra um login próprio além do Google.
+- **Funil do cliente:** busca → perfil → cadastro ou login → e-mail confirmado → pedido → orçamento recebido → aceito → concluído → avaliado. O abandono no cadastro é o sinal para rever o login social.
 - **Saúde do prestador:** tempo até o primeiro orçamento, taxa de resposta em 48 h, prestadores com perfil completo.
 - **Confiança:** taxa de contestação de pagamento, denúncias por mil pedidos.

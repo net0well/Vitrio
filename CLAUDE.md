@@ -62,7 +62,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Roadmap: `docs/07-roadmap.md`
 - Segurança: `docs/08-seguranca.md`
 - Cache: `docs/09-cache.md`
-- Design system (tokens, componentes, telas, guia Flutter, logos, ícones, fontes): `docs/design-system/`
+- Design system (tokens, componentes, telas, e-mails, guia Flutter, logos, ícones, fontes): `docs/design-system/`
 
 ## Comandos
 

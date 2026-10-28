@@ -10,5 +10,6 @@ A marca é uma vitrine: moldura arredondada com três vidros (um alto à esquerd
 - `vitrio-mark-mono.svg` — só o símbolo em tinta única `ink`, vidros vazados.
 - `vitrio-app-icon.svg` — ícone do app (1024×1024, fundo `plum`, cantos 224). Lojas e iOS.
 - `vitrio-app-icon-adaptive.svg` — camada de frente do ícone adaptativo do Android (1024×1024, sangria total), símbolo dentro da zona segura.
+- `vitrio-wordmark-on-dark@2x.png` — versão PNG (436×128, fundo transparente) do `vitrio-wordmark-on-dark.svg`, só para e-mails, porque o Gmail não exibe SVG. Exibida a 109×32 sobre `hero`. Gerada a partir do SVG; não edite o PNG à mão.
 
 O nome é desenhado em Bricolage Grotesque 800 convertida em curvas: não redigite o logo com a fonte.
