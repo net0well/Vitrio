@@ -122,3 +122,4 @@ A marca é uma vitrine: uma janela com três vidros, um alto à esquerda e dois 
 - **App (Flutter):** siga a seção "Implementação em Flutter": tokens viram `VitrioColors`, `VitrioText`, `VitrioSpace` e `VitrioRadius`, e cada componente abaixo tem um widget correspondente.
 - **Web e protótipos:** os componentes estão em `components/bundle.js` como `window.Vitrio` (React 18) e usam as classes de `components/bundle.css`, que esperam as variáveis CSS dos tokens (`--plum`, `--surface` etc.) com os valores de `tokens.json`; o arquivo `tokens.css` com essas variáveis ainda não está no repositório.
 - **Telas e fluxos:** a seção "Plano de telas e fluxos" lista cada tela, seus estados e as regras de negócio que aparecem na interface.
+- **E-mails:** [emails.md](emails.md) define layout, cores, tipografia, textos e validação dos e-mails de conta, com o modelo de referência em `emails/`.
