@@ -73,7 +73,10 @@
 ## Passos de entrega (próximo recorte)
 
 10. GitHub Actions: build, testes com Testcontainers, `dotnet format --verify-no-changes`, `dotnet list package --vulnerable --include-transitive`, CodeQL, gitleaks, `flutter analyze` e `flutter test`.
-11. Dockerfile da API e serviço da API no compose.
+11. Dockerfile da API e serviço da API no compose. Na configuração de produção:
+    - `ForwardedHeaders:KnownProxies` com o IP do Caddy; sem isso todo cliente cai no mesmo balde de rate limit por IP;
+    - `AllowedHosts` com o domínio real da API em vez de `*`;
+    - Caddy expõe só `/api/*`; `/health/*` fica acessível apenas para o monitoramento, porque `/health/ready` abre conexão com o banco a cada chamada.
 
 ## Pronto quando
 
