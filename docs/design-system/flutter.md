@@ -471,7 +471,7 @@ class VitrioBadge extends StatelessWidget {
 
 ## Ícones
 
-Use os SVGs de `assets/Icons/` com `flutter_svg` e recolora com `ColorFilter.mode(cor, BlendMode.srcIn)`. Tamanho padrão 20; 14–18 em badges e metadados (traço visual mais grosso, como no web). A estrela de nota é desenhada preenchida com `amber` e contorno `amberEdge`.
+Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mode(cor, BlendMode.srcIn)`. Tamanho padrão 20; 14–18 em badges e metadados (traço visual mais grosso, como no web). A estrela de nota é desenhada preenchida com `amber` e contorno `amberEdge`.
 
 ## Componentes → widgets
 

@@ -1,6 +1,6 @@
 # Vitrio
 
-App para encontrar, contratar e avaliar profissionais autônomos e MEIs perto de você, em qualquer cidade do Brasil. Monorepo: `backend/` (.NET 10, ASP.NET Core com Controllers, Clean Architecture, PostgreSQL + PostGIS), `mobile/` (Flutter), `docs/` (specs, planos, arquitetura, design system), `infra/`.
+App para encontrar, contratar e avaliar profissionais autônomos e MEIs perto de você, em qualquer cidade do Brasil. Monorepo: `backend/` (.NET 10, ASP.NET Core com Controllers, Clean Architecture, PostgreSQL + PostGIS, Redis), `mobile/` (Flutter; primeiro lançamento só Android, iOS depois), `docs/` (specs, planos, arquitetura, design system), `infra/`.
 
 ## Precedência
 
@@ -29,7 +29,10 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Clean Architecture: `Vitrio.Domain` → `Vitrio.Application` → `Vitrio.Infrastructure` → `Vitrio.Api`. Casos de uso por funcionalidade na Application, com `Mediator` (MIT), FluentValidation e Result pattern.
 - Controllers só montam o comando e chamam `ISender`. Filtro de dono sempre dentro da consulta. Recurso alheio responde 404.
 - `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono; `DbContext` direto, sem repositório genérico.
-- Proibido: MediatR 13+, AutoMapper 15+, FluentAssertions 8+, MassTransit 9+.
+- CQRS com `Mediator`: comandos mudam estado, consultas só leem (`AsNoTracking` e projeção). Eventos de domínio só nos agregados e só quando alguém reage a eles.
+- Mapeamento sempre explícito, escrito à mão (`Response.From(entidade)`, `Request.ToCommand()`, `Select` nas consultas). **Nenhuma biblioteca de mapeamento** (AutoMapper, Mapster, Mapperly ou parecidas).
+- Proibido também: MediatR 13+, FluentAssertions 8+, MassTransit 9+.
+- Cache segue `docs/09-cache.md`: banco é a fonte da verdade, Redis e memória só aceleram; toda mudança no prestador invalida o perfil público.
 - Código em inglês; interface, documentação, branches e commits em português.
 
 ### Segurança
@@ -58,6 +61,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Regras de desenvolvimento: `docs/06-regras-de-desenvolvimento.md`
 - Roadmap: `docs/07-roadmap.md`
 - Segurança: `docs/08-seguranca.md`
+- Cache: `docs/09-cache.md`
 - Design system (tokens, componentes, telas, guia Flutter, logos, ícones, fontes): `docs/design-system/`
 
 ## Comandos

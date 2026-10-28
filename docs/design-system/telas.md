@@ -14,7 +14,7 @@ Um só app com dois modos: **cliente** (padrão) e **prestador** (ativado em "Qu
 
 ## Localização e cidade
 
-- **GPS ativo:** a busca usa o ponto atual, ordena por distância e mostra "1,2 km · Bairro". A pílula de localização da Início mostra "Bairro, Cidade" detectados.
+- **GPS ativo:** a busca usa o ponto atual, ordena por relevância (a proximidade é um dos pesos; "Mais perto" fica disponível na ordenação) e mostra "1,2 km · Bairro". A pílula de localização da Início mostra "Bairro, Cidade" detectados.
 - **GPS negado ou desligado:** a pílula mostra a cidade escolhida; a busca ordena por relevância (nota, número de avaliações, perfil completo) e mostra só bairro e cidade, sem distância.
 - **Filtrar por cidade:** a pílula abre a folha "Escolher cidade" (busca por nome com acentos opcionais, cidades recentes, "Usar minha localização"). Escolher outra cidade não desliga o GPS; só muda o centro da busca até o usuário voltar para "Perto de mim".
 - **Privacidade do prestador:** o endereço base do prestador nunca aparece. O app mostra bairro, cidade e distância arredondada (uma casa decimal até 10 km, inteiro acima).
@@ -31,7 +31,7 @@ O pagamento é combinado entre cliente e prestador fora do app. **Só o prestado
 | Expirado | Sistema (48 h sem resposta) | "Sem resposta" + sugestões | Some da lista | Fim |
 | Orçamento enviado | Prestador | `QuoteCard` com valor, horário e validade | "Aguardando cliente" | Cliente: Aceitar ou Recusar |
 | Orçamento recusado | Cliente | Pedido arquivado | Aviso | Fim |
-| Agendado | Cliente aceita | Data, horário, valor combinado; endereço liberado ao prestador | Agenda + endereço completo | Qualquer um: Remarcar, Cancelar; ao terminar, Serviço concluído |
+| Agendado | Cliente aceita | Data, horário, valor combinado; endereço liberado ao prestador | Agenda + endereço completo (até 7 dias após o horário) | Qualquer um: Cancelar; ao terminar, Serviço concluído. Sem ação de ninguém, o pedido é concluído sozinho 7 dias após o horário |
 | Cancelado | Cliente ou prestador, com motivo | Motivo | Motivo | Fim |
 | Concluído | Quem marcar primeiro; o outro é avisado | "Serviço concluído" + convite para avaliar | "Confirme o pagamento" | Prestador: Confirmar pagamento; Cliente: Avaliar |
 | Pagamento confirmado | Só o prestador | `PaymentReceipt` (valor, meio, data) + "Não reconheço este pagamento" | Registro no histórico e no faturamento do mês | Cliente: Avaliar, se ainda não avaliou |
@@ -39,11 +39,12 @@ O pagamento é combinado entre cliente e prestador fora do app. **Só o prestado
 
 Regras que aparecem na interface:
 
-- O orçamento vale 48 h (`Badge` warning "Válido por 48 h").
+- O orçamento vale 48 h ou até 1 h antes do horário proposto, o que vier primeiro (`Badge` warning "Válido até qui 29/10, 13:00").
 - O endereço completo do cliente só vai para o prestador quando o orçamento é aceito.
 - A confirmação de pagamento traz o valor do orçamento já preenchido; se o prestador mudar o valor, "Motivo da diferença" vira obrigatório (ex.: material extra).
 - Meios de pagamento: Pix, Dinheiro, Cartão de débito, Cartão de crédito, Transferência, Outro.
-- A avaliação fica disponível a partir de Concluído e só para quem contratou pelo app. Uma avaliação por pedido; pode ser editada em até 7 dias. O prestador pode responder uma vez.
+- A avaliação fica disponível de Concluído até 30 dias depois, só para quem contratou pelo app. Uma avaliação por pedido; pode ser editada em até 7 dias. O prestador pode responder uma vez.
+- Com menos de 3 avaliações, busca e perfil mostram o `Badge` "Novo no Vitrio" no lugar da nota.
 
 ## Inventário de telas
 
@@ -52,7 +53,7 @@ Regras que aparecem na interface:
 | Tela | Situação | Componentes principais | Estados que precisa ter |
 | --- | --- | --- | --- |
 | Boas-vindas | prototipada | `Button` accent + on-hero, logo | — |
-| Entrar | a desenhar | `Button` (Google, Apple), link de termos | carregando, erro de login |
+| Entrar | a desenhar | `Button` (Google; Apple só no app iOS), link de termos | carregando, erro de login, e-mail já usado com outro provedor |
 | Permitir localização | a desenhar | ilustração do símbolo, `Button` primary + secondary | — |
 | Escolher cidade (folha) | a desenhar | `SearchField`, lista de cidades, "Usar minha localização" | sem resultado, carregando |
 | Início | prototipada | pílula de localização, `SearchField`, `HeroCard`, `CategoryTile`, cards resumidos, `BottomNav` | sem prestadores na cidade, sem GPS |

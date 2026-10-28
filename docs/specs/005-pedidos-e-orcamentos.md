@@ -18,7 +18,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 - Cliente aceita ou recusa o orçamento; ao aceitar, o pedido fica `Scheduled` e o endereço é liberado ao prestador.
 - Cancelar (qualquer lado, com motivo, regras por estado).
 - Concluir serviço (qualquer lado, a partir do início da faixa agendada).
-- Expirações automáticas (48 h sem resposta; orçamento 48 h sem decisão).
+- Expirações automáticas (48 h sem resposta; orçamento sem decisão até a validade) e conclusão automática de pedido agendado 7 dias após o fim da faixa.
 - Listas de pedidos para cliente e prestador; detalhe do pedido; agenda do prestador.
 - Ações permitidas calculadas pela API (`allowedActions`) para o app não duplicar regras.
 
@@ -29,11 +29,12 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 
 ## Domain Model
 
-- `Order` (agregado): `Id`, `CustomerId`, `ProviderId`, `ServiceId?`, `ServiceTitle`, `Description` (20–1000), `PreferredDay` (`Date`), `PreferredPeriod` (`Morning`, `Afternoon`, `Evening`), `AddressSnapshot` (criptografado: logradouro, número, complemento, bairro, cidade, UF, CEP), `Neighborhood`, `CityIbgeCode`, `CustomerPoint` (privado), `Status`, `CreatedAt`, `RespondBy`, `QuoteValidUntil?`, `ScheduledStart?`, `ScheduledEnd?`, `CompletedAt?`, `CompletedBy?`, `CancelledAt?`, `CancelledBy?`, `CancellationReason?`, `AddressReleasedAt?`.
+- `Order` (agregado): `Id`, `CustomerId`, `ProviderId`, `ServiceId?`, `ServiceTitle`, `Description` (20–1000), `PreferredDay` (`Date`), `PreferredPeriod` (`Morning`, `Afternoon`, `Evening`), `AddressSnapshot` (criptografado: logradouro, número, complemento, bairro, cidade, UF, CEP), `Neighborhood`, `CityIbgeCode`, `CustomerPoint` (privado; centroide da cidade quando o CEP não tem coordenadas, com `CustomerPointIsApproximate`), `CategoryId` (do serviço ou, em "Outro", a principal do prestador), `Status`, `CreatedAt`, `RespondBy`, `FirstResponseAt?` (primeiro orçamento ou recusa), `QuoteValidUntil?` (o que vier primeiro entre envio + 48 h e início da faixa − 1 h), `ScheduledStart?`, `ScheduledEnd?`, `CompletedAt?`, `CompletedBy?` (`Customer`, `Provider`, `System`), `CancelledAt?`, `CancelledBy?`, `CancellationReason?`, `AddressReleasedAt?`.
+- Endereço visível ao prestador de `AddressReleasedAt` até `ScheduledEnd` + 7 dias, se o pedido não foi cancelado, em qualquer status (inclusive os de pagamento).
 - `Quote` (entidade do pedido): `Type` (`FixedPrice`, `TechnicalVisit`), `Amount` (`Money`), `Date`, `Start`, `End`, `MaterialIncluded`, `Message?`, `SentAt`, `Version`.
 - `OrderPhoto`: `Id`, `OrderId`, `ObjectKey` (privado), `Status`.
 - Estados e transições: [02-regras-de-negocio.md §4](../02-regras-de-negocio.md).
-- Eventos: `OrderCreated`, `OrderDeclined`, `OrderExpired`, `QuoteSent`, `QuoteAccepted`, `QuoteDeclined`, `QuoteExpired`, `OrderCancelled`, `OrderCompleted`, `AddressReleased`.
+- Eventos: `OrderCreated`, `OrderDeclined`, `OrderExpired`, `QuoteSent`, `QuoteAccepted`, `QuoteDeclined`, `QuoteExpired`, `OrderCancelled`, `OrderCompleted` (com `CompletedBy`, inclusive `System`), `AddressReleased`. `QuoteSent`, `OrderDeclined` e `OrderExpired` recalculam o tempo de resposta do prestador; `OrderCancelled` recalcula os cancelamentos tardios.
 
 ## API Contract
 
@@ -62,12 +63,15 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - Rotas `/orders/*`: autenticado; consulta filtrada por `CustomerId = usuário`.
 - Rotas `/provider/orders/*` e `/provider/agenda`: política `Provider`; consulta filtrada por `ProviderId` da vitrine do usuário.
 - Pedido de outra pessoa responde 404 em qualquer rota.
-- Endereço completo no `orderProviderView` só quando `AddressReleasedAt` existe e dentro da janela de 7 dias após `Completed`/`Cancelled`; cada leitura grava auditoria.
+- Endereço completo no `orderProviderView` só quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias de `ScheduledEnd`; cada leitura grava auditoria.
 - Antes do aceite, o prestador vê primeiro nome do cliente, bairro, cidade e distância arredondada.
 
 ## Edge Cases & Failure Modes
 
-- Cliente com 10 pedidos abertos ou 3 `Sent` para o mesmo serviço: 409 com mensagem clara.
+- Cliente com 10 pedidos abertos (`Sent`, `Quoted`, `Scheduled`) ou 3 `Sent` na mesma categoria: 409 com mensagem clara.
+- Pedido `Scheduled` que ninguém marca como concluído: 7 dias depois do fim da faixa, o job conclui com `CompletedBy = System`, avisa os dois e o endereço deixa de aparecer.
+- Orçamento proposto para começar em menos de 1 h: 400 (não daria tempo de o cliente aceitar).
+- Endereço sem coordenadas: distância aproximada a partir do centroide da cidade, sem aviso de "fora da área".
 - Vitrine pausada ou suspensa entre abrir o perfil e enviar: 409 "Este profissional não está recebendo pedidos agora".
 - Endereço fora da área do prestador: permitido, com aviso ao cliente ("fora da área habitual") e ao prestador (distância).
 - Prestador envia orçamento depois de o cliente cancelar: 409 por estado (concorrência com `xmin`).
@@ -76,7 +80,7 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - Aceitar depois de `QuoteValidUntil`: 409 `quote.expired`.
 - Job de expiração roda duas vezes: idempotente (só muda quem ainda está no estado e no prazo).
 - Concluir antes do início da faixa agendada: 409.
-- Cancelamento pelo prestador com menos de 2 h: permitido, conta na métrica interna de confiabilidade.
+- Cancelamento pelo prestador com menos de 2 h: permitido; o handler de `OrderCancelled` recalcula `LateCancellations90d` do prestador e, com 3 ou mais, abre um item na fila de moderação. Nada aparece no perfil público.
 - Repetição do POST com a mesma `Idempotency-Key`: mesma resposta, sem pedido duplicado.
 - Fotos ainda processando ao criar o pedido: o pedido é criado; fotos aparecem quando prontas.
 
@@ -98,8 +102,8 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - **AC-1** Dado um cliente autenticado com endereço salvo e um prestador publicado, quando cria um pedido válido, então o pedido nasce `Sent`, `RespondBy` = criação + 48 h e o prestador o vê na aba Novos com bairro e distância, sem endereço completo.
 - **AC-2** Dado o mesmo `Idempotency-Key` reenviado com o mesmo corpo, quando cria o pedido, então recebe a mesma resposta e só existe um pedido.
 - **AC-3** Dado um cliente que é dono da vitrine, quando pede orçamento para ela, então recebe 409.
-- **AC-4** Dado um pedido `Sent`, quando o prestador envia orçamento válido, então o pedido vira `Quoted`, `QuoteValidUntil` = envio + 48 h e o cliente vê valor, data, faixa e material.
-- **AC-5** Dado um pedido `Quoted`, quando o prestador substitui o orçamento, então `quoteVersion` aumenta e o prazo de 48 h recomeça.
+- **AC-4** Dado um pedido `Sent`, quando o prestador envia orçamento válido para daqui a 3 dias, então o pedido vira `Quoted`, `QuoteValidUntil` = envio + 48 h, `FirstResponseAt` é preenchido e o cliente vê valor, data, faixa e material.
+- **AC-5** Dado um pedido `Quoted`, quando o prestador substitui o orçamento, então `quoteVersion` aumenta, a validade é recalculada pela mesma regra e `FirstResponseAt` não muda.
 - **AC-6** Dado um pedido `Quoted` com versão 2, quando o cliente aceita informando a versão 1, então recebe 409.
 - **AC-7** Dado um pedido `Quoted` dentro da validade, quando o cliente aceita, então o pedido vira `Scheduled`, o endereço completo aparece na visão do prestador e uma auditoria de liberação é gravada.
 - **AC-8** Dado um pedido `Sent` sem resposta por 48 h, quando o job roda, então o pedido vira `Expired` e o cliente vê sugestão de outros prestadores.
@@ -107,8 +111,12 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - **AC-10** Dado um pedido `Scheduled` cuja faixa ainda não começou, quando alguém marca como concluído, então recebe 409; depois do início, o pedido vira `Completed` com `CompletedBy`.
 - **AC-11** Dado o id de um pedido de outro cliente, quando consulta `GET /orders/{id}`, então recebe 404.
 - **AC-12** Dado um pedido `Sent`, quando o prestador consulta o detalhe, então a resposta não contém logradouro, número, complemento nem CEP.
-- **AC-13** Dado um pedido `Completed` há 8 dias, quando o prestador consulta o detalhe, então o endereço completo não aparece mais.
+- **AC-13** Dado um pedido cuja faixa agendada terminou há 8 dias, em qualquer status, quando o prestador consulta o detalhe, então o endereço completo não aparece mais.
 - **AC-14** Dado qualquer pedido, quando o app consulta o detalhe, então `allowedActions` lista só as ações válidas para quem pergunta no estado atual.
+- **AC-15** Dado um orçamento enviado às 15h para amanhã às 8h, quando é criado, então `QuoteValidUntil` é amanhã às 7h; às 7h01 o aceite recebe 409 `quote.expired`.
+- **AC-16** Dado um pedido `Scheduled` cuja faixa terminou há 7 dias sem conclusão, quando o job roda, então o pedido vira `Completed` com `CompletedBy = System` e os dois recebem aviso.
+- **AC-17** Dado um pedido `PaymentConfirmed` com faixa terminada há 3 dias, quando o prestador consulta o detalhe, então o endereço completo aparece.
+- **AC-18** Dado um cliente com 3 pedidos `Sent` em Elétrica, quando cria o quarto em Elétrica (com serviço "Outro" ou não), então recebe 409; em Hidráulica, o pedido é criado.
 
 ## Deferred Decisions
 

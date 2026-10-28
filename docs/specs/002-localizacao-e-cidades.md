@@ -29,7 +29,7 @@ O Vitrio funciona em qualquer cidade do Brasil. Para mostrar quem atende perto, 
 
 - `City` (referência, somente leitura): `IbgeCode` (7 dígitos, chave), `Name`, `NameNormalized`, `State` (UF), `Boundary` (`geography(MultiPolygon)` simplificada), `Centroid` (`geography(Point)`), `TimeZone` (IANA, ex.: `America/Sao_Paulo`).
 - `LocationContext` (valor usado pelas consultas, não persistido): `Mode` (`Gps`, `ChosenCity`), `Point?`, `CityIbgeCode`.
-- Carga: script em `infra/ibge/` lê a API de localidades e as malhas do IBGE, simplifica os polígonos e popula a tabela `cities`; idempotente; roda na criação do banco e uma vez por ano.
+- Carga: script em `infra/ibge/` lê a API de localidades e as malhas do IBGE, simplifica os polígonos e popula a tabela `cities`; idempotente; roda na criação do banco e uma vez por ano e, ao final, remove a tag `cities` do cache.
 
 ## API Contract
 
@@ -59,7 +59,7 @@ O Vitrio funciona em qualquer cidade do Brasil. Para mostrar quem atende perto, 
 ## Non-Functional Requirements
 
 - `locate` p95 ≤ 80 ms com índice GiST e cache de 10 min por célula de ~1 km.
-- `cities?search` p95 ≤ 50 ms (trigram em `NameNormalized`), cache por termo.
+- `cities?search` p95 ≤ 50 ms (trigram em `NameNormalized`), cache de 24 h por termo normalizado e `Cache-Control: public, max-age=86400`; mesma política em `GET /cities/{ibgeCode}`. Detalhes em [09-cache.md](../09-cache.md).
 - Nenhuma coordenada do usuário armazenada ou em log.
 - Tabela `cities` ≤ 60 MB com polígonos simplificados.
 

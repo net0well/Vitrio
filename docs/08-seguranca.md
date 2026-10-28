@@ -7,7 +7,7 @@ O Vitrio guarda dados pessoais (nome, telefone, endereço, localização, fotos 
 | Ativo | Ameaça | Controle principal |
 | --- | --- | --- |
 | Endereço do cliente | Prestador mal-intencionado coleta endereços enviando orçamentos falsos | Endereço só em `Scheduled`; janela de visibilidade de 7 dias; limites de orçamentos por prestador; auditoria de acesso ao endereço |
-| Endereço do prestador | Triangulação pela distância exibida | Ponto público em célula de ~500 m; distância arredondada; sem coordenadas na resposta |
+| Endereço do prestador | Triangulação pela distância exibida ou pela borda do raio (variar o ponto da busca e ver onde o prestador aparece e some) | Ponto público em célula de ~500 m usado em **todo** filtro e distância; distância arredondada; sem coordenadas na resposta |
 | Contas | Roubo de sessão, reuso de refresh token | JWT curto, refresh rotativo com detecção de reuso, armazenamento seguro no aparelho |
 | Pedidos e pagamentos | Acesso a pedido de outra pessoa (BOLA), confirmação forjada | Toda consulta filtrada pelo dono; só o prestador do pedido confirma; registros imutáveis e auditados |
 | Reputação | Avaliações falsas, autoavaliação, ataques de denúncia | Avaliação só com pedido concluído; sinais de mesma pessoa/aparelho; ocultação só com 3 denunciantes distintos |
@@ -16,21 +16,21 @@ O Vitrio guarda dados pessoais (nome, telefone, endereço, localização, fotos 
 
 ## 2. Autenticação
 
-- **Login social validado no servidor.** O app obtém o ID token do Google ou da Apple e envia para `POST /auth/google` ou `/auth/apple`. A API valida assinatura (JWKS do provedor, com cache), `iss`, `aud` (client ids do app), `exp`, `iat` e, na Apple, o `nonce` (hash SHA-256 do valor gerado pelo app). Nunca confie em e-mail ou nome vindos do app.
+- **Login social validado no servidor.** O app obtém o ID token do Google (e, com o app iOS, da Apple) e envia para `POST /auth/google` ou `/auth/apple`. A API valida assinatura (JWKS do provedor, com cache), `iss`, `aud` (client ids do app), `exp`, `iat` e, na Apple, o `nonce` (hash SHA-256 do valor gerado pelo app). Nunca confie em e-mail ou nome vindos do app.
 - **Token de acesso:** JWT assinado com chave assimétrica (ES256), validade de **10 minutos**, claims mínimas (`sub`, `sid`, `roles`, `iat`, `exp`, `jti`). Sem dados pessoais no token.
 - **Refresh token:** valor aleatório de 256 bits, guardado só como hash (SHA-256) no banco, validade de 30 dias deslizante e limite absoluto de 90 dias. **Rotação a cada uso**; se um refresh já usado for apresentado de novo, toda a família de tokens daquela sessão é revogada e o usuário precisa entrar de novo.
-- **Sessões:** cada login cria um `sid`; logout revoga o `sid`; "Sair de todos os aparelhos" revoga todos. Suspensão e exclusão de conta revogam tudo na hora (a validação do JWT consulta uma lista de `sid` revogados em cache com TTL igual à vida do token).
+- **Sessões:** cada login cria um `sid`; logout revoga o `sid`; "Sair de todos os aparelhos" revoga todos. Suspensão e exclusão de conta revogam tudo na hora. A revogação é gravada no banco (`Session.RevokedAt` e status da conta); a validação do JWT consulta esse estado por trás de um cache de até 1 min, então um token revogado é recusado em até 1 min mesmo depois de reinício e com várias instâncias ([09-cache.md §4](09-cache.md)).
 - **Rotação de chaves:** chaves de assinatura em cofre, com `kid`; a API publica as públicas atuais e a anterior durante a troca.
 - **No app:** tokens só no `flutter_secure_storage` (Keychain/Keystore), nunca em `SharedPreferences`, logs ou URLs. Refresh concorrente é serializado no `ApiClient`.
 
 ## 3. Autorização
 
 - **Negar por padrão.** `FallbackPolicy` exige usuário autenticado; endpoints públicos são marcados com `[AllowAnonymous]` explicitamente (busca, perfis, categorias, cidades). O teste de integração lista todas as rotas e falha se alguma não tiver marcação esperada; `get_endpoint_map` do kit confere no `/security-scan`.
-- **Políticas:** `Customer`, `Provider` (tem vitrine ativa ou em rascunho), `Admin`. `Admin` só por claim emitida pela API a partir de tabela interna, nunca por request.
+- **Políticas:** `Customer`, `Provider` (tem vitrine em `Draft`, `Published` ou `Paused`; pausada continua gerenciando a vitrine e os pedidos em andamento; conta suspensa não chega a autenticar), `Admin`. `Admin` só por claim emitida pela API a partir de tabela interna, nunca por request.
 - **Autorização por recurso (contra BOLA):** todo handler que lê ou altera um recurso filtra pelo dono **na própria consulta** (`where o.CustomerId == currentUser.Id`), em vez de buscar e comparar depois. Recurso de outro usuário responde **404**, não 403, para não confirmar que existe.
 - **Autorização por propriedade (contra BOPLA):** requests e responses são DTOs explícitos por caso de uso. Nada de bind direto em entidade. Campos como `status`, `ratingScore`, `meiVerified`, `role`, `customerId` nunca vêm do cliente.
 - **Funções privilegiadas (contra BFLA):** rotas `/admin` em controller separado com `[Authorize(Policy = Admin)]` no nível da classe; ações de moderação exigem motivo e geram auditoria.
-- **Endereço:** o DTO de pedido para o prestador só inclui endereço completo se `status ∈ {Scheduled, Completed, Cancelled}` e dentro da janela; cada leitura do endereço completo grava auditoria (quem, quando, pedido).
+- **Endereço:** o DTO de pedido para o prestador só inclui endereço completo quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias do fim da faixa agendada, qualquer que seja o status (inclusive `PaymentConfirmed`, `PaymentDisputed` e `PaymentVoided`). Cada leitura do endereço completo grava auditoria (quem, quando, pedido).
 
 ## 4. Validação de entrada e saída
 
@@ -56,11 +56,11 @@ Rate limiting nativo do ASP.NET Core, particionado por usuário autenticado ou, 
 | `reports` | `POST /reports` | 10/dia por usuário |
 | `uploads` | `upload-url` | 60/h por usuário |
 
-Respostas 429 com `Retry-After`. Além disso: paginação máxima de 30 itens e 10 páginas na busca; telefone do prestador nunca aparece na listagem, só no perfil e só se ele ativar o WhatsApp.
+Respostas 429 com `Retry-After`. Os contadores ficam na memória de cada instância: com uma instância os limites valem como escritos; ao escalar para mais de uma, passam para o Redis ([09-cache.md §6](09-cache.md)). Além disso: paginação máxima de 30 itens e 10 páginas na busca; telefone do prestador nunca aparece na listagem, só no perfil e só se ele ativar o WhatsApp.
 
 ## 6. Idempotência e concorrência
 
-- `Idempotency-Key` (UUID) obrigatório em criar pedido, enviar orçamento e confirmar pagamento. A API guarda chave + hash do corpo + resposta por 24 h; repetição devolve a mesma resposta; mesma chave com corpo diferente devolve 422.
+- `Idempotency-Key` (UUID) obrigatório em criar pedido, enviar orçamento e confirmar pagamento. A API guarda chave + hash do corpo + resposta **no banco** (tabela `idempotency_keys`, na mesma transação do comando) por 24 h; repetição devolve a mesma resposta; mesma chave com corpo diferente devolve 422. Nunca em cache: reinício ou segunda instância permitiriam duplicar.
 - Concorrência otimista (`xmin`) em pedidos, vitrines e avaliações; conflito devolve 409 e o app recarrega.
 - Transições de estado validadas no domínio; o banco tem `check constraint` nos estados e `unique` em (pedido) para avaliação e orçamento ativo.
 
@@ -81,7 +81,7 @@ Respostas 429 com `Retry-After`. Além disso: paginação máxima de 30 itens e 
 ## 9. Transporte e cabeçalhos
 
 - HTTPS obrigatório (TLS 1.2+) com HSTS (`max-age` 1 ano, `includeSubDomains`) no proxy; HTTP só redireciona.
-- Cabeçalhos: `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `X-Frame-Options: DENY`, `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` nas respostas da API; `Cache-Control: no-store` em respostas autenticadas.
+- Cabeçalhos: `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `X-Frame-Options: DENY`, `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` nas respostas da API; `Cache-Control: no-store` em toda resposta por padrão e sempre nas autenticadas. Só categorias e cidades declaram cache público ([09-cache.md §7](09-cache.md)).
 - CORS desligado para a API pública (o app não é navegador). Quando houver painel web, CORS só para o domínio do painel, com credenciais e métodos explícitos.
 - OpenAPI, Scalar e painel do Hangfire **desligados em produção** ou atrás de autenticação de admin e lista de IPs.
 - `ForwardedHeaders` configurado só para o proxy conhecido (sem confiar em `X-Forwarded-For` de qualquer origem), para o rate limit por IP funcionar.
@@ -99,7 +99,7 @@ Respostas 429 com `Retry-After`. Além disso: paginação máxima de 30 itens e 
 - **Base legal e transparência:** termos e política de privacidade no primeiro acesso e em Conta; consentimento explícito para localização e notificações (permissões do sistema).
 - **Direitos do titular:** ver, corrigir e excluir dados pelo app; exportação por solicitação no MVP.
 - **Proteção em repouso:** banco e storage com criptografia do provedor; endereços completos e telefone com criptografia de coluna via ASP.NET Core Data Protection (chaves no cofre), com hash determinístico para busca de duplicidade de telefone.
-- **Retenção:** pedidos e confirmações de pagamento anonimizados mantidos por 5 anos; logs de aplicação 30 dias; auditoria 1 ano.
+- **Retenção:** pedidos e confirmações de pagamento anonimizados mantidos por 5 anos; logs de aplicação 30 dias; auditoria 1 ano, exceto a de pagamentos (confirmação, anulação, contestação e resolução), guardada 5 anos junto com os registros que ela explica.
 - **Logs sem dados pessoais:** sem nome, telefone, endereço, e-mail, tokens ou coordenadas exatas. Ids e `traceId` bastam. Serilog com destructuring policy que mascara propriedades sensíveis.
 - **Incidentes:** procedimento escrito (detectar, conter, avaliar, comunicar a ANPD e titulares quando houver risco relevante, corrigir).
 

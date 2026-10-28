@@ -23,11 +23,16 @@ public sealed class Order : AggregateRoot
 
     private Order() { }
 
+    private static readonly TimeSpan QuoteValidity = TimeSpan.FromHours(48);
+    private static readonly TimeSpan MinimumNoticeBeforeStart = TimeSpan.FromHours(1);
+
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
     public Guid ProviderId { get; private set; }
     public OrderStatus Status { get; private set; }
     public Quote? Quote { get; private set; }
+    public DateTimeOffset? QuoteValidUntil { get; private set; }
+    public DateTimeOffset? FirstResponseAt { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public IReadOnlyList<PaymentConfirmation> PaymentConfirmations => _paymentConfirmations;
 
@@ -57,9 +62,18 @@ public sealed class Order : AggregateRoot
             return OrderErrors.CannotQuoteInStatus(Status);
         }
 
-        Quote = quote with { SentAt = clock.UtcNow };
+        var now = clock.UtcNow;
+        var lastMomentToAccept = quote.StartsAt - MinimumNoticeBeforeStart;
+        if (lastMomentToAccept <= now)
+        {
+            return OrderErrors.QuoteStartsTooSoon;
+        }
+
+        Quote = quote with { Version = (Quote?.Version ?? 0) + 1, SentAt = now };
+        QuoteValidUntil = now + QuoteValidity < lastMomentToAccept ? now + QuoteValidity : lastMomentToAccept;
+        FirstResponseAt ??= now;
         Status = OrderStatus.Quoted;
-        Raise(new QuoteSent(Id, CustomerId, quote.Amount));
+        Raise(new QuoteSent(Id, CustomerId, ProviderId, Quote.Version));
         return Result.Success();
     }
 
@@ -96,6 +110,8 @@ public sealed class Order : AggregateRoot
 - Erros de domínio ficam em classes estáticas por agregado (`OrderErrors`, `PaymentErrors`) com código estável (`order.cannot_quote`) e tipo (`Validation`, `Conflict`, `NotFound`).
 - Value objects validam na criação e são imutáveis (`Money.Create(decimal)` devolve `Result<Money>`).
 - Eventos de domínio são `record` no passado (`QuoteSent`), sem dados pessoais além de ids.
+- Só agregados registram eventos, e só quando outra parte do sistema reage à mudança (notificação, recálculo de selo ou nota, auditoria). Entidade sem ninguém interessado na mudança não gera evento. A lista está em [03-arquitetura.md §7](03-arquitetura.md).
+- Números derivados (nota, tempo de resposta, serviços feitos) são recalculados do zero pelo handler, nunca por incremento: o resultado é o mesmo se o evento for processado duas vezes.
 
 ## 3. Result
 
@@ -197,7 +213,8 @@ public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser,
 - Filtro de dono **dentro da consulta** (`o.ProviderId == currentUser.ProviderId`), nunca buscar e comparar depois.
 - Consultas de leitura usam `AsNoTracking()` e projetam direto para DTO com `Select`; nada de carregar agregado inteiro para listar.
 - Pipeline behaviors, nesta ordem: log com duração → validação (devolve `Result` com erros por campo) → transação (só comandos).
-- Mapeamento manual (`QuoteResponse.From(order)`), sem AutoMapper.
+- Mapeamento sempre explícito, escrito à mão: método estático `From` no DTO de resposta (`QuoteResponse.From(order)`), `ToCommand` no DTO de request (`SendQuoteRequest.ToCommand(orderId)`) e projeção direta no `Select` das consultas. Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly ou parecidas); o teste de arquitetura barra.
+- CQRS com `Mediator`: comandos (`ICommand<Result<T>>`) mudam estado e passam pelo behavior de transação; consultas (`IQuery<Result<T>>`) só leem, com `AsNoTracking()` e projeção. Um mesmo banco e um mesmo `DbContext` para os dois lados.
 
 ## 5. Controllers
 
