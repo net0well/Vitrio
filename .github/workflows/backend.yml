@@ -5,12 +5,14 @@ on:
     paths:
       - "backend/**"
       - "global.json"
+      - ".dockerignore"
       - ".github/workflows/backend.yml"
   push:
     branches: [main]
     paths:
       - "backend/**"
       - "global.json"
+      - ".dockerignore"
       - ".github/workflows/backend.yml"
 
 permissions:
@@ -50,3 +52,12 @@ jobs:
             echo "::error::Há pacotes com vulnerabilidade conhecida."
             exit 1
           fi
+
+  docker-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Construir imagem da API
+        run: docker build --file backend/Dockerfile --tag vitrio-api:ci .

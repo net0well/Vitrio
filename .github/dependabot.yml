@@ -25,3 +25,13 @@ updates:
     directory: /infra
     schedule:
       interval: weekly
+
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker-compose
+    directory: /infra/production
+    schedule:
+      interval: weekly
