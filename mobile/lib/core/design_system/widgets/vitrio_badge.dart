@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import '../tokens/vitrio_colors.dart';
 import '../tokens/vitrio_space.dart';
 import '../tokens/vitrio_text.dart';
-
-enum VitrioBadgeTone { verified, brand, neutral, warning, accent, danger, info }
+import 'vitrio_badge_tone.dart';
 
 class VitrioBadge extends StatelessWidget {
   const VitrioBadge({super.key, required this.label, this.tone = VitrioBadgeTone.brand, this.icon});

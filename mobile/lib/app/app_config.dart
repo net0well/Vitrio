@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'flavor.dart';
 
 part 'app_config.g.dart';
-
-enum Flavor { dev, staging, prod }
 
 final class AppConfig {
   const AppConfig({required this.flavor, required this.apiBaseUrl});

@@ -5,6 +5,7 @@ import '../tokens/vitrio_radius.dart';
 import '../tokens/vitrio_space.dart';
 import '../tokens/vitrio_text.dart';
 import 'vitrio_icon.dart';
+import 'vitrio_icon_name.dart';
 
 class VitrioEmptyState extends StatelessWidget {
   const VitrioEmptyState({
