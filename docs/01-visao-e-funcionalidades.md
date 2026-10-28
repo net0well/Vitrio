@@ -46,7 +46,7 @@ Legenda: **MVP** entra na primeira versão publicada; **Depois** fica no backlog
 | Trocar senha | Em Conta, com a senha atual; desconecta os outros aparelhos | MVP |
 | Aparelhos conectados | Lista de sessões em Conta, com "Desconectar" e "Sair de todos os aparelhos" | MVP |
 | Navegar sem conta | Busca, perfis e avaliações abertos; login só para pedir orçamento, favoritar, avaliar ou anunciar | MVP |
-| Dados básicos | Nome de exibição, foto opcional, telefone (opcional para cliente) | MVP |
+| Dados básicos | Nome de exibição e celular (obrigatório antes do primeiro pedido); cliente aparece com iniciais, sem foto | MVP |
 | Endereços salvos | Casa, trabalho etc., cadastrados por CEP com número e complemento | MVP |
 | Modo prestador | "Quero oferecer meus serviços" ativa o modo prestador na mesma conta; troca de modo em Conta | MVP |
 | Preferências de notificação | Liga/desliga por tipo de aviso | MVP |

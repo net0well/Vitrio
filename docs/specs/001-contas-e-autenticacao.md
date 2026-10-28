@@ -1,6 +1,6 @@
 # Spec 001 — Contas e autenticação
 
-- **Status:** Draft
+- **Status:** Approved (2026-10-28)
 - **Data:** 2026-10-28
 - **Responsável:** Wellington
 
@@ -20,7 +20,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - E-mails de conta com o layout de [design-system/emails.md](../design-system/emails.md): código de confirmação, código de redefinição, senha alterada e aviso de tentativa de cadastro com e-mail já usado.
 - Sessão com JWT de acesso (10 min) e refresh token rotativo com detecção de reuso.
 - Sair deste aparelho e sair de todos os aparelhos.
-- Ver e editar dados básicos: nome de exibição, foto (opcional), telefone (opcional para cliente).
+- Ver e editar dados básicos: nome de exibição e celular. O celular é opcional no cadastro e obrigatório antes do primeiro pedido de orçamento (spec 005).
 - Endereços salvos por CEP (rótulo, CEP, logradouro, número, complemento, bairro, cidade, UF).
 - Excluir conta dentro do app.
 - Registro do aparelho para push (token FCM), consumido pela spec 009.
@@ -29,18 +29,20 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 
 - Login social (Google, Apple, Facebook) e login por telefone.
 - Verificação de telefone por código e verificação em duas etapas.
+- Foto de perfil do cliente: o cliente aparece com iniciais sobre um tom de avatar; foto só na vitrine do prestador (spec 003).
 - Trocar o e-mail da conta.
 - Exportação de dados pelo app (atendida por solicitação ao suporte no MVP).
 - Painel administrativo.
 
 ## Domain Model
 
-- `User`: `Id`, `Email` (citext, único, normalizado em minúsculas), `EmailVerifiedAt?`, `PasswordHash`, `PasswordChangedAt`, `DisplayName`, `PhotoKey?`, `PhoneNumber?` (E.164, criptografado), `Status` (`PendingVerification`, `Active`, `Suspended`, `Deleted`), `FailedSignInCount`, `LockedOutUntil?`, `CreatedAt`, `DeletedAt?`, `Roles` (`customer` sempre; `provider` quando existir vitrine; `admin` interno).
+- `User`: `Id`, `Email` (citext, único, normalizado em minúsculas), `EmailVerifiedAt?`, `PasswordHash`, `PasswordChangedAt`, `DisplayName` (2 a 60 caracteres, texto normalizado conforme [08-seguranca.md §4](../08-seguranca.md), sem telefone, e-mail ou link), `PhoneNumber?` (celular brasileiro em E.164, `+55` + DDD + 9 dígitos, criptografado), `Status` (`PendingVerification`, `Active`, `Suspended`, `Deleted`), `FailedSignInCount`, `LockedOutUntil?`, `CreatedAt`, `DeletedAt?`, `Roles` (`customer` sempre; `provider` quando existir vitrine; `admin` interno).
 - `EmailCode`: `Id`, `Email`, `Purpose` (`VerifyEmail`, `ResetPassword`), `CodeHash` (HMAC-SHA256 com chave do servidor), `ExpiresAt` (10 min), `Attempts` (máx. 5), `ConsumedAt?`, `CreatedAt`. Um código novo invalida o anterior do mesmo e-mail e propósito.
 - `Session`: `Id` (`sid`), `UserId`, `DeviceName`, `CreatedAt` (momento do login), `LastSeenAt`, `RevokedAt?`, `RevokedReason?`.
 - `RefreshToken`: `Id`, `SessionId`, `FamilyId`, `TokenHash`, `ExpiresAt` (60 dias deslizantes), `AbsoluteExpiresAt` (1 ano do login), `UsedAt?`, `ReplacedById?`, `RevokedAt?`.
 - `Address`: `Id`, `UserId`, `Label`, `Cep`, `Street`, `Number`, `Complement?`, `Neighborhood`, `CityIbgeCode`, `State`, `Location` (ponto geocodificado quando disponível) — campos de endereço criptografados.
 - `Device`: `InstallationId`, `UserId`, `Platform`, `PushToken`, `UpdatedAt`.
+- **Como o cliente aparece para o prestador:** antes do aceite, primeiro nome + inicial do sobrenome ("Mariana F."), calculado de `DisplayName`; do aceite (`AddressReleasedAt`) até o fim da janela do endereço, nome completo e celular, junto com o endereço (spec 005). Cada leitura do celular grava auditoria, como a do endereço.
 - Ciclo de vida da conta: `PendingVerification` → `Active` (código confirmado); `PendingVerification` sem confirmação em 24 h é apagada; `Active` → `Suspended` (moderação) → `Active`; `Active` → `Deleted` (anonimização em até 30 dias).
 - **Senha:** 10 a 128 caracteres depois de normalizar (Unicode NFKC), qualquer caractere (inclusive espaço), sem regra de composição; recusada se estiver na lista de senhas comuns ou for igual ao e-mail. Guardada com o `PasswordHasher` do ASP.NET Core Identity (PBKDF2-HMAC-SHA512, formato v3), refeita no login quando o hasher pedir. Nunca sai da API, nem em hash.
 
@@ -59,8 +61,8 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 | PUT | `/api/v1/me/password` | `{ currentPassword, newPassword }` | 204 | 400 senha fraca, 401, 403 `auth.invalid_credentials` (senha atual errada) |
 | GET | `/api/v1/me/sessions` | — | `[{ id, deviceName, createdAt, lastSeenAt, current }]` | 401 |
 | DELETE | `/api/v1/me/sessions/{id}` | — | 204 | 401, 404 |
-| GET | `/api/v1/me` | — | `{ id, displayName, email, photoUrl, phoneNumber, roles, hasProviderProfile }` | 401 |
-| PATCH | `/api/v1/me` | `{ displayName?, phoneNumber?, photoKey? }` | `me` | 400, 401 |
+| GET | `/api/v1/me` | — | `{ id, displayName, initials, email, phoneNumber, roles, hasProviderProfile }` | 401 |
+| PATCH | `/api/v1/me` | `{ displayName?, phoneNumber? }` | `me` | 400, 401 |
 | DELETE | `/api/v1/me` | — (a confirmação é feita no app) | 204 | 401, 409 pedido agendado ou contestação de pagamento aberta |
 | GET | `/api/v1/me/addresses` | — | `[address]` | 401 |
 | POST | `/api/v1/me/addresses` | `{ label, cep, number, complement? }` | 201 `address` | 400 CEP inválido ou não encontrado, 401, 409 limite de 10 |
@@ -73,7 +75,8 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 
 - Rotas `/auth/*` (exceto `logout`): anônimas, política de rate limit `auth` (por IP). Os limites por e-mail de §Edge Cases ficam no handler, contados no banco.
 - Demais rotas: usuário autenticado; tudo filtrado por `sub` do token. Endereço, aparelho ou sessão de outro usuário responde 404.
-- `roles` nunca vem do request. `admin` só por tabela interna.
+- `roles` nunca vem do request. `admin` só por tabela interna; o primeiro admin é criado por um comando de linha no servidor (fora da API), com auditoria.
+- Rate limit das rotas de conta: mutações pela política global `write`; leituras (`GET /me`, `/me/addresses`, `/me/sessions`) pela política `profile` (120/min por usuário).
 - Sessão revogada ou conta suspensa/excluída invalida o access token em até 1 minuto. A revogação é gravada no banco (`Session.RevokedAt`, `User.Status`); a validação consulta esse estado por trás de um cache de 1 min ([09-cache.md §4](../09-cache.md)), então reinício e várias instâncias não reabrem o acesso.
 
 ## Edge Cases & Failure Modes
@@ -87,6 +90,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - **Redefinição de senha:** revoga todas as sessões e refresh tokens, abre uma sessão nova no aparelho que redefiniu, zera o bloqueio e envia o e-mail "Sua senha foi alterada". Troca de senha logado revoga as outras sessões e envia o mesmo aviso.
 - **Envio de e-mail falha (SMTP fora do ar ou recusado):** a requisição responde 503 `email.unavailable` com `Retry-After`, igual para e-mail existente ou não. O código gerado fica válido e o app oferece "Reenviar".
 - **Termos de uso:** o cadastro grava a versão aceita dos termos e da política de privacidade e a data; sem aceite, 400.
+- **Celular inválido** (fixo, sem DDD, fora do Brasil): 400 no campo `phoneNumber`. O número não é verificado por código no MVP; trocar o celular vale para os próximos pedidos, não para os já agendados (o pedido guarda uma cópia, como faz com o endereço).
 - Refresh token reapresentado depois de usado: revoga a família inteira, registra auditoria e devolve 401.
 - Dois refresh simultâneos do mesmo aparelho: o `ApiClient` serializa; se mesmo assim chegarem dois, o segundo recebe 401 e o app volta para a tela de login.
 - Conta suspensa tenta entrar: 403 com ProblemDetails `account.suspended` e motivo genérico.
@@ -136,11 +140,14 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - **AC-21** Dado um prestador sem pedidos agendados nem contestações, quando exclui a conta, então os pedidos `Sent` e `Quoted` dele são cancelados, a vitrine responde 404 no perfil público e o mesmo CNPJ pode ser usado em outra vitrine.
 - **AC-22** Dada uma sessão revogada, quando a API é reiniciada e o access token antigo é usado, então a resposta é 401.
 - **AC-23** Dado qualquer endpoint desta spec que exige login, quando chamado sem token, então responde 401.
+- **AC-24** Dado um usuário que salva o celular `(16) 99123-4567`, quando consulta `GET /me`, então recebe `+5516991234567`; com um número fixo ou sem DDD, recebe 400 no campo `phoneNumber`.
+- **AC-25** Dado o nome "Mariana Ferreira Souza", quando o prestador vê um pedido dela antes do aceite, então aparece "Mariana F." (a regra de exibição completa fica na spec 005).
 
 ## Deferred Decisions
 
 | Decisão | Fallback escolhido agora | Revisitar quando |
 | --- | --- | --- |
+| Provedor de e-mail em produção | SMTP genérico com MailKit; Mailpit em desenvolvimento. Trocar de provedor é só configuração | Antes do teste fechado na Google Play (candidatos: Amazon SES em São Paulo, Resend, Brevo) |
 | Login social (Google, Apple) | Só cadastro e login próprios. Se entrar um dia, vira mais uma forma de provar identidade, vinculada à conta pelo e-mail confirmado | Abandono no cadastro acima de 25% ou pedido recorrente dos usuários |
 | Desbloqueio por biometria no app | Sessão longa sem biometria; o celular já tem bloqueio de tela | Ações sensíveis (pagamento pelo app) entrarem |
 | Verificação em duas etapas | Não há; bloqueio por tentativas, aviso de senha alterada e lista de aparelhos conectados | Fraude de conta aparecer; para admins, antes do painel web |
@@ -150,6 +157,4 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 
 ## Open Questions
 
-- Provedor de e-mail em produção (proposta: Amazon SES na região de São Paulo, pelo custo e pela entrega; alternativas: Resend, Brevo).
-- Nome exibido do cliente para o prestador antes do aceite: só primeiro nome? (proposta: primeiro nome + inicial)
-- Foto de perfil do cliente: permitir no MVP ou só iniciais?
+Nenhuma.
