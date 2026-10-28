@@ -84,7 +84,7 @@ backend/
   Directory.Build.props
   Directory.Packages.props
   src/
-    Vitrio.Domain/            entidades, value objects, regras, eventos de domínio. Sem dependências externas.
+    Vitrio.Domain/            entidades, value objects, regras, eventos de domínio, Result/Error, IClock. Sem dependências externas.
     Vitrio.Application/       casos de uso por funcionalidade (comandos, consultas, validadores, DTOs), abstrações.
     Vitrio.Infrastructure/    EF Core, PostGIS, storage, FCM, BrasilAPI, Hangfire, outbox, autenticação.
     Vitrio.Api/               Controllers, filtros, middlewares, composição (Program.cs), OpenAPI.
@@ -98,7 +98,7 @@ backend/
 Regras de dependência (verificadas por teste de arquitetura):
 
 - `Domain` não referencia nenhum outro projeto nem pacote de infraestrutura.
-- `Application` referencia só `Domain` (e pacotes de abstração: Mediator, FluentValidation).
+- `Application` referencia só `Domain` (e pacotes de abstração: Mediator, FluentValidation e `Microsoft.EntityFrameworkCore` sem provedor, para `IAppDbContext` expor `DbSet`).
 - `Infrastructure` referencia `Application` e `Domain`.
 - `Api` referencia `Application` e `Infrastructure` só para composição; Controllers falam apenas com `ISender`.
 
@@ -106,8 +106,8 @@ Regras de dependência (verificadas por teste de arquitetura):
 
 ```text
 Vitrio.Application/
-  Abstractions/          IAppDbContext, ICurrentUser, IObjectStorage, IPushSender, ICnpjLookup, ICepLookup, IClock (TimeProvider)
-  Common/                Result, Error, PagedResult, behaviors (validação, log, transação)
+  Abstractions/          IAppDbContext, ICurrentUser, IObjectStorage, IPushSender, ICnpjLookup, ICepLookup
+  Common/                PagedResult, behaviors (log, validação, transação)
   Accounts/              SignInWithGoogle, SignInWithApple, RefreshToken, GetMe, UpdateMe, DeleteAccount, Addresses
   Cities/                LocateCity, SearchCities, GetCity
   Categories/            ListCategories
@@ -147,7 +147,7 @@ public sealed class ProviderOrdersController(ISender sender) : ApiControllerBase
 }
 ```
 
-`ApiControllerBase.ToActionResult` mapeia `ErrorType.Validation` → 400, `NotFound` → 404, `Conflict` → 409, `Forbidden` → 403, `Unauthorized` → 401, `RateLimited` → 429, sempre como ProblemDetails com `type`, `title`, `detail`, `traceId` e, em validação, `errors`.
+`ApiControllerBase.ToActionResult` mapeia `ErrorType.Validation` → 400, `NotFound` → 404, `Conflict` → 409, `Forbidden` → 403, `Unauthorized` → 401, `Unprocessable` → 422, `RateLimited` → 429, `Unavailable` → 503, sempre como ProblemDetails com `type`, `title`, `detail`, `traceId` e, em validação, `errors`.
 
 ## 4. Modelo de domínio
 
@@ -191,7 +191,7 @@ Agregados e invariantes principais:
 
 Value objects: `Money` (decimal(12,2), BRL), `IbgeCode`, `Cep`, `Cnpj`, `PhoneNumber` (E.164), `GeoPoint`, `ServiceRadius`, `Rating` (1–5), `TimeWindow`.
 
-Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas são `DateTimeOffset` em UTC vindas de `TimeProvider`; o fuso da cidade só entra na apresentação e em regras de horário (silêncio noturno, "Disponível hoje").
+Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas são `DateTimeOffset` em UTC vindas de `IClock` (implementado na Infrastructure sobre `TimeProvider`); o fuso da cidade só entra na apresentação e em regras de horário (silêncio noturno, "Disponível hoje").
 
 ## 5. Banco de dados e geolocalização
 
@@ -308,7 +308,7 @@ mobile/lib/
 
 ## 10. Infraestrutura e entrega
 
-- **Local:** `infra/docker-compose.yml` com PostGIS, MinIO, Seq e a API; `dotnet run` com user-secrets.
+- **Local:** `infra/docker-compose.yml` com PostGIS, Seq e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
 - **Produção inicial:** um servidor Linux com Docker Compose (API, Hangfire server no mesmo processo, Caddy com TLS automático), banco PostgreSQL gerenciado com backups diários e PITR, R2 para imagens. Migração para containers gerenciados quando a carga pedir.
 - **CI (GitHub Actions):** build e testes (com Testcontainers), `dotnet format --verify-no-changes`, análise de vulnerabilidades de pacotes, CodeQL, build do app Flutter com `--obfuscate --split-debug-info`.
 - **CD:** imagem Docker assinada por tag, migrações aplicadas por job separado, deploy por SSH com healthcheck e rollback.

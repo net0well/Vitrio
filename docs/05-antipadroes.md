@@ -35,7 +35,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | --- | --- | --- |
 | Setters públicos e mudar `Status` de fora | Pula invariantes da máquina de estados | Métodos de domínio (`order.AcceptQuote()`) que devolvem `Result` |
 | Exceção para regra de negócio esperada | Controle de fluxo caro e escondido | `Result` com `Error` tipado |
-| `DateTime.Now`/`UtcNow` | Impossível testar horários e prazos | `TimeProvider` |
+| `DateTime.Now`/`UtcNow` | Impossível testar horários e prazos | `IClock` (sobre `TimeProvider`) |
 | Buscar o recurso e depois comparar o dono | Fácil esquecer; abre BOLA | Filtro de dono na própria consulta |
 | Validação só no app | O app é contornável | FluentValidation em todo comando |
 | `async void`, `.Result`, `.Wait()` | Deadlock e exceção perdida | `async Task`/`ValueTask` de ponta a ponta |

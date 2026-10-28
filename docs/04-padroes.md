@@ -7,7 +7,7 @@ Como o código do Vitrio é escrito. Quando o dotnet-claude-kit sugerir algo dif
 - .NET 10, C# 14, `Nullable` habilitado, avisos como erro, namespaces por arquivo.
 - Classes `sealed` por padrão; `record` para DTOs, comandos, consultas e value objects; construtores primários para injeção.
 - Assíncrono de ponta a ponta, com `CancellationToken` em todo método assíncrono público.
-- Tempo sempre de `TimeProvider` (injetado), nunca `DateTime.Now`/`UtcNow`.
+- Tempo sempre de `IClock` (injetado, implementado sobre `TimeProvider`), nunca `DateTime.Now`/`UtcNow`.
 - `IHttpClientFactory` para HTTP; `IOptions<T>` validado no startup (`ValidateDataAnnotations().ValidateOnStart()`).
 - Nomes em inglês, claros e completos (`CustomerId`, não `CustId`). Termos de domínio seguem o glossário de [README.md](README.md).
 - Comentários só quando o porquê não é óbvio. Ver [06-regras-de-desenvolvimento.md](06-regras-de-desenvolvimento.md).
@@ -31,7 +31,7 @@ public sealed class Order : AggregateRoot
     public DateTimeOffset CreatedAt { get; private set; }
     public IReadOnlyList<PaymentConfirmation> PaymentConfirmations => _paymentConfirmations;
 
-    public static Result<Order> Create(Guid customerId, Guid providerId, OrderRequestDetails details, TimeProvider clock)
+    public static Result<Order> Create(Guid customerId, Guid providerId, OrderRequestDetails details, IClock clock)
     {
         if (customerId == Guid.Empty || providerId == Guid.Empty)
         {
@@ -44,26 +44,26 @@ public sealed class Order : AggregateRoot
             CustomerId = customerId,
             ProviderId = providerId,
             Status = OrderStatus.Sent,
-            CreatedAt = clock.GetUtcNow()
+            CreatedAt = clock.UtcNow
         };
         order.Raise(new OrderCreated(order.Id, providerId));
         return order;
     }
 
-    public Result SendQuote(Quote quote, TimeProvider clock)
+    public Result SendQuote(Quote quote, IClock clock)
     {
         if (Status is not (OrderStatus.Sent or OrderStatus.Quoted))
         {
             return OrderErrors.CannotQuoteInStatus(Status);
         }
 
-        Quote = quote with { SentAt = clock.GetUtcNow() };
+        Quote = quote with { SentAt = clock.UtcNow };
         Status = OrderStatus.Quoted;
         Raise(new QuoteSent(Id, CustomerId, quote.Amount));
         return Result.Success();
     }
 
-    public Result ConfirmPayment(Guid providerId, Money amount, PaymentMethod method, DateTimeOffset receivedAt, string? differenceReason, TimeProvider clock)
+    public Result ConfirmPayment(Guid providerId, Money amount, PaymentMethod method, DateTimeOffset receivedAt, string? differenceReason, IClock clock)
     {
         if (providerId != ProviderId)
         {
@@ -75,7 +75,7 @@ public sealed class Order : AggregateRoot
             return OrderErrors.CannotConfirmPaymentInStatus(Status);
         }
 
-        if (receivedAt > clock.GetUtcNow() || receivedAt < CreatedAt)
+        if (receivedAt > clock.UtcNow || receivedAt < CreatedAt)
         {
             return PaymentErrors.InvalidReceivedAt;
         }
@@ -100,7 +100,7 @@ public sealed class Order : AggregateRoot
 ## 3. Result
 
 ```csharp
-public enum ErrorType { Validation, NotFound, Conflict, Forbidden, Unauthorized, RateLimited, Failure }
+public enum ErrorType { Validation, NotFound, Conflict, Forbidden, Unauthorized, Unprocessable, RateLimited, Unavailable, Failure }
 
 public sealed record Error(string Code, string Message, ErrorType Type);
 
@@ -162,7 +162,7 @@ public sealed class SendQuoteValidator : AbstractValidator<SendQuoteCommand>
     }
 }
 
-public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser, TimeProvider clock)
+public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser, IClock clock)
     : ICommandHandler<SendQuoteCommand, Result<QuoteResponse>>
 {
     public async ValueTask<Result<QuoteResponse>> Handle(SendQuoteCommand command, CancellationToken cancellationToken)
@@ -205,7 +205,7 @@ public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser,
 - Herdam `ApiControllerBase` (tradução de `Result` em ProblemDetails) e recebem só `ISender`.
 - Todo action tem `[ProducesResponseType]` para cada status possível, `[EndpointSummary]` em português e `CancellationToken`.
 - Request DTO separado do comando (`SendQuoteRequest.ToCommand(orderId)`), para que ids de rota e usuário nunca venham do corpo.
-- Status: 200 com corpo, 201 com `Location` ao criar, 204 sem corpo, 400 validação, 401, 403 só quando o recurso é visível mas a ação não é permitida, 404 para o que não existe ou não é do usuário, 409 conflito de estado ou concorrência, 422 chave de idempotência reutilizada, 429.
+- Status: 200 com corpo, 201 com `Location` ao criar, 204 sem corpo, 400 validação, 401, 403 só quando o recurso é visível mas a ação não é permitida, 404 para o que não existe ou não é do usuário, 409 conflito de estado ou concorrência, 422 quando os dados atuais impedem a ação (ex.: publicar vitrine incompleta) ou a chave de idempotência foi reutilizada, 429, 503 quando uma dependência externa está fora.
 - `type` dos ProblemDetails: `https://vitrio.app/problems/<codigo>` (o código do `Error`).
 
 ## 6. EF Core
@@ -252,7 +252,7 @@ public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser,
 ## 10. Git e revisão
 
 - Trunk-based: `main` sempre publicável; branches curtas a partir da `main`.
-- Branch: `<tipo>/<descricao-em-kebab-case>` (tipos: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`). Ex.: `feat/confirmacao-de-pagamento`.
+- Branch: `<tipo>/<descricao-em-kebab-case>` (tipos: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`, `ci`). Ex.: `feat/confirmacao-de-pagamento`.
 - Commit: uma frase no imperativo dizendo o que foi feito, em português. Ex.: `Adiciona confirmação de pagamento pelo prestador`.
 - PR pequeno, com descrição do que mudou e como testar; `/verify` e `/code-review` do kit antes de pedir revisão.
 - Regras completas (inclusive o que nunca entra em branch, commit e comentário) em [06-regras-de-desenvolvimento.md](06-regras-de-desenvolvimento.md).
