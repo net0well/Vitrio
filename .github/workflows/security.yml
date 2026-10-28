@@ -1,0 +1,74 @@
+name: Segurança
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 9 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [csharp, actions]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        if: matrix.language == 'csharp'
+        with:
+          global-json-file: global.json
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+
+      # Private repository without code scanning: analyze locally, keep the SARIF and fail on findings.
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: ${{ matrix.language }}
+          upload: never
+          output: sarif
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: codeql-${{ matrix.language }}
+          path: sarif
+          if-no-files-found: ignore
+
+      - name: Falhar se houver alertas
+        run: |
+          count=$(jq '[.runs[].results[]] | length' sarif/*.sarif | awk '{ total += $1 } END { print total + 0 }')
+          echo "Alertas do CodeQL: $count"
+          if [ "$count" -gt 0 ]; then
+            jq -r '.runs[].results[] | "::error file=\(.locations[0].physicalLocation.artifactLocation.uri),line=\(.locations[0].physicalLocation.region.startLine)::\(.ruleId): \(.message.text)"' sarif/*.sarif
+            exit 1
+          fi
