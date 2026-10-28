@@ -42,7 +42,8 @@ Valem para pessoas e para o Claude. **Precedência:** estas regras e o `CLAUDE.m
 
 - API com **Controllers**. Nunca Minimal APIs. Ao usar `/scaffold`, peça ou adapte para controller herdando `ApiControllerBase`, com handler, validador e DTOs na Application.
 - Clean Architecture com casos de uso por funcionalidade; regras em [03-arquitetura.md](03-arquitetura.md) e [04-padroes.md](04-padroes.md).
-- Pacotes com licença comercial (MediatR 13+, AutoMapper 15+, FluentAssertions 8+, MassTransit 9+) não entram; o `/outdated` do kit avisa.
+- Pacotes com licença comercial (MediatR 13+, FluentAssertions 8+, MassTransit 9+) não entram; o `/outdated` do kit avisa.
+- Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly ou parecidas): mapeie à mão com `From`, `ToCommand` e projeção no `Select`. O teste de arquitetura falha se alguma entrar.
 - Código em inglês; interface, documentação, branches e commits em português.
 - Sem dados pessoais em logs, sem segredos no repositório.
 
