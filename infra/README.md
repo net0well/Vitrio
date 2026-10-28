@@ -19,3 +19,11 @@ dotnet run --project src/Vitrio.Api
 - API: http://localhost:5080 (Scalar em `/scalar`, saúde em `/health/ready`)
 - Redis: `localhost:6379` (já configurado em `appsettings.Development.json`; sem Redis a API usa só o cache em memória)
 - Seq: http://localhost:5341
+
+Para rodar a API em contêiner, com a mesma imagem de produção (aplique as migrações antes, como acima):
+
+```bash
+docker compose -f infra/docker-compose.yml --profile api up -d --build
+```
+
+O deploy de produção está em [production/README.md](production/README.md).
