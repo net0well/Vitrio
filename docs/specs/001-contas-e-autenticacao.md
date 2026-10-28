@@ -85,6 +85,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - Telefone e endereço criptografados em coluna (Data Protection).
 - Exclusão: dados pessoais apagados ou anonimizados em até 30 dias; job diário conclui pendências.
 - Conformidade com as lojas: botão "Excluir conta" em Conta, com confirmação.
+- Métrica de acesso: telas de login abertas e logins concluídos por dia (contagens, sem dado pessoal), para medir o abandono que reabre a decisão de login próprio.
 
 ## Integrations
 
@@ -114,7 +115,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 
 | Decisão | Fallback escolhido agora | Revisitar quando |
 | --- | --- | --- |
-| Login por telefone | Só Google e Apple | Prestadores relatarem dificuldade com conta Google |
+| Login próprio (e-mail e senha) ou por telefone | Só Google no lançamento Android (Apple com o app iOS). Contas, sessões e tokens já são da API, então outro meio de entrar é só mais uma forma de provar identidade, vinculada pelo e-mail verificado, sem migração | Mais de 15% de abandono na tela de login, prestadores relatando dificuldade com a conta Google, ou versão web para clientes |
 | Exportação de dados no app | Atendimento por e-mail do suporte | Volume de pedidos de exportação passar de 5/mês |
 
 ## Open Questions

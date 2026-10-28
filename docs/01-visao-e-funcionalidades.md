@@ -180,6 +180,6 @@ App iOS e login com Apple, pagamento dentro do app, chat interno, remarcação c
 ## Indicadores
 
 - **Norte:** pedidos com pagamento confirmado por semana.
-- **Funil do cliente:** busca → perfil → pedido → orçamento recebido → aceito → concluído → avaliado.
+- **Funil do cliente:** busca → perfil → login → pedido → orçamento recebido → aceito → concluído → avaliado. O abandono no login decide se entra um login próprio além do Google.
 - **Saúde do prestador:** tempo até o primeiro orçamento, taxa de resposta em 48 h, prestadores com perfil completo.
 - **Confiança:** taxa de contestação de pagamento, denúncias por mil pedidos.
