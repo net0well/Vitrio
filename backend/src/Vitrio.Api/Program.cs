@@ -127,8 +127,14 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
         bearer.MapInboundClaims = false;
         bearer.TokenValidationParameters = new TokenValidationParameters
         {
+            ValidateIssuer = true,
             ValidIssuer = jwt.Value.Issuer,
+            ValidateAudience = true,
             ValidAudience = jwt.Value.Audience,
+            ValidateLifetime = true,
+            RequireExpirationTime = true,
+            ValidateIssuerSigningKey = true,
+            RequireSignedTokens = true,
             ValidAlgorithms = [SecurityAlgorithms.EcdsaSha256],
             NameClaimType = ClaimNames.Subject,
             RoleClaimType = ClaimNames.Roles,
