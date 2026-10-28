@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Vitrio.Api.IntegrationTests.Infrastructure;
 
 namespace Vitrio.Api.IntegrationTests.Security;
@@ -25,14 +26,15 @@ public sealed class SecurityTests(ApiFactory factory)
     public async Task ProtectedEndpoint_WithUnsignedToken_ReturnsUnauthorized()
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/probe/private");
-        request.Headers.Authorization = new AuthenticationHeaderValue(
-            "Bearer",
-            "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxIiwicm9sZXMiOiJhZG1pbiJ9.");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UnsignedToken("""{"sub":"1","roles":"admin"}"""));
 
         var response = await _client.SendAsync(request, TestContext.Current.CancellationToken);
 
         await response.AssertProblemAsync(HttpStatusCode.Unauthorized, "unauthorized");
     }
+
+    private static string UnsignedToken(string payload) =>
+        $"{Base64UrlEncoder.Encode("""{"alg":"none","typ":"JWT"}""")}.{Base64UrlEncoder.Encode(payload)}.";
 
     [Fact]
     public async Task UnknownRoute_WithoutToken_ReturnsUnauthorizedWithoutRevealingTheRoute()
