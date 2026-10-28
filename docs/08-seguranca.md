@@ -16,10 +16,16 @@ O Vitrio guarda dados pessoais (nome, telefone, endereço, localização, fotos 
 
 ## 2. Autenticação
 
-- **Login social validado no servidor.** O app obtém o ID token do Google (e, com o app iOS, da Apple) e envia para `POST /auth/google` ou `/auth/apple`. A API valida assinatura (JWKS do provedor, com cache), `iss`, `aud` (client ids do app), `exp`, `iat` e, na Apple, o `nonce` (hash SHA-256 do valor gerado pelo app). Nunca confie em e-mail ou nome vindos do app.
+- **Cadastro e login próprios**, sem provedor externo. Detalhes e critérios em [specs/001-contas-e-autenticacao.md](specs/001-contas-e-autenticacao.md).
+- **Senha:** 10 a 128 caracteres (Unicode NFKC), sem regra de composição, recusando a lista de senhas comuns e a senha igual ao e-mail. Hash com o `PasswordHasher` do ASP.NET Core Identity (PBKDF2-HMAC-SHA512, formato v3), refeito no login quando o algoritmo for atualizado. A senha nunca é logada, devolvida nem guardada de outro jeito.
+- **E-mail confirmado antes do primeiro acesso:** código de 6 dígitos de gerador criptográfico, válido por 10 min, uso único, até 5 tentativas, guardado só como HMAC-SHA256 com chave do servidor e comparado em tempo constante. No máximo 5 códigos por e-mail por hora, com 60 s entre envios. O mesmo mecanismo serve para redefinir a senha.
+- **Sem enumeração de contas:** cadastro, reenvio de código e "Esqueci a senha" respondem sempre igual; o login responde o mesmo erro para e-mail inexistente e senha errada e roda uma verificação de senha falsa para levar o mesmo tempo. O dono de um e-mail já cadastrado recebe aviso quando alguém tenta cadastrá-lo de novo.
+- **Força bruta:** rate limit `auth` por IP e bloqueio da conta por 15 min depois de 5 senhas erradas em 15 min (429 com `Retry-After`); redefinir a senha desbloqueia.
+- **Redefinição e troca de senha:** redefinir revoga todas as sessões; trocar logado revoga as outras. Os dois enviam o e-mail "Sua senha foi alterada".
+- **E-mails de conta:** sem link para entrar (o código é digitado no app), sem dado pessoal além do primeiro nome, sem rastreamento, com o aviso de que o Vitrio nunca pede senha ou código ([design-system/emails.md](design-system/emails.md)). Domínio de envio com SPF, DKIM e DMARC. O código não passa pela outbox nem por log.
 - **Token de acesso:** JWT assinado com chave assimétrica (ES256), validade de **10 minutos**, claims mínimas (`sub`, `sid`, `roles`, `iat`, `exp`, `jti`). Sem dados pessoais no token.
-- **Refresh token:** valor aleatório de 256 bits, guardado só como hash (SHA-256) no banco, validade de 30 dias deslizante e limite absoluto de 90 dias. **Rotação a cada uso**; se um refresh já usado for apresentado de novo, toda a família de tokens daquela sessão é revogada e o usuário precisa entrar de novo.
-- **Sessões:** cada login cria um `sid`; logout revoga o `sid`; "Sair de todos os aparelhos" revoga todos. Suspensão e exclusão de conta revogam tudo na hora. A revogação é gravada no banco (`Session.RevokedAt` e status da conta); a validação do JWT consulta esse estado por trás de um cache de até 1 min, então um token revogado é recusado em até 1 min mesmo depois de reinício e com várias instâncias ([09-cache.md §4](09-cache.md)).
+- **Refresh token:** valor aleatório de 256 bits, guardado só como hash (SHA-256) no banco, validade de **60 dias deslizantes** e limite absoluto de **1 ano** desde o login, para a pessoa continuar conectada sem entrar toda hora. **Rotação a cada uso**; se um refresh já usado for apresentado de novo, toda a família de tokens daquela sessão é revogada e o usuário precisa entrar de novo.
+- **Sessões:** cada login cria um `sid`; logout revoga o `sid`; "Sair de todos os aparelhos" revoga todos; "Aparelhos conectados" lista as sessões e encerra qualquer uma. Suspensão e exclusão de conta revogam tudo na hora. A revogação é gravada no banco (`Session.RevokedAt` e status da conta); a validação do JWT consulta esse estado por trás de um cache de até 1 min, então um token revogado é recusado em até 1 min mesmo depois de reinício e com várias instâncias ([09-cache.md §4](09-cache.md)).
 - **Rotação de chaves:** chaves de assinatura em cofre, com `kid`; a API publica as públicas atuais e a anterior durante a troca.
 - **No app:** tokens só no `flutter_secure_storage` (Keychain/Keystore), nunca em `SharedPreferences`, logs ou URLs. Refresh concorrente é serializado no `ApiClient`.
 
@@ -47,7 +53,7 @@ Rate limiting nativo do ASP.NET Core, particionado por usuário autenticado ou, 
 
 | Política | Rotas | Limite |
 | --- | --- | --- |
-| `auth` | `/auth/*` | 10/min por IP, 30/h por IP |
+| `auth` | `/auth/*` | 10/min por IP, 30/h por IP; além disso, no handler, 5 códigos de e-mail por endereço por hora e bloqueio da conta após 5 senhas erradas em 15 min |
 | `search` | `GET /providers`, `/cities` | 60/min por usuário ou IP |
 | `profile` | `GET /providers/{id}` e subrotas | 120/min |
 | `write` | demais POST/PUT/PATCH/DELETE | 60/min por usuário |
@@ -89,7 +95,7 @@ Respostas 429 com `Retry-After`. Os contadores ficam na memória de cada instân
 ## 10. Segredos e configuração
 
 - Nada de segredo no repositório. Dev: `dotnet user-secrets`. Produção: variáveis de ambiente injetadas pelo cofre do provedor (ou Docker secrets), com rotação documentada.
-- Segredos: chaves de assinatura do JWT, credenciais do banco, chaves do storage, credencial do Firebase, client ids/secret da Apple.
+- Segredos: chaves de assinatura do JWT, chave HMAC dos códigos de e-mail, credenciais do banco, do SMTP e do storage, senha do Redis, credencial do Firebase.
 - Usuário do banco da API com privilégios mínimos (DML no schema da aplicação); migrações rodam com outro usuário, no pipeline.
 - `gitleaks` no CI e pre-commit para barrar segredos.
 
@@ -105,7 +111,7 @@ Respostas 429 com `Retry-After`. Os contadores ficam na memória de cada instân
 
 ## 12. Auditoria
 
-Tabela `audit_events` só de inserção (o usuário da API não tem `update`/`delete` nela): leitura de endereço completo, confirmação e anulação de pagamento, contestação, ações de moderação, mudança de papel, login e revogação de sessões, exclusão de conta. Campos: quando, quem (id), ação, alvo, ip truncado, `traceId`.
+Tabela `audit_events` só de inserção (o usuário da API não tem `update`/`delete` nela): leitura de endereço completo, confirmação e anulação de pagamento, contestação, ações de moderação, mudança de papel, cadastro e confirmação de e-mail, login (sucesso e bloqueio), redefinição e troca de senha, revogação de sessões, exclusão de conta. Campos: quando, quem (id), ação, alvo, ip truncado, `traceId`.
 
 ## 13. App mobile
 

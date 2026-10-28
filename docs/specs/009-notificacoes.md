@@ -21,7 +21,7 @@ O ciclo do pedido depende de as duas partes agirem no tempo certo: o prestador r
 
 ### Out
 
-- E-mail e SMS transacionais.
+- SMS e e-mails além dos de conta (código e avisos de senha, da spec 001).
 - Notificações de marketing.
 
 ## Domain Model

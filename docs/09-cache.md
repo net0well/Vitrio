@@ -30,9 +30,8 @@ Regra de ouro: **cache nunca é fonte da verdade**. Tudo que precisa sobreviver 
 | Cidade por código (`GET /cities/{ibge}`) | `city:{ibge}` | 24 h | 1 h | Tag `cities` |
 | Localizar cidade (`GET /cities/locate`) | `cities:locate:{celula1km}` | 10 min | 1 min | Tag `cities` |
 | Sessão revogada | `session:{sid}:revoked` | 1 min | 30 s | Logout, suspensão e exclusão removem a chave (§4) |
-| Chaves do Google (JWKS) | `jwks:google` | O que o provedor indicar, até 24 h | Igual | Por tempo; a última cópia válida é usada por até 24 h se o provedor cair |
 
-**Não ficam em cache:** busca de prestadores (`GET /providers`, sempre do banco com índices), pedidos, pagamentos, avaliações filtradas, notificações, tudo que é privado (`/me/*`, `/provider/*`), chaves de idempotência (§5) e contadores de rate limit (§6).
+**Não ficam em cache:** busca de prestadores (`GET /providers`, sempre do banco com índices), pedidos, pagamentos, avaliações filtradas, notificações, tudo que é privado (`/me/*`, `/provider/*`), chaves de idempotência (§5), contadores de rate limit (§6) e tudo do login: códigos de e-mail, tentativas de senha e bloqueios ficam no banco, para valerem igual em todas as instâncias e depois de reinício.
 
 ## 3. Invalidação do perfil do prestador
 

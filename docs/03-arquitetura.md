@@ -16,7 +16,7 @@ flowchart LR
   OBJ[(Armazenamento de objetos<br/>S3 compatível)]
   JOBS[Jobs agendados<br/>Hangfire]
   FCM[Firebase Cloud Messaging]
-  IDP[Google e Apple<br/>login]
+  MAIL[E-mail transacional<br/>SMTP]
   BR[BrasilAPI<br/>CNPJ e CEP]
   IBGE[IBGE<br/>municípios e malhas]
   C --> App
@@ -31,8 +31,7 @@ flowchart LR
   JOBS --> DB
   API --> FCM
   FCM --> App
-  App -->|token do provedor| IDP
-  API -->|valida token| IDP
+  API -->|códigos e avisos de conta| MAIL
   API --> BR
   IBGE -.->|carga inicial e anual| DB
 ```
@@ -65,7 +64,8 @@ vitrio/
 | Erros | Result pattern + ProblemDetails (RFC 9457) | Exceções só para o excepcional (ADR-004) |
 | Persistência | EF Core 10 + Npgsql + NetTopologySuite | `DbContext` direto, sem repositório genérico |
 | Banco | PostgreSQL 17 + PostGIS, `unaccent`, `pg_trgm` | ADR-005 |
-| Autenticação | Login Google (Apple com o app iOS) validado na API + JWT próprio + refresh token rotativo | Sem Keycloak no MVP (ADR-006) |
+| Autenticação | Cadastro e login próprios (e-mail e senha, e-mail confirmado por código) + JWT próprio + refresh token rotativo; senha com o `PasswordHasher` do ASP.NET Core Identity (sem o resto do Identity) | Sem login social nem Keycloak (ADR-006) |
+| E-mail | SMTP com MailKit; Mailpit em desenvolvimento, provedor transacional em produção | Layout em [design-system/emails.md](design-system/emails.md) |
 | Jobs | Hangfire + Hangfire.PostgreSql | Lista na §7 |
 | Eventos | Domain events → tabela outbox → despachante em `BackgroundService` | Sem broker no início (ADR-009) |
 | Cache | `HybridCache` com memória local (L1) e Redis (L2) | Política completa em [09-cache.md](09-cache.md) (ADR-013) |
@@ -107,9 +107,9 @@ Regras de dependência (verificadas por teste de arquitetura):
 
 ```text
 Vitrio.Application/
-  Abstractions/          IAppDbContext, ICurrentUser, IObjectStorage, IPushSender, ICnpjLookup, ICepLookup
+  Abstractions/          IAppDbContext, ICurrentUser, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
   Common/                PagedResult, behaviors (log, validação, transação)
-  Accounts/              SignInWithGoogle, SignInWithApple, RefreshToken, GetMe, UpdateMe, DeleteAccount, Addresses
+  Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
   Cities/                LocateCity, SearchCities, GetCity
   Categories/            ListCategories
   Providers/             CreateProviderProfile, UpdateProviderProfile, SetServiceArea, SetServices, Photos, VerifyMei, Publish, Pause, SetAvailableToday, GetProviderProfile
@@ -250,8 +250,8 @@ where p.status = 'Published'
 
 | Controller | Método e rota | Quem |
 | --- | --- | --- |
-| Auth | `POST /auth/google`, `POST /auth/apple` (com o app iOS), `POST /auth/refresh`, `POST /auth/logout` | público / autenticado |
-| Me | `GET /me`, `PATCH /me`, `DELETE /me` | autenticado |
+| Auth | `POST /auth/register`, `POST /auth/verify-email`, `POST /auth/resend-code`, `POST /auth/login`, `POST /auth/password/forgot`, `POST /auth/password/reset`, `POST /auth/refresh`, `POST /auth/logout` | público / autenticado |
+| Me | `GET /me`, `PATCH /me`, `DELETE /me`, `PUT /me/password`, `GET /me/sessions`, `DELETE /me/sessions/{id}` | autenticado |
 | Addresses | `GET /me/addresses`, `POST /me/addresses`, `PUT /me/addresses/{id}`, `DELETE /me/addresses/{id}` | autenticado |
 | Devices | `PUT /me/devices/{installationId}`, `DELETE /me/devices/{installationId}` | autenticado |
 | Cities | `GET /cities?search=`, `GET /cities/locate?lat=&lng=`, `GET /cities/{ibgeCode}` | público |
@@ -294,6 +294,7 @@ where p.status = 'Published'
 | Limpar chaves de idempotência | Diário | Apaga chaves com mais de 24 h |
 | Limpar notificações | Diário | Apaga notificações com mais de 90 dias |
 | Anonimizar contas excluídas | Diário | Conclui a anonimização em até 30 dias |
+| Limpar cadastros e códigos | Diário | Apaga contas não confirmadas em 24 h, códigos de e-mail vencidos e refresh tokens expirados |
 
 "Disponível hoje" não tem job: é calculado na leitura ([02-regras-de-negocio.md §3](02-regras-de-negocio.md)).
 - Push via FCM com o token do dispositivo; mensagens sem dados sensíveis no corpo (o app busca detalhes autenticado).
@@ -308,7 +309,7 @@ where p.status = 'Published'
 
 ## 9. App Flutter
 
-O primeiro lançamento é só Android. O projeto iOS existe no repositório, mas flavors nativos, login com Apple e APNs entram junto com o lançamento iOS.
+O primeiro lançamento é só Android. O projeto iOS existe no repositório, mas flavors nativos e APNs entram junto com o lançamento iOS.
 
 | Tema | Escolha |
 | --- | --- |
@@ -345,7 +346,7 @@ mobile/lib/
 
 ## 10. Infraestrutura e entrega
 
-- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
+- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq, Mailpit (caixa de e-mail de teste em `http://localhost:8025`) e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
 - **Produção inicial:** um servidor Linux com Docker Compose (API, Hangfire server no mesmo processo, Redis sem persistência, Caddy com TLS automático), banco PostgreSQL gerenciado com backups diários e PITR, R2 para imagens. Migração para containers gerenciados quando a carga pedir; com mais de uma instância, Redis gerenciado e rate limit no Redis ([09-cache.md](09-cache.md)). Os arquivos ficam em `infra/production/`. A imagem da API (`backend/Dockerfile`) roda sem root, sem shell e com sistema de arquivos só de leitura, e a API se recusa a subir em produção sem domínio em `AllowedHosts`, sem o proxy conhecido e sem senha no Redis.
 - **CI (GitHub Actions):** build e testes (com Testcontainers), `dotnet format --verify-no-changes`, análise de vulnerabilidades de pacotes, CodeQL, gitleaks, `flutter analyze`, `flutter test` e build Android.
 - **CD:** imagem Docker assinada por tag, migrações aplicadas por job separado, deploy por SSH com healthcheck e rollback.
@@ -360,7 +361,7 @@ mobile/lib/
 | 003 | `Mediator` (MIT) para CQRS | Licença livre, source generator, mesma ergonomia do MediatR | MediatR 13+ (comercial) |
 | 004 | Result pattern + ProblemDetails | Erros de negócio são esperados; exceções ficam para falhas | Exceções de domínio mapeadas em middleware |
 | 005 | PostgreSQL + PostGIS | Busca por raio e cidade com índice espacial, texto em português | SQL Server, banco de busca separado |
-| 006 | Login social + JWT próprio | Menos peças no MVP, controle de sessão e revogação | Keycloak / provedor de identidade dedicado |
+| 006 | Cadastro e login próprios (e-mail e senha, código por e-mail) + JWT próprio | Controle do cadastro, dos dados e das regras de acesso, sem depender de provedor; o iOS não exige login com Apple sem login social | Login social (Google, Apple), Keycloak / provedor de identidade dedicado |
 | 007 | Pagamento combinado fora do app, confirmado pelo prestador | Sem custo de intermediação nem obrigações financeiras no MVP | Pagamento integrado com split |
 | 008 | Ponto público do prestador | Distância útil sem expor endereço | Distância exata |
 | 009 | Outbox + Hangfire, sem broker | Simples e transacional; Wolverine quando surgirem fluxos assíncronos de verdade | RabbitMQ desde o início |

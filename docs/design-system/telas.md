@@ -53,7 +53,11 @@ Regras que aparecem na interface:
 | Tela | Situação | Componentes principais | Estados que precisa ter |
 | --- | --- | --- | --- |
 | Boas-vindas | prototipada | `Button` accent + on-hero, logo | — |
-| Entrar | a desenhar | `Button` (Google; Apple só no app iOS), link de termos | carregando, erro de login, e-mail já usado com outro provedor |
+| Entrar | a desenhar | `TextField` de e-mail e de senha (com "Mostrar senha"), `Button` primary "Entrar", links "Esqueci a senha" e "Criar conta" | carregando, e-mail ou senha incorretos, conta bloqueada por 15 min, e-mail não confirmado (leva ao código) |
+| Criar conta | a desenhar | `TextField` de nome, e-mail e senha, aceite de termos e política, `ActionBar` "Criar conta" | carregando, senha fraca (explica a regra), sem conexão |
+| Confirmar e-mail | a desenhar | Campo de 6 dígitos com colar automático, "Reenviar código" com contagem de 60 s, "Trocar e-mail" | código errado, código vencido, muitos códigos (espera), e-mail fora do ar |
+| Esqueci a senha | a desenhar | `TextField` de e-mail, `ActionBar` "Enviar código"; depois, código e senha nova na mesma tela | enviado (mesma mensagem exista o e-mail ou não), código errado, senha fraca |
+| Aparelhos conectados (Conta) | a desenhar | Lista de sessões com aparelho e último acesso, "Desconectar", "Sair de todos os aparelhos" | só este aparelho |
 | Permitir localização | a desenhar | ilustração do símbolo, `Button` primary + secondary | — |
 | Escolher cidade (folha) | a desenhar | `SearchField`, lista de cidades, "Usar minha localização" | sem resultado, carregando |
 | Início | prototipada | pílula de localização, `SearchField`, `HeroCard`, `CategoryTile`, cards resumidos, `BottomNav` | sem prestadores na cidade, sem GPS |
