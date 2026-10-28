@@ -83,7 +83,8 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 - CNPJ já usado por outra vitrine: 409; denúncia possível pelo dono legítimo.
 - BrasilAPI fora do ar: `Pending`; job tenta de novo a cada 6 h por até 3 dias. Depois disso, `Failed` com motivo "Não conseguimos consultar o CNPJ agora", push ao prestador (`MeiVerificationFailed`) e opção de tentar de novo.
 - Revalidação perde o selo: `Lost`, push ao prestador, selo some da busca e do perfil na hora (cache invalidado).
-- Qualquer mudança no prestador vinda de job ou evento (selo, nota, tempo de resposta, serviços feitos, foto ocultada, suspensão) invalida o perfil público pelo ponto único de [09-cache.md §3](../09-cache.md).
+- Qualquer mudança no prestador, inclusive vinda de job ou moderação (selo, nota, tempo de resposta, serviços feitos, foto ocultada, suspensão), gera um evento do catálogo que invalida o perfil público ([09-cache.md §3](../09-cache.md)).
+- Eventos da vitrine (`provider.*` e `mei.*`), conteúdo e consumidores: catálogo de [10-eventos.md](../10-eventos.md) §9.
 - Upload confirmado mas arquivo inválido (não é imagem, > 10 MB, > 8000 px): foto vai para `Rejected` e o app mostra o motivo.
 - Foto com EXIF de GPS: metadados removidos antes de publicar.
 - Raio que cobre várias cidades: permitido; a cidade base continua a do endereço.

@@ -34,7 +34,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 - `Quote` (entidade do pedido): `Type` (`FixedPrice`, `TechnicalVisit`), `Amount` (`Money`), `Date`, `Start`, `End`, `MaterialIncluded`, `Message?`, `SentAt`, `Version`.
 - `OrderPhoto`: `Id`, `OrderId`, `ObjectKey` (privado), `Status`.
 - Estados e transições: [02-regras-de-negocio.md §4](../02-regras-de-negocio.md).
-- Eventos: `OrderCreated`, `OrderDeclined`, `OrderExpired`, `QuoteSent`, `QuoteAccepted`, `QuoteDeclined`, `QuoteExpired`, `OrderCancelled`, `OrderCompleted` (com `CompletedBy`, inclusive `System`), `AddressReleased`. `QuoteSent`, `OrderDeclined` e `OrderExpired` recalculam o tempo de resposta do prestador; `OrderCancelled` recalcula os cancelamentos tardios.
+- Eventos (`order.*` e `quote.*`), conteúdo e consumidores: catálogo de [10-eventos.md](../10-eventos.md) §9. Entre eles, os que recalculam o tempo de resposta (`quote.sent`, `order.declined`, `order.expired`) e os cancelamentos tardios (`order.cancelled`).
 
 ## API Contract
 

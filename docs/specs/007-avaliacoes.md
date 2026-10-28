@@ -29,7 +29,7 @@ A nota é o que faz o cliente escolher um prestador e o que dá ao prestador uma
 
 - `Review` (agregado): `Id`, `OrderId` (único), `ProviderId`, `CustomerId`, `Rating` (1–5), `Tags` (subconjunto de `Punctual`, `Careful`, `FairPrice`, `ExplainedWell`, `LeftClean`, `Polite`), `Comment?` (até 400), `Recommends`, `PhotoKeys` (até 3), `CreatedAt`, `UpdatedAt?`, `EditableUntil`, `Status` (`Visible`, `UnderReview`, `Hidden`), `AuthorDisplayName` (primeiro nome + inicial, congelado na publicação). `UnderReview` não aparece nem conta na nota até a moderação decidir.
 - `ReviewReply`: `ReviewId`, `Text` (até 400), `CreatedAt`, `UpdatedAt?`, `EditableUntil`.
-- Agregados de leitura no `Provider` (recalculados do zero, só com avaliações `Visible`, pelo handler de `ReviewPublished`, `ReviewUpdated` e `ReviewStatusChanged`; ocultar, restaurar e aprovar uma avaliação em revisão geram `ReviewStatusChanged`): `ReviewCount`, `RatingSum`, `RatingScore` (bayesiana), `RatingDistribution` (1–5), `TagCounts`, `RecommendCount`.
+- Agregados de leitura no `Provider` (recalculados do zero, só com avaliações `Visible`, pelo handler `RecalculateProviderRating`, que consome `review.published`, `review.updated`, `content.hidden` e `content.restored`; ocultar gera `content.hidden`, e restaurar ou aprovar uma avaliação em revisão gera `content.restored`, ambos com `TargetType = Review`). Catálogo em [10-eventos.md](../10-eventos.md) §9: `ReviewCount`, `RatingSum`, `RatingScore` (bayesiana), `RatingDistribution` (1–5), `TagCounts`, `RecommendCount`.
 - Média bayesiana: `(C × m + soma) / (C + n)`, `C = 5`, `m` = média global da categoria principal. Um job diário recalcula `m` de cada categoria e, em seguida, `RatingScore` de todos os prestadores; sem isso, quem não recebe avaliação nova ficaria com a nota calculada sobre um `m` antigo.
 
 ## API Contract
@@ -61,7 +61,7 @@ A nota é o que faz o cliente escolher um prestador e o que dá ao prestador uma
 - Edição após 7 dias: 409.
 - Pedido com pagamento contestado: avaliação permitida normalmente.
 - Cliente e prestador ligados ao mesmo aparelho (`InstallationId`) ou ao mesmo telefone informado (sem verificação no MVP): avaliação aceita como `UnderReview`, fora da lista e do cálculo até a moderação decidir; vai para a fila de moderação.
-- Avaliação ocultada por moderação: sai do cálculo e da lista; volta se restaurada, e a nota é recalculada nos dois casos (`ReviewStatusChanged`).
+- Avaliação ocultada por moderação: sai do cálculo e da lista; volta se restaurada, e a nota é recalculada nos dois casos (`content.hidden` e `content.restored`).
 - Conta do autor excluída: autor vira "Usuário removido", fotos permanecem.
 - Recalcular nota com muitas avaliações simultâneas: handler idempotente que recalcula a partir das avaliações visíveis, não por incremento cego.
 

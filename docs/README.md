@@ -19,6 +19,7 @@ Vitrio é um app para encontrar, contratar e avaliar profissionais autônomos e 
 | [07-roadmap.md](07-roadmap.md) | Ordem de construção, dependências entre specs e critérios de pronto |
 | [08-seguranca.md](08-seguranca.md) | Modelo de ameaças, autenticação, autorização, limites, uploads, LGPD, auditoria e verificação contínua |
 | [09-cache.md](09-cache.md) | Camadas de cache (memória e Redis), o que fica em cache, invalidação, sessões revogadas, idempotência, cabeçalhos HTTP e cache no app |
+| [10-eventos.md](10-eventos.md) | Eventos de domínio: quando usar, contrato, outbox com entrega por handler, despachante, regras e testes, e o **catálogo único** de eventos com quem consome cada um |
 | [specs/](specs/) | Uma spec por funcionalidade, no formato do `/spec` do dotnet-claude-kit, em status Draft |
 | [design-system/](design-system/) | Identidade, tokens, componentes, plano de telas, guia Flutter, logos, ícones e fontes |
 

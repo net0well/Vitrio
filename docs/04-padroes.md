@@ -100,9 +100,10 @@ public sealed class Order : AggregateRoot
             return PaymentErrors.DifferenceReasonRequired;
         }
 
-        _paymentConfirmations.Add(PaymentConfirmation.Create(Id, amount, method, receivedAt, differenceReason, clock));
+        var confirmation = PaymentConfirmation.Create(Id, amount, method, receivedAt, differenceReason, clock);
+        _paymentConfirmations.Add(confirmation);
         Status = OrderStatus.PaymentConfirmed;
-        Raise(new PaymentConfirmed(Id, CustomerId, amount, method));
+        Raise(new PaymentConfirmed(Id, CustomerId, ProviderId, confirmation.Id));
         return Result.Success();
     }
 }
@@ -110,9 +111,9 @@ public sealed class Order : AggregateRoot
 
 - Erros de domínio ficam em classes estáticas por agregado (`OrderErrors`, `PaymentErrors`) com código estável (`order.cannot_quote`) e tipo (`Validation`, `Conflict`, `NotFound`).
 - Value objects validam na criação e são imutáveis (`Money.Create(decimal)` devolve `Result<Money>`).
-- Eventos de domínio são `record` no passado (`QuoteSent`), sem dados pessoais além de ids.
-- Só agregados registram eventos, e só quando outra parte do sistema reage à mudança (notificação, recálculo de selo ou nota, auditoria). Entidade sem ninguém interessado na mudança não gera evento. A lista está em [03-arquitetura.md §7](03-arquitetura.md).
-- Números derivados (nota, tempo de resposta, serviços feitos) são recalculados do zero pelo handler, nunca por incremento: o resultado é o mesmo se o evento for processado duas vezes.
+- **Eventos seguem [10-eventos.md](10-eventos.md)**: `record` no passado derivado de `DomainEvent`, com `[EventType("nome.estavel", versão)]`, conteúdo só com ids e códigos (nunca nome, contato, endereço, texto livre ou valor), um evento por arquivo. Todo evento novo entra primeiro no catálogo (§9 daquele documento).
+- Só agregados registram eventos, e só quando algo fora do agregado reage à mudança. Entidade sem ninguém interessado na mudança não gera evento; auditoria não é evento.
+- Handlers de evento implementam `IDomainEventHandler<T>` (não o `Mediator`), são `sealed`, idempotentes, têm um propósito cada e leem o estado atual. Números derivados (nota, tempo de resposta, serviços feitos) são recalculados do zero, nunca por incremento.
 
 ## 3. Result
 
@@ -232,7 +233,8 @@ public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser,
 - Value objects como `ComplexProperty` ou conversões; `Money` como `numeric(12,2)`.
 - Sem lazy loading; `Include` explícito só em comandos que precisam do agregado completo.
 - `xmin` como token de concorrência nos agregados que mudam de estado.
-- Interceptor de `SaveChanges` grava eventos na outbox e campos de auditoria.
+- Interceptor de `SaveChanges` grava os eventos na outbox (uma mensagem e uma entrega por handler) na mesma transação.
+- **Proibido `ExecuteUpdate`/`ExecuteDelete` em agregado que gera evento**: a atualização em massa pula o interceptor e o evento some. Jobs em lote carregam em páginas, chamam o método de domínio e salvam.
 - Migrações com nome descritivo do que mudam (`AddPaymentConfirmations`), revisadas no PR; SQL gerado (`dotnet ef migrations script --idempotent`) vai para o artefato de deploy.
 
 ## 7. Logs e observabilidade

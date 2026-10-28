@@ -12,7 +12,8 @@ O ciclo do pedido depende de as duas partes agirem no tempo certo: o prestador r
 
 ### In
 
-- Push via FCM para Android, a partir dos eventos de domínio das specs 003, 005, 006, 007 e 008. iOS (APNs via FCM) entra com o app iOS.
+- Push via FCM para Android, a partir dos eventos do catálogo de [10-eventos.md](../10-eventos.md) §9 (handlers `AccountNotifications`, `OrderNotifications`, `PaymentNotifications` e `ReviewNotifications`). iOS (APNs via FCM) entra com o app iOS.
+- Lembretes e convites são criados por job de varredura, conferindo o estado atual do pedido, e não a partir de evento.
 - Central de notificações no app (lidas e não lidas, 90 dias).
 - Preferências por tipo (pedidos, lembretes, avaliações, novidades da conta); avisos de conta e segurança não podem ser desligados.
 - Silêncio noturno (22h–7h no fuso do destinatário) para lembretes e convites.
@@ -30,6 +31,8 @@ O ciclo do pedido depende de as duas partes agirem no tempo certo: o prestador r
 - `NotificationPreference`: `UserId`, `Category` (`Orders`, `Reminders`, `Reviews`, `Account`), `PushEnabled`.
 - `Device` (spec 001).
 - `PushDelivery`: `NotificationId`, `DeviceId`, `Status` (`Pending`, `Sent`, `Failed`, `Deferred`), `Attempts`, `LastError?`, `SendAfter`.
+
+Os nomes abaixo são os do `record`; o nome estável, o conteúdo e os demais consumidores estão no catálogo de [10-eventos.md](../10-eventos.md) §9.
 
 | Evento | Destinatário | Tipo | Categoria |
 | --- | --- | --- | --- |
@@ -50,7 +53,8 @@ O ciclo do pedido depende de as duas partes agirem no tempo certo: o prestador r
 | Convite para avaliar | Cliente | Avalie o serviço | Reviews |
 | `ReviewPublished` | Prestador | Nova avaliação | Reviews |
 | `ReviewReplied` | Cliente | Resposta à avaliação | Reviews |
-| `MeiVerificationLost`, `MeiVerificationFailed` | Prestador | Selo MEI removido / verificação não concluída | Account |
+| `mei.verified`, `mei.verification_failed` (só quando a verificação estava `Pending`) | Prestador | Selo MEI confirmado / verificação não concluída | Account |
+| `mei.verification_lost` | Prestador | Selo MEI removido | Account |
 | `ContentHidden`, `UserSuspended` | Autor | Conteúdo ocultado / conta suspensa | Account |
 | `ContentRestored`, `UserReactivated` | Autor | Conteúdo restaurado / conta reativada | Account |
 

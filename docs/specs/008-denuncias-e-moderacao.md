@@ -29,7 +29,7 @@ Um app que coloca desconhecidos em contato precisa de um jeito simples de sinali
 - `Report` (agregado): `Id`, `ReporterId`, `TargetType` (`Provider`, `Photo`, `Review`, `ReviewReply`, `Order`), `TargetId`, `Reason` (`FalseInformation`, `Offensive`, `ScamOrOvercharge`, `InappropriatePhoto`, `Spam`, `Other`), `Details?` (até 500), `Status` (`Open`, `Dismissed`, `Actioned`), `CreatedAt`, `ResolvedAt?`, `ResolvedBy?`, `ResolutionNote?`. Único por (`ReporterId`, `TargetType`, `TargetId`).
 - `ModerationAction`: `Id`, `AdminId`, `Action` (`Keep`, `Hide`, `Restore`, `SuspendUser`, `ReactivateUser`), `TargetType`, `TargetId`, `Reason`, `SuspendedUntil?`, `CreatedAt`.
 - Conteúdos moderáveis ganham `Status` `Hidden` (foto, avaliação, resposta) ou a conta ganha `Suspended` (spec 001).
-- Evento `ContentHidden`, `ContentRestored`, `UserSuspended`, `UserReactivated`. Ocultar ou restaurar avaliação também gera `ReviewStatusChanged` (recalcula a nota); qualquer ação sobre conteúdo do prestador invalida o cache do perfil.
+- Eventos `content.hidden`, `content.restored`, `user.suspended` e `user.reactivated`, com conteúdo e consumidores no catálogo de [10-eventos.md](../10-eventos.md) §9: avisam o autor, recalculam a nota quando o alvo é avaliação, cancelam pedidos na suspensão e invalidam o cache do perfil.
 - Itens da fila também nascem de sinais automáticos: avaliação `UnderReview` (mesmo aparelho ou telefone) e prestador com 3 ou mais cancelamentos tardios em 90 dias.
 
 ## API Contract
