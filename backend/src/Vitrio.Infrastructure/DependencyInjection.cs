@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Common;
+using Vitrio.Infrastructure.Caching;
 using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Time;
@@ -29,6 +30,7 @@ public static class DependencyInjection
         services.AddScoped<IAppDbContext>(serviceProvider => serviceProvider.GetRequiredService<AppDbContext>());
 
         services.AddHealthChecks().AddDbContextCheck<AppDbContext>("database", tags: [ReadinessTag]);
+        services.AddVitrioCaching(configuration);
 
         return services;
     }
