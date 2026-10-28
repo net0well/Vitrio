@@ -29,7 +29,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Clean Architecture: `Vitrio.Domain` → `Vitrio.Application` → `Vitrio.Infrastructure` → `Vitrio.Api`. Casos de uso por funcionalidade na Application, com `Mediator` (MIT), FluentValidation e Result pattern.
 - Controllers só montam o comando e chamam `ISender`. Filtro de dono sempre dentro da consulta. Recurso alheio responde 404.
 - `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono; `DbContext` direto, sem repositório genérico.
-- CQRS com `Mediator`: comandos mudam estado, consultas só leem (`AsNoTracking` e projeção). Eventos de domínio só nos agregados e só quando alguém reage a eles.
+- CQRS com `Mediator`: comandos mudam estado, consultas só leem (`AsNoTracking` e projeção). Eventos de domínio seguem `docs/10-eventos.md` (padrão e catálogo único): só nos agregados, só quando algo fora do agregado reage, conteúdo só com ids e códigos, `IDomainEventHandler<T>` em vez do `Mediator`. Evento novo entra primeiro no catálogo.
 - Mapeamento sempre explícito, escrito à mão (`Response.From(entidade)`, `Request.ToCommand()`, `Select` nas consultas). **Nenhuma biblioteca de mapeamento** (AutoMapper, Mapster, Mapperly ou parecidas).
 - Proibido também: MediatR 13+, FluentAssertions 8+, MassTransit 9+.
 - Cache segue `docs/09-cache.md`: banco é a fonte da verdade, Redis e memória só aceleram; toda mudança no prestador invalida o perfil público.
@@ -62,6 +62,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Roadmap: `docs/07-roadmap.md`
 - Segurança: `docs/08-seguranca.md`
 - Cache: `docs/09-cache.md`
+- Eventos de domínio (padrão e catálogo único): `docs/10-eventos.md`
 - Design system (tokens, componentes, telas, e-mails, guia Flutter, logos, ícones, fontes): `docs/design-system/`
 
 ## Comandos

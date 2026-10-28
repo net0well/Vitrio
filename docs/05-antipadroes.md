@@ -55,7 +55,9 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | `ToList()` antes de filtrar | Filtra em memória | Filtros no `IQueryable` |
 | Distância calculada em C# sobre todos os prestadores | Não escala | `ST_DWithin` com índice GiST |
 | Filtrar ou medir distância pelo endereço base do prestador | Variando o ponto da busca dá para achar a borda do raio e o endereço exato | Sempre `public_location` |
-| `ExecuteUpdate` em dado do perfil sem invalidar o cache | Perfil mostra selo ou nota antigos por minutos | Chamar `IProviderProfileCache.InvalidateAsync` para os ids afetados |
+| `ExecuteUpdate`/`ExecuteDelete` em agregado que gera evento | Pula o interceptor: o evento some, o cache não é invalidado e as notificações não saem | Carregar em páginas, chamar o método de domínio e salvar ([10-eventos.md](10-eventos.md) §4) |
+| Evento com nome, contato, endereço, texto livre ou valor | Espalha dado pessoal pela outbox e envelhece | Só ids e códigos; o handler lê o estado atual |
+| Evento fora do catálogo | Ninguém sabe quem consome nem o que acontece | Evento novo entra primeiro em [10-eventos.md](10-eventos.md) §9 |
 | `LIKE '%texto%'` para busca | Sem índice e sem acento | Full-text em português com `unaccent` e trigram |
 
 ## Segurança e privacidade

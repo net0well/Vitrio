@@ -21,11 +21,11 @@ Regra de ouro: **cache nunca é fonte da verdade**. Tudo que precisa sobreviver 
 
 | Dado | Chave | TTL no Redis | TTL local | Invalidação |
 | --- | --- | --- | --- | --- |
-| Perfil público (`GET /providers/{id}`) | `provider:{id}` | 5 min | 30 s | Qualquer mudança no prestador (§3); tag `provider:{id}` |
+| Perfil público (`GET /providers/{id}`) | `provider:{id}` | 5 min | 30 s | Eventos do prestador, da moderação e da conta (§3); tag `provider:{id}` |
 | Fotos do perfil (`GET /providers/{id}/photos`) | `provider:{id}:photos:{page}` | 5 min | 30 s | Tag `provider:{id}` |
 | Primeira página de avaliações sem filtro | `provider:{id}:reviews:1` | 5 min | 30 s | Tag `provider:{id}` |
 | Início (`GET /home`) | `home:cell:{celula2km}` ou `home:city:{ibge}` | 60 s | 30 s | Só por tempo |
-| Categorias (`GET /categories`) | `categories` | 1 h | 5 min | `PUT /admin/categories/{id}` remove a tag `categories` |
+| Categorias (`GET /categories`) | `categories` | 1 h | 5 min | Evento `category.updated` remove a tag `categories` (§3) |
 | Busca de cidades (`GET /cities?search=`) | `cities:search:{termo}:{uf}` | 24 h | 1 h | Carga anual do IBGE remove a tag `cities` |
 | Cidade por código (`GET /cities/{ibge}`) | `city:{ibge}` | 24 h | 1 h | Tag `cities` |
 | Localizar cidade (`GET /cities/locate`) | `cities:locate:{celula1km}` | 10 min | 1 min | Tag `cities` |
@@ -35,13 +35,20 @@ Regra de ouro: **cache nunca é fonte da verdade**. Tudo que precisa sobreviver 
 
 ## 3. Invalidação do perfil do prestador
 
-O perfil público junta dados de várias origens, e muitas mudanças não vêm do prestador editando a vitrine. Por isso a invalidação tem **um ponto único**: `IProviderProfileCache.InvalidateAsync(providerId)`, que remove a tag `provider:{id}`.
+O perfil público junta dados de várias origens, e muitas mudanças não vêm do prestador editando a vitrine. Por isso a invalidação tem **um ponto único**: o handler de evento `InvalidateProviderProfileCache`, que remove a tag `provider:{id}`. Os eventos que o acionam estão no catálogo de [10-eventos.md](10-eventos.md) §9:
 
-- **Pelo change tracker:** um interceptor de `SaveChanges`, depois do commit, invalida todo prestador cujo `Provider`, `ProviderService`, `PortfolioPhoto`, `MeiVerification`, `Review` ou `ReviewReply` foi alterado. Handler nenhum precisa lembrar de invalidar.
-- **Fora do change tracker:** jobs e handlers que usam `ExecuteUpdate`/`ExecuteDelete` chamam `InvalidateAsync` para cada id afetado. Recálculos em massa (nota diária) removem a tag `providers` inteira ao final.
-- Mudanças que alteram o perfil sem edição do dono, todas cobertas pelas duas regras acima: selo MEI (`Verified`, `Lost`, `Failed`), nota recalculada (por evento ou pelo job diário), tempo de resposta, serviços feitos, foto ou avaliação ocultada e restaurada, pausa, suspensão e remoção da vitrine.
+- mudança feita pelo dono (`provider.profile_updated`, `provider.published`, `provider.paused`);
+- números recalculados por handler ou job (`provider.stats_updated`: nota, tempo de resposta, serviços feitos);
+- selo MEI (`mei.verified`, `mei.verification_lost`);
+- moderação (`content.hidden`, `content.restored`) e conta (`user.suspended`, `user.reactivated`, `user.deleted`).
+
+Regras:
+
+- Como o evento sai pela outbox, a invalidação acontece cerca de 1 a 2 s depois do commit, inclusive para mudanças vindas de jobs e da moderação. Nenhum handler ou job precisa lembrar de invalidar.
+- `ExecuteUpdate`/`ExecuteDelete` são proibidos em agregado que gera evento ([10-eventos.md](10-eventos.md) §4), então nenhuma mudança escapa do evento.
 - **Dados que dependem da hora não ficam congelados no cache.** "Disponível hoje" é calculado ao montar a resposta, a partir de `AvailableToday`, `AvailableTodaySetAt` e do fuso da cidade; o cache guarda os campos, não o selo. A distância também é calculada por requisição.
-- Pausa, suspensão e remoção passam a responder 404 na hora na instância que fez a mudança e em até 30 s nas demais.
+- Pausa, suspensão e remoção passam a responder 404 em até cerca de 2 s (entrega do evento), mais até 30 s do cache local nas outras instâncias.
+- Categorias seguem a mesma ideia: `category.updated` aciona `InvalidateCategoriesCache`, que remove a tag `categories`.
 
 ## 4. Sessões revogadas
 

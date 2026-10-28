@@ -67,7 +67,7 @@ vitrio/
 | Autenticação | Cadastro e login próprios (e-mail e senha, e-mail confirmado por código) + JWT próprio + refresh token rotativo; senha com o `PasswordHasher` do ASP.NET Core Identity (sem o resto do Identity) | Sem login social nem Keycloak (ADR-006) |
 | E-mail | SMTP com MailKit; Mailpit em desenvolvimento, provedor transacional em produção | Layout em [design-system/emails.md](design-system/emails.md) |
 | Jobs | Hangfire + Hangfire.PostgreSql | Lista na §7 |
-| Eventos | Domain events → tabela outbox → despachante em `BackgroundService` | Sem broker no início (ADR-009) |
+| Eventos | Domain events → outbox com uma entrega por handler → despachante em `BackgroundService` | Padrão e catálogo em [10-eventos.md](10-eventos.md); sem broker no início (ADR-009) |
 | Cache | `HybridCache` com memória local (L1) e Redis (L2) | Política completa em [09-cache.md](09-cache.md) (ADR-013) |
 | Mapeamento | Manual, com métodos estáticos nos DTOs (`From`, `ToCommand`) | Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly) |
 | Imagens | S3 compatível (Cloudflare R2 em produção, MinIO local) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
@@ -107,7 +107,8 @@ Regras de dependência (verificadas por teste de arquitetura):
 
 ```text
 Vitrio.Application/
-  Abstractions/          IAppDbContext, ICurrentUser, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
+  Abstractions/          IAppDbContext, ICurrentUser, IAuditLog, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
+  Events/                IDomainEventHandler<T> e os handlers de evento (notificações, dados derivados, cache)
   Common/                PagedResult, behaviors (log, validação, transação)
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
   Cities/                LocateCity, SearchCities, GetCity
@@ -272,14 +273,9 @@ where p.status = 'Published'
 
 ## 7. Eventos, jobs e notificações
 
-- **Nem toda entidade gera evento.** Só agregados registram eventos, e só nas transições a que outra parte do sistema reage (notificação, recálculo de selo ou nota, auditoria). Editar um endereço salvo, por exemplo, não gera evento.
-- Eventos por agregado:
-  - `Order`: `OrderCreated`, `OrderDeclined`, `OrderExpired`, `QuoteSent`, `QuoteAccepted`, `QuoteDeclined`, `QuoteExpired`, `OrderCancelled`, `OrderCompleted`, `AddressReleased`, `PaymentConfirmed`, `PaymentConfirmationVoided`, `PaymentDisputed`, `PaymentDisputeResolved`;
-  - `Provider`: `MeiVerificationLost`, `MeiVerificationFailed`;
-  - `Review`: `ReviewPublished`, `ReviewUpdated`, `ReviewStatusChanged`, `ReviewReplied`;
-  - `Report` e moderação: `ContentHidden`, `ContentRestored`, `UserSuspended`, `UserReactivated`.
-- No `SaveChanges`, os eventos viram linhas da tabela `outbox_messages` na mesma transação.
-- Um `BackgroundService` lê a outbox, publica in-process para os handlers (notificação, recálculo de selos e nota, auditoria) e marca como processado; falhas têm retry com backoff e vão para estado `Failed` após 10 tentativas. Handlers são idempotentes e recalculam a partir do zero.
+- **Eventos de domínio seguem [10-eventos.md](10-eventos.md)**, que tem o padrão completo e o **catálogo único** (evento, agregado, conteúdo, versão, quem consome e o que cada consumidor faz). Nenhum outro documento lista eventos.
+- Resumo: só agregados geram eventos, e só nas transições a que algo fora do agregado reage (notificação, dado derivado de outro agregado, cache, outro módulo). No `SaveChanges`, cada evento vira uma linha de `outbox_messages` e uma de `outbox_deliveries` por handler, na mesma transação. Um `BackgroundService` entrega cada handler em transação própria, com retry por handler e `Failed` após 10 tentativas. Eventos não passam pelo `Mediator`.
+- Auditoria não é evento: o comando grava `audit_events` na própria transação, com `IAuditLog`.
 - Hangfire roda os jobs recorrentes. Painel do Hangfire só para admin, fora da internet pública.
 
 | Job | Frequência | O que faz |

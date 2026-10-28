@@ -28,7 +28,7 @@ No MVP o pagamento é combinado entre cliente e prestador, fora do app. Mesmo as
 - `PaymentConfirmation` (entidade do agregado `Order`): `Id`, `OrderId`, `Amount` (`Money`), `Method` (`Pix`, `Cash`, `DebitCard`, `CreditCard`, `BankTransfer`, `Other`), `ReceivedAt`, `Note?` (até 300), `DifferenceReason?` (até 300, obrigatório se `Amount` ≠ valor do orçamento aceito), `ConfirmedAt`, `Status` (`Valid`, `Voided`), `VoidedAt?`, `VoidedBy?` (`Provider`, `Support`), `VoidReason?`.
 - `PaymentDispute`: `Id`, `PaymentConfirmationId`, `Reason` (`AmountDiffers`, `MethodDiffers`, `NotPaidYet`, `NeverHired`, `Other`), `Details?` (até 500), `OpenedAt`, `Status` (`Open`, `ResolvedKept`, `ResolvedVoided`), `ResolvedAt?`, `ResolutionNote?`.
 - Transições de `Order`: `Completed` → `PaymentConfirmed`; `PaymentConfirmed` → `PaymentDisputed` → `PaymentConfirmed` ou `PaymentVoided`; anulação pelo prestador em 24 h volta o pedido para `Completed` (e permite confirmar de novo). `PaymentVoided` é final: nova confirmação só pelo suporte.
-- Eventos: `PaymentConfirmed`, `PaymentConfirmationVoided`, `PaymentDisputed`, `PaymentDisputeResolved`.
+- Eventos (`payment.*`), conteúdo e consumidores: catálogo de [10-eventos.md](../10-eventos.md) §9.
 - Leitura: `EarningsSummary` por prestador e mês (`Total`, `Count`, por `Method`), só de confirmações `Valid`. O mês é o de `ReceivedAt` no fuso da cidade do pedido (um Pix recebido às 23h30 de 31/10 em Manaus entra em outubro).
 
 ## API Contract

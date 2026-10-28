@@ -39,15 +39,15 @@ As regras abaixo valem para app, API e moderação. Quando uma spec contradisser
 
 ### Selos e números do perfil
 
-Todos são calculados pela API a partir dos dados atuais. Nenhum é gravado à mão nem fica para sempre: quando a condição deixa de valer, o selo sai. Recálculos partem do zero (nunca por incremento), para dar o mesmo resultado se rodarem duas vezes, e toda mudança invalida o cache do perfil ([09-cache.md §3](09-cache.md)).
+Todos são calculados pela API a partir dos dados atuais. Nenhum é gravado à mão nem fica para sempre: quando a condição deixa de valer, o selo sai. Recálculos partem do zero (nunca por incremento), para dar o mesmo resultado se rodarem duas vezes, e toda mudança invalida o cache do perfil ([09-cache.md §3](09-cache.md)). Os eventos e handlers citados abaixo estão no catálogo de [10-eventos.md](10-eventos.md) §9.
 
 | Selo ou número | Regra | Recalculado quando | Some quando |
 | --- | --- | --- | --- |
 | MEI verificado | Verificação do CNPJ com status `Verified` | Na verificação e na revalidação a cada 30 dias (job diário em lotes) | Revalidação falha (`Lost`) ou consulta pendente por mais de 3 dias (`Failed`) |
 | Disponível hoje (e a lista "Disponíveis agora") | `AvailableToday` ligado **e** ligado hoje no fuso da cidade base | Na leitura, a cada requisição | Na virada do dia no fuso da cidade, sem depender de job |
 | Responde em ~X | Mediana do tempo até a primeira resposta (§4) nos **últimos 20 pedidos recebidos nos últimos 90 dias**. Pedido ignorado até expirar conta como 48 h; pedido cancelado pelo cliente antes da resposta fica fora. Faixas: até 15 min, 30 min, 1 h, 3 h e 1 dia | Handler de `QuoteSent`, `OrderDeclined` e `OrderExpired`; job diário para a janela de 90 dias andar | Mediana acima de 1 dia ou menos de 5 pedidos na amostra |
-| Nota ou "Novo no Vitrio" | Média bayesiana (§6) com 3 ou mais avaliações visíveis; abaixo disso, "Novo no Vitrio" no lugar da nota | Handler de mudança de avaliação; job diário que recalcula a média da categoria e todas as notas | — |
-| Serviços feitos pelo app | Pedidos em `Completed`, `PaymentConfirmed` ou `PaymentDisputed` (pagamento anulado não conta). Exibido a partir de 5 | Handler de `OrderCompleted` e `PaymentConfirmationVoided` | Pagamento anulado reduz a contagem |
+| Nota ou "Novo no Vitrio" | Média bayesiana (§6) com 3 ou mais avaliações visíveis; abaixo disso, "Novo no Vitrio" no lugar da nota | Handler dos eventos `review.published`, `review.updated`, `content.hidden` e `content.restored`; job diário que recalcula a média da categoria e todas as notas | — |
+| Serviços feitos pelo app | Pedidos em `Completed`, `PaymentConfirmed` ou `PaymentDisputed` (pagamento anulado pelo suporte não conta). Exibido a partir de 5 | Handler dos eventos `order.completed` e `payment.dispute_resolved` (anulado) | Anulação pelo suporte reduz a contagem |
 | Tags mais citadas | Contagem das tags nas avaliações visíveis | Junto com a nota | — |
 | Distância ("perto de você") | Do ponto público do prestador ao ponto do cliente, arredondada (§2); só com GPS | Em cada requisição | Sem GPS não aparece |
 
