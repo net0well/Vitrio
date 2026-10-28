@@ -1,0 +1,16 @@
+**/.git
+**/.vs
+**/.vscode
+**/.idea
+**/bin
+**/obj
+**/TestResults
+**/*.user
+mobile/
+docs/
+infra/
+.github/
+backend/tests/
+**/.env
+**/.env.*
+**/appsettings.*.local.json

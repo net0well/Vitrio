@@ -1,0 +1,23 @@
+{$API_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy api:8080 {
+			lb_try_duration 15s
+			health_uri /health/ready
+			health_interval 5s
+			health_headers {
+				Host localhost
+			}
+		}
+	}
+
+	handle {
+		respond 404
+	}
+}

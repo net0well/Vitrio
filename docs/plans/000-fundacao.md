@@ -1,10 +1,10 @@
 # Plano: Fundação
 
-**Status:** Em andamento (backend, app e CI prontos; falta o passo 11)
+**Status:** Em andamento (passos 1 a 11 feitos; falta validar em staging e abrir o app no emulador contra a API local)
 **Origem:** [07-roadmap.md](../07-roadmap.md), bloco Fundação (sem spec de funcionalidade)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:** todas (projetos novos), `infra/`
-**Recorte atual:** Dockerfile da API e configuração de produção (passo 11).
+**Recorte atual:** validação final (ver "Pronto quando").
 
 ## Decisões tomadas para a Fundação
 
@@ -73,7 +73,7 @@
 ## Passos de entrega
 
 10. (Feito) GitHub Actions: build, testes com Testcontainers, `dotnet format --verify-no-changes`, `dotnet list package --vulnerable --include-transitive`, CodeQL, gitleaks, `flutter analyze`, `flutter test`, conferência do código gerado e build do APK de dev; Dependabot semanal. O repositório é privado e sem code scanning, então o CodeQL analisa sem enviar e falha o job quando encontra alerta.
-11. Dockerfile da API e serviço da API no compose. Na configuração de produção:
+11. (Feito) Dockerfile da API (`backend/Dockerfile`, imagem chiseled sem root), serviço `api` opcional no compose local e compose de produção em `infra/production/` com Caddy e Redis com senha. Na configuração de produção, verificado na inicialização:
     - `ForwardedHeaders:KnownProxies` com o IP do Caddy; sem isso todo cliente cai no mesmo balde de rate limit por IP;
     - `AllowedHosts` com o domínio real da API em vez de `*`;
     - Caddy expõe só `/api/*`; `/health/*` fica acessível apenas para o monitoramento, porque `/health/ready` abre conexão com o banco a cada chamada.

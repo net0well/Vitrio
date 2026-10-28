@@ -1,0 +1,67 @@
+name: vitrio-producao
+
+services:
+  api:
+    image: ${API_IMAGE:?defina API_IMAGE no .env}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: ${API_DOMAIN:?defina API_DOMAIN no .env};localhost
+      ForwardedHeaders__KnownNetworks__0: 172.30.0.0/24
+      ConnectionStrings__Database: ${DATABASE_CONNECTION_STRING:?defina DATABASE_CONNECTION_STRING no .env}
+      ConnectionStrings__Redis: redis:6379,password=${REDIS_PASSWORD:?defina REDIS_PASSWORD no .env}
+      Jwt__Issuer: https://${API_DOMAIN}
+      Jwt__Audience: ${JWT_AUDIENCE:?defina JWT_AUDIENCE no .env}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+    ports:
+      - "127.0.0.1:8081:8080"
+    networks: [edge]
+    depends_on:
+      redis:
+        condition: service_healthy
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+
+  redis:
+    image: redis:8.8-alpine
+    restart: unless-stopped
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\" --save '' --appendonly no --maxmemory 256mb --maxmemory-policy allkeys-lru"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [edge]
+    cap_drop: [ALL]
+    cap_add: [SETGID, SETUID]
+    security_opt: ["no-new-privileges:true"]
+
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    environment:
+      API_DOMAIN: ${API_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [edge]
+    depends_on: [api]
+
+networks:
+  edge:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  caddy-data:
+  caddy-config:
