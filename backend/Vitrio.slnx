@@ -3,10 +3,12 @@
     <Project Path="src/Vitrio.Domain/Vitrio.Domain.csproj" />
     <Project Path="src/Vitrio.Application/Vitrio.Application.csproj" />
     <Project Path="src/Vitrio.Infrastructure/Vitrio.Infrastructure.csproj" />
+    <Project Path="src/Vitrio.Api/Vitrio.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Vitrio.Domain.Tests/Vitrio.Domain.Tests.csproj" />
     <Project Path="tests/Vitrio.Application.Tests/Vitrio.Application.Tests.csproj" />
+    <Project Path="tests/Vitrio.Api.IntegrationTests/Vitrio.Api.IntegrationTests.csproj" />
   </Folder>
   <Folder Name="/solution items/">
     <File Path=".editorconfig" />
