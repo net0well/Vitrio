@@ -12,11 +12,11 @@ O ciclo do pedido depende de as duas partes agirem no tempo certo: o prestador r
 
 ### In
 
-- Push via FCM para Android e iOS, a partir dos eventos de domínio das specs 003, 005, 006, 007 e 008.
+- Push via FCM para Android, a partir dos eventos de domínio das specs 003, 005, 006, 007 e 008. iOS (APNs via FCM) entra com o app iOS.
 - Central de notificações no app (lidas e não lidas, 90 dias).
 - Preferências por tipo (pedidos, lembretes, avaliações, novidades da conta); avisos de conta e segurança não podem ser desligados.
 - Silêncio noturno (22h–7h no fuso do destinatário) para lembretes e convites.
-- Lembretes agendados: 1 h antes do horário; prestador sem confirmar pagamento 24 h após `Completed`; cliente sem avaliar 2 h após `Completed` (um lembrete só).
+- Lembretes agendados: 1 h antes do horário (ou às 21h da noite anterior, se 1 h antes cair no silêncio noturno); prestador sem confirmar pagamento 24 h após `Completed`; cliente sem avaliar 2 h após `Completed` (um lembrete só).
 - Registro e remoção de dispositivos (rotas da spec 001).
 
 ### Out
@@ -36,19 +36,23 @@ O ciclo do pedido depende de as duas partes agirem no tempo certo: o prestador r
 | `OrderCreated` | Prestador | Novo pedido | Orders |
 | `QuoteSent` | Cliente | Orçamento recebido | Orders |
 | `QuoteAccepted` | Prestador | Orçamento aceito | Orders |
+| `QuoteDeclined` | Prestador | Orçamento recusado | Orders |
 | `OrderDeclined`, `OrderExpired` | Cliente | Pedido não atendido | Orders |
 | `QuoteExpired` | Os dois | Orçamento expirado | Orders |
-| `OrderCancelled` | O outro lado | Pedido cancelado | Orders |
+| `OrderCancelled` | O outro lado (os dois, quando o motivo é suspensão ou exclusão de conta) | Pedido cancelado | Orders |
 | Lembrete 1 h | Os dois | Lembrete | Reminders |
-| `OrderCompleted` | O outro lado | Serviço concluído | Orders |
+| `OrderCompleted` | O outro lado (os dois, quando `CompletedBy = System`) | Serviço concluído | Orders |
 | Lembrete de confirmação | Prestador | Confirme o pagamento | Reminders |
 | `PaymentConfirmed` | Cliente | Pagamento confirmado | Orders |
+| `PaymentConfirmationVoided` | Cliente | Confirmação de pagamento anulada | Orders |
 | `PaymentDisputed` | Prestador | Pagamento contestado | Account |
+| `PaymentDisputeResolved` | Os dois | Contestação resolvida | Account |
 | Convite para avaliar | Cliente | Avalie o serviço | Reviews |
 | `ReviewPublished` | Prestador | Nova avaliação | Reviews |
 | `ReviewReplied` | Cliente | Resposta à avaliação | Reviews |
-| `MeiVerificationLost` | Prestador | Selo MEI removido | Account |
+| `MeiVerificationLost`, `MeiVerificationFailed` | Prestador | Selo MEI removido / verificação não concluída | Account |
 | `ContentHidden`, `UserSuspended` | Autor | Conteúdo ocultado / conta suspensa | Account |
+| `ContentRestored`, `UserReactivated` | Autor | Conteúdo restaurado / conta reativada | Account |
 
 Textos de referência em `docs/design-system/telas.md`.
 
@@ -87,7 +91,7 @@ Textos de referência em `docs/design-system/telas.md`.
 ## Integrations
 
 - Firebase Cloud Messaging (Admin SDK) com credencial de serviço no cofre.
-- APNs via FCM para iOS.
+- APNs via FCM, com o app iOS.
 
 ## Acceptance Criteria
 
@@ -99,6 +103,8 @@ Textos de referência em `docs/design-system/telas.md`.
 - **AC-6** Dado qualquer push enviado, quando o payload é inspecionado, então não contém nome, endereço, valor nem telefone.
 - **AC-7** Dado um usuário, quando tenta desligar a categoria Account, então recebe 400.
 - **AC-8** Dado um pedido `Completed` sem confirmação de pagamento por 24 h, quando o job roda, então o prestador recebe um único lembrete.
+- **AC-9** Dado um serviço agendado para as 7h30, quando o lembrete é agendado, então ele sai às 21h da noite anterior, no fuso do destinatário.
+- **AC-10** Dado um orçamento recusado pelo cliente, quando o evento é processado, então o prestador recebe a notificação "Orçamento recusado".
 
 ## Deferred Decisions
 

@@ -12,7 +12,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 
 ### In
 
-- Entrar com Google e com Apple (validação do ID token na API).
+- Entrar com Google (validação do ID token na API). O contrato de `POST /auth/apple` fica descrito aqui, mas só é implementado com o app iOS.
 - Criação automática da conta no primeiro login.
 - Sessão com JWT de acesso (10 min) e refresh token rotativo (30 dias deslizantes, 90 absolutos) com detecção de reuso.
 - Sair deste aparelho e sair de todos os aparelhos.
@@ -24,6 +24,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 ### Out
 
 - Login com e-mail e senha, telefone ou outros provedores.
+- Login com Apple até o lançamento do app iOS.
 - Verificação de telefone por código.
 - Exportação de dados pelo app (atendida por solicitação ao suporte no MVP).
 - Painel administrativo.
@@ -48,7 +49,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 | POST | `/api/v1/auth/logout` | `{ allDevices: bool }` | 204 | 401 |
 | GET | `/api/v1/me` | — | `{ id, displayName, email, photoUrl, phoneNumber, roles, hasProviderProfile }` | 401 |
 | PATCH | `/api/v1/me` | `{ displayName?, phoneNumber?, photoKey? }` | `me` | 400, 401 |
-| DELETE | `/api/v1/me` | `{ confirmation: "EXCLUIR" }` | 204 | 400, 401, 409 pedidos agendados em aberto |
+| DELETE | `/api/v1/me` | — (a confirmação é feita no app) | 204 | 401, 409 pedido agendado ou contestação de pagamento aberta |
 | GET | `/api/v1/me/addresses` | — | `[address]` | 401 |
 | POST | `/api/v1/me/addresses` | `{ label, cep, number, complement? }` | 201 `address` | 400 CEP inválido ou não encontrado, 401, 409 limite de 10 |
 | PUT | `/api/v1/me/addresses/{id}` | idem | `address` | 400, 401, 404 |
@@ -61,17 +62,19 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - `/auth/google`, `/auth/apple`, `/auth/refresh`: anônimos, política de rate limit `auth`.
 - Demais rotas: usuário autenticado; tudo filtrado por `sub` do token. Endereço ou aparelho de outro usuário responde 404.
 - `roles` nunca vem do request. `admin` só por tabela interna.
-- Sessão revogada ou conta suspensa/excluída invalida o access token em até 1 minuto (lista de `sid` revogados em cache).
+- Sessão revogada ou conta suspensa/excluída invalida o access token em até 1 minuto. A revogação é gravada no banco (`Session.RevokedAt`, `User.Status`); a validação consulta esse estado por trás de um cache de 1 min ([09-cache.md §4](../09-cache.md)), então reinício e várias instâncias não reabrem o acesso.
 
 ## Edge Cases & Failure Modes
 
-- Mesmo e-mail em Google e Apple: contas são vinculadas por `ExternalLogin`; se o e-mail já existir com outro provedor, vincula ao mesmo usuário somente se o e-mail vier verificado pelos dois provedores.
+- Mesmo e-mail em Google e Apple: contas são vinculadas por `ExternalLogin`; se o e-mail já existir com outro provedor, vincula ao mesmo usuário somente se o e-mail vier verificado pelos dois provedores. Sem essa verificação, o login responde 409 `account.email_in_use` com a orientação de entrar pelo provedor usado antes; o índice único de `Email` continua valendo.
 - Apple com "Ocultar meu e-mail": o e-mail de relay é aceito como e-mail da conta.
 - Apple só envia o nome no primeiro login: o app repassa `fullName`; se não vier, `DisplayName` é a parte antes do `@`, editável depois.
 - Refresh token reapresentado depois de usado: revoga a família inteira, registra auditoria e devolve 401.
 - Dois refresh simultâneos do mesmo aparelho: o `ApiClient` serializa; se mesmo assim chegarem dois, o segundo recebe 401 e o app refaz login silencioso se o provedor permitir.
 - Conta suspensa tenta logar: 403 com ProblemDetails `account.suspended` e motivo genérico.
-- Exclusão com pedidos `Scheduled`: bloqueia com 409 e explica que é preciso concluir ou cancelar antes.
+- Exclusão com pedido `Scheduled` ou contestação de pagamento aberta (como cliente ou prestador): bloqueia com 409 e explica o que resolver antes.
+- Exclusão de quem tem vitrine: pedidos `Sent` e `Quoted` são cancelados com motivo "Conta excluída", a vitrine vira `Removed` (some da busca e do perfil público), o CNPJ fica livre e as avaliações recebidas deixam de aparecer.
+- `DELETE /me` não leva corpo: alguns proxies e clientes HTTP descartam corpo em `DELETE`. A confirmação ("Digite EXCLUIR") acontece no app antes da chamada.
 - JWKS do provedor fora do ar: usa as chaves em cache (até 24 h); sem cache, 503 com `Retry-After`.
 - CEP não encontrado na BrasilAPI: aceita cadastro manual de logradouro, bairro e cidade (cidade escolhida da lista do IBGE).
 
@@ -85,8 +88,8 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 
 ## Integrations
 
-- Google: validação de ID token com JWKS do Google e `aud` = client ids Android e iOS.
-- Apple: validação de ID token com JWKS da Apple, `aud` = bundle id, `nonce` com hash SHA-256.
+- Google: validação de ID token com JWKS do Google (cache em [09-cache.md](../09-cache.md)) e `aud` = client id do Android (e o do iOS quando ele existir).
+- Apple (com o app iOS): validação de ID token com JWKS da Apple, `aud` = bundle id, `nonce` com hash SHA-256.
 - BrasilAPI CEP: logradouro, bairro, cidade e UF a partir do CEP.
 
 ## Acceptance Criteria
@@ -101,8 +104,11 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - **AC-8** Dado um usuário autenticado, quando cadastra um endereço com CEP válido, então logradouro, bairro, cidade (código IBGE) e UF são preenchidos e o endereço aparece em `GET /me/addresses`.
 - **AC-9** Dado o id de um endereço de outro usuário, quando chama `PUT /me/addresses/{id}`, então a resposta é 404.
 - **AC-10** Dado um usuário sem pedidos agendados, quando confirma a exclusão da conta, então a sessão é encerrada, o login seguinte com o mesmo provedor cria uma conta nova e as avaliações antigas aparecem como "Usuário removido".
-- **AC-11** Dado um usuário com pedido `Scheduled`, quando tenta excluir a conta, então recebe 409 explicando que precisa concluir ou cancelar o pedido.
+- **AC-11** Dado um usuário com pedido `Scheduled` ou contestação de pagamento aberta, quando tenta excluir a conta, então recebe 409 explicando o que precisa resolver.
 - **AC-12** Dado qualquer endpoint desta spec que exige login, quando chamado sem token, então responde 401.
+- **AC-13** Dado um prestador sem pedidos agendados nem contestações, quando exclui a conta, então os pedidos `Sent` e `Quoted` dele são cancelados, a vitrine responde 404 no perfil público e o mesmo CNPJ pode ser usado em outra vitrine.
+- **AC-14** Dada uma conta Google com o e-mail `ana@x.com`, quando alguém entra pela Apple com o mesmo e-mail sem verificação dos dois provedores, então recebe 409 `account.email_in_use` e nenhuma conta nova é criada.
+- **AC-15** Dada uma sessão revogada, quando a API é reiniciada e o access token antigo é usado, então a resposta é 401.
 
 ## Deferred Decisions
 

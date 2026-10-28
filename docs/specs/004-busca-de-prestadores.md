@@ -29,14 +29,15 @@ O cliente precisa achar rápido quem atende onde ele está (ou na cidade que esc
 Sem agregados novos. Usa `Provider` (spec 003), `City` (spec 002) e:
 
 - `Favorite`: `UserId`, `ProviderId`, `CreatedAt` (único por par).
-- Projeção de busca (leitura): `ProviderSearchItem` com `Id`, `DisplayName`, `Headline`, `Initials`, `PhotoUrl?`, `RatingScore?` (nulo com menos de 3 avaliações), `ReviewCount`, `Neighborhood`, `CityName`, `DistanceKm?` (arredondada; só com GPS), `MeiVerified`, `AvailableToday`, `ResponseTimeBucket?`, `PriceFrom?`.
+- Projeção de busca (leitura): `ProviderSearchItem` com `Id`, `DisplayName`, `Headline`, `Initials`, `PhotoUrl?`, `RatingScore?` (nulo com menos de 3 avaliações), `ReviewCount`, `Neighborhood`, `CityName`, `DistanceKm?` (arredondada, do ponto público; só com GPS), `MeiVerified`, `AvailableToday` (calculado na consulta: ligado hoje no fuso da cidade base), `ResponseTimeBucket?`, `PriceFrom?`, `PriceUnit?` ("a partir de" conforme [02-regras-de-negocio.md §3](../02-regras-de-negocio.md)).
+- Área de atendimento na busca: com GPS, o ponto do cliente precisa estar dentro do raio medido do **ponto público**; sem GPS, aparecem os prestadores com cidade base na cidade escolhida e os de fora cujo raio, do ponto público, alcança o limite do município. O endereço base nunca entra no filtro.
 - Relevância: combinação de correspondência de texto, nota bayesiana, número de avaliações (log), completude do perfil, disponibilidade hoje e, com GPS, proximidade. Pesos configuráveis, sem patrocínio no MVP.
 
 ## API Contract
 
 | Verbo | Rota | Request | Response | Erros |
 | --- | --- | --- | --- | --- |
-| GET | `/api/v1/providers` | `q?`, `categoryId?`, `lat?`, `lng?`, `cityIbgeCode?`, `maxDistanceKm?` (1–50), `minRating?` (3–5), `meiVerified?`, `availableToday?`, `maxPriceFrom?`, `sort?` (`relevance`, `distance`, `rating`, `price`), `page?` (1–10), `pageSize?` (≤ 30) | `{ items: [ProviderSearchItem], page, pageSize, hasMore, context: { mode, city } }` | 400 (ex.: `sort=distance` sem coordenadas, nem `lat/lng` nem `cityIbgeCode`), 429 |
+| GET | `/api/v1/providers` | `q?`, `categoryId?`, `lat?`, `lng?`, `cityIbgeCode?`, `maxDistanceKm?` (1–50), `minRating?` (3–5), `meiVerified?`, `availableToday?`, `maxPriceFrom?` (só preços por serviço), `sort?` (`relevance`, `distance`, `rating`, `price`; `price` considera só preços por serviço), `page?` (1–10), `pageSize?` (≤ 30) | `{ items: [ProviderSearchItem], page, pageSize, hasMore, context: { mode, city } }` | 400 (ex.: `sort=distance` sem coordenadas, nem `lat/lng` nem `cityIbgeCode`), 429 |
 | GET | `/api/v1/home?lat=&lng=&cityIbgeCode=` | contexto de localização | `{ categories, availableNow: [..10], topRated: [..10], city }` | 400, 429 |
 | GET | `/api/v1/me/favorites?page=` | — | `{ items: [ProviderSearchItem], hasMore }` | 401 |
 | PUT | `/api/v1/me/favorites/{providerId}` | — | 204 | 401, 404 |
@@ -51,7 +52,9 @@ Sem agregados novos. Usa `Provider` (spec 003), `City` (spec 002) e:
 ## Edge Cases & Failure Modes
 
 - Sem `lat/lng` e sem `cityIbgeCode`: 400 (o app sempre tem um dos dois).
-- Com `lat/lng` e `cityIbgeCode` de outra cidade: vale a cidade escolhida como centro (centroide); a distância não é exibida.
+- Com `lat/lng` e `cityIbgeCode` de outra cidade: vale a regra sem GPS para a cidade escolhida; a distância não é exibida.
+- Cidade grande sem GPS (ex.: São Paulo): prestador da Zona Sul com raio de 5 km aparece para quem escolheu São Paulo, porque a cidade base é a escolhida.
+- Prestador só com preço por m² ou por hora: o card mostra a unidade; ele não entra no filtro `maxPriceFrom` nem na ordenação por preço.
 - Termo com erro ("eletrisista"): o trigram encontra "eletricista".
 - Termo só com stopwords ou vazio após normalização: busca só pelos filtros.
 - Cidade sem prestadores: lista vazia + `context.city` para o app mostrar o estado vazio com convite.
@@ -63,9 +66,9 @@ Sem agregados novos. Usa `Provider` (spec 003), `City` (spec 002) e:
 ## Non-Functional Requirements
 
 - p95 ≤ 400 ms para buscas com GPS e texto, com 50 mil prestadores ativos.
-- Índices: GiST em `base_location`, GIN em `search_vector`, trigram em nome normalizado; consulta com pré-filtro de 50 km.
-- Cache de 60 s para `/home` por célula de ~2 km e por cidade.
-- Distância calculada a partir do ponto público e arredondada (regras em [02-regras-de-negocio.md §2](../02-regras-de-negocio.md)).
+- Índices: GiST em `public_location` e `cities.boundary`, GIN em `search_vector`, trigram em nome normalizado; consulta com pré-filtro de 50 km.
+- `GET /providers` não tem cache (sempre do banco); `/home` tem cache de 60 s por célula de ~2 km e por cidade ([09-cache.md](../09-cache.md)).
+- Filtro de raio, filtro de distância máxima e distância exibida usam o mesmo ponto público, arredondado conforme [02-regras-de-negocio.md §2](../02-regras-de-negocio.md): o card nunca mostra "10,3 km" com `maxDistanceKm=10`.
 
 ## Integrations
 
@@ -74,7 +77,7 @@ Nenhuma externa. Usa PostGIS, `unaccent` e `pg_trgm`.
 ## Acceptance Criteria
 
 - **AC-1** Dados prestadores publicados a 2 km e a 12 km de um ponto, ambos com raio de 15 km, quando o cliente busca com esse ponto e `sort=distance`, então o de 2 km vem primeiro, a distância do primeiro vem com uma casa decimal e a do segundo como inteiro (calculadas a partir do ponto público).
-- **AC-2** Dado um prestador a 8 km com raio de 5 km, quando o cliente busca a partir desse ponto, então ele não aparece.
+- **AC-2** Dado um prestador cujo ponto público está a 8 km do cliente, com raio de 5 km, quando o cliente busca a partir desse ponto, então ele não aparece, mesmo que o endereço base esteja a menos de 5 km.
 - **AC-3** Dado o termo "eletrisista", quando o cliente busca, então prestadores de Elétrica aparecem.
 - **AC-4** Dado o termo "pintor" sem acento e um prestador com "Pintura" no título, quando busca, então ele aparece.
 - **AC-5** Dado `cityIbgeCode` sem coordenadas, quando busca, então os resultados vêm ordenados por relevância, sem `distanceKm`.
@@ -85,6 +88,10 @@ Nenhuma externa. Usa PostGIS, `unaccent` e `pg_trgm`.
 - **AC-10** Dada qualquer resposta da busca, quando inspecionada, então não contém telefone, endereço nem coordenadas.
 - **AC-11** Dado um usuário autenticado, quando favorita e depois lista favoritos, então o prestador aparece; quando remove, some.
 - **AC-12** Dado um cliente que excede 60 buscas por minuto, quando faz a seguinte, então recebe 429 com `Retry-After`.
+- **AC-13** Dado um prestador com cidade base São Paulo e raio de 5 km a 15 km do centroide, quando o cliente busca sem GPS com `cityIbgeCode` de São Paulo, então ele aparece.
+- **AC-14** Dado um prestador de cidade vizinha cujo raio, a partir do ponto público, alcança o limite da cidade escolhida, quando o cliente busca sem GPS nessa cidade, então ele aparece.
+- **AC-15** Dado um prestador com serviços só "a partir de R$ 15/m²", quando aparece na busca, então o card traz o valor com a unidade e ele não entra em `sort=price` nem em `maxPriceFrom`.
+- **AC-16** Dado `maxDistanceKm=10`, quando busca com GPS, então nenhum resultado traz `distanceKm` acima de 10.
 
 ## Deferred Decisions
 

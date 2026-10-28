@@ -36,7 +36,7 @@ Backend:
 
 App:
 
-- Projeto Flutter com flavors, go_router, Riverpod, `ApiClient` com refresh e ProblemDetails.
+- Projeto Flutter com flavors Android, go_router, Riverpod, `ApiClient` com refresh e ProblemDetails.
 - Design system no código (`core/design_system/` conforme `docs/design-system/flutter.md`), fontes, ícones e ícone do app.
 - Telas base: boas-vindas e esqueleto das abas.
 
@@ -46,7 +46,7 @@ Pronto quando: `GET /health/ready` responde em staging, o app abre em dev aponta
 
 | Ordem | Spec | Entrega visível |
 | --- | --- | --- |
-| 1 | [001-contas-e-autenticacao](specs/001-contas-e-autenticacao.md) | Entrar com Google/Apple, sessão segura, conta, endereços, excluir conta |
+| 1 | [001-contas-e-autenticacao](specs/001-contas-e-autenticacao.md) | Entrar com Google, sessão segura, conta, endereços, excluir conta |
 | 2 | [002-localizacao-e-cidades](specs/002-localizacao-e-cidades.md) | Pré-permissão, cidade detectada pelo GPS, escolher qualquer cidade |
 | 3 | [003-vitrine-do-prestador](specs/003-vitrine-do-prestador.md) | Onboarding do prestador, vitrine pública, fotos, serviços, selo MEI, painel inicial |
 | 4 | [004-busca-de-prestadores](specs/004-busca-de-prestadores.md) | Início, categorias, busca com filtros e ordenação, favoritos |
@@ -58,7 +58,7 @@ Pronto quando: `GET /health/ready` responde em staging, o app abre em dev aponta
 
 ## Lançamento
 
-- Contas de desenvolvedor Apple e Google, política de privacidade e termos de uso publicados, formulário de segurança de dados das lojas, exclusão de conta acessível.
+- Primeiro lançamento só na **Google Play**: conta de desenvolvedor Google, teste fechado exigido pela Play para contas novas, política de privacidade e termos de uso publicados, formulário de segurança de dados, exclusão de conta acessível pelo app e por uma página web, `assetlinks.json` em `vitrio.app` para os links de perfil.
 - Beta fechado com prestadores reais de uma **cidade piloto** (sugestão: Jaboticabal, onde é possível cadastrar os primeiros prestadores pessoalmente). O app funciona em qualquer cidade; o piloto resolve o "ovo e galinha" da oferta.
 - Metas do piloto: 50 prestadores com vitrine publicada, 100 pedidos, 60% com pagamento confirmado, nota média do app nas lojas acima de 4,5.
 
@@ -66,6 +66,7 @@ Pronto quando: `GET /health/ready` responde em staging, o app abre em dev aponta
 
 | Tema | Itens |
 | --- | --- |
+| iOS | App na App Store com o mesmo código: login com Apple, flavors nativos, APNs via FCM, Universal Links, conta de desenvolvedor Apple |
 | Conversa | Chat por pedido, remarcação com proposta de horário |
 | Descoberta | Mapa de resultados, buscas recentes, indicação de prestadores pelos clientes |
 | Confiança | Verificação de telefone por código, Play Integrity e App Attest, bloqueio de usuário, avaliação do cliente pelo prestador |

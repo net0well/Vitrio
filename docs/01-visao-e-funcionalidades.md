@@ -31,14 +31,16 @@
 
 ## Funcionalidades
 
-Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica no backlog.
+Legenda: **MVP** entra na primeira versão publicada; **Depois** fica no backlog.
+
+**Plataformas:** o primeiro lançamento é só **Android** (Google Play). O app iOS vem depois, com o mesmo código Flutter, e traz junto o login com Apple (exigido pela App Store quando há login social).
 
 ### 1. Conta e acesso
 
 | Funcionalidade | Descrição | Quando |
 | --- | --- | --- |
 | Entrar com Google | Login social; cria a conta no primeiro acesso | MVP |
-| Entrar com Apple | Obrigatório no iOS quando há login social | MVP |
+| Entrar com Apple | Obrigatório no iOS quando há login social | Com o app iOS |
 | Navegar sem conta | Busca, perfis e avaliações abertos; login só para pedir orçamento, favoritar, avaliar ou anunciar | MVP |
 | Dados básicos | Nome de exibição, foto opcional, telefone (opcional para cliente) | MVP |
 | Endereços salvos | Casa, trabalho etc., cadastrados por CEP com número e complemento | MVP |
@@ -57,7 +59,7 @@ Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica 
 | Escolher cidade | Busca entre todas as cidades do Brasil (acentos opcionais), com UF, e cidades recentes | MVP |
 | Trocar o centro da busca | Procurar em outra cidade sem desligar o GPS; voltar para "Perto de mim" com um toque | MVP |
 | Funcionar sem GPS | Ordena por relevância dentro da cidade escolhida, sem mostrar distância | MVP |
-| Cidades com poucos prestadores | Mensagem honesta + convite para indicar profissionais e para anunciar | MVP |
+| Cidades com poucos prestadores | Mensagem honesta + convite para anunciar e para mandar o Vitrio a um profissional conhecido (compartilhamento do sistema, sem programa de indicação) | MVP |
 
 ### 3. Descoberta e busca
 
@@ -70,7 +72,7 @@ Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica 
 | "Disponíveis agora" | Atalho para prestadores com "Disponível hoje" ligado | MVP |
 | Bem avaliados perto de você | Carrossel na Início | MVP |
 | Favoritos | Salvar prestadores | MVP |
-| Compartilhar perfil | Link público que abre o app ou a loja | MVP |
+| Compartilhar perfil | Link `https://vitrio.app/p/{id}` que abre o app (Android App Links) ou, sem o app, uma página simples com o perfil resumido e o botão da Google Play | MVP |
 | Mapa de resultados | Alternativa à lista | Depois |
 | Buscas recentes | Atalho para repetir uma busca | Depois |
 
@@ -78,8 +80,8 @@ Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica 
 
 | Funcionalidade | Descrição | Quando |
 | --- | --- | --- |
-| Cabeçalho | Nome, profissão, anos de experiência, selos (MEI verificado, Atende hoje, tempo de resposta) | MVP |
-| Métricas | Nota e número de avaliações, serviços feitos pelo app, distância | MVP |
+| Cabeçalho | Nome, profissão, anos de experiência, selos (MEI verificado, Atende hoje, tempo de resposta), calculados conforme [02-regras-de-negocio.md §3](02-regras-de-negocio.md) | MVP |
+| Métricas | Nota e número de avaliações, serviços feitos pelo app (a partir de 5), distância | MVP |
 | Sobre | Texto livre do prestador | MVP |
 | Onde e quando atende | Cidade base, raio, bairros, dias e horários, atende emergência | MVP |
 | Serviços e preços | Lista com "a partir de" ou "Sob orçamento" | MVP |
@@ -120,7 +122,7 @@ Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica 
 | Cancelar | Qualquer lado, antes de concluir, com motivo | MVP |
 | Concluir serviço | Quem marcar primeiro; o outro lado é avisado | MVP |
 | Lista de pedidos | Cliente: Em andamento / Finalizados. Prestador: Novos / Em andamento / Finalizados | MVP |
-| Lembretes | 1 h antes do horário agendado, para os dois | MVP |
+| Lembretes | 1 h antes do horário agendado, para os dois (na véspera às 21h se esse horário cair no silêncio noturno) | MVP |
 | Remarcar com proposta de novo horário | Um lado propõe, o outro aceita | Depois |
 | Chat dentro do app | Mensagens entre cliente e prestador por pedido | Depois |
 
@@ -140,10 +142,10 @@ Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica 
 | Funcionalidade | Descrição | Quando |
 | --- | --- | --- |
 | Avaliar serviço | Nota 1–5, tags, comentário (até 400), até 3 fotos, "Recomendo" | MVP |
-| Elegibilidade | Só o cliente do pedido, a partir de Concluído; uma por pedido | MVP |
+| Elegibilidade | Só o cliente do pedido, de Concluído até 30 dias depois; uma por pedido | MVP |
 | Editar | Até 7 dias após publicar | MVP |
 | Responder | O prestador responde uma vez, publicamente | MVP |
-| Nota do prestador | Média bayesiana exibida com uma casa decimal; "Novo no Vitrio" até 3 avaliações | MVP |
+| Nota do prestador | Média bayesiana exibida com uma casa decimal; "Novo no Vitrio" com menos de 3 avaliações | MVP |
 | Tags mais citadas | Contagem por tag no perfil | MVP |
 | Denunciar avaliação | Pelo prestador ou por qualquer usuário | MVP |
 | Cliente avaliado pelo prestador | Reputação do cliente | Depois |
@@ -161,7 +163,7 @@ Legenda: **MVP** entra na primeira versão publicada nas lojas; **Depois** fica 
 | Funcionalidade | Descrição | Quando |
 | --- | --- | --- |
 | Denúncias | Perfil, foto, avaliação ou pedido; motivos padronizados | MVP |
-| Ocultação automática | Conteúdo com 3 denúncias abertas de pessoas diferentes fica oculto até revisão | MVP |
+| Ocultação automática | Foto, avaliação ou resposta com 3 denúncias abertas de pessoas diferentes fica oculta até revisão; vitrine denunciada vai para o topo da fila e só sai do ar por decisão da moderação | MVP |
 | Moderação | Fila de denúncias, ocultar, restaurar, suspender e reativar perfis | MVP (endpoints + ferramenta interna) |
 | Limites de uso | Rate limit em login, pedidos, avaliações e denúncias | MVP |
 | Painel administrativo web | Interface para moderação, categorias e métricas | Depois |
@@ -173,7 +175,7 @@ Nada é cobrado no MVP. Caminhos previstos, sempre do lado do prestador e nunca 
 
 ## Fora do MVP
 
-Pagamento dentro do app, chat interno, remarcação com proposta, mapa, painel administrativo web, avaliação de clientes, verificação de telefone, outros idiomas e versão web para clientes.
+App iOS e login com Apple, pagamento dentro do app, chat interno, remarcação com proposta, mapa, programa de indicação, painel administrativo web, avaliação de clientes, verificação de telefone, outros idiomas e versão web para clientes.
 
 ## Indicadores
 

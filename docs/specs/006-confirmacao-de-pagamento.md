@@ -27,9 +27,9 @@ No MVP o pagamento é combinado entre cliente e prestador, fora do app. Mesmo as
 
 - `PaymentConfirmation` (entidade do agregado `Order`): `Id`, `OrderId`, `Amount` (`Money`), `Method` (`Pix`, `Cash`, `DebitCard`, `CreditCard`, `BankTransfer`, `Other`), `ReceivedAt`, `Note?` (até 300), `DifferenceReason?` (até 300, obrigatório se `Amount` ≠ valor do orçamento aceito), `ConfirmedAt`, `Status` (`Valid`, `Voided`), `VoidedAt?`, `VoidedBy?` (`Provider`, `Support`), `VoidReason?`.
 - `PaymentDispute`: `Id`, `PaymentConfirmationId`, `Reason` (`AmountDiffers`, `MethodDiffers`, `NotPaidYet`, `NeverHired`, `Other`), `Details?` (até 500), `OpenedAt`, `Status` (`Open`, `ResolvedKept`, `ResolvedVoided`), `ResolvedAt?`, `ResolutionNote?`.
-- Transições de `Order`: `Completed` → `PaymentConfirmed`; `PaymentConfirmed` → `PaymentDisputed` → `PaymentConfirmed` ou `PaymentVoided`; anulação pelo prestador em 24 h volta o pedido para `Completed`.
+- Transições de `Order`: `Completed` → `PaymentConfirmed`; `PaymentConfirmed` → `PaymentDisputed` → `PaymentConfirmed` ou `PaymentVoided`; anulação pelo prestador em 24 h volta o pedido para `Completed` (e permite confirmar de novo). `PaymentVoided` é final: nova confirmação só pelo suporte.
 - Eventos: `PaymentConfirmed`, `PaymentConfirmationVoided`, `PaymentDisputed`, `PaymentDisputeResolved`.
-- Leitura: `EarningsSummary` por prestador e mês (`Total`, `Count`, por `Method`), só de confirmações `Valid`.
+- Leitura: `EarningsSummary` por prestador e mês (`Total`, `Count`, por `Method`), só de confirmações `Valid`. O mês é o de `ReceivedAt` no fuso da cidade do pedido (um Pix recebido às 23h30 de 31/10 em Manaus entra em outubro).
 
 ## API Contract
 
@@ -67,8 +67,9 @@ No MVP o pagamento é combinado entre cliente e prestador, fora do app. Mesmo as
 
 - Valores com `numeric(12,2)` e aritmética em `decimal`; exibição em BRL no fuso da cidade do pedido.
 - Registros nunca são apagados; anulação é uma mudança de status com auditoria.
-- Retenção de 5 anos, anonimizada após exclusão de conta.
-- Resumo de recebimentos p95 ≤ 200 ms (índice por `provider_id, confirmed_at`).
+- Retenção de 5 anos, anonimizada após exclusão de conta. A auditoria de confirmação, anulação, contestação e resolução também fica 5 anos.
+- Resumo de recebimentos p95 ≤ 200 ms (índice por `provider_id, received_at`).
+- `PaymentConfirmationVoided` e a resolução que anula recalculam os "serviços feitos pelo app" do prestador.
 
 ## Integrations
 
@@ -88,6 +89,8 @@ Nenhuma externa. Eventos na outbox para notificações (spec 009).
 - **AC-10** Dadas confirmações válidas de R$ 180 (Pix) e R$ 90 (Dinheiro) e uma anulada de R$ 50 no mês, quando o prestador consulta o resumo, então o total é R$ 270,00 com 2 registros.
 - **AC-11** Dado o mesmo `Idempotency-Key` reenviado, quando confirma de novo, então recebe a mesma resposta e só existe uma confirmação.
 - **AC-12** Dada qualquer confirmação, anulação, contestação ou resolução, quando a auditoria é consultada, então existe um evento com autor, data e valores.
+- **AC-13** Dado um pedido `PaymentVoided`, quando o prestador tenta confirmar de novo, então recebe 409.
+- **AC-14** Dada uma confirmação com `ReceivedAt` às 23h30 de 31/10 no fuso de Manaus, quando o prestador consulta o resumo de outubro, então ela está incluída.
 
 ## Deferred Decisions
 

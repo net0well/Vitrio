@@ -19,10 +19,12 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 - Serviços (até 20) com preço "a partir de" ou "Sob orçamento".
 - Fotos de trabalhos (até 30), com legenda, reordenação e exclusão.
 - Disponibilidade semanal (dias e faixas) e "Atende emergências".
-- "Disponível hoje" (liga/desliga; desliga sozinho às 23:59 no fuso da cidade base).
+- "Disponível hoje" (liga/desliga; vale só no dia em que foi ligado, no fuso da cidade base, calculado na leitura).
 - Verificação MEI por CNPJ (selo) e revalidação a cada 30 dias.
 - Publicar, pausar e editar.
 - Perfil público (`GET /providers/{id}`) e painel inicial do prestador (contadores).
+- Selos e números do perfil conforme [02-regras-de-negocio.md §3](../02-regras-de-negocio.md): MEI verificado, Disponível hoje, Responde em ~X, serviços feitos pelo app.
+- Link para compartilhar o perfil: `https://vitrio.app/p/{id}`, aberto pelo app via Android App Links (`assetlinks.json` em `vitrio.app`); sem o app, uma página estática com nome, profissão, nota e o botão da Google Play.
 
 ### Out
 
@@ -31,7 +33,8 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 
 ## Domain Model
 
-- `Provider` (agregado): `Id`, `UserId` (único), `DisplayName`, `Headline` (profissão, até 60), `About` (40–600), `YearsOfExperience?`, `PhotoKey?`, `ContactPhone` (E.164, criptografado), `WhatsAppEnabled`, `Status` (`Draft`, `Published`, `Paused`, `Suspended`), `CityIbgeCode`, `BaseAddress` (criptografado), `BaseLocation` (privado), `PublicLocation` (centro da célula de ~500 m), `ServiceRadiusMeters` (1.000–50.000), `AvailableToday`, `AvailableTodaySetAt?`, `HandlesEmergencies`, `RatingScore`, `ReviewCount`, `CompletedOrders`, `ResponseTimeBucket?`, `SearchVector`.
+- `Provider` (agregado): `Id`, `UserId` (único), `DisplayName`, `Headline` (profissão, até 60), `About` (40–600), `YearsOfExperience?`, `PhotoKey?`, `ContactPhone` (E.164, criptografado), `WhatsAppEnabled`, `Status` (`Draft`, `Published`, `Paused`, `Suspended`, `Removed`), `CityIbgeCode`, `BaseAddress` (criptografado), `BaseLocation` (privado, nunca usado em filtro nem distância), `PublicLocation` (centro da célula de ~500 m; usado em todo filtro e distância), `ServiceRadiusMeters` (1.000–50.000), `AvailableToday`, `AvailableTodaySetAt?`, `HandlesEmergencies`, `RatingScore`, `ReviewCount`, `CompletedOrders`, `ResponseTimeBucket?`, `ResponseSampleSize`, `LateCancellations90d`, `SearchVector`.
+- Campos derivados (`RatingScore`, `CompletedOrders`, `ResponseTimeBucket`, `LateCancellations90d`) só mudam por handler ou job, sempre recalculados do zero, com as regras de [02-regras-de-negocio.md §3 e §4](../02-regras-de-negocio.md).
 - `ProviderCategory`: `ProviderId`, `CategoryId` (até 3; uma marcada como principal).
 - `ProviderService`: `Id`, `Title` (até 60), `Description?` (até 140), `PriceFrom?` (`Money`), `PriceUnit` (`PerService`, `PerHour`, `PerDay`, `PerSquareMeter`, `PerUnit`), `OnQuote` (bool), `SortOrder`.
 - `ServedNeighborhood`: `ProviderId`, `Name`, `NameNormalized`.
@@ -46,7 +49,7 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 | Verbo | Rota | Request | Response | Erros |
 | --- | --- | --- | --- | --- |
 | GET | `/api/v1/categories` | — | `[{ id, slug, name, icon }]` | — |
-| POST | `/api/v1/provider` | `{ displayName, headline }` | 201 `providerDraft` | 400, 401, 409 já existe |
+| POST | `/api/v1/provider` | `{ displayName, headline }` | 201 `providerDraft` (o app chama `POST /auth/refresh` em seguida para o token trazer o papel `provider`) | 400, 401, 409 já existe |
 | GET | `/api/v1/provider` | — | `providerPrivate` (inclui endereço base e checklist de publicação) | 401, 404 |
 | PATCH | `/api/v1/provider` | `{ displayName?, headline?, about?, yearsOfExperience?, photoKey?, contactPhone?, whatsAppEnabled?, handlesEmergencies? }` | `providerPrivate` | 400, 401, 409 concorrência |
 | PUT | `/api/v1/provider/categories` | `{ categoryIds: [..3], primaryCategoryId }` | 204 | 400, 401 |
@@ -68,7 +71,7 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 
 ## Authorization
 
-- Rotas `/provider/*`: autenticado; política `Provider` exceto `POST /provider` (qualquer usuário sem vitrine). Tudo filtrado pelo `UserId` do token.
+- Rotas `/provider/*`: autenticado; política `Provider` (vitrine em `Draft`, `Published` ou `Paused`) exceto `POST /provider` (qualquer usuário sem vitrine). Tudo filtrado pelo `UserId` do token. Vitrine pausada continua gerenciável, inclusive para despausar e atender pedidos em andamento.
 - `GET /providers/{id}` e fotos: anônimo, política `profile`.
 - Status, nota, contadores, selo e `PublicLocation` nunca vêm do request.
 - Endereço base e `BaseLocation` só em `GET /provider` do próprio dono; nunca em respostas públicas nem em logs.
@@ -78,8 +81,9 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 - Publicar sem campos mínimos: 422 com a lista do que falta (`about`, `categories`, `serviceArea`, `services`, `contactPhone`).
 - CNPJ válido mas baixado, inapto ou não optante pelo MEI: `Failed` com motivo legível ("CNPJ não é optante pelo MEI").
 - CNPJ já usado por outra vitrine: 409; denúncia possível pelo dono legítimo.
-- BrasilAPI fora do ar: `Pending`; job tenta de novo a cada 6 h por até 3 dias.
-- Revalidação perde o selo: `Lost`, push ao prestador, selo some da busca.
+- BrasilAPI fora do ar: `Pending`; job tenta de novo a cada 6 h por até 3 dias. Depois disso, `Failed` com motivo "Não conseguimos consultar o CNPJ agora", push ao prestador (`MeiVerificationFailed`) e opção de tentar de novo.
+- Revalidação perde o selo: `Lost`, push ao prestador, selo some da busca e do perfil na hora (cache invalidado).
+- Qualquer mudança no prestador vinda de job ou evento (selo, nota, tempo de resposta, serviços feitos, foto ocultada, suspensão) invalida o perfil público pelo ponto único de [09-cache.md §3](../09-cache.md).
 - Upload confirmado mas arquivo inválido (não é imagem, > 10 MB, > 8000 px): foto vai para `Rejected` e o app mostra o motivo.
 - Foto com EXIF de GPS: metadados removidos antes de publicar.
 - Raio que cobre várias cidades: permitido; a cidade base continua a do endereço.
@@ -89,7 +93,7 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 
 ## Non-Functional Requirements
 
-- `GET /providers/{id}` p95 ≤ 150 ms com `HybridCache` (invalida ao editar, 5 min).
+- `GET /providers/{id}` p95 ≤ 150 ms com `HybridCache` (5 min no Redis, 30 s local, invalidado por qualquer mudança no prestador; "Disponível hoje" e distância calculados fora do cache). Ver [09-cache.md](../09-cache.md).
 - Fotos públicas servidas por CDN; miniatura ≤ 60 KB.
 - Ponto público recalculado sempre que o endereço base muda; auditoria de mudança de endereço base.
 - Revalidação MEI em lotes de 200 com intervalo para respeitar a BrasilAPI.
@@ -111,10 +115,14 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 - **AC-7** Dada uma vitrine publicada, quando qualquer pessoa consulta o perfil público, então a resposta não contém endereço base nem coordenadas, e a distância (se informada a localização) é arredondada.
 - **AC-8** Dada uma foto JPEG com GPS no EXIF, quando é processada, então a versão publicada não contém metadados de localização.
 - **AC-9** Dada uma vitrine com 30 fotos, quando pede nova URL de upload, então recebe 409.
-- **AC-10** Dado "Disponível hoje" ligado, quando passam as 23:59 no fuso da cidade base, então ele desliga sozinho.
+- **AC-10** Dado "Disponível hoje" ligado ontem no fuso da cidade base, quando alguém consulta o perfil ou a busca hoje, então o selo não aparece, sem depender de nenhum job.
 - **AC-11** Dado o id de foto de outra vitrine, quando o prestador tenta apagar, então recebe 404.
 - **AC-12** Dada uma vitrine pausada, quando alguém consulta o perfil público, então recebe 404.
 - **AC-13** Dado um texto "Sobre" com número de telefone, quando salva, então recebe 400 explicando que contato é pelo botão de WhatsApp.
+- **AC-14** Dada uma vitrine pausada, quando o prestador chama `POST /provider/publish`, então ela volta a `Published` (a política `Provider` aceita vitrine pausada).
+- **AC-15** Dado um selo MEI que a revalidação marca como `Lost`, quando o perfil público é consultado logo depois, então o selo não aparece.
+- **AC-16** Dada uma verificação MEI `Pending` há mais de 3 dias, quando o job roda, então ela vira `Failed` com motivo e o prestador recebe aviso.
+- **AC-17** Dado o link `https://vitrio.app/p/{id}` de uma vitrine publicada, quando aberto num Android com o app, então o app abre no perfil; sem o app, a página mostra o perfil resumido e o botão da Google Play.
 
 ## Deferred Decisions
 
@@ -128,4 +136,3 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 
 - Lista inicial de categorias (proposta: Elétrica, Hidráulica, Pedreiro, Pintura, Diarista, Jardinagem, Montagem de móveis, Ar-condicionado, Marido de aluguel, Fretes e mudanças, Beleza a domicílio, Aulas particulares, Informática, Cuidador(a), Pet).
 - Prestador sem CNPJ e sem telefone de WhatsApp pode publicar? (proposta: sim, telefone é obrigatório mas WhatsApp é opcional)
-- Mostrar "serviços feitos pelo Vitrio" a partir de quantos pedidos? (proposta: a partir de 5)

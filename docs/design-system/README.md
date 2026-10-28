@@ -88,7 +88,7 @@ Curto e funcional: 150–220ms, `ease-out`, sem quique. Use para troca de estado
 
 ## Iconografia
 
-- Conjunto próprio em `assets/Icons/`: grade de 24px, traço 2px (2.2–2.4 em tamanhos de 14–18px), pontas e junções arredondadas, sem preenchimento. A única exceção é a estrela de nota, preenchida.
+- Conjunto próprio em `assets/icons/`: grade de 24px, traço 2px (2.2–2.4 em tamanhos de 14–18px), pontas e junções arredondadas, sem preenchimento. A única exceção é a estrela de nota, preenchida.
 - Ícones herdam a cor do texto ao lado. Ícone de categoria vai numa caixa de 40px (`size-icon-box`) em `plum-soft` com o ícone em `plum` e raio `radius-md`.
 - Sem emoji e sem logos de terceiros. WhatsApp usa o ícone `message` com a palavra "WhatsApp"; Pix usa `qr` com a palavra "Pix".
 - Botões só de ícone sempre têm rótulo acessível ("Voltar", "Notificações", "Salvar nos favoritos").
@@ -120,5 +120,5 @@ A marca é uma vitrine: uma janela com três vidros, um alto à esquerda e dois 
 ## Como usar este sistema
 
 - **App (Flutter):** siga a seção "Implementação em Flutter": tokens viram `VitrioColors`, `VitrioText`, `VitrioSpace` e `VitrioRadius`, e cada componente abaixo tem um widget correspondente.
-- **Web e protótipos:** os componentes estão em `components/bundle.js` como `window.Vitrio` (React 18) e usam as classes de `components/bundle.css` sobre as variáveis de `tokens.css`.
+- **Web e protótipos:** os componentes estão em `components/bundle.js` como `window.Vitrio` (React 18) e usam as classes de `components/bundle.css`, que esperam as variáveis CSS dos tokens (`--plum`, `--surface` etc.) com os valores de `tokens.json`; o arquivo `tokens.css` com essas variáveis ainda não está no repositório.
 - **Telas e fluxos:** a seção "Plano de telas e fluxos" lista cada tela, seus estados e as regras de negócio que aparecem na interface.

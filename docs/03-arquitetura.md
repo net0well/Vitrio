@@ -65,10 +65,11 @@ vitrio/
 | Erros | Result pattern + ProblemDetails (RFC 9457) | Exceções só para o excepcional (ADR-004) |
 | Persistência | EF Core 10 + Npgsql + NetTopologySuite | `DbContext` direto, sem repositório genérico |
 | Banco | PostgreSQL 17 + PostGIS, `unaccent`, `pg_trgm` | ADR-005 |
-| Autenticação | Login Google/Apple validado na API + JWT próprio + refresh token rotativo | Sem Keycloak no MVP (ADR-006) |
-| Jobs | Hangfire + Hangfire.PostgreSql | Expirações, lembretes, revalidação MEI |
+| Autenticação | Login Google (Apple com o app iOS) validado na API + JWT próprio + refresh token rotativo | Sem Keycloak no MVP (ADR-006) |
+| Jobs | Hangfire + Hangfire.PostgreSql | Lista na §7 |
 | Eventos | Domain events → tabela outbox → despachante em `BackgroundService` | Sem broker no início (ADR-009) |
-| Cache | `HybridCache` | Categorias, cidades, perfis públicos |
+| Cache | `HybridCache` com memória local (L1) e Redis (L2) | Política completa em [09-cache.md](09-cache.md) (ADR-013) |
+| Mapeamento | Manual, com métodos estáticos nos DTOs (`From`, `ToCommand`) | Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly) |
 | Imagens | S3 compatível (Cloudflare R2 em produção, MinIO local) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
 | Push | Firebase Admin SDK (FCM) | |
 | Documentação da API | OpenAPI nativo do ASP.NET Core + Scalar | Só fora de produção |
@@ -197,7 +198,7 @@ Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas 
 
 - PostgreSQL 17 com extensões `postgis`, `unaccent`, `pg_trgm`, `citext`.
 - Pontos como `geography(Point, 4326)`; limites de município como `geography(MultiPolygon, 4326)`.
-- Índices: GiST em `providers.base_location` e `cities.boundary`; GIN em `providers.search_vector` (tsvector com configuração `portuguese` + `unaccent`) e trigram em `providers.display_name` e `cities.name_normalized`.
+- Índices: GiST em `providers.public_location` e `cities.boundary`; GIN em `providers.search_vector` (tsvector com configuração `portuguese` + `unaccent`) e trigram em `providers.display_name` e `cities.name_normalized`.
 - Concorrência otimista com a coluna de sistema `xmin` (`UseXminAsConcurrencyToken`) em `Order`, `Provider` e `Review`.
 - Migrações EF Core versionadas no repositório e aplicadas por um passo de deploy, nunca no startup da API em produção.
 
@@ -208,26 +209,40 @@ Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas 
 
 ### Busca de prestadores
 
+Com GPS:
+
 ```sql
 select p.id, p.display_name, ...
 from providers p
 where p.status = 'Published'
-  and st_dwithin(p.base_location, @point, 50000)
-  and st_dwithin(p.base_location, @point, p.service_radius_m)
+  and st_dwithin(p.public_location, @point, 50000)
+  and st_dwithin(p.public_location, @point, p.service_radius_m)
   and (@category_id is null or exists (select 1 from provider_categories pc where pc.provider_id = p.id and pc.category_id = @category_id))
   and (@q is null or p.search_vector @@ websearch_to_tsquery('portuguese_unaccent', @q) or p.display_name_normalized % unaccent(lower(@q)))
-order by st_distance(p.public_location, @point), p.rating_score desc
+order by @relevance desc
 limit @page_size offset @offset;
 ```
 
-O primeiro `st_dwithin` com 50 km (raio máximo) usa o índice; o segundo aplica o raio de cada prestador. Sem GPS, `@point` é o centroide da cidade escolhida, a ordenação padrão é por `rating_score` e a distância não é devolvida. `page_size` máximo 30, `offset` máximo 300 (anti-raspagem).
+Sem GPS, com a cidade escolhida `@city`:
+
+```sql
+where p.status = 'Published'
+  and (p.city_ibge_code = @city.ibge_code
+       or st_dwithin(p.public_location, @city.boundary, p.service_radius_m))
+```
+
+- **Todo filtro e toda distância usam `public_location`**, nunca `base_location`. Filtrar pelo endereço exato deixaria descobrir o endereço variando o ponto da busca; com o ponto público, a borda do círculo só revela o centro da célula, que já é público. Isso também mantém o filtro de distância máxima coerente com a distância exibida.
+- O primeiro `st_dwithin` com 50 km (raio máximo) usa o índice; o segundo aplica o raio de cada prestador.
+- Sem GPS, a distância não é devolvida e a relevância não tem o componente de proximidade. `page_size` máximo 30, `offset` máximo 300 (anti-raspagem).
+- "Disponível hoje" entra como condição calculada: `available_today and (available_today_set_at at time zone c.time_zone)::date = (now() at time zone c.time_zone)::date`, com `c` a cidade base.
 
 ## 6. API
 
 - REST sobre HTTPS, JSON camelCase, versão na URL (`/api/v1`), `Asp.Versioning.Mvc`.
 - Erros sempre ProblemDetails; validação com `errors` por campo.
 - Paginação: `page` e `pageSize` com resposta `{ items, page, pageSize, hasMore }` (sem total em buscas públicas).
-- `Idempotency-Key` obrigatório em `POST /orders`, `POST /provider/orders/{id}/quote` e `POST /provider/orders/{id}/payment-confirmation`.
+- `Idempotency-Key` obrigatório em `POST /orders`, `POST /provider/orders/{id}/quote` e `POST /provider/orders/{id}/payment-confirmation`; as chaves ficam no banco ([09-cache.md §5](09-cache.md)).
+- `Cache-Control: no-store` por padrão em toda resposta; exceções só para categorias e cidades ([09-cache.md §7](09-cache.md)).
 - Datas ISO 8601 com offset; dinheiro como string decimal (`"180.00"`) e moeda implícita BRL.
 - Detalhes de segurança da API em [08-seguranca.md](08-seguranca.md).
 
@@ -235,7 +250,7 @@ O primeiro `st_dwithin` com 50 km (raio máximo) usa o índice; o segundo aplica
 
 | Controller | Método e rota | Quem |
 | --- | --- | --- |
-| Auth | `POST /auth/google`, `POST /auth/apple`, `POST /auth/refresh`, `POST /auth/logout` | público / autenticado |
+| Auth | `POST /auth/google`, `POST /auth/apple` (com o app iOS), `POST /auth/refresh`, `POST /auth/logout` | público / autenticado |
 | Me | `GET /me`, `PATCH /me`, `DELETE /me` | autenticado |
 | Addresses | `GET /me/addresses`, `POST /me/addresses`, `PUT /me/addresses/{id}`, `DELETE /me/addresses/{id}` | autenticado |
 | Devices | `PUT /me/devices/{installationId}`, `DELETE /me/devices/{installationId}` | autenticado |
@@ -257,10 +272,30 @@ O primeiro `st_dwithin` com 50 km (raio máximo) usa o índice; o segundo aplica
 
 ## 7. Eventos, jobs e notificações
 
-- Agregados registram eventos de domínio (`OrderCreated`, `QuoteSent`, `QuoteAccepted`, `OrderCompleted`, `PaymentConfirmed`, `PaymentDisputed`, `ReviewPublished`, `ReviewReplied`, `MeiVerificationLost`, `ContentHidden`).
+- **Nem toda entidade gera evento.** Só agregados registram eventos, e só nas transições a que outra parte do sistema reage (notificação, recálculo de selo ou nota, auditoria). Editar um endereço salvo, por exemplo, não gera evento.
+- Eventos por agregado:
+  - `Order`: `OrderCreated`, `OrderDeclined`, `OrderExpired`, `QuoteSent`, `QuoteAccepted`, `QuoteDeclined`, `QuoteExpired`, `OrderCancelled`, `OrderCompleted`, `AddressReleased`, `PaymentConfirmed`, `PaymentConfirmationVoided`, `PaymentDisputed`, `PaymentDisputeResolved`;
+  - `Provider`: `MeiVerificationLost`, `MeiVerificationFailed`;
+  - `Review`: `ReviewPublished`, `ReviewUpdated`, `ReviewStatusChanged`, `ReviewReplied`;
+  - `Report` e moderação: `ContentHidden`, `ContentRestored`, `UserSuspended`, `UserReactivated`.
 - No `SaveChanges`, os eventos viram linhas da tabela `outbox_messages` na mesma transação.
-- Um `BackgroundService` lê a outbox, publica in-process para os handlers (notificação, recálculo de nota, auditoria) e marca como processado; falhas têm retry com backoff e vão para estado `Failed` após 10 tentativas.
-- Hangfire roda os jobs recorrentes: expirar pedidos e orçamentos (a cada 5 min), lembretes (a cada 5 min), desligar "Disponível hoje" (por fuso), revalidar selo MEI (diário, em lotes), limpar uploads órfãos (diário), recalcular tempo de resposta (horário). Painel do Hangfire só para admin, fora da internet pública.
+- Um `BackgroundService` lê a outbox, publica in-process para os handlers (notificação, recálculo de selos e nota, auditoria) e marca como processado; falhas têm retry com backoff e vão para estado `Failed` após 10 tentativas. Handlers são idempotentes e recalculam a partir do zero.
+- Hangfire roda os jobs recorrentes. Painel do Hangfire só para admin, fora da internet pública.
+
+| Job | Frequência | O que faz |
+| --- | --- | --- |
+| Expirar pedidos e orçamentos | 5 min | `Sent` e `Quoted` fora do prazo viram `Expired`/`QuoteExpired` |
+| Concluir agendados esquecidos | 1 h | `Scheduled` 7 dias após o fim da faixa vira `Completed` pelo sistema |
+| Lembretes | 5 min | Lembrete de serviço, de confirmar pagamento e convite para avaliar, respeitando o silêncio noturno |
+| Revalidar selo MEI | Diário, em lotes | Revalida quem passou de 30 dias; `Pending` com mais de 3 dias vira `Failed` |
+| Nota e média da categoria | Diário | Recalcula `m` de cada categoria e a nota de todos os prestadores |
+| Tempo de resposta | Diário | Recalcula quem teve pedido saindo da janela de 90 dias |
+| Limpar uploads órfãos | Diário | Apaga uploads não confirmados em 24 h |
+| Limpar chaves de idempotência | Diário | Apaga chaves com mais de 24 h |
+| Limpar notificações | Diário | Apaga notificações com mais de 90 dias |
+| Anonimizar contas excluídas | Diário | Conclui a anonimização em até 30 dias |
+
+"Disponível hoje" não tem job: é calculado na leitura ([02-regras-de-negocio.md §3](02-regras-de-negocio.md)).
 - Push via FCM com o token do dispositivo; mensagens sem dados sensíveis no corpo (o app busca detalhes autenticado).
 
 ## 8. Imagens
@@ -272,6 +307,8 @@ O primeiro `st_dwithin` com 50 km (raio máximo) usa o índice; o segundo aplica
 5. Fotos públicas saem por CDN com chave não adivinhável; fotos de pedido só por URL assinada de leitura com 10 min, emitida para as partes do pedido.
 
 ## 9. App Flutter
+
+O primeiro lançamento é só Android. O projeto iOS existe no repositório, mas flavors nativos, login com Apple e APNs entram junto com o lançamento iOS.
 
 | Tema | Escolha |
 | --- | --- |
@@ -308,9 +345,9 @@ mobile/lib/
 
 ## 10. Infraestrutura e entrega
 
-- **Local:** `infra/docker-compose.yml` com PostGIS, Seq e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
-- **Produção inicial:** um servidor Linux com Docker Compose (API, Hangfire server no mesmo processo, Caddy com TLS automático), banco PostgreSQL gerenciado com backups diários e PITR, R2 para imagens. Migração para containers gerenciados quando a carga pedir.
-- **CI (GitHub Actions):** build e testes (com Testcontainers), `dotnet format --verify-no-changes`, análise de vulnerabilidades de pacotes, CodeQL, build do app Flutter com `--obfuscate --split-debug-info`.
+- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
+- **Produção inicial:** um servidor Linux com Docker Compose (API, Hangfire server no mesmo processo, Redis sem persistência, Caddy com TLS automático), banco PostgreSQL gerenciado com backups diários e PITR, R2 para imagens. Migração para containers gerenciados quando a carga pedir; com mais de uma instância, Redis gerenciado e rate limit no Redis ([09-cache.md](09-cache.md)).
+- **CI (GitHub Actions):** build e testes (com Testcontainers), `dotnet format --verify-no-changes`, análise de vulnerabilidades de pacotes, CodeQL, gitleaks, `flutter analyze`, `flutter test` e build Android.
 - **CD:** imagem Docker assinada por tag, migrações aplicadas por job separado, deploy por SSH com healthcheck e rollback.
 - **Observabilidade:** `/health/live` e `/health/ready`; traces de requisição e banco; métricas de negócio (pedidos criados, orçamentos, confirmações, contestações); alertas de erro 5xx, latência p95 da busca acima de 400 ms e outbox atrasada.
 
@@ -330,3 +367,6 @@ mobile/lib/
 | 010 | Upload direto ao storage com URL assinada e processamento em job | Não passa arquivo pela API; limpa EXIF; reencoda | Upload multipart na API |
 | 011 | Monorepo | Specs, app e API evoluem juntos | Repositórios separados |
 | 012 | Código em inglês; interface, docs e commits em português | Termos de domínio estáveis no código; equipe e usuários falam português | Tudo em português |
+| 013 | `HybridCache` com Redis como segunda camada; banco como fonte da verdade | Cache compartilhado entre instâncias e reinícios; nada crítico (sessão revogada, idempotência) depende só do cache | Cache só em memória |
+| 014 | Lançar primeiro só no Android | Público-alvo majoritariamente Android; uma loja e um fluxo de login no início | Android e iOS juntos |
+| 015 | Mapeamento manual entre entidades e DTOs | Explícito, verificado pelo compilador, sem reflexão nem convenções escondidas | AutoMapper, Mapster, Mapperly |
