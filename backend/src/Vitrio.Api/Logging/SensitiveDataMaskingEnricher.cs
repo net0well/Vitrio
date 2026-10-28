@@ -15,10 +15,17 @@ public sealed class SensitiveDataMaskingEnricher : ILogEventEnricher
         "Token", "AccessToken", "RefreshToken", "IdToken", "Password", "Secret", "Authorization", "Nonce"
     };
 
+    private static readonly HashSet<string> FrameworkProperties = new(StringComparer.Ordinal) { "EventId", "SourceContext" };
+
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
         foreach (var (name, value) in logEvent.Properties.ToList())
         {
+            if (FrameworkProperties.Contains(name))
+            {
+                continue;
+            }
+
             var masked = SensitiveNames.Contains(name) ? new ScalarValue(Mask) : MaskNested(value);
             if (!ReferenceEquals(masked, value))
             {

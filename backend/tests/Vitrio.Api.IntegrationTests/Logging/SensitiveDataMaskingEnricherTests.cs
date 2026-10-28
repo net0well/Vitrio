@@ -38,6 +38,17 @@ public sealed class SensitiveDataMaskingEnricherTests
         Assert.Equal("Jaboticabal", ((ScalarValue)address.Properties.Single(p => p.Name == "City").Value).Value);
     }
 
+    [Fact]
+    public void Enrich_KeepsFrameworkEventNames()
+    {
+        var logEvent = Capture(logger => logger
+            .ForContext("EventId", new { Id = 20102, Name = "CommandError" }, destructureObjects: true)
+            .Information("Command failed"));
+
+        var eventId = Assert.IsType<StructureValue>(logEvent.Properties["EventId"]);
+        Assert.Equal("CommandError", ((ScalarValue)eventId.Properties.Single(p => p.Name == "Name").Value).Value);
+    }
+
     private static LogEvent Capture(Action<ILogger> write)
     {
         var sink = new CaptureSink();
