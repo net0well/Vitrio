@@ -1,0 +1,2 @@
+# Fake unsigned token used by a test before it was built at runtime; not a credential.
+ca6eb26f20a79d0fbc9a0aa51e543b207458d43f:backend/tests/Vitrio.Api.IntegrationTests/Security/SecurityTests.cs:jwt:30

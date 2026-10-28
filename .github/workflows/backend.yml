@@ -1,0 +1,52 @@
+name: Backend
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - "global.json"
+      - ".github/workflows/backend.yml"
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "global.json"
+      - ".github/workflows/backend.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restaurar
+        run: dotnet restore backend/Vitrio.slnx
+
+      - name: Compilar
+        run: dotnet build backend/Vitrio.slnx --no-restore --configuration Release
+
+      - name: Verificar formatação
+        run: dotnet format backend/Vitrio.slnx --verify-no-changes --no-restore
+
+      - name: Testar
+        run: dotnet test backend/Vitrio.slnx --no-build --configuration Release
+
+      - name: Verificar pacotes vulneráveis
+        run: |
+          dotnet list backend/Vitrio.slnx package --vulnerable --include-transitive | tee vulnerable.txt
+          if grep -qi "has the following vulnerable packages" vulnerable.txt; then
+            echo "::error::Há pacotes com vulnerabilidade conhecida."
+            exit 1
+          fi
