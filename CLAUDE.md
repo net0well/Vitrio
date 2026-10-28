@@ -28,7 +28,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - API com **Controllers** (`[ApiController]`, herdando `ApiControllerBase`). **Nunca Minimal APIs**, mesmo que `/scaffold` gere assim: adapte para controller.
 - Clean Architecture: `Vitrio.Domain` → `Vitrio.Application` → `Vitrio.Infrastructure` → `Vitrio.Api`. Casos de uso por funcionalidade na Application, com `Mediator` (MIT), FluentValidation e Result pattern.
 - Controllers só montam o comando e chamam `ISender`. Filtro de dono sempre dentro da consulta. Recurso alheio responde 404.
-- `TimeProvider` em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono; `DbContext` direto, sem repositório genérico.
+- `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono; `DbContext` direto, sem repositório genérico.
 - Proibido: MediatR 13+, AutoMapper 15+, FluentAssertions 8+, MassTransit 9+.
 - Código em inglês; interface, documentação, branches e commits em português.
 
