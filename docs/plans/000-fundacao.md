@@ -1,6 +1,6 @@
 # Plano: Fundação
 
-**Status:** Em andamento
+**Status:** Em andamento (backend pronto; app e CI a seguir)
 **Origem:** [07-roadmap.md](../07-roadmap.md), bloco Fundação (sem spec de funcionalidade)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:** todas (projetos novos), `infra/`
@@ -19,7 +19,7 @@
 ## Passos do backend
 
 1. **Solução e build** — `backend/` — base para todo o resto.
-   - `global.json` (SDK 10.0.400, `rollForward: latestFeature`), `Vitrio.slnx`, `Directory.Build.props` (`net10.0`, `Nullable`, `ImplicitUsings`, `TreatWarningsAsErrors`, `AnalysisLevel` latest, `EnforceCodeStyleInBuild`), `Directory.Packages.props` com Central Package Management, `.editorconfig`.
+   - `global.json` na raiz do repositório (SDK 10.0.400, `rollForward: latestFeature`, runner de testes Microsoft.Testing.Platform, exigido pelo xUnit v3 no .NET 10), `Vitrio.slnx`, `Directory.Build.props` (`net10.0`, `Nullable`, `ImplicitUsings`, `TreatWarningsAsErrors`, `AnalysisLevel` latest, `EnforceCodeStyleInBuild`), `Directory.Packages.props` com Central Package Management, `.editorconfig`.
    - Projetos `src/Vitrio.{Domain,Application,Infrastructure,Api}` e `tests/Vitrio.{Domain.Tests,Application.Tests,Api.IntegrationTests,ArchitectureTests}` com as referências da regra de dependência.
    - Testes de arquitetura (NetArchTest): direção das dependências, Domain sem pacotes externos, Application sem Npgsql/Infrastructure, controllers herdam `ApiControllerBase` e só recebem `ISender`, handlers e controllers `sealed`, ninguém usa `DateTime.Now`/`UtcNow`.
 
@@ -50,7 +50,7 @@
    - Rate limiting com as políticas de [08-seguranca.md](../08-seguranca.md) §5, particionado por usuário ou IP, 429 em ProblemDetails com `Retry-After`. Políticas com duas janelas (`auth`, `orders`) usam um limitador encadeado.
    - Cabeçalhos de segurança e `Cache-Control: no-store` em respostas autenticadas; `ForwardedHeaders` só para proxies configurados.
    - `/health/live` e `/health/ready` (banco).
-   - OpenAPI nativo + Scalar só em Development.
+   - OpenAPI nativo integrado ao versionamento (`Asp.Versioning.OpenApi`, um documento por versão) + Scalar só em Development.
    - Serilog com enricher que mascara propriedades sensíveis; OpenTelemetry (ASP.NET Core, HttpClient, Npgsql) com exportação OTLP quando configurada.
    - `CurrentUser : ICurrentUser` lendo as claims do `HttpContext`.
 
@@ -58,10 +58,11 @@
    - `WebApplicationFactory` + Testcontainers (PostGIS), migração aplicada no início da coleção.
    - `/health/ready` 200 com banco no ar; `/health/live` 200.
    - Controller de teste adicionado só no projeto de testes para exercitar `ApiControllerBase`: cada `ErrorType` vira o status certo com ProblemDetails no formato combinado; validação devolve `errors` por campo em camelCase.
-   - Rota protegida sem token → 401 em ProblemDetails; rota inexistente → 404 em ProblemDetails.
+   - Rota protegida sem token ou com token não assinado → 401 em ProblemDetails. Rota inexistente sem token também responde 401, porque a `FallbackPolicy` vale para requisições sem endpoint; assim a API não revela quais rotas existem.
    - Todo action de todo controller tem `[Authorize]` ou `[AllowAnonymous]` explícito e uma política de rate limit.
-   - Cabeçalhos de segurança presentes; campo desconhecido no JSON → 400; corpo acima de 64 KB → 413.
+   - Cabeçalhos de segurança presentes; `no-store` com `Authorization`; campo desconhecido no JSON → 400; limite de 64 KB configurado no Kestrel (o `TestServer` não aplica esse limite, então o teste confere a opção).
    - Interceptor grava eventos de domínio na outbox na mesma transação.
+   - Testes de unidade do limitador encadeado e do mascaramento de dados pessoais nos logs.
 
 ## Passos do app (próximo recorte)
 
