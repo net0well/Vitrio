@@ -11,9 +11,8 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
         builder.ToTable("outbox_messages");
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
-        builder.Property(message => message.Type).HasMaxLength(300);
-        builder.Property(message => message.Content).HasColumnType("jsonb");
-        builder.Property(message => message.LastError).HasMaxLength(2000);
-        builder.HasIndex(message => message.OccurredAt).HasFilter("processed_at IS NULL");
+        builder.Property(message => message.Type).HasMaxLength(100);
+        builder.Property(message => message.Payload).HasColumnType("jsonb");
+        builder.HasIndex(message => message.OccurredAt);
     }
 }

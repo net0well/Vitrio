@@ -10,21 +10,18 @@ public sealed class OutboxMessage
 
     public string Type { get; private set; } = string.Empty;
 
-    public string Content { get; private set; } = string.Empty;
+    public int Version { get; private set; }
+
+    public string Payload { get; private set; } = string.Empty;
 
     public DateTimeOffset OccurredAt { get; private set; }
 
-    public DateTimeOffset? ProcessedAt { get; private set; }
-
-    public int Attempts { get; private set; }
-
-    public string? LastError { get; private set; }
-
-    public static OutboxMessage Create(string type, string content, DateTimeOffset occurredAt) => new()
+    public static OutboxMessage Create(Guid eventId, string type, int version, string payload, DateTimeOffset occurredAt) => new()
     {
-        Id = Guid.CreateVersion7(occurredAt),
+        Id = eventId,
         Type = type,
-        Content = content,
+        Version = version,
+        Payload = payload,
         OccurredAt = occurredAt
     };
 }
