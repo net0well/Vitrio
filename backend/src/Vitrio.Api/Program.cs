@@ -18,6 +18,7 @@ using Serilog;
 using Vitrio.Api.Authentication;
 using Vitrio.Api.Authorization;
 using Vitrio.Api.Controllers;
+using Vitrio.Api.Hosting;
 using Vitrio.Api.Logging;
 using Vitrio.Api.RateLimiting;
 using Vitrio.Api.Security;
@@ -30,6 +31,11 @@ using Vitrio.Infrastructure;
 const int MaxRequestBodySize = 64 * 1024;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsProduction())
+{
+    ProductionSettings.EnsureComplete(builder.Configuration);
+}
 
 builder.WebHost.ConfigureKestrel(kestrel =>
 {
@@ -109,9 +115,14 @@ builder.Services.AddProblemDetails(problemDetails => problemDetails.CustomizePro
 builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
 {
     forwarded.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    foreach (var proxy in builder.Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? [])
+    foreach (var proxy in ProductionSettings.ReadList(builder.Configuration, "ForwardedHeaders:KnownProxies"))
     {
         forwarded.KnownProxies.Add(IPAddress.Parse(proxy));
+    }
+
+    foreach (var network in ProductionSettings.ReadList(builder.Configuration, "ForwardedHeaders:KnownNetworks"))
+    {
+        forwarded.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
     }
 });
 
