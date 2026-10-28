@@ -2,6 +2,8 @@
 
 O app é Flutter (Material 3). Os tokens deste sistema viram quatro classes (`VitrioColors`, `VitrioText`, `VitrioSpace`, `VitrioRadius`) e um `ThemeData`. Os componentes viram widgets próprios em `lib/core/design_system/`. Nenhum widget usa cor, tamanho ou raio literal: tudo vem dessas classes.
 
+Um tipo por arquivo: enums como `VitrioBadgeTone` ficam em arquivo próprio (`vitrio_badge_tone.dart`), separados do widget. Os exemplos abaixo mostram o enum junto só para leitura.
+
 ## Estrutura
 
 ```text

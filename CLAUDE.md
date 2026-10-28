@@ -33,6 +33,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Mapeamento sempre explícito, escrito à mão (`Response.From(entidade)`, `Request.ToCommand()`, `Select` nas consultas). **Nenhuma biblioteca de mapeamento** (AutoMapper, Mapster, Mapperly ou parecidas).
 - Proibido também: MediatR 13+, FluentAssertions 8+, MassTransit 9+.
 - Cache segue `docs/09-cache.md`: banco é a fonte da verdade, Redis e memória só aceleram; toda mudança no prestador invalida o perfil público.
+- **Um tipo por arquivo**, com o nome do tipo: classe, record, interface e enum separados (`User.cs` e `UserStatus.cs`). Só tipos aninhados privados ficam dentro da classe. No Dart, o mesmo; hierarquia `sealed` e rotas tipadas usam `part`.
 - Código em inglês; interface, documentação, branches e commits em português.
 
 ### Segurança

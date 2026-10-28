@@ -12,6 +12,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Repositório genérico (`IRepository<T>`) sobre EF Core | Duplica o que o `DbContext` já é e esconde consultas | `IAppDbContext` com `DbSet`s e consultas no handler |
 | "Services" anêmicos que fazem tudo (`OrderService` com 30 métodos) | Classe gigante, dependências demais | Um handler por caso de uso |
 | Pasta `Helpers`/`Utils` genérica | Vira depósito sem dono | Coloque perto de quem usa ou crie um value object |
+| Vários tipos no mesmo arquivo (enum junto da classe, interface junto da implementação, records de request e response juntos) | Tipo difícil de achar pelo nome do arquivo e arquivos que crescem sem limite | Um tipo por arquivo, com o nome do tipo; no Dart, `part` quando a linguagem exige a mesma biblioteca |
 | MediatR 13+, FluentAssertions 8+, MassTransit 9+ | Licenças comerciais | `Mediator`, asserts do xUnit, outbox/Wolverine |
 | Biblioteca de mapeamento (AutoMapper, Mapster, Mapperly ou parecidas) | Esconde quais campos saem e entram, quebra em silêncio quando um nome muda e facilita vazar campo interno | `From` no DTO de resposta, `ToCommand` no request, `Select` nas consultas, tudo escrito à mão |
 | Cache como fonte da verdade (sessão revogada, chave de idempotência, contador que precisa sobreviver) | Reinício ou segunda instância perdem o dado e reabrem a falha | Banco como fonte; cache só acelera leitura ([09-cache.md](09-cache.md)) |
