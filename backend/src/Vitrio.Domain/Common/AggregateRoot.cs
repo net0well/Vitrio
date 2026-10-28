@@ -2,11 +2,11 @@ namespace Vitrio.Domain.Common;
 
 public abstract class AggregateRoot
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<DomainEvent> _domainEvents = [];
 
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
+    public IReadOnlyList<DomainEvent> DomainEvents => _domainEvents;
 
     public void ClearDomainEvents() => _domainEvents.Clear();
 
-    protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void Raise(DomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 }
