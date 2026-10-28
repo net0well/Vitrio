@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vitrio/app/app.dart';
 import 'package:vitrio/app/app_config.dart';
+import 'package:vitrio/app/flavor.dart';
 import 'package:vitrio/core/storage/preferences.dart';
 
 void main() {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../tokens/vitrio_colors.dart';
 import '../tokens/vitrio_space.dart';
+import 'vitrio_button_variant.dart';
 import 'vitrio_icon.dart';
-
-enum VitrioButtonVariant { accent, onHero }
+import 'vitrio_icon_name.dart';
 
 class VitrioButton extends StatelessWidget {
   const VitrioButton({

@@ -6,33 +6,7 @@ part of 'routes.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$welcomeRoute, $clientShellRoute];
-
-RouteBase get $welcomeRoute => GoRouteData.$route(
-  path: '/welcome',
-  hasOverriddenOnExit: false,
-  factory: $WelcomeRoute._fromState,
-);
-
-mixin $WelcomeRoute on GoRouteData {
-  static WelcomeRoute _fromState(GoRouterState state) => const WelcomeRoute();
-
-  @override
-  String get location => GoRouteData.$location('/welcome');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
+List<RouteBase> get $appRoutes => [$clientShellRoute, $welcomeRoute];
 
 RouteBase get $clientShellRoute => StatefulShellRouteData.$route(
   factory: $ClientShellRouteExtension._fromState,
@@ -146,6 +120,32 @@ mixin $AccountRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/account');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $welcomeRoute => GoRouteData.$route(
+  path: '/welcome',
+  hasOverriddenOnExit: false,
+  factory: $WelcomeRoute._fromState,
+);
+
+mixin $WelcomeRoute on GoRouteData {
+  static WelcomeRoute _fromState(GoRouterState state) => const WelcomeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/welcome');
 
   @override
   void go(BuildContext context) => context.go(location);

@@ -9,71 +9,13 @@ import '../features/welcome/presentation/welcome_screen.dart';
 import 'client_shell.dart';
 
 part 'routes.g.dart';
-
-@TypedGoRoute<WelcomeRoute>(path: '/welcome')
-class WelcomeRoute extends GoRouteData with $WelcomeRoute {
-  const WelcomeRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const WelcomeScreen();
-}
-
-@TypedStatefulShellRoute<ClientShellRoute>(
-  branches: [
-    TypedStatefulShellBranch<HomeBranch>(routes: [TypedGoRoute<HomeRoute>(path: '/home')]),
-    TypedStatefulShellBranch<SearchBranch>(routes: [TypedGoRoute<SearchRoute>(path: '/search')]),
-    TypedStatefulShellBranch<OrdersBranch>(routes: [TypedGoRoute<OrdersRoute>(path: '/orders')]),
-    TypedStatefulShellBranch<AccountBranch>(routes: [TypedGoRoute<AccountRoute>(path: '/account')]),
-  ],
-)
-class ClientShellRoute extends StatefulShellRouteData {
-  const ClientShellRoute();
-
-  @override
-  Widget builder(BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) =>
-      ClientShell(navigationShell: navigationShell);
-}
-
-class HomeBranch extends StatefulShellBranchData {
-  const HomeBranch();
-}
-
-class SearchBranch extends StatefulShellBranchData {
-  const SearchBranch();
-}
-
-class OrdersBranch extends StatefulShellBranchData {
-  const OrdersBranch();
-}
-
-class AccountBranch extends StatefulShellBranchData {
-  const AccountBranch();
-}
-
-class HomeRoute extends GoRouteData with $HomeRoute {
-  const HomeRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
-}
-
-class SearchRoute extends GoRouteData with $SearchRoute {
-  const SearchRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const SearchScreen();
-}
-
-class OrdersRoute extends GoRouteData with $OrdersRoute {
-  const OrdersRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const OrdersScreen();
-}
-
-class AccountRoute extends GoRouteData with $AccountRoute {
-  const AccountRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const AccountScreen();
-}
+part 'routes/account_branch.dart';
+part 'routes/account_route.dart';
+part 'routes/client_shell_route.dart';
+part 'routes/home_branch.dart';
+part 'routes/home_route.dart';
+part 'routes/orders_branch.dart';
+part 'routes/orders_route.dart';
+part 'routes/search_branch.dart';
+part 'routes/search_route.dart';
+part 'routes/welcome_route.dart';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/design_system/widgets/vitrio_icon.dart';
+import '../core/design_system/widgets/vitrio_icon_name.dart';
 import '../l10n/app_localizations.dart';
 
 class ClientShell extends StatelessWidget {

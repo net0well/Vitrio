@@ -5,6 +5,7 @@ Como o código do Vitrio é escrito. Quando o dotnet-claude-kit sugerir algo dif
 ## 1. C# em geral
 
 - .NET 10, C# 14, `Nullable` habilitado, avisos como erro, namespaces por arquivo.
+- **Um tipo por arquivo**, com o nome do tipo: classe, record, interface e enum cada um no seu arquivo (`User.cs` e `UserStatus.cs`, `Result.cs` e `ResultOfT.cs`). Só tipos aninhados privados, usados apenas pela classe que os contém, ficam dentro dela.
 - Classes `sealed` por padrão; `record` para DTOs, comandos, consultas e value objects; construtores primários para injeção.
 - Assíncrono de ponta a ponta, com `CancellationToken` em todo método assíncrono público.
 - Tempo sempre de `IClock` (injetado, implementado sobre `TimeProvider`), nunca `DateTime.Now`/`UtcNow`.
@@ -258,6 +259,7 @@ public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser,
 ## 9. App Flutter
 
 - Pastas por funcionalidade (`features/<nome>/{data,domain,presentation}`), núcleo em `core/`.
+- **Um tipo por arquivo**, como no C#: enum em arquivo próprio (`vitrio_button_variant.dart`), interface separada da implementação (`token_store.dart` e `secure_token_store.dart`). Quando o Dart exige a mesma biblioteca (subclasses de uma classe `sealed`, rotas tipadas com código gerado), cada tipo vai num arquivo `part` próprio (`api_result.dart` com `api_success.dart` e `api_failure.dart`; `app/routes/`).
 - Estado com Riverpod (`AsyncNotifier`/`Notifier` gerados); a tela observa um único estado com `loading`, `data`, `empty` e `error` explícitos.
 - Repositórios chamam o `ApiClient` e devolvem um resultado selado (`ApiSuccess`/`ApiFailure` com o ProblemDetails convertido); a camada de apresentação nunca vê `http.Response`.
 - Só widgets e tokens do design system (`context.vitrio`, `VitrioText`, `VitrioSpace`, `VitrioRadius`); nenhuma cor, tamanho ou raio literal.

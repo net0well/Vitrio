@@ -1,4 +1,4 @@
-import 'app/app_config.dart';
 import 'app/bootstrap.dart';
+import 'app/flavor.dart';
 
 Future<void> main() => bootstrap(Flavor.dev);

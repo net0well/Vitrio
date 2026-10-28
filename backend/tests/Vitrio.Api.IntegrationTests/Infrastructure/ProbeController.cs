@@ -59,7 +59,3 @@ public sealed class ProbeController : ApiControllerBase
     [EnableRateLimiting(ApiFactory.TightRateLimitPolicy)]
     public IActionResult Limited() => NoContent();
 }
-
-public sealed record ProbeRequest(string Name);
-
-public sealed record ProbeResponse(string Name);

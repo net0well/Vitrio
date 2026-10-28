@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/widgets/vitrio_empty_state.dart';
-import '../../../core/design_system/widgets/vitrio_icon.dart';
+import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../l10n/app_localizations.dart';
 
 class HomeScreen extends StatelessWidget {
