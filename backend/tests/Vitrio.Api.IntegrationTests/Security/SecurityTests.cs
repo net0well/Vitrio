@@ -67,14 +67,34 @@ public sealed class SecurityTests(ApiFactory factory)
     }
 
     [Fact]
-    public async Task RequestWithAuthorizationHeader_IsNeverCached()
+    public async Task AnonymousResponse_IsNotCachedByDefault()
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/probe/value");
+        var response = await _client.GetAsync("/api/v1/probe/value", TestContext.Current.CancellationToken);
+
+        Assert.True(response.Headers.CacheControl?.NoStore);
+    }
+
+    [Fact]
+    public async Task PublicReferenceData_KeepsItsExplicitCachePolicy()
+    {
+        var response = await _client.GetAsync("/api/v1/probe/public-reference", TestContext.Current.CancellationToken);
+
+        Assert.True(response.Headers.CacheControl?.Public);
+        Assert.Equal(TimeSpan.FromHours(1), response.Headers.CacheControl?.MaxAge);
+    }
+
+    [Theory]
+    [InlineData("/api/v1/probe/value")]
+    [InlineData("/api/v1/probe/public-reference")]
+    public async Task RequestWithAuthorizationHeader_IsNeverCached(string path)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "invalid");
 
         var response = await _client.SendAsync(request, TestContext.Current.CancellationToken);
 
         Assert.True(response.Headers.CacheControl?.NoStore);
+        Assert.False(response.Headers.CacheControl?.Public);
     }
 
     [Fact]

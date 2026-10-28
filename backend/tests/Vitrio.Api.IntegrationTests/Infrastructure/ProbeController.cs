@@ -37,6 +37,11 @@ public sealed class ProbeController : ApiControllerBase
     [AllowAnonymous]
     public IActionResult Nothing() => ToActionResult(Result.Success());
 
+    [HttpGet("public-reference")]
+    [AllowAnonymous]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+    public IActionResult PublicReference() => ToActionResult(Result<ProbeResponse>.Success(new ProbeResponse("reference")));
+
     [HttpPost("echo")]
     [AllowAnonymous]
     public IActionResult Echo(ProbeRequest request) => Ok(new ProbeResponse(request.Name));
