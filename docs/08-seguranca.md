@@ -6,7 +6,7 @@ O Vitrio guarda dados pessoais (nome, telefone, endereço, localização, fotos 
 
 | Ativo | Ameaça | Controle principal |
 | --- | --- | --- |
-| Endereço do cliente | Prestador mal-intencionado coleta endereços enviando orçamentos falsos | Endereço só em `Scheduled`; janela de visibilidade de 7 dias; limites de orçamentos por prestador; auditoria de acesso ao endereço |
+| Endereço e celular do cliente | Prestador mal-intencionado coleta endereços e telefones enviando orçamentos falsos | Endereço, nome completo e celular só em `Scheduled`; janela de visibilidade de 7 dias; limites de orçamentos por prestador; auditoria de cada leitura |
 | Endereço do prestador | Triangulação pela distância exibida ou pela borda do raio (variar o ponto da busca e ver onde o prestador aparece e some) | Ponto público em célula de ~500 m usado em **todo** filtro e distância; distância arredondada; sem coordenadas na resposta |
 | Contas | Roubo de sessão, reuso de refresh token | JWT curto, refresh rotativo com detecção de reuso, armazenamento seguro no aparelho |
 | Pedidos e pagamentos | Acesso a pedido de outra pessoa (BOLA), confirmação forjada | Toda consulta filtrada pelo dono; só o prestador do pedido confirma; registros imutáveis e auditados |
@@ -36,7 +36,7 @@ O Vitrio guarda dados pessoais (nome, telefone, endereço, localização, fotos 
 - **Autorização por recurso (contra BOLA):** todo handler que lê ou altera um recurso filtra pelo dono **na própria consulta** (`where o.CustomerId == currentUser.Id`), em vez de buscar e comparar depois. Recurso de outro usuário responde **404**, não 403, para não confirmar que existe.
 - **Autorização por propriedade (contra BOPLA):** requests e responses são DTOs explícitos por caso de uso. Nada de bind direto em entidade. Campos como `status`, `ratingScore`, `meiVerified`, `role`, `customerId` nunca vêm do cliente.
 - **Funções privilegiadas (contra BFLA):** rotas `/admin` em controller separado com `[Authorize(Policy = Admin)]` no nível da classe; ações de moderação exigem motivo e geram auditoria.
-- **Endereço:** o DTO de pedido para o prestador só inclui endereço completo quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias do fim da faixa agendada, qualquer que seja o status (inclusive `PaymentConfirmed`, `PaymentDisputed` e `PaymentVoided`). Cada leitura do endereço completo grava auditoria (quem, quando, pedido).
+- **Endereço e contato do cliente:** o DTO de pedido para o prestador só inclui endereço completo, nome completo e celular quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias do fim da faixa agendada, qualquer que seja o status (inclusive `PaymentConfirmed`, `PaymentDisputed` e `PaymentVoided`). Antes disso, o cliente aparece como primeiro nome + inicial. Cada leitura desses dados grava auditoria (quem, quando, pedido).
 
 ## 4. Validação de entrada e saída
 

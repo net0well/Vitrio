@@ -29,7 +29,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 
 ## Domain Model
 
-- `Order` (agregado): `Id`, `CustomerId`, `ProviderId`, `ServiceId?`, `ServiceTitle`, `Description` (20–1000), `PreferredDay` (`Date`), `PreferredPeriod` (`Morning`, `Afternoon`, `Evening`), `AddressSnapshot` (criptografado: logradouro, número, complemento, bairro, cidade, UF, CEP), `Neighborhood`, `CityIbgeCode`, `CustomerPoint` (privado; centroide da cidade quando o CEP não tem coordenadas, com `CustomerPointIsApproximate`), `CategoryId` (do serviço ou, em "Outro", a principal do prestador), `Status`, `CreatedAt`, `RespondBy`, `FirstResponseAt?` (primeiro orçamento ou recusa), `QuoteValidUntil?` (o que vier primeiro entre envio + 48 h e início da faixa − 1 h), `ScheduledStart?`, `ScheduledEnd?`, `CompletedAt?`, `CompletedBy?` (`Customer`, `Provider`, `System`), `CancelledAt?`, `CancelledBy?`, `CancellationReason?`, `AddressReleasedAt?`.
+- `Order` (agregado): `Id`, `CustomerId`, `ProviderId`, `ServiceId?`, `ServiceTitle`, `Description` (20–1000), `PreferredDay` (`Date`), `PreferredPeriod` (`Morning`, `Afternoon`, `Evening`), `AddressSnapshot` (criptografado: logradouro, número, complemento, bairro, cidade, UF, CEP), `CustomerContactSnapshot` (criptografado: nome completo e celular no momento do pedido), `Neighborhood`, `CityIbgeCode`, `CustomerPoint` (privado; centroide da cidade quando o CEP não tem coordenadas, com `CustomerPointIsApproximate`), `CategoryId` (do serviço ou, em "Outro", a principal do prestador), `Status`, `CreatedAt`, `RespondBy`, `FirstResponseAt?` (primeiro orçamento ou recusa), `QuoteValidUntil?` (o que vier primeiro entre envio + 48 h e início da faixa − 1 h), `ScheduledStart?`, `ScheduledEnd?`, `CompletedAt?`, `CompletedBy?` (`Customer`, `Provider`, `System`), `CancelledAt?`, `CancelledBy?`, `CancellationReason?`, `AddressReleasedAt?`.
 - Endereço visível ao prestador de `AddressReleasedAt` até `ScheduledEnd` + 7 dias, se o pedido não foi cancelado, em qualquer status (inclusive os de pagamento).
 - `Quote` (entidade do pedido): `Type` (`FixedPrice`, `TechnicalVisit`), `Amount` (`Money`), `Date`, `Start`, `End`, `MaterialIncluded`, `Message?`, `SentAt`, `Version`.
 - `OrderPhoto`: `Id`, `OrderId`, `ObjectKey` (privado), `Status`.
@@ -40,7 +40,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 
 | Verbo | Rota | Request | Response | Erros |
 | --- | --- | --- | --- | --- |
-| POST | `/api/v1/orders` | header `Idempotency-Key`; `{ providerId, serviceId?, serviceTitle?, description, preferredDay, preferredPeriod, addressId, photoKeys: [..5] }` | 201 `orderCustomerView` | 400, 401, 404 prestador, 409 limite de pedidos abertos, 409 pedir para si mesmo, 422 chave reutilizada, 429 |
+| POST | `/api/v1/orders` | header `Idempotency-Key`; `{ providerId, serviceId?, serviceTitle?, description, preferredDay, preferredPeriod, addressId, photoKeys: [..5] }` | 201 `orderCustomerView` | 400, 401, 404 prestador, 409 limite de pedidos abertos, 409 pedir para si mesmo, 422 `order.phone_required` (conta sem celular), 422 chave reutilizada, 429 |
 | POST | `/api/v1/orders/photos/upload-url` | `{ contentType, contentLength }` | `{ uploadUrl, objectKey, expiresAt }` | 400, 401, 429 |
 | GET | `/api/v1/orders?status=open\|closed&page=` | — | `{ items: [orderCustomerSummary], hasMore }` | 401 |
 | GET | `/api/v1/orders/{id}` | — | `orderCustomerView` com `allowedActions` | 401, 404 |
@@ -63,8 +63,9 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - Rotas `/orders/*`: autenticado; consulta filtrada por `CustomerId = usuário`.
 - Rotas `/provider/orders/*` e `/provider/agenda`: política `Provider`; consulta filtrada por `ProviderId` da vitrine do usuário.
 - Pedido de outra pessoa responde 404 em qualquer rota.
-- Endereço completo no `orderProviderView` só quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias de `ScheduledEnd`; cada leitura grava auditoria.
-- Antes do aceite, o prestador vê primeiro nome do cliente, bairro, cidade e distância arredondada.
+- Endereço completo, nome completo e celular do cliente no `orderProviderView` só quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias de `ScheduledEnd`; cada leitura grava auditoria.
+- Antes do aceite, o prestador vê primeiro nome + inicial do cliente ("Mariana F."), bairro, cidade e distância arredondada.
+- O app do cliente pede o celular antes de enviar o primeiro pedido, se a conta ainda não tiver um.
 
 ## Edge Cases & Failure Modes
 
@@ -110,7 +111,9 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - **AC-9** Dado um pedido `Scheduled`, quando o cliente cancela sem motivo, então recebe 400; com motivo, o pedido vira `Cancelled`.
 - **AC-10** Dado um pedido `Scheduled` cuja faixa ainda não começou, quando alguém marca como concluído, então recebe 409; depois do início, o pedido vira `Completed` com `CompletedBy`.
 - **AC-11** Dado o id de um pedido de outro cliente, quando consulta `GET /orders/{id}`, então recebe 404.
-- **AC-12** Dado um pedido `Sent`, quando o prestador consulta o detalhe, então a resposta não contém logradouro, número, complemento nem CEP.
+- **AC-12** Dado um pedido `Sent`, quando o prestador consulta o detalhe, então a resposta não contém logradouro, número, complemento, CEP, celular nem sobrenome do cliente (só "Mariana F.").
+- **AC-19** Dado um cliente sem celular na conta, quando tenta criar um pedido, então recebe 422 `order.phone_required` e nenhum pedido é criado.
+- **AC-20** Dado um pedido aceito, quando o prestador consulta o detalhe dentro da janela, então vê nome completo e celular do cliente, e uma auditoria de leitura é gravada.
 - **AC-13** Dado um pedido cuja faixa agendada terminou há 8 dias, em qualquer status, quando o prestador consulta o detalhe, então o endereço completo não aparece mais.
 - **AC-14** Dado qualquer pedido, quando o app consulta o detalhe, então `allowedActions` lista só as ações válidas para quem pergunta no estado atual.
 - **AC-15** Dado um orçamento enviado às 15h para amanhã às 8h, quando é criado, então `QuoteValidUntil` é amanhã às 7h; às 7h01 o aceite recebe 409 `quote.expired`.
