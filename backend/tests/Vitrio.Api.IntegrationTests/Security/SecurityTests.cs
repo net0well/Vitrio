@@ -43,6 +43,17 @@ public sealed class SecurityTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task UnhandledException_ReturnsProblemWithoutInternalDetails()
+    {
+        var response = await _client.GetAsync("/api/v1/probe/crash", TestContext.Current.CancellationToken);
+
+        await response.AssertProblemAsync(HttpStatusCode.InternalServerError, "internal_error");
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.DoesNotContain("segredo", body, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(nameof(InvalidOperationException), body, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Response_IncludesSecurityHeaders()
     {
         var response = await _client.GetAsync("/api/v1/probe/value", TestContext.Current.CancellationToken);

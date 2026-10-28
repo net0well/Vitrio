@@ -15,6 +15,7 @@ public sealed class ProbeController : ApiControllerBase
 {
     public const string FailureCode = "probe.failed";
     public const string FailureMessage = "A sondagem falhou.";
+    public const string CrashMessage = "connection string Host=db;Password=segredo";
 
     [HttpGet("errors/{type}")]
     [AllowAnonymous]
@@ -39,6 +40,10 @@ public sealed class ProbeController : ApiControllerBase
     [HttpPost("echo")]
     [AllowAnonymous]
     public IActionResult Echo(ProbeRequest request) => Ok(new ProbeResponse(request.Name));
+
+    [HttpGet("crash")]
+    [AllowAnonymous]
+    public IActionResult Crash() => throw new InvalidOperationException(CrashMessage);
 
     [HttpGet("private")]
     [Authorize]
