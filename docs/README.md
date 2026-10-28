@@ -2,8 +2,8 @@
 
 Vitrio é um app para encontrar, contratar e avaliar profissionais autônomos e MEIs perto de você, em qualquer cidade do Brasil. O cliente acha quem atende perto (pelo GPS ou escolhendo a cidade), pede orçamento, aceita, recebe o serviço e avalia. O prestador monta a vitrine dele, responde pedidos, confirma o pagamento combinado e constrói reputação.
 
-- **App:** Flutter (Android e iOS), um app com modo cliente e modo prestador.
-- **API:** .NET 10, ASP.NET Core com **Controllers**, Clean Architecture, PostgreSQL + PostGIS.
+- **App:** Flutter, um app com modo cliente e modo prestador. Primeiro lançamento só Android; iOS depois.
+- **API:** .NET 10, ASP.NET Core com **Controllers**, Clean Architecture, PostgreSQL + PostGIS, Redis como cache.
 - **Design:** sistema de design Vitrio (artifact "Vitrio — Sistema de design") e protótipo navegável (artifact "Vitrio — Protótipo do app").
 
 ## Mapa dos documentos
@@ -18,6 +18,7 @@ Vitrio é um app para encontrar, contratar e avaliar profissionais autônomos e 
 | [06-regras-de-desenvolvimento.md](06-regras-de-desenvolvimento.md) | Regras de trabalho para pessoas e para o Claude: comentários, branches, commits, uso do dotnet-claude-kit |
 | [07-roadmap.md](07-roadmap.md) | Ordem de construção, dependências entre specs e critérios de pronto |
 | [08-seguranca.md](08-seguranca.md) | Modelo de ameaças, autenticação, autorização, limites, uploads, LGPD, auditoria e verificação contínua |
+| [09-cache.md](09-cache.md) | Camadas de cache (memória e Redis), o que fica em cache, invalidação, sessões revogadas, idempotência, cabeçalhos HTTP e cache no app |
 | [specs/](specs/) | Uma spec por funcionalidade, no formato do `/spec` do dotnet-claude-kit, em status Draft |
 | [design-system/](design-system/) | Identidade, tokens, componentes, plano de telas, guia Flutter, logos, ícones e fontes |
 
