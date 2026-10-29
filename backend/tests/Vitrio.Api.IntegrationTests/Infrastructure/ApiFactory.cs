@@ -57,6 +57,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("ConnectionStrings:Database", ConnectionString);
         builder.UseSetting("Jwt:SigningKey", SigningKey);
         builder.UseSetting("Auth:CodeKey", CodeKey);
+        builder.UseSetting("Jobs:Enabled", "false");
         builder.ConfigureTestServices(services =>
         {
             services.AddControllers().AddApplicationPart(typeof(ApiFactory).Assembly);

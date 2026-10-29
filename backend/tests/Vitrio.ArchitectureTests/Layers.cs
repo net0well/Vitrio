@@ -11,5 +11,7 @@ internal static class Layers
     public static readonly Assembly Domain = typeof(AggregateRoot).Assembly;
     public static readonly Assembly Application = typeof(Vitrio.Application.DependencyInjection).Assembly;
     public static readonly Assembly Infrastructure = typeof(Vitrio.Infrastructure.DependencyInjection).Assembly;
+    public static readonly Assembly Jobs = typeof(Vitrio.Jobs.JobsOptions).Assembly;
     public static readonly Assembly Api = typeof(ApiControllerBase).Assembly;
+    public static readonly Assembly[] All = [Shared, Domain, Application, Infrastructure, Jobs, Api];
 }

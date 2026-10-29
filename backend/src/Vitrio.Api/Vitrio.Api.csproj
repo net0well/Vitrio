@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Vitrio.Application\Vitrio.Application.csproj" />
     <ProjectReference Include="..\Vitrio.Infrastructure\Vitrio.Infrastructure.csproj" />
+    <ProjectReference Include="..\Vitrio.Jobs\Vitrio.Jobs.csproj" />
   </ItemGroup>
 
   <ItemGroup>

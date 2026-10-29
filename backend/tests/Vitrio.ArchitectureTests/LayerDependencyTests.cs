@@ -84,6 +84,43 @@ public sealed class LayerDependencyTests
     }
 
     [Fact]
+    public void Api_UsesJobsOnlyInTheComposition()
+    {
+        var result = Types.InAssembly(Layers.Api)
+            .That()
+            .ResideInNamespaceStartingWith("Vitrio.Api")
+            .ShouldNot()
+            .HaveDependencyOnAny("Vitrio.Jobs", "Hangfire")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void Jobs_DependOnlyOnTheApplication()
+    {
+        var result = Types.InAssembly(Layers.Jobs)
+            .ShouldNot()
+            .HaveDependencyOnAny("Vitrio.Infrastructure", "Vitrio.Api", "Microsoft.EntityFrameworkCore", "Microsoft.AspNetCore")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void Jobs_OnlySendCommands_NeverTouchRepositoriesOrTheUnitOfWork()
+    {
+        var persistence = Layers.Application.GetTypes()
+            .Where(type => type.IsInterface && (type.Namespace?.EndsWith(".Repositories", StringComparison.Ordinal) == true || type.Name == "IUnitOfWork"))
+            .Select(type => type.FullName!)
+            .ToArray();
+
+        var result = Types.InAssembly(Layers.Jobs).ShouldNot().HaveDependencyOnAny(persistence).GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
     public void Infrastructure_DoesNotDependOnApiOrJobs()
     {
         var result = Types.InAssembly(Layers.Infrastructure)
@@ -97,7 +134,7 @@ public sealed class LayerDependencyTests
     [Fact]
     public void NoLayer_UsesMappingLibraries()
     {
-        var result = Types.InAssemblies([Layers.Shared, Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api])
+        var result = Types.InAssemblies(Layers.All)
             .ShouldNot()
             .HaveDependencyOnAny("AutoMapper", "Mapster", "Riok.Mapperly", "AgileObjects.AgileMapper", "ExpressMapper", "Nelibur.ObjectMapper")
             .GetResult();
@@ -108,7 +145,7 @@ public sealed class LayerDependencyTests
     [Fact]
     public void NoLayer_UsesMediatR()
     {
-        var result = Types.InAssemblies([Layers.Shared, Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api])
+        var result = Types.InAssemblies(Layers.All)
             .ShouldNot()
             .HaveDependencyOn("MediatR")
             .GetResult();
