@@ -100,7 +100,7 @@ backend/
 
 Regras de dependência (verificadas por teste de arquitetura):
 
-- `Shared` não referencia nenhum projeto nem framework, e não tem regra de negócio. Entra nele o tipo técnico usado por mais de uma camada; conceito de negócio fica no `Domain`, mesmo que várias camadas o usem.
+- `Shared` não referencia nenhum projeto nem framework, e não tem regra de negócio. Entra nele o tipo técnico usado por mais de uma camada; conceito de negócio fica no `Domain`, mesmo que várias camadas o usem. Não é o *shared kernel* do DDD: conceito de domínio compartilhado entre módulos (`AggregateRoot`, eventos de domínio, `FreeText`, `Money`) fica em `Domain/Common`. Exemplo: `ClaimNames` é o formato do token que a Infrastructure grava e a Api lê, então é Shared; os papéis (`Roles`) são conceito de negócio, então são Domain.
 - `Domain` referencia só o `Shared`, sem pacote de infraestrutura.
 - `Application` referencia só `Domain` (e pacotes de abstração: Mediator e FluentValidation). Não referencia EF Core: lê e grava só por repositories e `IUnitOfWork`.
 - Só a `Infrastructure` conhece o `AppDbContext`; a `Api` usa repositories quando precisa gravar algo (auditoria).
