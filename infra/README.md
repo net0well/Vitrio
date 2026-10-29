@@ -16,7 +16,7 @@ dotnet ef database update -p src/Vitrio.Infrastructure -s src/Vitrio.Infrastruct
 dotnet run --project src/Vitrio.Api
 ```
 
-- API: http://localhost:5080 (Scalar em `/scalar`, saúde em `/health/ready`)
+- API: http://localhost:5080 (Swagger em `/swagger`, saúde em `/health/ready`)
 - Redis: `localhost:6379` (já configurado em `appsettings.Development.json`; sem Redis a API usa só o cache em memória)
 - Mailpit (caixa de e-mail de teste; todo e-mail da API em desenvolvimento cai aqui): http://localhost:8025, SMTP em `localhost:1025`
 - Seq: http://localhost:5341
