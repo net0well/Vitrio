@@ -38,7 +38,8 @@ internal sealed class AddressLookupService(ICepLookup cepLookup, ICityDirectory 
             return list.Error;
         }
 
-        var city = list.Value.FirstOrDefault(candidate => Key(candidate.Name) == Key(found.City));
+        var city = list.Value.FirstOrDefault(candidate => candidate.Code == found.CityIbgeCode)
+            ?? list.Value.FirstOrDefault(candidate => Key(candidate.Name) == Key(found.City));
         if (city is null)
         {
             return AccountErrors.CityNotFound;

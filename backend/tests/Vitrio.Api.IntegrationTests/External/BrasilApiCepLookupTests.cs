@@ -14,6 +14,7 @@ public sealed class BrasilApiCepLookupTests
     {
         var handler = new StubHttpHandler(HttpStatusCode.OK, """
             {"cep":"14870000","state":"SP","city":"Jaboticabal","neighborhood":"Centro","street":"Rua Rui Barbosa","service":"open-cep",
+             "ibge":{"city":"3524303","state":"35"},
              "location":{"type":"Point","coordinates":{"longitude":"-48.3221","latitude":"-21.2547"}}}
             """);
 
@@ -23,6 +24,7 @@ public sealed class BrasilApiCepLookupTests
         Assert.Equal("Rua Rui Barbosa", found.Street);
         Assert.Equal("Jaboticabal", found.City);
         Assert.Equal("SP", found.State);
+        Assert.Equal(3524303, found.CityIbgeCode);
         Assert.Equal(-21.2547, found.Latitude);
         Assert.Equal(-48.3221, found.Longitude);
         Assert.EndsWith("/api/cep/v2/14870000", handler.Requests.Single().AbsolutePath, StringComparison.Ordinal);

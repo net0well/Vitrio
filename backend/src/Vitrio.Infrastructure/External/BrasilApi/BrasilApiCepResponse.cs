@@ -6,4 +6,5 @@ internal sealed record BrasilApiCepResponse(
     string? City,
     string? Neighborhood,
     string? Street,
+    BrasilApiIbge? Ibge,
     BrasilApiLocation? Location);

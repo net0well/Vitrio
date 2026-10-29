@@ -5,5 +5,6 @@ public sealed record CepLookupResult(
     string? Neighborhood,
     string City,
     string State,
+    int? CityIbgeCode,
     double? Latitude,
     double? Longitude);

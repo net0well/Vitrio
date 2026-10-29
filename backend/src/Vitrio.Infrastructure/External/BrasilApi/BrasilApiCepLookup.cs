@@ -37,6 +37,7 @@ internal sealed partial class BrasilApiCepLookup(HttpClient http, ILogger<Brasil
                 body.Neighborhood,
                 body.City,
                 body.State.ToUpperInvariant(),
+                int.TryParse(body.Ibge?.City, NumberStyles.None, CultureInfo.InvariantCulture, out var cityCode) ? cityCode : null,
                 Parse(body.Location?.Coordinates?.Latitude),
                 Parse(body.Location?.Coordinates?.Longitude));
         }

@@ -13,7 +13,7 @@ public sealed class FakeCepLookup : ICepLookup
     public Task<Result<CepLookupResult?>> FindAsync(Cep cep, CancellationToken cancellationToken) => Task.FromResult(cep.Value switch
     {
         Jaboticabal => Result<CepLookupResult?>.Success(
-            new CepLookupResult("Rua Rui Barbosa", "Centro", "Jaboticabal", "SP", -21.2547, -48.3221)),
+            new CepLookupResult("Rua Rui Barbosa", "Centro", "Jaboticabal", "SP", null, -21.2547, -48.3221)),
         Unreachable => AccountErrors.CepUnavailable,
         _ => Result<CepLookupResult?>.Success(null)
     });
