@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IPasswordChangeService, PasswordChangeService>();
         services.AddScoped<IAddressLookupService, AddressLookupService>();
+        services.AddScoped<IAccountRolesService, AccountRolesService>();
         return services;
     }
 }

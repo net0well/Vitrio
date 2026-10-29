@@ -43,7 +43,7 @@ public sealed class VerifyEmailCommandHandler(
         }
 
         user.ConfirmEmail(clock);
-        var response = sessions.Start(user, command.DeviceName);
+        var response = await sessions.StartAsync(user, command.DeviceName, cancellationToken);
         auditLog.Record(AuditActions.EmailVerified, user.Id, AuditTargets.User, user.Id);
 
         return await TrySaveAsync(cancellationToken) ? response : AccountErrors.InvalidCode;

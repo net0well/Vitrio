@@ -81,6 +81,8 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
 
 ## Recorte 4: conta, celular, endereços e aparelhos de push
 
+**Situação:** pronto.
+
 1. **Domain:**
    - `PhoneNumber` (celular brasileiro com DDD válido, guardado em E.164) e `User.Rename`/`ChangePhoneNumber`.
    - `Cep`, `PostalLocation` (rua, bairro, cidade, UF, código IBGE e coordenadas do CEP quando houver) e `Address` (rótulo, número, complemento; até 10 por pessoa).
@@ -108,6 +110,24 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
    - endereço e aparelho de outra pessoa respondem 404, e todas as rotas respondem 401 sem token;
    - dados criptografados no banco;
    - leitura das respostas da BrasilAPI e do IBGE com um handler HTTP falso (sem rede nos testes).
+
+## Recorte 5: exclusão de conta e primeiro admin
+
+1. **Domain:**
+   - `User.Delete` anonimiza na hora o e-mail (`{id}@removido.invalid`, o que libera o endereço para um cadastro novo), o nome ("Usuário removido"), o celular e a senha, grava `DeletedAt` e gera `user.deleted` (catálogo de [10-eventos.md](../10-eventos.md)).
+   - `AdminGrant` registra quem é admin.
+2. **Application:**
+   - `DeleteAccount` consulta os bloqueios (`IAccountDeletionBlocker`, um por módulo; pedidos e pagamentos entram nas specs deles para o AC-20), revoga todas as sessões, apaga endereços e aparelhos, anonimiza e audita.
+   - `GrantAdmin` dá o papel de admin a uma conta ativa, com auditoria.
+   - `IAccountRolesService` monta os papéis do token e do `/me` (`customer` sempre, `admin` pela tabela).
+3. **Api:**
+   - `DELETE /me` (204).
+   - Comando de linha `dotnet Vitrio.Api.dll grant-admin <email>`: roda no servidor, fora da API, e não sobe o servidor web.
+4. **Testes de integração:**
+   - AC-19: sessão encerrada, mesmo e-mail cria conta nova e dados pessoais apagados. As avaliações como "Usuário removido" ficam para a spec de avaliações.
+   - `user.deleted` na outbox.
+   - Papel de admin no token e no `/me`.
+   - 401 sem token.
 
 ## Recortes seguintes
 

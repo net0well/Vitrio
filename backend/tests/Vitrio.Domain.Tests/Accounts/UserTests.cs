@@ -144,6 +144,33 @@ public sealed class UserTests
         Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
     }
 
+    [Fact]
+    public void Delete_AnonymizesTheAccountAndRaisesUserDeleted()
+    {
+        var user = ActiveUser();
+        user.ChangePhoneNumber(PhoneNumber.Create("16991234567").Value);
+
+        var result = user.Delete(_clock);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(UserStatus.Deleted, user.Status);
+        Assert.Equal($"{user.Id:N}@removido.invalid", user.Email);
+        Assert.Equal(User.RemovedDisplayName, user.DisplayName);
+        Assert.Null(user.PhoneNumber);
+        Assert.Empty(user.PasswordHash);
+        Assert.Equal(_clock.UtcNow, user.DeletedAt);
+        Assert.Equal(new UserDeleted(user.Id) { EventId = user.DomainEvents.Single().EventId }, user.DomainEvents.Single());
+    }
+
+    [Fact]
+    public void Delete_Twice_Fails()
+    {
+        var user = ActiveUser();
+        user.Delete(_clock);
+
+        Assert.True(user.Delete(_clock).IsFailure);
+    }
+
     private User ActiveUser()
     {
         var user = User.Register(

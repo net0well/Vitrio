@@ -11,4 +11,6 @@ public interface IAddressWritableRepository
     void Add(Address address);
 
     void Remove(Address address);
+
+    Task RemoveAllForUserAsync(Guid userId, CancellationToken cancellationToken);
 }

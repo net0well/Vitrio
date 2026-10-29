@@ -19,11 +19,18 @@ internal sealed class UserSearchableRepository(AppDbContext db) : IUserSearchabl
         var user = await db.Users
             .AsNoTracking()
             .Where(account => account.Id == userId && account.Status == UserStatus.Active)
-            .Select(account => new { account.Id, account.DisplayName, account.Email, account.PhoneNumber })
+            .Select(account => new
+            {
+                account.Id,
+                account.DisplayName,
+                account.Email,
+                account.PhoneNumber,
+                IsAdmin = db.AdminGrants.Any(grant => grant.UserId == account.Id)
+            })
             .SingleOrDefaultAsync(cancellationToken);
 
         return user is null
             ? null
-            : MeResponse.Create(user.Id, user.DisplayName, user.Email, user.PhoneNumber, AccountRoles.Customer);
+            : MeResponse.Create(user.Id, user.DisplayName, user.Email, user.PhoneNumber, AccountRoles.For(user.IsAdmin));
     }
 }

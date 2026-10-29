@@ -5,9 +5,9 @@ namespace Vitrio.Application.Accounts.Services;
 
 public interface ISessionService
 {
-    AuthResponse Start(User user, string? deviceName);
+    Task<AuthResponse> StartAsync(User user, string? deviceName, CancellationToken cancellationToken);
 
-    TokenResponse Rotate(User user, Session session, RefreshToken current);
+    Task<TokenResponse> RotateAsync(User user, Session session, RefreshToken current, CancellationToken cancellationToken);
 
     Task<IReadOnlyCollection<Guid>> RevokeAsync(
         IReadOnlyCollection<Session> sessionsToRevoke,

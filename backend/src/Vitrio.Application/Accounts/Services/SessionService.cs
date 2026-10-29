@@ -11,28 +11,31 @@ internal sealed class SessionService(
     IRefreshTokenWritableRepository refreshTokens,
     IRefreshTokenFactory refreshTokenFactory,
     ITokenIssuer tokenIssuer,
+    IAccountRolesService roles,
     IClock clock) : ISessionService
 {
-    public AuthResponse Start(User user, string? deviceName)
+    public async Task<AuthResponse> StartAsync(User user, string? deviceName, CancellationToken cancellationToken)
     {
+        var userRoles = await roles.ForUserAsync(user.Id, cancellationToken);
         var session = Session.Start(user.Id, deviceName, clock);
         var refreshToken = refreshTokenFactory.Create();
         sessions.Add(session);
         refreshTokens.Add(RefreshToken.IssueFor(session, refreshToken.Hash, clock));
 
-        var accessToken = tokenIssuer.Issue(user, session, AccountRoles.Customer);
-        return new AuthResponse(accessToken.Value, accessToken.ExpiresInSeconds, refreshToken.Value, MeResponse.From(user, AccountRoles.Customer));
+        var accessToken = tokenIssuer.Issue(user, session, userRoles);
+        return new AuthResponse(accessToken.Value, accessToken.ExpiresInSeconds, refreshToken.Value, MeResponse.From(user, userRoles));
     }
 
-    public TokenResponse Rotate(User user, Session session, RefreshToken current)
+    public async Task<TokenResponse> RotateAsync(User user, Session session, RefreshToken current, CancellationToken cancellationToken)
     {
+        var userRoles = await roles.ForUserAsync(user.Id, cancellationToken);
         var next = refreshTokenFactory.Create();
         var nextToken = RefreshToken.IssueFor(session, next.Hash, clock);
         current.MarkUsed(nextToken.Id, clock);
         refreshTokens.Add(nextToken);
         session.Touch(clock);
 
-        var accessToken = tokenIssuer.Issue(user, session, AccountRoles.Customer);
+        var accessToken = tokenIssuer.Issue(user, session, userRoles);
         return new TokenResponse(accessToken.Value, accessToken.ExpiresInSeconds, next.Value);
     }
 

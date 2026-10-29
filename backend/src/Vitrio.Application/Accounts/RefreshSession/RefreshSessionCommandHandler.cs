@@ -40,7 +40,7 @@ public sealed class RefreshSessionCommandHandler(
             return AccountErrors.InvalidRefreshToken;
         }
 
-        var response = sessionService.Rotate(user, session, token);
+        var response = await sessionService.RotateAsync(user, session, token, cancellationToken);
         return await TrySaveAsync(cancellationToken) ? response : AccountErrors.InvalidRefreshToken;
     }
 

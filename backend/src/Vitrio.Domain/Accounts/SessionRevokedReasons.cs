@@ -8,4 +8,5 @@ public static class SessionRevokedReasons
     public const string RefreshReused = "refresh_reused";
     public const string PasswordReset = "password_reset";
     public const string PasswordChanged = "password_changed";
+    public const string AccountDeleted = "account_deleted";
 }

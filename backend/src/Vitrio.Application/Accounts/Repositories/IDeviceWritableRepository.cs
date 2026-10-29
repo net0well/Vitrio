@@ -9,4 +9,6 @@ public interface IDeviceWritableRepository
     void Add(Device device);
 
     void Remove(Device device);
+
+    Task RemoveAllForUserAsync(Guid userId, CancellationToken cancellationToken);
 }

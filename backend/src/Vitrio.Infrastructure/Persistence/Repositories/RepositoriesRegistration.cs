@@ -17,6 +17,8 @@ internal static class RepositoriesRegistration
         services.AddScoped<IAddressWritableRepository, AddressWritableRepository>();
         services.AddScoped<IAddressSearchableRepository, AddressSearchableRepository>();
         services.AddScoped<IDeviceWritableRepository, DeviceWritableRepository>();
+        services.AddScoped<IAdminGrantWritableRepository, AdminGrantWritableRepository>();
+        services.AddScoped<IAdminGrantSearchableRepository, AdminGrantSearchableRepository>();
         services.AddScoped<IAuditEventWritableRepository, AuditEventWritableRepository>();
         return services;
     }

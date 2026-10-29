@@ -40,7 +40,7 @@ public sealed class ResetPasswordCommandHandler(
             SessionRevokedReasons.PasswordReset,
             sessionToKeep: null,
             cancellationToken);
-        var response = sessions.Start(user, command.DeviceName);
+        var response = await sessions.StartAsync(user, command.DeviceName, cancellationToken);
         auditLog.Record(AuditActions.PasswordReset, user.Id, AuditTargets.User, user.Id);
         if (!await TrySaveAsync(cancellationToken))
         {

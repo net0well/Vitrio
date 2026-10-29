@@ -5,6 +5,7 @@ namespace Vitrio.Domain.Accounts;
 public sealed class User : AggregateRoot
 {
     public const int TermsVersionMaxLength = 20;
+    public const string RemovedDisplayName = "Usuário removido";
     public const int MaxFailedSignIns = 5;
 
     public static readonly TimeSpan FailedSignInWindow = TimeSpan.FromMinutes(15);
@@ -45,6 +46,8 @@ public sealed class User : AggregateRoot
     public DateTimeOffset? LockedOutUntil { get; private set; }
 
     public DateTimeOffset CreatedAt { get; private set; }
+
+    public DateTimeOffset? DeletedAt { get; private set; }
 
     public static User Register(EmailAddress email, DisplayName displayName, string passwordHash, string termsVersion, IClock clock)
     {
@@ -125,6 +128,24 @@ public sealed class User : AggregateRoot
     public void ReplacePasswordHash(string passwordHash) => PasswordHash = passwordHash;
 
     public void Rename(DisplayName displayName) => DisplayName = displayName.Value;
+
+    public Result Delete(IClock clock)
+    {
+        if (Status is not (UserStatus.Active or UserStatus.Suspended))
+        {
+            return AccountErrors.AccountNotFound;
+        }
+
+        Status = UserStatus.Deleted;
+        DeletedAt = clock.UtcNow;
+        Email = $"{Id:N}@removido.invalid";
+        DisplayName = RemovedDisplayName;
+        PhoneNumber = null;
+        PasswordHash = string.Empty;
+        RegisterSuccessfulSignIn();
+        Raise(new UserDeleted(Id));
+        return Result.Success();
+    }
 
     public void ChangePhoneNumber(PhoneNumber? phoneNumber) => PhoneNumber = phoneNumber?.Value;
 

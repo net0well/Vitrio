@@ -12,4 +12,7 @@ internal sealed class DeviceWritableRepository(AppDbContext db) : IDeviceWritabl
     public void Add(Device device) => db.Devices.Add(device);
 
     public void Remove(Device device) => db.Devices.Remove(device);
+
+    public async Task RemoveAllForUserAsync(Guid userId, CancellationToken cancellationToken) =>
+        db.Devices.RemoveRange(await db.Devices.Where(device => device.UserId == userId).ToListAsync(cancellationToken));
 }

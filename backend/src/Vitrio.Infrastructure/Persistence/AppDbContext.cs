@@ -22,6 +22,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
 
     public DbSet<Device> Devices => Set<Device>();
 
+    public DbSet<AdminGrant> AdminGrants => Set<AdminGrant>();
+
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();

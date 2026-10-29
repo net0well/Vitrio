@@ -60,7 +60,7 @@ public sealed class LoginCommandHandler(
             user.ReplacePasswordHash(passwords.Hash(command.Password));
         }
 
-        var response = sessions.Start(user, command.DeviceName);
+        var response = await sessions.StartAsync(user, command.DeviceName, cancellationToken);
         auditLog.Record(AuditActions.SignedIn, user.Id, AuditTargets.User, user.Id);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return response;

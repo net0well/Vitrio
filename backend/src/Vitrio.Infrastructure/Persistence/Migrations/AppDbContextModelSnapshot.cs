@@ -136,6 +136,22 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.ToTable("addresses", (string)null);
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Accounts.AdminGrant", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTimeOffset>("GrantedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("granted_at");
+
+                    b.HasKey("UserId")
+                        .HasName("pk_admin_grants");
+
+                    b.ToTable("admin_grants", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Accounts.Device", b =>
                 {
                     b.Property<string>("InstallationId")
@@ -357,6 +373,10 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(60)
@@ -573,6 +593,16 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_addresses_users_user_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Accounts.AdminGrant", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithOne()
+                        .HasForeignKey("Vitrio.Domain.Accounts.AdminGrant", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_admin_grants_users_user_id");
                 });
 
             modelBuilder.Entity("Vitrio.Domain.Accounts.Device", b =>

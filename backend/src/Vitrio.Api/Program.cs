@@ -36,7 +36,7 @@ using Vitrio.Infrastructure.Authentication;
 
 const int MaxRequestBodySize = 64 * 1024;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(AdminCommand.IsRequested(args) ? [] : args);
 
 if (builder.Environment.IsProduction())
 {
@@ -212,5 +212,11 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
     Predicate = check => check.Tags.Contains(Vitrio.Infrastructure.DependencyInjection.ReadinessTag)
 }).AllowAnonymous();
+
+if (AdminCommand.IsRequested(args))
+{
+    Environment.ExitCode = await AdminCommand.RunAsync(app.Services, args);
+    return;
+}
 
 await app.RunAsync();

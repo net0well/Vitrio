@@ -12,4 +12,6 @@ public static class AuditActions
     public const string RefreshReused = "account.refresh_reused";
     public const string PasswordReset = "account.password_reset";
     public const string PasswordChanged = "account.password_changed";
+    public const string AccountDeleted = "account.deleted";
+    public const string AdminGranted = "account.admin_granted";
 }

@@ -15,4 +15,7 @@ internal sealed class AddressWritableRepository(AppDbContext db) : IAddressWrita
     public void Add(Address address) => db.Addresses.Add(address);
 
     public void Remove(Address address) => db.Addresses.Remove(address);
+
+    public async Task RemoveAllForUserAsync(Guid userId, CancellationToken cancellationToken) =>
+        db.Addresses.RemoveRange(await db.Addresses.Where(address => address.UserId == userId).ToListAsync(cancellationToken));
 }

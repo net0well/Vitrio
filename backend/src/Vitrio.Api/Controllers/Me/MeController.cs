@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Vitrio.Api.RateLimiting;
 using Vitrio.Application.Accounts.Common;
+using Vitrio.Application.Accounts.DeleteAccount;
 using Vitrio.Application.Accounts.DeleteAddress;
 using Vitrio.Application.Accounts.GetMe;
 using Vitrio.Application.Accounts.ListAddresses;
@@ -34,6 +35,14 @@ public sealed class MeController(ISender sender) : ApiControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateMe(UpdateMeRequest request, CancellationToken cancellationToken) =>
         ToActionResult(await sender.Send(request.ToCommand(), cancellationToken));
+
+    [HttpDelete]
+    [EndpointSummary("Exclui a conta e encerra todas as sessões")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteAccount(CancellationToken cancellationToken) =>
+        ToActionResult(await sender.Send(new DeleteAccountCommand(), cancellationToken));
 
     [HttpGet("addresses")]
     [EnableRateLimiting(RateLimitPolicies.Profile)]
