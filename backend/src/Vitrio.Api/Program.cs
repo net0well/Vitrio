@@ -84,6 +84,7 @@ builder.Services.AddMediator((Mediator.MediatorOptions options) =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IAuditLog, HttpAuditLog>();
+builder.Services.AddScoped<SessionValidationEvents>();
 
 builder.Services
     .AddControllers()
@@ -141,6 +142,7 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
     .Configure<IOptions<JwtOptions>, JwtSigningKey, IClock>((bearer, jwt, signingKey, clock) =>
     {
         bearer.MapInboundClaims = false;
+        bearer.EventsType = typeof(SessionValidationEvents);
         bearer.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,

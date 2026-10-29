@@ -128,6 +128,12 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("used_at");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id")
                         .HasName("pk_refresh_tokens");
 
@@ -220,6 +226,18 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("EmailVerifiedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("email_verified_at");
+
+                    b.Property<int>("FailedSignInCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("failed_sign_in_count");
+
+                    b.Property<DateTimeOffset?>("FailedSignInWindowStartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("failed_sign_in_window_started_at");
+
+                    b.Property<DateTimeOffset?>("LockedOutUntil")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("locked_out_until");
 
                     b.Property<DateTimeOffset>("PasswordChangedAt")
                         .HasColumnType("timestamp with time zone")

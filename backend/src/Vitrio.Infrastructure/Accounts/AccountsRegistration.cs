@@ -19,6 +19,8 @@ internal static class AccountsRegistration
         services.AddSingleton<IVerificationCodes, HmacVerificationCodes>();
         services.AddSingleton<IRefreshTokenFactory, RefreshTokenFactory>();
         services.AddSingleton<Application.Abstractions.IPasswordHasher, IdentityPasswordHasher>();
+        services.AddSingleton<ISessionStatusCache, SessionStatusCache>();
+        services.AddScoped<SessionStatusChecker>();
         return services;
     }
 }

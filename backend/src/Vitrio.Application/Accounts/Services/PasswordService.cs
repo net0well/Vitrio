@@ -9,8 +9,10 @@ public sealed class PasswordService(IPasswordHasher hasher)
 
     public string Hash(string password) => hasher.Hash(PasswordPolicy.Normalize(password));
 
-    public bool Matches(string passwordHash, string password) =>
-        hasher.Verify(passwordHash, PasswordPolicy.Normalize(password)) != PasswordCheck.Failed;
+    public PasswordCheck Check(string passwordHash, string password) =>
+        hasher.Verify(passwordHash, PasswordPolicy.Normalize(password));
 
-    public void MatchWithoutAccount(string password) => Matches(_unusedHash.Value, password);
+    public bool Matches(string passwordHash, string password) => Check(passwordHash, password) != PasswordCheck.Failed;
+
+    public void MatchWithoutAccount(string password) => Check(_unusedHash.Value, password);
 }

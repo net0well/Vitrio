@@ -7,8 +7,12 @@ internal sealed class CurrentUser(IHttpContextAccessor httpContextAccessor) : IC
 {
     public bool IsAuthenticated => httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true;
 
-    public Guid Id =>
-        Guid.TryParse(httpContextAccessor.HttpContext?.User.FindFirst(ClaimNames.Subject)?.Value, out var id)
-            ? id
+    public Guid Id => ReadGuid(ClaimNames.Subject);
+
+    public Guid SessionId => ReadGuid(ClaimNames.SessionId);
+
+    private Guid ReadGuid(string claim) =>
+        Guid.TryParse(httpContextAccessor.HttpContext?.User.FindFirst(claim)?.Value, out var value)
+            ? value
             : throw new InvalidOperationException("There is no authenticated user in the current request.");
 }
