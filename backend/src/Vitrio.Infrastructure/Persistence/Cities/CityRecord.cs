@@ -22,10 +22,13 @@ public sealed class CityRecord
 
     public string TimeZone { get; private set; } = string.Empty;
 
+    public int Population { get; private set; }
+
     public static CityRecord Create(int ibgeCode) => new() { IbgeCode = ibgeCode };
 
-    public void Update(string name, string nameNormalized, string state, string timeZone, MultiPolygon boundary)
+    public void Update(string name, string nameNormalized, string state, string timeZone, int population, MultiPolygon boundary)
     {
+        Population = population;
         Name = name;
         NameNormalized = nameNormalized;
         State = state;

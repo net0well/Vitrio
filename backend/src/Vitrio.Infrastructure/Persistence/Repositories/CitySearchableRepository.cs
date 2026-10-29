@@ -43,7 +43,7 @@ internal sealed class CitySearchableRepository(AppDbContext db) : ICitySearchabl
             .AsNoTracking()
             .Where(city => city.NameNormalized.Contains(normalizedTerm) && (state == null || city.State == state))
             .OrderBy(city => city.NameNormalized.StartsWith(normalizedTerm) ? 0 : 1)
-            .ThenBy(city => city.NameNormalized.Length)
+            .ThenByDescending(city => city.Population)
             .ThenBy(city => city.Name)
             .Take(limit)
             .Select(city => new CitySummary(city.IbgeCode, city.Name, city.State))

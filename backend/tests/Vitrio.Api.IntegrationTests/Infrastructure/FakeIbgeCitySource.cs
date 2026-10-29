@@ -12,13 +12,13 @@ public sealed class FakeIbgeCitySource : IIbgeCitySource
     public const int SaoJoseDosCamposCode = 3549904;
     public const int SaoJoseCode = 4216602;
 
-    private static readonly IReadOnlyList<(int Code, string Name, string State, double West, double South, double East, double North)> Cities =
+    private static readonly IReadOnlyList<(int Code, string Name, string State, int Population, double West, double South, double East, double North)> Cities =
     [
-        (JaboticabalCode, "Jaboticabal", "SP", -48.40, -21.32, -48.25, -21.18),
-        (SaoPauloCode, "São Paulo", "SP", -46.83, -23.80, -46.36, -23.36),
-        (SantosCode, "Santos", "SP", -46.40, -23.99, -46.28, -23.90),
-        (SaoJoseDosCamposCode, "São José dos Campos", "SP", -46.00, -23.30, -45.70, -23.00),
-        (SaoJoseCode, "São José", "SC", -48.70, -27.65, -48.60, -27.55)
+        (JaboticabalCode, "Jaboticabal", "SP", 77_000, -48.40, -21.32, -48.25, -21.18),
+        (SaoPauloCode, "São Paulo", "SP", 11_900_000, -46.83, -23.80, -46.36, -23.36),
+        (SantosCode, "Santos", "SP", 420_000, -46.40, -23.99, -46.28, -23.90),
+        (SaoJoseDosCamposCode, "São José dos Campos", "SP", 700_000, -46.00, -23.30, -45.70, -23.00),
+        (SaoJoseCode, "São José", "SC", 270_000, -48.70, -27.65, -48.60, -27.55)
     ];
 
     public ConcurrentDictionary<int, string> Renamed { get; } = new();
@@ -31,6 +31,7 @@ public sealed class FakeIbgeCitySource : IIbgeCitySource
                 city.Code,
                 Renamed.TryGetValue(city.Code, out var name) ? name : city.Name,
                 city.State,
+                city.Population,
                 Rectangle(city.West, city.South, city.East, city.North)))
             .ToList();
         return Task.FromResult(found);

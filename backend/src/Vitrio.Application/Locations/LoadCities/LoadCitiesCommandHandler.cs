@@ -34,5 +34,6 @@ public sealed class LoadCitiesCommandHandler(
         SearchText.Normalize(municipality.Name),
         municipality.State,
         BrazilTimeZones.For(municipality.State, municipality.Name),
+        municipality.Population,
         municipality.BoundaryGeoJson);
 }

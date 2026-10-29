@@ -532,6 +532,10 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(80)")
                         .HasColumnName("name_normalized");
 
+                    b.Property<int>("Population")
+                        .HasColumnType("integer")
+                        .HasColumnName("population");
+
                     b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(2)

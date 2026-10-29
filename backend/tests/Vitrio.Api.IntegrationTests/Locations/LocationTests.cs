@@ -75,7 +75,7 @@ public sealed class LocationTests(ApiFactory factory)
         var cities = await response.Content.ReadFromJsonAsync<List<CitySummary>>(TestContext.Current.CancellationToken);
         Assert.Contains(new CitySummary(FakeIbgeCitySource.SaoJoseCode, "São José", "SC"), cities!);
         Assert.Contains(new CitySummary(FakeIbgeCitySource.SaoJoseDosCamposCode, "São José dos Campos", "SP"), cities!);
-        Assert.Equal("São José", cities![0].Name);
+        Assert.Equal("São José dos Campos", cities![0].Name);
         Assert.True(cities.Count <= 20);
         Assert.Equal("public, max-age=86400", response.Headers.CacheControl?.ToString());
     }

@@ -27,7 +27,7 @@ O Vitrio funciona em qualquer cidade do Brasil. Para mostrar quem atende perto, 
 
 ## Domain Model
 
-- `City` (referência, somente leitura): `IbgeCode` (7 dígitos, chave), `Name`, `NameNormalized`, `State` (UF), `Boundary` (`geography(MultiPolygon)` simplificada), `Centroid` (`geography(Point)`), `TimeZone` (IANA, ex.: `America/Sao_Paulo`).
+- `City` (referência, somente leitura): `IbgeCode` (7 dígitos, chave), `Name`, `NameNormalized`, `State` (UF), `Boundary` (`geography(MultiPolygon)` simplificada), `Centroid` (`geography(Point)`), `TimeZone` (IANA, ex.: `America/Sao_Paulo`), `Population` (estimativa mais recente do IBGE, usada para pôr as cidades maiores primeiro na busca por nome).
 - `LocationContext` (valor usado pelas consultas, não persistido): `Mode` (`Gps`, `ChosenCity`), `Point?`, `CityIbgeCode`. Com GPS e sem distância escolhida pelo cliente, a busca usa até **20 km** (`maxDistanceKm` padrão da spec 004).
 - Carga: comando de linha da API (`dotnet Vitrio.Api.dll load-cities`, como o `grant-admin`) lê a API de localidades e as malhas do IBGE (qualidade mínima, já simplificadas), calcula o centroide e o fuso e grava a tabela `cities`. É idempotente (atualiza o que já existe), roda depois das migrações na criação do banco e uma vez por ano e, ao final, remove a tag `cities` do cache. Os testes carregam só algumas cidades por uma fonte falsa.
 - Fuso: por UF, com as exceções de Fernando de Noronha (`America/Noronha`) e dos 13 municípios do oeste do Amazonas no fuso do Acre (`America/Eirunepe`, Lei 12.876/2013).

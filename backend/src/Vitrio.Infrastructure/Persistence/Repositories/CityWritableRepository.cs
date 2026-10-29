@@ -22,7 +22,7 @@ internal sealed class CityWritableRepository(AppDbContext db) : ICityWritableRep
                 db.Cities.Add(record);
             }
 
-            record.Update(city.Name, city.NameNormalized, city.State, city.TimeZone, GeoJsonBoundary.Parse(city.BoundaryGeoJson));
+            record.Update(city.Name, city.NameNormalized, city.State, city.TimeZone, city.Population, GeoJsonBoundary.Parse(city.BoundaryGeoJson));
         }
     }
 }
