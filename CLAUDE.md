@@ -64,11 +64,10 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 4. Rastreabilidade só nos documentos. Código, testes, branches e commits não citam specs nem planos.
 5. Se a implementação mostrar que a spec está errada, volte a spec para In Review e corrija antes de seguir.
 6. Uma branch e um PR por spec. Os recortes do plano viram vários commits pequenos na mesma branch, e o PR só abre quando a spec inteira estiver implementada e testada de ponta a ponta (API e app). Nada de PR pequeno no meio do caminho.
-7. Fechamento da spec, antes do PR:
-   - `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); os achados são corrigidos ou registrados.
-   - Subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
-   - Comparar no emulador cada tela criada ou alterada com a prancheta do protótipo e com o design system; as diferenças são corrigidas.
-   - O resultado das revisões e dos testes manuais vai na descrição do PR.
+7. Fechamento de cada etapa (spec), antes do PR, com duas revisões:
+   - **Revisão de back:** `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); depois subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
+   - **Revisão de front:** confrontar no emulador, por captura, cada tela do app com a prancheta do protótipo e com o design system (estrutura, ordem, componentes, textos, tokens, ícones e funcionalidades), e validar o código do app que já existe: componentes do design system em vez de widgets próprios, nada fora dos tokens, textos no ARB, um tipo por arquivo, padrões e antipadrões da parte Flutter, `flutter analyze` e `flutter test` verdes.
+   - Os achados das duas revisões são corrigidos ou registrados, e o resultado delas e dos testes manuais vai na descrição do PR.
 
 ## Onde está cada coisa
 

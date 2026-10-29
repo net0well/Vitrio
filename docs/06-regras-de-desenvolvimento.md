@@ -37,6 +37,9 @@ Valem para pessoas e para o Claude. **Precedência:** estas regras e o `CLAUDE.m
   - `/security-scan` quando o PR toca autenticação, autorização, uploads, dados pessoais ou um endpoint novo;
   - checklist de segurança de [08-seguranca.md](08-seguranca.md) respondido;
   - migração revisada (se houver) e app Flutter compilando (`flutter analyze`, `flutter test`).
+- No fim de cada etapa (spec), antes do PR, duas revisões, com o resultado na descrição:
+  - **back:** `/code-review`, `/security-scan` e `/arch-check` contra a arquitetura, os padrões e os antipadrões, e a API testada endpoint por endpoint, com os casos de sucesso e de erro;
+  - **front:** cada tela do app confrontada no emulador, por captura, com a prancheta do [protótipo](https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt) e com o [design system](design-system/) (estrutura, componentes, textos, tokens, ícones e funcionalidades), e o código do app revisado contra os padrões e antipadrões da parte Flutter.
 
 ## 5. Arquitetura e código
 
