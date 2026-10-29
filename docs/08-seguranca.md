@@ -89,7 +89,7 @@ Respostas 429 com `Retry-After`. Os contadores ficam na memória de cada instân
 - HTTPS obrigatório (TLS 1.2+) com HSTS (`max-age` 1 ano, `includeSubDomains`) no proxy; HTTP só redireciona.
 - Cabeçalhos: `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `X-Frame-Options: DENY`, `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` nas respostas da API; `Cache-Control: no-store` em toda resposta por padrão e sempre nas autenticadas. Só categorias e cidades declaram cache público ([09-cache.md §7](09-cache.md)).
 - CORS desligado para a API pública (o app não é navegador). Quando houver painel web, CORS só para o domínio do painel, com credenciais e métodos explícitos.
-- OpenAPI, Scalar e painel do Hangfire **desligados em produção** ou atrás de autenticação de admin e lista de IPs.
+- Swagger (documento e UI) e painel do Hangfire **desligados em produção** ou atrás de autenticação de admin e lista de IPs.
 - `ForwardedHeaders` configurado só para o proxy conhecido (sem confiar em `X-Forwarded-For` de qualquer origem), para o rate limit por IP funcionar.
 
 ## 10. Segredos e configuração
