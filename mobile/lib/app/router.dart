@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../features/auth/presentation/session_controller.dart';
+import '../features/location/data/location_providers.dart';
 import '../features/welcome/presentation/welcome_controller.dart';
 import 'routes.dart';
 
@@ -17,6 +18,8 @@ GoRouter router(Ref ref) {
   ref.listen(sessionControllerProvider, (_, session) => signedIn.value = session.value != null);
 
   final welcomeLocation = const WelcomeRoute().location;
+  final homeLocation = const HomeRoute().location;
+  final locationPermissionLocation = const LocationPermissionRoute().location;
   final signInLocation = const SignInRoute().location;
   final protectedLocations = {
     const EditProfileRoute().location,
@@ -32,6 +35,10 @@ GoRouter router(Ref ref) {
       final location = state.matchedLocation;
       if (!welcomeSeen.value && location != welcomeLocation) {
         return welcomeLocation;
+      }
+
+      if (location == homeLocation && ref.read(locationPreferencesProvider).mode == null) {
+        return locationPermissionLocation;
       }
 
       if (!signedIn.value && protectedLocations.contains(location)) {

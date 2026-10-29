@@ -495,6 +495,72 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Só este aparelho está conectado.'**
   String get devicesOnlyThis;
+
+  /// No description provided for @locationPermissionTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Para mostrar quem atende perto de você'**
+  String get locationPermissionTitle;
+
+  /// No description provided for @locationPermissionMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Vitrio usa sua localização só enquanto o app está aberto e não guarda o histórico. Se preferir, escolha a cidade.'**
+  String get locationPermissionMessage;
+
+  /// No description provided for @locationUseMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Usar minha localização'**
+  String get locationUseMine;
+
+  /// No description provided for @locationChooseCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolher cidade'**
+  String get locationChooseCity;
+
+  /// No description provided for @locationSearchHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscar cidade'**
+  String get locationSearchHint;
+
+  /// No description provided for @locationRecent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recentes'**
+  String get locationRecent;
+
+  /// No description provided for @locationNoResults.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma cidade encontrada.'**
+  String get locationNoResults;
+
+  /// No description provided for @locationShowingCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostrando profissionais de {city}'**
+  String locationShowingCity(String city);
+
+  /// No description provided for @locationDenied.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem acesso à localização. Escolha a cidade.'**
+  String get locationDenied;
+
+  /// No description provided for @locationNotFound.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não encontramos sua cidade. Escolha na lista.'**
+  String get locationNotFound;
+
+  /// No description provided for @locationPillHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Trocar cidade'**
+  String get locationPillHint;
 }
 
 class _AppLocalizationsDelegate

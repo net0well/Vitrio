@@ -12,6 +12,7 @@ List<RouteBase> get $appRoutes => [
   $editProfileRoute,
   $forgotPasswordRoute,
   $clientShellRoute,
+  $locationPermissionRoute,
   $signInRoute,
   $signUpRoute,
   $verifyEmailRoute,
@@ -238,6 +239,33 @@ mixin $AccountRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/account');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $locationPermissionRoute => GoRouteData.$route(
+  path: '/location',
+  hasOverriddenOnExit: false,
+  factory: $LocationPermissionRoute._fromState,
+);
+
+mixin $LocationPermissionRoute on GoRouteData {
+  static LocationPermissionRoute _fromState(GoRouterState state) =>
+      const LocationPermissionRoute();
+
+  @override
+  String get location => GoRouteData.$location('/location');
 
   @override
   void go(BuildContext context) => context.go(location);

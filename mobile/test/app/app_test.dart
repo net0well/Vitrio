@@ -7,10 +7,19 @@ import 'package:vitrio/app/app_config.dart';
 import 'package:vitrio/app/flavor.dart';
 import 'package:vitrio/core/network/network_providers.dart';
 import 'package:vitrio/core/storage/preferences.dart';
+import 'package:vitrio/features/location/data/location_providers.dart';
 
+import '../support/fake_cities_repository.dart';
+import '../support/fake_device_location.dart';
 import '../support/memory_token_store.dart';
 
 void main() {
+  const returning = {
+    'welcome_seen': true,
+    'location_mode': 'chosenCity',
+    'location_chosen_city': '{"ibgeCode":3524303,"name":"Jaboticabal","state":"SP"}',
+  };
+
   Future<SharedPreferences> pumpApp(WidgetTester tester, {Map<String, Object> preferences = const {}}) async {
     SharedPreferences.setMockInitialValues(preferences);
     final instance = await SharedPreferences.getInstance();
@@ -20,6 +29,8 @@ void main() {
           appConfigProvider.overrideWithValue(AppConfig.forFlavor(Flavor.dev)),
           preferencesProvider.overrideWithValue(instance),
           tokenStoreProvider.overrideWithValue(MemoryTokenStore()),
+          deviceLocationProvider.overrideWithValue(FakeDeviceLocation()),
+          citiesRepositoryProvider.overrideWithValue(FakeCitiesRepository()),
         ],
         child: const VitrioApp(),
       ),
@@ -35,14 +46,13 @@ void main() {
     expect(find.byType(NavigationBar), findsNothing);
   });
 
-  testWidgets('finding a professional opens the home tab and remembers the welcome', (tester) async {
+  testWidgets('finding a professional asks where to search and remembers the welcome', (tester) async {
     final preferences = await pumpApp(tester);
 
     await tester.tap(find.text('Encontrar um profissional'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.text('Perto de você'), findsOneWidget);
+    expect(find.text('Para mostrar quem atende perto de você'), findsOneWidget);
     expect(preferences.getBool('welcome_seen'), isTrue);
   });
 
@@ -56,14 +66,15 @@ void main() {
     expect(find.textContaining('Entre ou crie sua conta'), findsOneWidget);
   });
 
-  testWidgets('returning users start on the home tab', (tester) async {
-    await pumpApp(tester, preferences: {'welcome_seen': true});
+  testWidgets('returning users start on the home tab of their city', (tester) async {
+    await pumpApp(tester, preferences: returning);
 
     expect(find.text('Perto de você'), findsOneWidget);
+    expect(find.text('Mostrando profissionais de Jaboticabal'), findsOneWidget);
   });
 
   testWidgets('the empty orders tab leads to search', (tester) async {
-    await pumpApp(tester, preferences: {'welcome_seen': true});
+    await pumpApp(tester, preferences: returning);
 
     await tester.tap(find.text('Pedidos'));
     await tester.pumpAndSettle();

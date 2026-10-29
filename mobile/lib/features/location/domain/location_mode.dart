@@ -1,0 +1,1 @@
+enum LocationMode { nearMe, chosenCity }
