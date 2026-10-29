@@ -55,7 +55,13 @@ final class SystemDeviceLocation implements DeviceLocation {
   }
 
   @override
-  Future<void> openSettings() async => Geolocator.openAppSettings();
+  Future<void> openSettings() async {
+    if (await Geolocator.isLocationServiceEnabled()) {
+      await Geolocator.openAppSettings();
+    } else {
+      await Geolocator.openLocationSettings();
+    }
+  }
 
   static DevicePermission _map(LocationPermission permission) => switch (permission) {
         LocationPermission.always || LocationPermission.whileInUse => DevicePermission.granted,
