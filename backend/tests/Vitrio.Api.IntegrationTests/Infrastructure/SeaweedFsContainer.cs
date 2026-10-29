@@ -17,7 +17,7 @@ public sealed class SeaweedFsContainer : IAsyncDisposable
         .WithCommand(
             "printf '{\"identities\":[{\"name\":\"vitrio\",\"credentials\":[{\"accessKey\":\"" + AccessKey + "\",\"secretKey\":\"" + SecretKey
             + "\"}],\"actions\":[\"Admin\",\"Read\",\"List\",\"Tagging\",\"Write\"]},{\"name\":\"anonymous\",\"actions\":[\"Read:" + PublicBucket
-            + "\"]}]}' > /tmp/s3.json && exec weed server -dir=/data -ip.bind=0.0.0.0 -master.volumeSizeLimitMB=64 -s3 -s3.config=/tmp/s3.json")
+            + "\"]}]}' > /tmp/s3.json && exec weed server -dir=/data -ip.bind=0.0.0.0 -master.volumeSizeLimitMB=64 -volume.max=100 -s3 -s3.config=/tmp/s3.json")
         .WithPortBinding(S3Port, true)
         .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request => request.ForPort(S3Port).ForStatusCode(HttpStatusCode.Forbidden)))
         .Build();

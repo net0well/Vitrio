@@ -68,7 +68,7 @@ services:
     command:
       - |
         printf '{"identities":[{"name":"vitrio","credentials":[{"accessKey":"%s","secretKey":"%s"}],"actions":["Admin","Read","List","Tagging","Write"]},{"name":"anonymous","actions":["Read:vitrio-public"]}]}' "$$S3_ACCESS_KEY" "$$S3_SECRET_KEY" > /tmp/s3.json
-        exec weed server -dir=/data -ip.bind=0.0.0.0 -master.volumeSizeLimitMB=1024 -s3 -s3.config=/tmp/s3.json
+        exec weed server -dir=/data -ip.bind=0.0.0.0 -master.volumeSizeLimitMB=256 -volume.max=100 -s3 -s3.config=/tmp/s3.json
     ports:
       - "127.0.0.1:8333:8333"
     volumes:
