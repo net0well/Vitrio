@@ -20,7 +20,7 @@ internal static class AccountsRegistration
         services.AddSingleton<IRefreshTokenFactory, RefreshTokenFactory>();
         services.AddSingleton<Application.Abstractions.IPasswordHasher, IdentityPasswordHasher>();
         services.AddSingleton<ISessionStatusCache, SessionStatusCache>();
-        services.AddScoped<SessionStatusChecker>();
+        services.AddScoped<ISessionStatusChecker, SessionStatusChecker>();
         return services;
     }
 }

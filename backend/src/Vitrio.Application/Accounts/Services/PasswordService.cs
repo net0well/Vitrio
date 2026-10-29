@@ -3,7 +3,7 @@ using Vitrio.Application.Accounts.Common;
 
 namespace Vitrio.Application.Accounts.Services;
 
-public sealed class PasswordService(IPasswordHasher hasher)
+internal sealed class PasswordService(IPasswordHasher hasher) : IPasswordService
 {
     private readonly Lazy<string> _unusedHash = new(() => hasher.Hash(Guid.NewGuid().ToString()));
 

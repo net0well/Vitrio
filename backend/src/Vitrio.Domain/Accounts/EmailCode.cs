@@ -7,8 +7,11 @@ namespace Vitrio.Domain.Accounts;
 public sealed class EmailCode
 {
     public const int MaxAttempts = 5;
+    public const int MaxIssuedPerWindow = 5;
 
     public static readonly TimeSpan Lifetime = TimeSpan.FromMinutes(10);
+    public static readonly TimeSpan ResendInterval = TimeSpan.FromSeconds(60);
+    public static readonly TimeSpan IssueWindow = TimeSpan.FromHours(1);
 
     private EmailCode()
     {

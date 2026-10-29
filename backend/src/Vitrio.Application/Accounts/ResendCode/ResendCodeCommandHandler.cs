@@ -10,7 +10,7 @@ namespace Vitrio.Application.Accounts.ResendCode;
 
 public sealed class ResendCodeCommandHandler(
     IUserSearchableRepository users,
-    EmailCodeService emailCodes,
+    IEmailCodeService emailCodes,
     IEmailSender emailSender,
     IUnitOfWork unitOfWork) : ICommandHandler<ResendCodeCommand, Result>
 {

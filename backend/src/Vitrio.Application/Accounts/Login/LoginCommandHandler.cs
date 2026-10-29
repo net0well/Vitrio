@@ -10,8 +10,8 @@ namespace Vitrio.Application.Accounts.Login;
 
 public sealed class LoginCommandHandler(
     IUserWritableRepository users,
-    PasswordService passwords,
-    SessionService sessions,
+    IPasswordService passwords,
+    ISessionService sessions,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork,
     IClock clock) : ICommandHandler<LoginCommand, Result<AuthResponse>>

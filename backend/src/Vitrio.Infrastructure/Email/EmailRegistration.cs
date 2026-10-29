@@ -12,7 +12,7 @@ internal static class EmailRegistration
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<AccountEmailRenderer>();
+        services.AddSingleton<IAccountEmailRenderer, AccountEmailRenderer>();
         services.AddSingleton<IEmailSender, SmtpEmailSender>();
         return services;
     }

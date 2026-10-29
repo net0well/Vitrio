@@ -6,12 +6,12 @@ using Vitrio.Domain.Common;
 
 namespace Vitrio.Application.Accounts.Services;
 
-public sealed class SessionService(
+internal sealed class SessionService(
     ISessionWritableRepository sessions,
     IRefreshTokenWritableRepository refreshTokens,
     IRefreshTokenFactory refreshTokenFactory,
     ITokenIssuer tokenIssuer,
-    IClock clock)
+    IClock clock) : ISessionService
 {
     private static readonly IReadOnlyCollection<string> CustomerRoles = [Roles.Customer];
 

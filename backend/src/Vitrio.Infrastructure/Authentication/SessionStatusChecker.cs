@@ -1,9 +1,10 @@
 using Microsoft.Extensions.Caching.Hybrid;
+using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Repositories;
 
 namespace Vitrio.Infrastructure.Authentication;
 
-public sealed class SessionStatusChecker(HybridCache cache, ISessionSearchableRepository sessions)
+internal sealed class SessionStatusChecker(HybridCache cache, ISessionSearchableRepository sessions) : ISessionStatusChecker
 {
     private static readonly HybridCacheEntryOptions CacheOptions = new()
     {

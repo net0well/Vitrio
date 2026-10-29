@@ -11,7 +11,7 @@ namespace Vitrio.Application.Accounts.Logout;
 public sealed class LogoutCommandHandler(
     ICurrentUser currentUser,
     ISessionWritableRepository sessions,
-    SessionService sessionService,
+    ISessionService sessionService,
     ISessionStatusCache sessionStatusCache,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork) : ICommandHandler<LogoutCommand, Result>

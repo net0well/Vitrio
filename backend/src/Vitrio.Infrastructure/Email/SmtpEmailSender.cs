@@ -14,7 +14,7 @@ namespace Vitrio.Infrastructure.Email;
 
 internal sealed partial class SmtpEmailSender(
     IOptions<EmailOptions> options,
-    AccountEmailRenderer renderer,
+    IAccountEmailRenderer renderer,
     ILogger<SmtpEmailSender> logger) : IEmailSender
 {
     public async Task<Result> SendAsync(AccountEmail email, CancellationToken cancellationToken)

@@ -11,7 +11,7 @@ namespace Vitrio.Application.Accounts.RevokeSession;
 public sealed class RevokeSessionCommandHandler(
     ICurrentUser currentUser,
     ISessionWritableRepository sessions,
-    SessionService sessionService,
+    ISessionService sessionService,
     ISessionStatusCache sessionStatusCache,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork) : ICommandHandler<RevokeSessionCommand, Result>

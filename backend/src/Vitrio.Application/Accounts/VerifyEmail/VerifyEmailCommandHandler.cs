@@ -11,9 +11,9 @@ namespace Vitrio.Application.Accounts.VerifyEmail;
 public sealed class VerifyEmailCommandHandler(
     IUserWritableRepository users,
     IEmailCodeWritableRepository emailCodes,
-    EmailCodeService emailCodeService,
-    PasswordService passwords,
-    SessionService sessions,
+    IEmailCodeService emailCodeService,
+    IPasswordService passwords,
+    ISessionService sessions,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork,
     IClock clock) : ICommandHandler<VerifyEmailCommand, Result<AuthResponse>>

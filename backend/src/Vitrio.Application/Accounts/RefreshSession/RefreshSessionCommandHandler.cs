@@ -13,7 +13,7 @@ public sealed class RefreshSessionCommandHandler(
     ISessionWritableRepository sessions,
     IUserWritableRepository users,
     IRefreshTokenFactory refreshTokenFactory,
-    SessionService sessionService,
+    ISessionService sessionService,
     ISessionStatusCache sessionStatusCache,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork,

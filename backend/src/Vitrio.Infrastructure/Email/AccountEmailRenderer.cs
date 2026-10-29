@@ -5,7 +5,7 @@ using Vitrio.Application.Accounts.Emails;
 
 namespace Vitrio.Infrastructure.Email;
 
-public sealed partial class AccountEmailRenderer
+public sealed partial class AccountEmailRenderer : IAccountEmailRenderer
 {
     public const string LogoContentId = "vitrio-wordmark";
 

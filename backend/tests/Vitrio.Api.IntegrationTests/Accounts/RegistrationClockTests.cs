@@ -2,7 +2,6 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Vitrio.Api.IntegrationTests.Infrastructure;
 using Vitrio.Application.Accounts.Emails;
-using Vitrio.Application.Accounts.Services;
 using Vitrio.Domain.Accounts;
 
 namespace Vitrio.Api.IntegrationTests.Accounts;
@@ -10,7 +9,7 @@ namespace Vitrio.Api.IntegrationTests.Accounts;
 [Collection(nameof(ClockSensitiveCollection))]
 public sealed class RegistrationClockTests(ApiFactory factory)
 {
-    private static readonly TimeSpan PastResendInterval = EmailCodeService.ResendInterval + TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan PastResendInterval = EmailCode.ResendInterval + TimeSpan.FromSeconds(1);
 
     private readonly HttpClient _client = factory.CreateAuthClient();
 
@@ -31,7 +30,7 @@ public sealed class RegistrationClockTests(ApiFactory factory)
     {
         var email = AuthApi.NewEmail();
         await _client.RegisterAsync(email);
-        for (var code = 2; code <= EmailCodeService.MaxCodesPerWindow; code++)
+        for (var code = 2; code <= EmailCode.MaxIssuedPerWindow; code++)
         {
             factory.Clock.Advance(PastResendInterval);
             Assert.Equal(HttpStatusCode.Accepted, (await _client.ResendCodeAsync(email)).StatusCode);
@@ -41,9 +40,9 @@ public sealed class RegistrationClockTests(ApiFactory factory)
         var response = await _client.ResendCodeAsync(email);
 
         await response.AssertProblemAsync(HttpStatusCode.TooManyRequests, "auth.too_many_codes");
-        var expectedWait = EmailCodeService.Window - (PastResendInterval * EmailCodeService.MaxCodesPerWindow);
+        var expectedWait = EmailCode.IssueWindow - (PastResendInterval * EmailCode.MaxIssuedPerWindow);
         Assert.InRange(response.Headers.RetryAfter!.Delta!.Value, expectedWait - TimeSpan.FromSeconds(5), expectedWait + TimeSpan.FromSeconds(5));
-        Assert.Equal(EmailCodeService.MaxCodesPerWindow, factory.Emails.SentTo(email).Count);
+        Assert.Equal(EmailCode.MaxIssuedPerWindow, factory.Emails.SentTo(email).Count);
     }
 
     [Fact]

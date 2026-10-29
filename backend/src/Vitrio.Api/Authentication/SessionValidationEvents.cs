@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Vitrio.Application.Abstractions;
 using Vitrio.Infrastructure.Authentication;
 
 namespace Vitrio.Api.Authentication;
 
-internal sealed class SessionValidationEvents(SessionStatusChecker sessions) : JwtBearerEvents
+internal sealed class SessionValidationEvents(ISessionStatusChecker sessions) : JwtBearerEvents
 {
     public override async Task TokenValidated(TokenValidatedContext context)
     {
