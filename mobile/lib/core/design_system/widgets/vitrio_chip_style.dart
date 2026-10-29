@@ -1,0 +1,1 @@
+enum VitrioChipStyle { solid, soft }

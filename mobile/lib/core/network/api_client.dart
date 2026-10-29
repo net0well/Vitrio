@@ -81,6 +81,15 @@ class ApiClient {
     }
   }
 
+  Future<bool> renewSession() async {
+    final current = await _tokenStore.read();
+    if (current == null) {
+      return false;
+    }
+
+    return await (_refreshing ??= _refresh(current.refreshToken).whenComplete(() => _refreshing = null)) != null;
+  }
+
   Future<String?> _renewAccessToken(String rejectedAccessToken) async {
     final current = await _tokenStore.read();
     if (current == null) {

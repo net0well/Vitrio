@@ -13,6 +13,12 @@ List<RouteBase> get $appRoutes => [
   $forgotPasswordRoute,
   $clientShellRoute,
   $locationPermissionRoute,
+  $providerAvailabilityRoute,
+  $providerEditRoute,
+  $providerOnboardingRoute,
+  $providerShellRoute,
+  $publicProviderRoute,
+  $shareLinkRoute,
   $signInRoute,
   $signUpRoute,
   $verifyEmailRoute,
@@ -266,6 +272,271 @@ mixin $LocationPermissionRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/location');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $providerAvailabilityRoute => GoRouteData.$route(
+  path: '/provider-availability',
+  hasOverriddenOnExit: false,
+  factory: $ProviderAvailabilityRoute._fromState,
+);
+
+mixin $ProviderAvailabilityRoute on GoRouteData {
+  static ProviderAvailabilityRoute _fromState(GoRouterState state) =>
+      const ProviderAvailabilityRoute();
+
+  @override
+  String get location => GoRouteData.$location('/provider-availability');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $providerEditRoute => GoRouteData.$route(
+  path: '/provider-edit/:step',
+  hasOverriddenOnExit: false,
+  factory: $ProviderEditRoute._fromState,
+);
+
+mixin $ProviderEditRoute on GoRouteData {
+  static ProviderEditRoute _fromState(GoRouterState state) => ProviderEditRoute(
+    step: _$ProviderStepEnumMap._$fromName(state.pathParameters['step']!)!,
+  );
+
+  ProviderEditRoute get _self => this as ProviderEditRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/provider-edit/${Uri.encodeComponent(_$ProviderStepEnumMap[_self.step]!)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+const _$ProviderStepEnumMap = {
+  ProviderStep.about: 'about',
+  ProviderStep.showcase: 'showcase',
+  ProviderStep.photos: 'photos',
+  ProviderStep.review: 'review',
+};
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
+}
+
+RouteBase get $providerOnboardingRoute => GoRouteData.$route(
+  path: '/provider-onboarding/:step',
+  hasOverriddenOnExit: false,
+  factory: $ProviderOnboardingRoute._fromState,
+);
+
+mixin $ProviderOnboardingRoute on GoRouteData {
+  static ProviderOnboardingRoute _fromState(GoRouterState state) =>
+      ProviderOnboardingRoute(
+        step: _$ProviderStepEnumMap._$fromName(state.pathParameters['step']!)!,
+      );
+
+  ProviderOnboardingRoute get _self => this as ProviderOnboardingRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/provider-onboarding/${Uri.encodeComponent(_$ProviderStepEnumMap[_self.step]!)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $providerShellRoute => StatefulShellRouteData.$route(
+  factory: $ProviderShellRouteExtension._fromState,
+  branches: [
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/provider-dashboard',
+          hasOverriddenOnExit: false,
+          factory: $ProviderDashboardRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/provider-profile',
+          hasOverriddenOnExit: false,
+          factory: $ProviderProfileRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/provider-account',
+          hasOverriddenOnExit: false,
+          factory: $ProviderAccountRoute._fromState,
+        ),
+      ],
+    ),
+  ],
+);
+
+extension $ProviderShellRouteExtension on ProviderShellRoute {
+  static ProviderShellRoute _fromState(GoRouterState state) =>
+      const ProviderShellRoute();
+}
+
+mixin $ProviderDashboardRoute on GoRouteData {
+  static ProviderDashboardRoute _fromState(GoRouterState state) =>
+      const ProviderDashboardRoute();
+
+  @override
+  String get location => GoRouteData.$location('/provider-dashboard');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProviderProfileRoute on GoRouteData {
+  static ProviderProfileRoute _fromState(GoRouterState state) =>
+      const ProviderProfileRoute();
+
+  @override
+  String get location => GoRouteData.$location('/provider-profile');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProviderAccountRoute on GoRouteData {
+  static ProviderAccountRoute _fromState(GoRouterState state) =>
+      const ProviderAccountRoute();
+
+  @override
+  String get location => GoRouteData.$location('/provider-account');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $publicProviderRoute => GoRouteData.$route(
+  path: '/providers/:id',
+  hasOverriddenOnExit: false,
+  factory: $PublicProviderRoute._fromState,
+);
+
+mixin $PublicProviderRoute on GoRouteData {
+  static PublicProviderRoute _fromState(GoRouterState state) =>
+      PublicProviderRoute(id: state.pathParameters['id']!);
+
+  PublicProviderRoute get _self => this as PublicProviderRoute;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/providers/${Uri.encodeComponent(_self.id)}');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $shareLinkRoute => GoRouteData.$route(
+  path: '/p/:id',
+  hasOverriddenOnExit: false,
+  factory: $ShareLinkRoute._fromState,
+);
+
+mixin $ShareLinkRoute on GoRouteData {
+  static ShareLinkRoute _fromState(GoRouterState state) =>
+      ShareLinkRoute(id: state.pathParameters['id']!);
+
+  ShareLinkRoute get _self => this as ShareLinkRoute;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/p/${Uri.encodeComponent(_self.id)}');
 
   @override
   void go(BuildContext context) => context.go(location);

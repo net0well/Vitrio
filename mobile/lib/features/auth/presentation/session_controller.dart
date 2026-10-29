@@ -34,6 +34,12 @@ class SessionController extends _$SessionController {
 
   void replaceProfile(Me me) => state = AsyncData(me);
 
+  Future<void> reload() async {
+    if (await ref.read(accountRepositoryProvider).me() case ApiSuccess(:final data)) {
+      state = AsyncData(data);
+    }
+  }
+
   Future<void> signOut({required bool allDevices}) async {
     await ref.read(authRepositoryProvider).logout(allDevices: allDevices);
     state = AsyncData(await _forget());

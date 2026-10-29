@@ -105,5 +105,187 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tabDashboard": "Painel",
+  "tabMyProfile": "Meu perfil",
+  "providerOfferServices": "Quero oferecer meus serviços",
+  "providerEnterMode": "Entrar como prestador",
+  "providerLeaveMode": "Voltar para cliente",
+  "providerStepOf": "Passo {step} de {total}",
+  "@providerStepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "providerStepAbout": "Sobre você",
+  "providerStepShowcase": "Monte sua vitrine",
+  "providerStepPhotos": "Fotos e preços",
+  "providerStepReview": "Revisar e publicar",
+  "providerContinue": "Continuar",
+  "providerPublish": "Publicar",
+  "providerDisplayName": "Nome que os clientes vão ver",
+  "providerHeadline": "Profissão",
+  "providerHeadlineHint": "Ex.: Eletricista",
+  "providerAbout": "Sobre você e o seu trabalho",
+  "providerAboutHint": "Conte há quanto tempo trabalha, o que faz e o que te diferencia.",
+  "providerYears": "Anos de experiência",
+  "providerAvatarAdd": "Adicionar foto de perfil",
+  "providerAvatarChange": "Trocar foto de perfil",
+  "providerCategories": "Categorias",
+  "providerCategoriesHint": "Escolha até 3. A primeira é a principal.",
+  "providerCategoriesRequired": "Escolha ao menos uma categoria.",
+  "providerPrimary": "Principal",
+  "providerServiceArea": "Onde você atende",
+  "providerCep": "CEP do endereço base",
+  "providerNumber": "Número",
+  "providerComplement": "Complemento",
+  "providerBasePrivate": "Seu endereço não aparece para ninguém. Os clientes veem só a cidade, os bairros que você atende e a distância aproximada.",
+  "providerRadius": "Atende até {km} km",
+  "@providerRadius": {
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "providerNeighborhoods": "Bairros atendidos",
+  "providerNeighborhoodHint": "Digite o bairro e toque em adicionar",
+  "providerNeighborhoodAdd": "Adicionar bairro",
+  "providerApproximate": "Não achamos o ponto exato do seu CEP. Usamos o centro da cidade, então as distâncias ficam aproximadas.",
+  "providerContact": "Contato",
+  "providerContactPhone": "Telefone de contato",
+  "providerWhatsApp": "Mostrar o botão de WhatsApp no perfil",
+  "providerWhatsAppHint": "Sem ele, o contato é só pelo pedido no app.",
+  "providerMei": "Selo MEI verificado",
+  "providerMeiHint": "Opcional. Confirma na Receita que o seu CNPJ está ativo e é MEI.",
+  "providerCnpj": "CNPJ",
+  "providerVerify": "Verificar",
+  "providerMeiVerified": "MEI verificado (CNPJ ativo)",
+  "providerMeiPending": "Consulta pendente. Vamos tentar de novo nas próximas horas.",
+  "providerMeiLost": "O selo MEI saiu na última revalidação.",
+  "providerPhotos": "Fotos dos seus trabalhos",
+  "providerPhotosHint": "Até 30 fotos. Elas aparecem no perfil depois de processadas.",
+  "providerPhotoAdd": "Adicionar foto",
+  "providerPhotoProcessing": "Processando",
+  "providerPhotoRejected": "Recusada",
+  "providerPhotoUploadFailed": "Não conseguimos enviar a foto. Tente de novo.",
+  "providerPhotoDelete": "Apagar foto",
+  "providerServices": "Serviços e preços",
+  "providerServicesEmpty": "Cadastre ao menos um serviço.",
+  "providerServiceAdd": "Adicionar serviço",
+  "providerServiceTitle": "Nome do serviço",
+  "providerServiceDescription": "Descrição (opcional)",
+  "providerServicePrice": "A partir de (R$)",
+  "providerServiceOnQuote": "Sob orçamento",
+  "providerServiceUnit": "Cobrado por",
+  "providerUnitPerService": "serviço",
+  "providerUnitPerHour": "hora",
+  "providerUnitPerDay": "dia",
+  "providerUnitPerSquareMeter": "m²",
+  "providerUnitPerUnit": "unidade",
+  "providerPriceFrom": "a partir de {price}/{unit}",
+  "@providerPriceFrom": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "providerServiceRemove": "Remover serviço",
+  "providerReviewMissing": "Para publicar, falta:",
+  "providerReviewReady": "Tudo pronto para publicar.",
+  "providerMissingAbout": "o texto sobre você",
+  "providerMissingCategories": "uma categoria",
+  "providerMissingServiceArea": "a área de atendimento",
+  "providerMissingServices": "um serviço",
+  "providerMissingContactPhone": "o telefone de contato",
+  "providerPublished": "Vitrine publicada!",
+  "providerStatusDraft": "Rascunho",
+  "providerStatusPublished": "Publicada",
+  "providerStatusPaused": "Pausada",
+  "providerStatusSuspended": "Suspensa",
+  "providerAvailableToday": "Disponível hoje",
+  "providerAvailableTodayHint": "Aparece no seu perfil até a meia-noite.",
+  "providerCompleteness": "Perfil {percent}% completo",
+  "@providerCompleteness": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "providerNextStep": "Próximo passo",
+  "providerNextPublish": "Publicar a vitrine",
+  "providerNextShare": "Compartilhar o perfil",
+  "providerNextAvailability": "Informar os dias e horários",
+  "providerViewPublic": "Ver como os clientes veem",
+  "providerShare": "Compartilhar perfil",
+  "providerShareText": "Veja meu perfil no Vitrio: {url}",
+  "@providerShareText": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "providerAvailability": "Dias e horários",
+  "providerEmergencies": "Atende emergências",
+  "providerPause": "Pausar a vitrine",
+  "providerResume": "Publicar de novo",
+  "providerPausedHint": "Vitrine pausada. Ela não aparece para os clientes.",
+  "providerDayMonday": "Segunda",
+  "providerDayTuesday": "Terça",
+  "providerDayWednesday": "Quarta",
+  "providerDayThursday": "Quinta",
+  "providerDayFriday": "Sexta",
+  "providerDaySaturday": "Sábado",
+  "providerDaySunday": "Domingo",
+  "providerFrom": "Das",
+  "providerTo": "às",
+  "providerBadgeMei": "MEI verificado (CNPJ ativo)",
+  "providerBadgeToday": "Disponível hoje",
+  "providerNew": "Novo no Vitrio",
+  "providerRating": "Nota {score} ({count} avaliações)",
+  "@providerRating": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "providerServes": "{city} · atende até {km} km",
+  "@providerServes": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "providerYearsExperience": "{years} anos de experiência",
+  "@providerYearsExperience": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "providerWhatsAppAction": "Chamar no WhatsApp",
+  "providerNotFound": "Este perfil não está disponível.",
+  "providerAboutTitle": "Sobre",
+  "providerWorks": "Trabalhos",
+  "providerHours": "Horários"
 }

@@ -11,6 +11,9 @@ import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/domain/me.dart';
 import '../../auth/presentation/session_controller.dart';
+import '../../provider/domain/app_mode.dart';
+import '../../provider/presentation/app_mode_controller.dart';
+import '../../provider/presentation/provider_step.dart';
 import 'delete_account_dialog.dart';
 
 class AccountScreen extends ConsumerWidget {
@@ -75,6 +78,8 @@ class _SignedIn extends ConsumerWidget {
           isThreeLine: me.phoneNumber != null,
         ),
         const Divider(),
+        _ModeTile(me: me),
+        const Divider(),
         ListTile(
           leading: const VitrioIcon(VitrioIconName.user),
           title: Text(l10n.accountEditProfile),
@@ -102,6 +107,37 @@ class _SignedIn extends ConsumerWidget {
           onTap: () => showDialog<void>(context: context, builder: (_) => const DeleteAccountDialog()),
         ),
       ],
+    );
+  }
+}
+
+class _ModeTile extends ConsumerWidget {
+  const _ModeTile({required this.me});
+
+  final Me me;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final mode = ref.watch(appModeControllerProvider);
+    if (!me.hasProviderProfile) {
+      return ListTile(
+        leading: const VitrioIcon(VitrioIconName.wrench),
+        title: Text(l10n.providerOfferServices),
+        onTap: () => const ProviderOnboardingRoute(step: ProviderStep.about).push<void>(context),
+      );
+    }
+
+    final toProvider = mode == AppMode.client;
+    return ListTile(
+      leading: VitrioIcon(toProvider ? VitrioIconName.chart : VitrioIconName.home),
+      title: Text(toProvider ? l10n.providerEnterMode : l10n.providerLeaveMode),
+      onTap: () async {
+        await ref.read(appModeControllerProvider.notifier).change(toProvider ? AppMode.provider : AppMode.client);
+        if (context.mounted) {
+          toProvider ? const ProviderDashboardRoute().go(context) : const HomeRoute().go(context);
+        }
+      },
     );
   }
 }

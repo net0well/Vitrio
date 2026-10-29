@@ -265,4 +265,373 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get locationPillHint => 'Trocar cidade';
+
+  @override
+  String get tabDashboard => 'Painel';
+
+  @override
+  String get tabMyProfile => 'Meu perfil';
+
+  @override
+  String get providerOfferServices => 'Quero oferecer meus serviços';
+
+  @override
+  String get providerEnterMode => 'Entrar como prestador';
+
+  @override
+  String get providerLeaveMode => 'Voltar para cliente';
+
+  @override
+  String providerStepOf(int step, int total) {
+    return 'Passo $step de $total';
+  }
+
+  @override
+  String get providerStepAbout => 'Sobre você';
+
+  @override
+  String get providerStepShowcase => 'Monte sua vitrine';
+
+  @override
+  String get providerStepPhotos => 'Fotos e preços';
+
+  @override
+  String get providerStepReview => 'Revisar e publicar';
+
+  @override
+  String get providerContinue => 'Continuar';
+
+  @override
+  String get providerPublish => 'Publicar';
+
+  @override
+  String get providerDisplayName => 'Nome que os clientes vão ver';
+
+  @override
+  String get providerHeadline => 'Profissão';
+
+  @override
+  String get providerHeadlineHint => 'Ex.: Eletricista';
+
+  @override
+  String get providerAbout => 'Sobre você e o seu trabalho';
+
+  @override
+  String get providerAboutHint =>
+      'Conte há quanto tempo trabalha, o que faz e o que te diferencia.';
+
+  @override
+  String get providerYears => 'Anos de experiência';
+
+  @override
+  String get providerAvatarAdd => 'Adicionar foto de perfil';
+
+  @override
+  String get providerAvatarChange => 'Trocar foto de perfil';
+
+  @override
+  String get providerCategories => 'Categorias';
+
+  @override
+  String get providerCategoriesHint =>
+      'Escolha até 3. A primeira é a principal.';
+
+  @override
+  String get providerCategoriesRequired => 'Escolha ao menos uma categoria.';
+
+  @override
+  String get providerPrimary => 'Principal';
+
+  @override
+  String get providerServiceArea => 'Onde você atende';
+
+  @override
+  String get providerCep => 'CEP do endereço base';
+
+  @override
+  String get providerNumber => 'Número';
+
+  @override
+  String get providerComplement => 'Complemento';
+
+  @override
+  String get providerBasePrivate =>
+      'Seu endereço não aparece para ninguém. Os clientes veem só a cidade, os bairros que você atende e a distância aproximada.';
+
+  @override
+  String providerRadius(int km) {
+    return 'Atende até $km km';
+  }
+
+  @override
+  String get providerNeighborhoods => 'Bairros atendidos';
+
+  @override
+  String get providerNeighborhoodHint => 'Digite o bairro e toque em adicionar';
+
+  @override
+  String get providerNeighborhoodAdd => 'Adicionar bairro';
+
+  @override
+  String get providerApproximate =>
+      'Não achamos o ponto exato do seu CEP. Usamos o centro da cidade, então as distâncias ficam aproximadas.';
+
+  @override
+  String get providerContact => 'Contato';
+
+  @override
+  String get providerContactPhone => 'Telefone de contato';
+
+  @override
+  String get providerWhatsApp => 'Mostrar o botão de WhatsApp no perfil';
+
+  @override
+  String get providerWhatsAppHint =>
+      'Sem ele, o contato é só pelo pedido no app.';
+
+  @override
+  String get providerMei => 'Selo MEI verificado';
+
+  @override
+  String get providerMeiHint =>
+      'Opcional. Confirma na Receita que o seu CNPJ está ativo e é MEI.';
+
+  @override
+  String get providerCnpj => 'CNPJ';
+
+  @override
+  String get providerVerify => 'Verificar';
+
+  @override
+  String get providerMeiVerified => 'MEI verificado (CNPJ ativo)';
+
+  @override
+  String get providerMeiPending =>
+      'Consulta pendente. Vamos tentar de novo nas próximas horas.';
+
+  @override
+  String get providerMeiLost => 'O selo MEI saiu na última revalidação.';
+
+  @override
+  String get providerPhotos => 'Fotos dos seus trabalhos';
+
+  @override
+  String get providerPhotosHint =>
+      'Até 30 fotos. Elas aparecem no perfil depois de processadas.';
+
+  @override
+  String get providerPhotoAdd => 'Adicionar foto';
+
+  @override
+  String get providerPhotoProcessing => 'Processando';
+
+  @override
+  String get providerPhotoRejected => 'Recusada';
+
+  @override
+  String get providerPhotoUploadFailed =>
+      'Não conseguimos enviar a foto. Tente de novo.';
+
+  @override
+  String get providerPhotoDelete => 'Apagar foto';
+
+  @override
+  String get providerServices => 'Serviços e preços';
+
+  @override
+  String get providerServicesEmpty => 'Cadastre ao menos um serviço.';
+
+  @override
+  String get providerServiceAdd => 'Adicionar serviço';
+
+  @override
+  String get providerServiceTitle => 'Nome do serviço';
+
+  @override
+  String get providerServiceDescription => 'Descrição (opcional)';
+
+  @override
+  String get providerServicePrice => 'A partir de (R\$)';
+
+  @override
+  String get providerServiceOnQuote => 'Sob orçamento';
+
+  @override
+  String get providerServiceUnit => 'Cobrado por';
+
+  @override
+  String get providerUnitPerService => 'serviço';
+
+  @override
+  String get providerUnitPerHour => 'hora';
+
+  @override
+  String get providerUnitPerDay => 'dia';
+
+  @override
+  String get providerUnitPerSquareMeter => 'm²';
+
+  @override
+  String get providerUnitPerUnit => 'unidade';
+
+  @override
+  String providerPriceFrom(String price, String unit) {
+    return 'a partir de $price/$unit';
+  }
+
+  @override
+  String get providerServiceRemove => 'Remover serviço';
+
+  @override
+  String get providerReviewMissing => 'Para publicar, falta:';
+
+  @override
+  String get providerReviewReady => 'Tudo pronto para publicar.';
+
+  @override
+  String get providerMissingAbout => 'o texto sobre você';
+
+  @override
+  String get providerMissingCategories => 'uma categoria';
+
+  @override
+  String get providerMissingServiceArea => 'a área de atendimento';
+
+  @override
+  String get providerMissingServices => 'um serviço';
+
+  @override
+  String get providerMissingContactPhone => 'o telefone de contato';
+
+  @override
+  String get providerPublished => 'Vitrine publicada!';
+
+  @override
+  String get providerStatusDraft => 'Rascunho';
+
+  @override
+  String get providerStatusPublished => 'Publicada';
+
+  @override
+  String get providerStatusPaused => 'Pausada';
+
+  @override
+  String get providerStatusSuspended => 'Suspensa';
+
+  @override
+  String get providerAvailableToday => 'Disponível hoje';
+
+  @override
+  String get providerAvailableTodayHint =>
+      'Aparece no seu perfil até a meia-noite.';
+
+  @override
+  String providerCompleteness(int percent) {
+    return 'Perfil $percent% completo';
+  }
+
+  @override
+  String get providerNextStep => 'Próximo passo';
+
+  @override
+  String get providerNextPublish => 'Publicar a vitrine';
+
+  @override
+  String get providerNextShare => 'Compartilhar o perfil';
+
+  @override
+  String get providerNextAvailability => 'Informar os dias e horários';
+
+  @override
+  String get providerViewPublic => 'Ver como os clientes veem';
+
+  @override
+  String get providerShare => 'Compartilhar perfil';
+
+  @override
+  String providerShareText(String url) {
+    return 'Veja meu perfil no Vitrio: $url';
+  }
+
+  @override
+  String get providerAvailability => 'Dias e horários';
+
+  @override
+  String get providerEmergencies => 'Atende emergências';
+
+  @override
+  String get providerPause => 'Pausar a vitrine';
+
+  @override
+  String get providerResume => 'Publicar de novo';
+
+  @override
+  String get providerPausedHint =>
+      'Vitrine pausada. Ela não aparece para os clientes.';
+
+  @override
+  String get providerDayMonday => 'Segunda';
+
+  @override
+  String get providerDayTuesday => 'Terça';
+
+  @override
+  String get providerDayWednesday => 'Quarta';
+
+  @override
+  String get providerDayThursday => 'Quinta';
+
+  @override
+  String get providerDayFriday => 'Sexta';
+
+  @override
+  String get providerDaySaturday => 'Sábado';
+
+  @override
+  String get providerDaySunday => 'Domingo';
+
+  @override
+  String get providerFrom => 'Das';
+
+  @override
+  String get providerTo => 'às';
+
+  @override
+  String get providerBadgeMei => 'MEI verificado (CNPJ ativo)';
+
+  @override
+  String get providerBadgeToday => 'Disponível hoje';
+
+  @override
+  String get providerNew => 'Novo no Vitrio';
+
+  @override
+  String providerRating(String score, int count) {
+    return 'Nota $score ($count avaliações)';
+  }
+
+  @override
+  String providerServes(String city, int km) {
+    return '$city · atende até $km km';
+  }
+
+  @override
+  String providerYearsExperience(int years) {
+    return '$years anos de experiência';
+  }
+
+  @override
+  String get providerWhatsAppAction => 'Chamar no WhatsApp';
+
+  @override
+  String get providerNotFound => 'Este perfil não está disponível.';
+
+  @override
+  String get providerAboutTitle => 'Sobre';
+
+  @override
+  String get providerWorks => 'Trabalhos';
+
+  @override
+  String get providerHours => 'Horários';
 }

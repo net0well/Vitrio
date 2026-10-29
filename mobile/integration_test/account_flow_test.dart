@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -8,9 +6,9 @@ import 'package:integration_test/integration_test.dart';
 import 'package:vitrio/app/bootstrap.dart';
 import 'package:vitrio/app/flavor.dart';
 
+import 'support/mailpit.dart';
 import 'support/pump_until.dart';
 
-const _mailpit = String.fromEnvironment('MAILPIT_URL', defaultValue: 'http://10.0.2.2:8025');
 const _password = 'vidro azul na janela';
 const _name = 'Mariana Ferreira Souza';
 
@@ -52,7 +50,7 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Criar conta'));
     await pumpUntil(tester, find.textContaining('Enviamos um código de 6 números'));
 
-    await tester.enterText(find.byType(TextField), await _codeFor(email));
+    await tester.enterText(find.byType(TextField), await confirmationCodeFor(email));
     await tester.tap(find.widgetWithText(FilledButton, 'Confirmar'));
     await pumpUntil(tester, find.text(_name));
     expect(find.text('MF'), findsOneWidget);
@@ -85,27 +83,4 @@ void main() {
     await pumpUntil(tester, find.widgetWithText(OutlinedButton, 'Criar conta'));
     expect(find.text(_name), findsNothing);
   });
-}
-
-Future<String> _codeFor(String email) async {
-  final client = HttpClient();
-  try {
-    for (var attempt = 0; attempt < 30; attempt++) {
-      final request = await client.getUrl(Uri.parse('$_mailpit/api/v1/search?query=${Uri.encodeQueryComponent('to:$email')}'));
-      final response = await request.close();
-      final body = jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, Object?>;
-      for (final message in (body['messages'] as List<Object?>? ?? const []).cast<Map<String, Object?>>()) {
-        final code = RegExp(r'^(\d{6})').firstMatch(message['Subject']! as String)?.group(1);
-        if (code != null) {
-          return code;
-        }
-      }
-
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-    }
-  } finally {
-    client.close();
-  }
-
-  throw StateError('No confirmation code arrived for $email.');
 }

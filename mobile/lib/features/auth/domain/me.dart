@@ -6,6 +6,7 @@ final class Me {
     required this.email,
     required this.phoneNumber,
     required this.roles,
+    this.hasProviderProfile = false,
   });
 
   factory Me.fromJson(Map<String, Object?> json) {
@@ -26,6 +27,7 @@ final class Me {
       email: email,
       phoneNumber: phoneNumber is String ? phoneNumber : null,
       roles: roles.whereType<String>().toList(growable: false),
+      hasProviderProfile: json['hasProviderProfile'] == true,
     );
   }
 
@@ -35,4 +37,5 @@ final class Me {
   final String email;
   final String? phoneNumber;
   final List<String> roles;
+  final bool hasProviderProfile;
 }

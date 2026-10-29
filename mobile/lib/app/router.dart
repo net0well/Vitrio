@@ -4,6 +4,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../features/auth/presentation/session_controller.dart';
 import '../features/location/data/location_providers.dart';
+import '../features/provider/data/provider_providers.dart';
+import '../features/provider/domain/app_mode.dart';
 import '../features/welcome/presentation/welcome_controller.dart';
 import 'routes.dart';
 
@@ -27,8 +29,11 @@ GoRouter router(Ref ref) {
     const ConnectedDevicesRoute().location,
   };
 
+  const providerPrefix = '/provider-';
+  final startsAsProvider = ref.read(appModeStoreProvider).mode == AppMode.provider && signedIn.value;
+
   final router = GoRouter(
-    initialLocation: const HomeRoute().location,
+    initialLocation: startsAsProvider ? const ProviderDashboardRoute().location : const HomeRoute().location,
     routes: $appRoutes,
     refreshListenable: Listenable.merge([welcomeSeen, signedIn]),
     redirect: (context, state) {
@@ -41,7 +46,7 @@ GoRouter router(Ref ref) {
         return locationPermissionLocation;
       }
 
-      if (!signedIn.value && protectedLocations.contains(location)) {
+      if (!signedIn.value && (protectedLocations.contains(location) || location.startsWith(providerPrefix))) {
         return signInLocation;
       }
 
