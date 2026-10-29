@@ -10,5 +10,5 @@ public sealed class ExternalServicesOptions
     public Uri BrasilApiBaseUrl { get; init; } = new("https://brasilapi.com.br/api/");
 
     [Required]
-    public Uri IbgeBaseUrl { get; init; } = new("https://servicodados.ibge.gov.br/api/v1/");
+    public Uri IbgeBaseUrl { get; init; } = new("https://servicodados.ibge.gov.br/api/");
 }

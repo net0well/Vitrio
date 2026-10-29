@@ -11,12 +11,14 @@ class VitrioEmptyState extends StatelessWidget {
   const VitrioEmptyState({
     super.key,
     required this.icon,
+    this.title,
     required this.message,
     this.actionLabel,
     this.onAction,
   });
 
   final VitrioIconName icon;
+  final String? title;
   final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
@@ -38,6 +40,14 @@ class VitrioEmptyState extends StatelessWidget {
           child: VitrioIcon(icon, size: 24, color: c.plum),
         ),
         const SizedBox(height: VitrioSpace.sp16),
+        if (title != null) ...[
+          Text(
+            title!,
+            textAlign: TextAlign.center,
+            style: VitrioText.title.copyWith(color: c.ink),
+          ),
+          const SizedBox(height: VitrioSpace.sp8),
+        ],
         Text(
           message,
           textAlign: TextAlign.center,

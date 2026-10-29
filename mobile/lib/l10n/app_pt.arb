@@ -87,5 +87,23 @@
         "type": "String"
       }
     }
+  },
+  "locationPermissionTitle": "Para mostrar quem atende perto de você",
+  "locationPermissionMessage": "O Vitrio usa sua localização só enquanto o app está aberto e não guarda o histórico. Se preferir, escolha a cidade.",
+  "locationUseMine": "Usar minha localização",
+  "locationChooseCity": "Escolher cidade",
+  "locationSearchHint": "Buscar cidade",
+  "locationRecent": "Recentes",
+  "locationNoResults": "Nenhuma cidade encontrada.",
+  "locationShowingCity": "Mostrando profissionais de {city}",
+  "locationDenied": "Sem acesso à localização. Escolha a cidade.",
+  "locationNotFound": "Não encontramos sua cidade. Escolha na lista.",
+  "locationPillHint": "Trocar cidade",
+  "@locationShowingCity": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -227,4 +227,42 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get devicesOnlyThis => 'Só este aparelho está conectado.';
+
+  @override
+  String get locationPermissionTitle =>
+      'Para mostrar quem atende perto de você';
+
+  @override
+  String get locationPermissionMessage =>
+      'O Vitrio usa sua localização só enquanto o app está aberto e não guarda o histórico. Se preferir, escolha a cidade.';
+
+  @override
+  String get locationUseMine => 'Usar minha localização';
+
+  @override
+  String get locationChooseCity => 'Escolher cidade';
+
+  @override
+  String get locationSearchHint => 'Buscar cidade';
+
+  @override
+  String get locationRecent => 'Recentes';
+
+  @override
+  String get locationNoResults => 'Nenhuma cidade encontrada.';
+
+  @override
+  String locationShowingCity(String city) {
+    return 'Mostrando profissionais de $city';
+  }
+
+  @override
+  String get locationDenied => 'Sem acesso à localização. Escolha a cidade.';
+
+  @override
+  String get locationNotFound =>
+      'Não encontramos sua cidade. Escolha na lista.';
+
+  @override
+  String get locationPillHint => 'Trocar cidade';
 }

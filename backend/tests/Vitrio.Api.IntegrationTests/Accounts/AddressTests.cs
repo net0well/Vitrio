@@ -26,7 +26,7 @@ public sealed class AddressTests(ApiFactory factory)
         Assert.Equal("Centro", address.Neighborhood);
         Assert.Equal("Jaboticabal", address.City);
         Assert.Equal("SP", address.State);
-        Assert.Equal(FakeCityDirectory.JaboticabalCode, address.CityIbgeCode);
+        Assert.Equal(FakeIbgeCitySource.JaboticabalCode, address.CityIbgeCode);
 
         var list = await (await _client.SendAsAsync(HttpMethod.Get, Addresses, auth.AccessToken))
             .Content.ReadFromJsonAsync<List<AddressResponse>>(TestContext.Current.CancellationToken);
@@ -52,7 +52,7 @@ public sealed class AddressTests(ApiFactory factory)
             Street = "Rua Nova",
             Neighborhood = "Jardim das Flores",
             State = "SP",
-            CityIbgeCode = FakeCityDirectory.SaoPauloCode
+            CityIbgeCode = FakeIbgeCitySource.SaoPauloCode
         };
 
         var response = await _client.SendJsonAsAsync(HttpMethod.Post, Addresses, auth.AccessToken, body);

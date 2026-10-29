@@ -1,4 +1,5 @@
 using Vitrio.Domain.Common;
+using Vitrio.Domain.Locations;
 
 namespace Vitrio.Domain.Accounts;
 
@@ -7,12 +8,6 @@ public sealed record PostalLocation
     public const int StreetMaxLength = 120;
     public const int NeighborhoodMaxLength = 80;
     public const int CityMaxLength = 80;
-
-    private static readonly HashSet<string> States = new(StringComparer.Ordinal)
-    {
-        "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA",
-        "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
-    };
 
     private PostalLocation(string street, string neighborhood, string city, string state, int cityIbgeCode, double? latitude, double? longitude)
     {
@@ -39,7 +34,7 @@ public sealed record PostalLocation
 
     public double? Longitude { get; }
 
-    public static bool IsState(string? state) => state is not null && States.Contains(state);
+    public static bool IsState(string? state) => BrazilStates.IsState(state);
 
     public static Result<PostalLocation> Create(
         string? street,

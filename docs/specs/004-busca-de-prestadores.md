@@ -37,7 +37,7 @@ Sem agregados novos. Usa `Provider` (spec 003), `City` (spec 002) e:
 
 | Verbo | Rota | Request | Response | Erros |
 | --- | --- | --- | --- | --- |
-| GET | `/api/v1/providers` | `q?`, `categoryId?`, `lat?`, `lng?`, `cityIbgeCode?`, `maxDistanceKm?` (1–50), `minRating?` (3–5), `meiVerified?`, `availableToday?`, `maxPriceFrom?` (só preços por serviço), `sort?` (`relevance`, `distance`, `rating`, `price`; `price` considera só preços por serviço), `page?` (1–10), `pageSize?` (≤ 30) | `{ items: [ProviderSearchItem], page, pageSize, hasMore, context: { mode, city } }` | 400 (ex.: `sort=distance` sem coordenadas, nem `lat/lng` nem `cityIbgeCode`), 429 |
+| GET | `/api/v1/providers` | `q?`, `categoryId?`, `lat?`, `lng?`, `cityIbgeCode?`, `maxDistanceKm?` (1–50; com GPS e sem valor, 20 km), `minRating?` (3–5), `meiVerified?`, `availableToday?`, `maxPriceFrom?` (só preços por serviço), `sort?` (`relevance`, `distance`, `rating`, `price`; `price` considera só preços por serviço), `page?` (1–10), `pageSize?` (≤ 30) | `{ items: [ProviderSearchItem], page, pageSize, hasMore, context: { mode, city } }` | 400 (ex.: `sort=distance` sem coordenadas, nem `lat/lng` nem `cityIbgeCode`), 429 |
 | GET | `/api/v1/home?lat=&lng=&cityIbgeCode=` | contexto de localização | `{ categories, availableNow: [..10], topRated: [..10], city }` | 400, 429 |
 | GET | `/api/v1/me/favorites?page=` | — | `{ items: [ProviderSearchItem], hasMore }` | 401 |
 | PUT | `/api/v1/me/favorites/{providerId}` | — | 204 | 401, 404 |

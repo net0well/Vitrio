@@ -26,7 +26,10 @@ flutter build appbundle --flavor prod -t lib/main_prod.dart --obfuscate --split-
 
 ## Teste de ponta a ponta no emulador
 
-`integration_test/` roda o app de verdade num emulador Android contra a API local: cria a conta, confirma o e-mail com o código lido no Mailpit, edita o celular, abre os aparelhos conectados, sai, entra de novo e exclui a conta.
+`integration_test/` roda o app de verdade num emulador Android contra a API local, com as cidades carregadas (`load-cities`):
+
+- `account_flow_test.dart`: escolhe a cidade, cria a conta, confirma o e-mail com o código lido no Mailpit, edita o celular, abre os aparelhos conectados, sai, entra de novo e exclui a conta.
+- `location_flow_test.dart`: acha a cidade pelo GPS, troca para uma cidade escolhida e volta para "Perto de mim".
 
 ```bash
 docker compose -f ../infra/docker-compose.yml up -d postgres redis mailpit
@@ -37,6 +40,22 @@ flutter test integration_test --flavor dev -d emulator-5554
 ```
 
 O emulador chega à API e ao Mailpit por `10.0.2.2`. O teste não roda no CI.
+
+O teste de localização precisa da permissão concedida e de uma posição em Jaboticabal. O `flutter test` reinstala o app a cada arquivo, e o Google Play Services só aceita posição nova; por isso a permissão e a posição vão num laço, em outro terminal, enquanto o teste roda:
+
+```bash
+adb shell appops set com.android.shell android:mock_location allow
+for p in gps network; do
+  adb shell cmd location providers add-test-provider $p
+  adb shell cmd location providers set-test-provider-enabled $p true
+done
+while true; do
+  adb shell "pm grant app.vitrio.dev android.permission.ACCESS_FINE_LOCATION; cmd location providers set-test-provider-location gps --location -21.2546,-48.3225 --accuracy 20; cmd location providers set-test-provider-location network --location -21.2546,-48.3225 --accuracy 20" >/dev/null 2>&1
+  sleep 0.5
+done
+```
+
+Depois, `adb shell cmd location providers remove-test-provider gps` (e `network`) devolve a localização normal do emulador.
 
 Os arquivos gerados (`*.g.dart` e `lib/l10n/app_localizations*.dart`) ficam no repositório; rode o `build_runner` de novo ao mudar providers ou rotas.
 

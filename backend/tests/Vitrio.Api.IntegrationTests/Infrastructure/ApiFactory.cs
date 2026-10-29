@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Mediator;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.RateLimiting;
@@ -6,8 +7,10 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Serilog.Core;
 using Testcontainers.PostgreSql;
 using Vitrio.Application.Abstractions;
+using Vitrio.Application.Locations.LoadCities;
 using Vitrio.Infrastructure.Persistence;
 
 [assembly: AssemblyFixture(typeof(Vitrio.Api.IntegrationTests.Infrastructure.ApiFactory))]
@@ -29,12 +32,17 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public CapturingEmailSender Emails { get; } = new();
 
+    public FakeIbgeCitySource Ibge { get; } = new();
+
+    public CapturedLogs Logs { get; } = new();
+
     public async ValueTask InitializeAsync()
     {
         await _database.StartAsync();
 
         using var scope = Services.CreateScope();
         await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+        await scope.ServiceProvider.GetRequiredService<ISender>().Send(new LoadCitiesCommand(["SP", "SC"]));
     }
 
     public override async ValueTask DisposeAsync()
@@ -56,7 +64,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.Replace(ServiceDescriptor.Singleton<TimeProvider>(Clock));
             services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
             services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
-            services.Replace(ServiceDescriptor.Singleton<ICityDirectory, FakeCityDirectory>());
+            services.Replace(ServiceDescriptor.Singleton<IIbgeCitySource>(Ibge));
+            services.AddSingleton<ILogEventSink>(Logs);
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {
                 limiter.PermitLimit = 1;
