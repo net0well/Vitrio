@@ -1,9 +1,8 @@
 using System.Reflection;
-using Vitrio.Shared.Results;
 
-namespace Vitrio.Application.Common;
+namespace Vitrio.Shared.Results;
 
-internal static class FailedResult<TResult>
+public static class FailedResult<TResult>
 {
     private static readonly Func<Error, TResult> Factory = CreateFactory();
 

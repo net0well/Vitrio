@@ -1,4 +1,4 @@
-namespace Vitrio.Application.Abstractions;
+namespace Vitrio.Shared.Exceptions;
 
 public sealed class ConcurrencyConflictException : Exception
 {

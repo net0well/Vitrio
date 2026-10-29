@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics;
-using Vitrio.Application.Abstractions;
+using Vitrio.Shared.Exceptions;
 
 namespace Vitrio.Api.Controllers;
 

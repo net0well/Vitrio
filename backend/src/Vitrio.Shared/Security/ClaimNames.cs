@@ -1,4 +1,4 @@
-namespace Vitrio.Application.Abstractions;
+namespace Vitrio.Shared.Security;
 
 public static class ClaimNames
 {

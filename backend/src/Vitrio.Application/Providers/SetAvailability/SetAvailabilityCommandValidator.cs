@@ -1,6 +1,6 @@
 using FluentValidation;
-using Vitrio.Application.Providers.Common;
 using Vitrio.Domain.Providers;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Application.Providers.SetAvailability;
 

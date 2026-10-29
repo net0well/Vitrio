@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Vitrio.Application.Providers.Common;
+namespace Vitrio.Shared.Time;
 
 public static class ClockTime
 {

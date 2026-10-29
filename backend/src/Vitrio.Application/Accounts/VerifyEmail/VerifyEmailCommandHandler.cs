@@ -4,6 +4,7 @@ using Vitrio.Application.Accounts.Common;
 using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Domain.Accounts;
+using Vitrio.Shared.Exceptions;
 using Vitrio.Shared.Results;
 using Vitrio.Shared.Time;
 

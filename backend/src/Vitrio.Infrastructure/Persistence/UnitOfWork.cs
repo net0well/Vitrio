@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Vitrio.Application.Abstractions;
+using Vitrio.Shared.Exceptions;
 
 namespace Vitrio.Infrastructure.Persistence;
 
