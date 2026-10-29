@@ -75,7 +75,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Aceitar upload pela API ou publicar a foto como veio | DoS e vazamento de GPS no EXIF | URL assinada + job que valida, limpa metadados e reencoda |
 | Mostrar endereço do cliente antes do aceite | Coleta de endereços por prestador mal-intencionado | Endereço só em `Scheduled` e com auditoria |
 | Chamar URL vinda do usuário | SSRF | Destinos fixos por configuração |
-| Swagger/Scalar e painel do Hangfire abertos em produção | Mapa da API e controle de jobs expostos | Desligados ou atrás de admin + IP |
+| Swagger e painel do Hangfire abertos em produção | Mapa da API e controle de jobs expostos | Desligados ou atrás de admin + IP |
 
 ## Testes
 

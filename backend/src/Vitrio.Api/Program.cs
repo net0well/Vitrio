@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -14,12 +15,12 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Scalar.AspNetCore;
 using Serilog;
 using Vitrio.Api.Auditing;
 using Vitrio.Api.Authentication;
 using Vitrio.Api.Authorization;
 using Vitrio.Api.Controllers;
+using Vitrio.Api.Documentation;
 using Vitrio.Api.Hosting;
 using Vitrio.Api.Logging;
 using Vitrio.Api.RateLimiting;
@@ -104,8 +105,10 @@ builder.Services
     {
         explorer.GroupNameFormat = "'v'V";
         explorer.SubstituteApiVersionInUrl = true;
-    })
-    .AddOpenApi();
+    });
+
+builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<SwaggerDocuments>();
 
 builder.Services.AddExceptionHandler<ConcurrencyConflictExceptionHandler>();
 builder.Services.AddProblemDetails(problemDetails => problemDetails.CustomizeProblemDetails = context =>
@@ -181,10 +184,16 @@ app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.UseWhen(
-        context => !context.Request.Path.StartsWithSegments("/scalar") && !context.Request.Path.StartsWithSegments("/openapi"),
+        context => !context.Request.Path.StartsWithSegments("/swagger"),
         branch => branch.UseMiddleware<SecurityHeadersMiddleware>());
-    app.MapOpenApi().WithDocumentPerVersion().AllowAnonymous();
-    app.MapScalarApiReference().AllowAnonymous();
+    app.UseSwagger();
+    app.UseSwaggerUI(ui =>
+    {
+        foreach (var version in app.Services.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions)
+        {
+            ui.SwaggerEndpoint($"/swagger/{version.GroupName}/swagger.json", $"Vitrio API {version.GroupName}");
+        }
+    });
 }
 else
 {

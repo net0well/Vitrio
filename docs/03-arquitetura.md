@@ -72,7 +72,7 @@ vitrio/
 | Mapeamento | Manual, com métodos estáticos nos DTOs (`From`, `ToCommand`) | Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly) |
 | Imagens | S3 compatível (Cloudflare R2 em produção, MinIO local) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
 | Push | Firebase Admin SDK (FCM) | |
-| Documentação da API | OpenAPI nativo do ASP.NET Core + Scalar | Só fora de produção |
+| Documentação da API | Swashbuckle: documento OpenAPI por versão e Swagger UI em `/swagger`, com o esquema Bearer nas rotas protegidas | Só em desenvolvimento |
 | Observabilidade | OpenTelemetry (traces e métricas) + Serilog (logs) → Seq em dev, Grafana/Loki/Tempo em produção | |
 | Testes | xUnit, asserts nativos, NSubstitute, Testcontainers (PostGIS), `WebApplicationFactory` | FluentAssertions 8+ é comercial |
 | Arquitetura | Testes de arquitetura (NetArchTest) + `/arch-check` do kit | |
@@ -88,7 +88,7 @@ backend/
     Vitrio.Domain/            entidades, value objects, regras, eventos de domínio, Result/Error, IClock. Sem dependências externas.
     Vitrio.Application/       casos de uso por funcionalidade (comandos, consultas, validadores, DTOs), abstrações.
     Vitrio.Infrastructure/    EF Core, PostGIS, storage, FCM, BrasilAPI, Hangfire, outbox, autenticação.
-    Vitrio.Api/               Controllers, filtros, middlewares, composição (Program.cs), OpenAPI.
+    Vitrio.Api/               Controllers, filtros, middlewares, composição (Program.cs), Swagger.
   tests/
     Vitrio.Domain.Tests/
     Vitrio.Application.Tests/
