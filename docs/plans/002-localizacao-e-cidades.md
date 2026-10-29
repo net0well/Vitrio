@@ -39,6 +39,8 @@ Todos na branch `feat/localizacao-e-cidades`, em vários commits. O PR só abre 
 
 ## Recorte 2: app
 
+**Situação:** pronto. Testado com widgets e no emulador contra a API local com as 5.570 cidades: o GPS acha Jaboticabal, com o bairro dado pelo geocodificador do Android ("Centro, Jaboticabal"); a troca para São Paulo mostra "Mostrando profissionais de São Paulo"; "Usar minha localização" na folha volta para "Perto de mim". A folha mostra carregando e diferencia falta de conexão de busca sem resultado.
+
 1. Pacotes: `geolocator` (permissão e posição) e `geocoding` (geocodificador do Android para o bairro). Permissões `ACCESS_COARSE_LOCATION` e `ACCESS_FINE_LOCATION` no Android.
 2. `features/location`:
    - `domain`: `CitySummary`, `LocationMode` (`nearMe`, `chosenCity`) e `LocationState` (modo, cidade, bairro opcional).
