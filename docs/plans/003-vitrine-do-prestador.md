@@ -56,6 +56,8 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 
 ## Recorte 2: perfil público
 
+**Situação:** pronto. O cache guarda um retrato da vitrine; "Disponível hoje", nota, serviços feitos e distância são calculados ao montar a resposta. Conta excluída ou suspensa some do perfil público na hora, porque a consulta exige a conta ativa.
+
 1. `GET /providers/{id}` com `providerPublic`, distância e selos calculados na leitura.
 2. Cache `provider:{id}` e `InvalidateProviderProfileCache` para `provider.*` e `user.deleted`.
 3. `RemoveProviderProfileOfDeletedUser`: vitrine `Removed` e papel retirado.

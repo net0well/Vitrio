@@ -320,6 +320,13 @@ public sealed class Provider : AggregateRoot
         return Result.Success();
     }
 
+    public void Remove(IClock clock)
+    {
+        Status = ProviderStatus.Removed;
+        AvailableToday = false;
+        UpdatedAt = clock.UtcNow;
+    }
+
     private static Result<string> NormalizeHeadline(string? headline)
     {
         var normalized = FreeText.Normalize(headline);

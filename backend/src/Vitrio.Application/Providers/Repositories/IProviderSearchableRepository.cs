@@ -11,4 +11,8 @@ public interface IProviderSearchableRepository
     Task<ProviderPrivateResponse?> GetPrivateAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken);
 
     Task<ProviderDashboardResponse?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken);
+
+    Task<ProviderPublicSnapshot?> GetPublicSnapshotAsync(Guid providerId, CancellationToken cancellationToken);
+
+    Task<Guid?> FindIdByUserAsync(Guid userId, CancellationToken cancellationToken);
 }
