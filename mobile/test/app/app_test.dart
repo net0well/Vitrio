@@ -5,7 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vitrio/app/app.dart';
 import 'package:vitrio/app/app_config.dart';
 import 'package:vitrio/app/flavor.dart';
+import 'package:vitrio/core/network/network_providers.dart';
 import 'package:vitrio/core/storage/preferences.dart';
+
+import '../support/memory_token_store.dart';
 
 void main() {
   Future<SharedPreferences> pumpApp(WidgetTester tester, {Map<String, Object> preferences = const {}}) async {
@@ -16,6 +19,7 @@ void main() {
         overrides: [
           appConfigProvider.overrideWithValue(AppConfig.forFlavor(Flavor.dev)),
           preferencesProvider.overrideWithValue(instance),
+          tokenStoreProvider.overrideWithValue(MemoryTokenStore()),
         ],
         child: const VitrioApp(),
       ),
@@ -49,7 +53,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.textContaining('entrar com Google ou Apple'), findsOneWidget);
+    expect(find.textContaining('Entre ou crie sua conta'), findsOneWidget);
   });
 
   testWidgets('returning users start on the home tab', (tester) async {

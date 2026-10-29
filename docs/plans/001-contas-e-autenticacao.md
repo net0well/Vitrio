@@ -113,6 +113,8 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
 
 ## Recorte 5: exclusão de conta e primeiro admin
 
+**Situação:** pronto.
+
 1. **Domain:**
    - `User.Delete` anonimiza na hora o e-mail (`{id}@removido.invalid`, o que libera o endereço para um cadastro novo), o nome ("Usuário removido"), o celular e a senha, grava `DeletedAt` e gera `user.deleted` (catálogo de [10-eventos.md](../10-eventos.md)).
    - `AdminGrant` registra quem é admin.
@@ -129,9 +131,20 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
    - Papel de admin no token e no `/me`.
    - 401 sem token.
 
-## Recortes seguintes
+## Recorte 6: telas do app
 
-Detalhados aqui quando o recorte anterior estiver pronto.
+**Situação:** pronto.
+
+- **Dados** (`features/auth/data`): `AuthRepository` e `AccountRepository` são interfaces, com as implementações HTTP sobre o `ApiClient`. Os modelos (`Me`, `AuthSession`, `ConnectedSession`) leem o JSON à mão.
+- **Sessão:** `SessionController` (Riverpod) carrega a conta ao abrir o app se houver tokens. Quando o `ApiClient` não consegue renovar a sessão, ele avisa pelo `SessionExpiry`, e o controller sai. O roteador manda quem não entrou para "Entrar" ao abrir telas da conta.
+- **Telas:**
+  - Entrar: com conta pendente, reenvia o código e abre a confirmação.
+  - Criar conta: com aceite dos termos.
+  - Confirmar e-mail: código de 6 números, reenvio com contagem de 60 s e "Trocar e-mail". A senha fica só na memória até confirmar.
+  - Esqueci a senha: e-mail e, depois, código e senha nova.
+  - Conta: dados, editar nome e celular, trocar senha, aparelhos conectados com "Sair de todos", sair e excluir conta com confirmação digitada.
+- **Fora deste recorte:** a tela de endereços entra com o pedido de orçamento (spec 005); o registro do token FCM, com as notificações (spec 009).
+- **Testes:** repositório HTTP, controller de sessão e os fluxos de entrar, conta pendente com código e redirecionamento para "Entrar".
 
 ## Riscos
 

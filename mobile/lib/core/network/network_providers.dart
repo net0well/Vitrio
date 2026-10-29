@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../app/app_config.dart';
 import '../session/secure_token_store.dart';
+import '../session/session_expiry.dart';
 import '../session/token_store.dart';
 import 'api_client.dart';
 
@@ -24,4 +25,5 @@ ApiClient apiClient(Ref ref) => ApiClient(
       httpClient: ref.watch(httpClientProvider),
       baseUrl: ref.watch(appConfigProvider).apiBaseUrl,
       tokenStore: ref.watch(tokenStoreProvider),
+      onSessionExpired: () => ref.read(sessionExpiryProvider.notifier).notify(),
     );
