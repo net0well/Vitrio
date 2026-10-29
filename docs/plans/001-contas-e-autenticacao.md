@@ -11,7 +11,7 @@ Cada recorte é uma branch e um PR, nesta ordem. Os critérios de aceite da spec
 
 | # | Recorte | Critérios | Depende de |
 | --- | --- | --- | --- |
-| 1 | Cadastro com confirmação de e-mail | AC-1, AC-2, AC-3, AC-4, AC-9 (cadastro), AC-15, AC-16 | — |
+| 1 | Cadastro com confirmação de e-mail | AC-1, AC-2, AC-3, AC-4, AC-9 (cadastro), AC-15, AC-16, AC-26 | — |
 | 2 | Login, sessão longa e aparelhos conectados | AC-5, AC-6, AC-7, AC-10, AC-11, AC-12, AC-13, AC-14, AC-22, AC-23 | 1 |
 | 3 | Esqueci a senha e troca de senha | AC-8, AC-9 (redefinição e troca) | 2 |
 | 4 | Conta, celular, endereços e aparelhos de push | AC-17, AC-18, AC-24, AC-25 | 2 |
@@ -38,7 +38,7 @@ Cada recorte é uma branch e um PR, nesta ordem. Os critérios de aceite da spec
 2. **Application:** `Register`, `VerifyEmail`, `ResendCode` com validadores; abstrações `IPasswordHasher`, `IVerificationCodes`, `IEmailSender`, `ITokenIssuer`; `PasswordPolicy`. Testes de validadores e da política.
 3. **Infrastructure:** configurações EF (`users`, `email_codes`, `sessions`, `refresh_tokens`), migração `AddAccounts`; hasher de senha, códigos HMAC, `SmtpEmailSender` e modelos de e-mail; `TokenIssuer` ES256 com emissão de sessão e refresh (hash SHA-256 do refresh).
 4. **Api:** `AuthController` com `POST /auth/register`, `/auth/verify-email`, `/auth/resend-code`; `[AllowAnonymous]` e política `auth`; configuração de `Email:Smtp` (Mailpit em Development) e `Auth:CodeKey`.
-5. **Testes de integração:** AC-1, AC-2, AC-3, AC-4, AC-9 (cadastro), AC-15, AC-16 e respostas iguais com e sem conta.
+5. **Testes de integração:** AC-1, AC-2, AC-3, AC-4, AC-9 (cadastro), AC-15, AC-16, AC-26 e respostas iguais com e sem conta.
 
 ## Recortes seguintes
 
