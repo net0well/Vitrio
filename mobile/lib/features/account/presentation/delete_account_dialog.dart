@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_result.dart';
+import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/presentation/session_controller.dart';
-import '../../auth/presentation/widgets/problem_message.dart';
 
 class DeleteAccountDialog extends ConsumerStatefulWidget {
   const DeleteAccountDialog({super.key});

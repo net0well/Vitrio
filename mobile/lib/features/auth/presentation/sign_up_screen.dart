@@ -5,14 +5,14 @@ import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
+import '../../../core/presentation/form_page.dart';
+import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_providers.dart';
 import '../domain/pending_credentials.dart';
 import '../domain/terms.dart';
 import 'pending_verification.dart';
-import 'widgets/form_page.dart';
 import 'widgets/password_field.dart';
-import 'widgets/problem_message.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});

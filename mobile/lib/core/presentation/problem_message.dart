@@ -1,5 +1,5 @@
-import '../../../../core/network/problem_details.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
+import '../network/problem_details.dart';
 
 String problemMessage(AppLocalizations l10n, ProblemDetails problem) {
   if (problem.isConnectivity) {

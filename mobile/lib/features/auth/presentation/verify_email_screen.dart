@@ -9,13 +9,13 @@ import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/tokens/vitrio_text.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
+import '../../../core/presentation/form_page.dart';
+import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_providers.dart';
 import '../domain/email_code_purpose.dart';
 import 'pending_verification.dart';
 import 'session_controller.dart';
-import 'widgets/form_page.dart';
-import 'widgets/problem_message.dart';
 
 class VerifyEmailScreen extends ConsumerStatefulWidget {
   const VerifyEmailScreen({super.key});

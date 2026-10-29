@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/design_system/tokens/vitrio_space.dart';
-import '../../../../core/design_system/tokens/vitrio_text.dart';
+import '../design_system/tokens/vitrio_space.dart';
+import '../design_system/tokens/vitrio_text.dart';
 
 class FormPage extends StatelessWidget {
   const FormPage({

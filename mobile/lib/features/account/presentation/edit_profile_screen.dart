@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
+import '../../../core/presentation/form_page.dart';
+import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/data/auth_providers.dart';
 import '../../auth/presentation/session_controller.dart';
-import '../../auth/presentation/widgets/form_page.dart';
-import '../../auth/presentation/widgets/problem_message.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});

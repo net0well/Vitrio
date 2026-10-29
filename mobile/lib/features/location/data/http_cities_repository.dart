@@ -1,6 +1,6 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_result.dart';
-import '../../auth/data/json_body.dart';
+import '../../../core/network/json_body.dart';
 import '../domain/city_summary.dart';
 import 'cities_repository.dart';
 
