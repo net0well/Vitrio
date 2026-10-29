@@ -49,6 +49,11 @@ public abstract class ApiControllerBase : ControllerBase
                 HttpContext, statusCode, type: type, detail: error.Message);
         }
 
+        if (error is MissingFieldsError incomplete)
+        {
+            problem.Extensions["missing"] = incomplete.Missing;
+        }
+
         if (error.RetryAfter is { } retryAfter)
         {
             Response.Headers.RetryAfter = Math.Ceiling(retryAfter.TotalSeconds).ToString(CultureInfo.InvariantCulture);

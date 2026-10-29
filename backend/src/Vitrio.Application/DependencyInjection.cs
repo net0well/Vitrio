@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Vitrio.Application.Accounts.Services;
+using Vitrio.Application.Providers.Services;
 
 namespace Vitrio.Application;
 
@@ -15,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordChangeService, PasswordChangeService>();
         services.AddScoped<IAddressLookupService, AddressLookupService>();
         services.AddScoped<IAccountRolesService, AccountRolesService>();
+        services.AddScoped<IServiceAreaService, ServiceAreaService>();
         return services;
     }
 }

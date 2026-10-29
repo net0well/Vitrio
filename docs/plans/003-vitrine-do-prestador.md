@@ -41,16 +41,18 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 | CNPJ | `ICnpjLookup` (BrasilAPI CNPJ v1) com resiliência; validação do dígito verificador no Domain. Dublê nos testes. |
 | Jobs | Hangfire com Hangfire.PostgreSql no processo da API, desligável por configuração (desligado nos testes de integração). Os jobs só chamam comandos da Application pelo `ISender`: processamento da foto, novas tentativas do MEI pendente, revalidação diária em lotes de 200 e limpeza de uploads sem confirmação. A confirmação da foto enfileira o processamento por `IPhotoProcessingQueue` depois do commit; a limpeza também reenfileira foto presa em `Processing` há mais de 10 min, para nenhum envio se perder. Painel só para admin, fora da internet pública. Os testes chamam os comandos direto, com o relógio ajustável. |
 | Página do link | `ShareController` responde `/p/{id}` com HTML montado por template embutido, texto codificado, Open Graph (título, descrição e imagem) e `Cache-Control: public, max-age=300`. `WellKnownController` responde o `assetlinks.json` pela configuração. Os dois são anônimos e usam a política `profile`. |
-| Rate limit | Política nova `write` (60/min por usuário) nas escritas de `/provider/*`; `uploads` no `upload-url`; `profile` nas rotas públicas. |
+| Rate limit | Escritas pelo limitador global já existente (60/min por usuário); `uploads` no `upload-url`; `profile` nas leituras e nas rotas públicas; `search` nas categorias. |
 | App | Pacotes `image_picker` (galeria e câmera) e `share_plus`. Upload direto à URL assinada. Modo ativo salvo no aparelho. Shell do prestador com Painel e Meu perfil. Rota `/p/:id` com intent-filter `autoVerify` para `vitrio.app/p/`. |
 
 ## Recorte 1: categorias e vitrine na API
 
+**Situação:** pronto. O telefone de contato é pré-preenchido pela própria API na criação, a partir do celular da conta; o endereço base e o ponto base ficam criptografados, e só a célula pública fica em claro.
+
 1. Domain: `Money`, ponto e célula pública, `Provider` com as entidades filhas, estados, checklist, eventos `provider.*`, regra de texto com contato.
 2. Application: `Providers` (criar, `GET /provider`, `PATCH`, categorias, área, serviços, disponibilidade, "Disponível hoje", publicar, pausar, Painel), `IServiceAreaService` e repositories; papéis com `provider`.
 3. Infrastructure: tabelas, configurações, migração com as 15 categorias, repositories.
-4. Api: `CategoriesController`, `ProviderController`, política `write`.
-5. Testes de domínio, de integração (401 e 404 incluídos) e de arquitetura.
+4. Api: `CategoriesController` e `ProviderController`; 422 com a lista `missing`.
+5. Testes de domínio, de integração (401 e 403 incluídos; não há rota com id de outra pessoa neste recorte) e de arquitetura.
 
 ## Recorte 2: perfil público
 

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Auditing;
+using Vitrio.Domain.Categories;
+using Vitrio.Domain.Providers;
 using Vitrio.Infrastructure.Persistence.Cities;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Persistence.Protection;
@@ -26,6 +28,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
     public DbSet<AdminGrant> AdminGrants => Set<AdminGrant>();
 
     public DbSet<CityRecord> Cities => Set<CityRecord>();
+
+    public DbSet<Category> Categories => Set<Category>();
+
+    public DbSet<Provider> Providers => Set<Provider>();
 
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
