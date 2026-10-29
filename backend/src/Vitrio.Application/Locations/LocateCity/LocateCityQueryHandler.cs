@@ -24,7 +24,7 @@ public sealed class LocateCityQueryHandler(ICitySearchableRepository cities, IRe
 
         var found = await cache.GetOrCreateAsync(
             key,
-            token => new ValueTask<LocateResponse?>(cities.LocateAsync(query.Latitude.Value, query.Longitude!.Value, NearestWithinMeters, token)),
+            token => new ValueTask<LocateResponse?>(cities.LocateAsync(latitude, longitude, NearestWithinMeters, token)),
             CellLifetime,
             LocalCellLifetime,
             [CacheTags.Cities],
