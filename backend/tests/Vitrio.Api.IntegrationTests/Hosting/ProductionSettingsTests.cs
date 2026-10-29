@@ -9,7 +9,10 @@ public sealed class ProductionSettingsTests
     {
         ["AllowedHosts"] = "api.vitrio.app",
         ["ForwardedHeaders:KnownNetworks:0"] = "172.30.0.0/24",
-        ["ConnectionStrings:Redis"] = "redis:6379,password=secret-value"
+        ["ConnectionStrings:Redis"] = "redis:6379,password=secret-value",
+        ["Jwt:SigningKey"] = "configured-in-the-vault",
+        ["Auth:CodeKey"] = "configured-in-the-vault",
+        ["Email:Smtp:Host"] = "smtp.vitrio.app"
     };
 
     [Fact]
@@ -40,6 +43,17 @@ public sealed class ProductionSettingsTests
         var problems = ProductionSettings.FindProblems(Build(CompleteSettings, ("ConnectionStrings:Redis", "redis:6379")));
 
         Assert.Contains(problems, problem => problem.Contains("password", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("Jwt:SigningKey")]
+    [InlineData("Auth:CodeKey")]
+    [InlineData("Email:Smtp:Host")]
+    public void FindProblems_WithoutAccountSetting_ReportsTheMissingKey(string key)
+    {
+        var problems = ProductionSettings.FindProblems(Build(CompleteSettings, (key, null)));
+
+        Assert.Contains(problems, problem => problem.StartsWith(key, StringComparison.Ordinal));
     }
 
     [Fact]

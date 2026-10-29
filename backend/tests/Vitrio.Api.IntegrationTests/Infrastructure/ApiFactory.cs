@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.PostgreSql;
+using Vitrio.Application.Abstractions;
 using Vitrio.Infrastructure.Persistence;
 
 [assembly: AssemblyFixture(typeof(Vitrio.Api.IntegrationTests.Infrastructure.ApiFactory))]
@@ -18,6 +20,10 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgis/postgis:17-3.6").Build();
 
     public string ConnectionString => _database.GetConnectionString();
+
+    public AdjustableTimeProvider Clock { get; } = new();
+
+    public CapturingEmailSender Emails { get; } = new();
 
     public async ValueTask InitializeAsync()
     {
@@ -40,6 +46,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.ConfigureTestServices(services =>
         {
             services.AddControllers().AddApplicationPart(typeof(ApiFactory).Assembly);
+            services.AddSingleton<IStartupFilter, TestClientAddressStartupFilter>();
+            services.Replace(ServiceDescriptor.Singleton<TimeProvider>(Clock));
+            services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {
                 limiter.PermitLimit = 1;

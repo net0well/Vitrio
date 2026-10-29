@@ -2,6 +2,8 @@ namespace Vitrio.Domain.Common;
 
 public record Error(string Code, string Message, ErrorType Type)
 {
+    public TimeSpan? RetryAfter { get; init; }
+
     public static Error Validation(string code, string message) => new(code, message, ErrorType.Validation);
 
     public static Error NotFound(string code, string message) => new(code, message, ErrorType.NotFound);

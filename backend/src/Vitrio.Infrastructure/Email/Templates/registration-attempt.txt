@@ -1,0 +1,7 @@
+Seu e-mail já tem conta
+
+Olá, {{firstName}}. Alguém tentou criar uma conta no Vitrio com este e-mail, que já é seu. Nada mudou na sua conta.
+
+Esqueceu a senha? No app, toque em Esqueci a senha.
+
+Se foi você, é só entrar com sua senha.

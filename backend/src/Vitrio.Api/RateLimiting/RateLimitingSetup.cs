@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
-using Vitrio.Api.Authentication;
+using Vitrio.Infrastructure.Authentication;
 
 namespace Vitrio.Api.RateLimiting;
 

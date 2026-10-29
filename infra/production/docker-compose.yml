@@ -12,6 +12,12 @@ services:
       ConnectionStrings__Redis: redis:6379,password=${REDIS_PASSWORD:?defina REDIS_PASSWORD no .env}
       Jwt__Issuer: https://${API_DOMAIN}
       Jwt__Audience: ${JWT_AUDIENCE:?defina JWT_AUDIENCE no .env}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?defina JWT_SIGNING_KEY no .env}
+      Auth__CodeKey: ${AUTH_CODE_KEY:?defina AUTH_CODE_KEY no .env}
+      Email__Smtp__Host: ${SMTP_HOST:?defina SMTP_HOST no .env}
+      Email__Smtp__Port: ${SMTP_PORT:-587}
+      Email__Smtp__Username: ${SMTP_USERNAME:-}
+      Email__Smtp__Password: ${SMTP_PASSWORD:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     ports:
       - "127.0.0.1:8081:8080"

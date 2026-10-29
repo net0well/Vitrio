@@ -42,6 +42,10 @@ public static class ProductionSettings
             problems.Add("ConnectionStrings:Redis must include a password.");
         }
 
+        RequireValue(configuration, "Jwt:SigningKey", "an ECDSA P-256 private key in PEM", problems);
+        RequireValue(configuration, "Auth:CodeKey", "a random key of at least 32 bytes in base64", problems);
+        RequireValue(configuration, "Email:Smtp:Host", "the SMTP server", problems);
+
         return problems;
     }
 
@@ -50,4 +54,12 @@ public static class ProductionSettings
             .Where(value => !string.IsNullOrWhiteSpace(value))
             .Select(value => value!.Trim())
             .ToList();
+
+    private static void RequireValue(IConfiguration configuration, string key, string description, List<string> problems)
+    {
+        if (string.IsNullOrWhiteSpace(configuration[key]))
+        {
+            problems.Add($"{key} must be set to {description}.");
+        }
+    }
 }

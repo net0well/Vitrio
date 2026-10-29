@@ -1,6 +1,6 @@
 # Spec 001 — Contas e autenticação
 
-- **Status:** Approved (2026-10-28)
+- **Status:** Approved (2026-10-28; revisada no mesmo dia: a confirmação do e-mail exige a senha do cadastro)
 - **Data:** 2026-10-28
 - **Responsável:** Wellington
 
@@ -52,7 +52,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 | Verbo | Rota | Request | Response | Erros |
 | --- | --- | --- | --- | --- |
 | POST | `/api/v1/auth/register` | `{ displayName, email, password, acceptedTermsVersion }` | 202 (sempre a mesma resposta, exista o e-mail ou não) | 400 senha fraca, termos não aceitos ou campo inválido, 429, 503 `email.unavailable` |
-| POST | `/api/v1/auth/verify-email` | `{ email, code, deviceName }` | `{ accessToken, expiresIn, refreshToken, user }` | 400 `auth.invalid_code` (código errado, vencido ou usado), 429 |
+| POST | `/api/v1/auth/verify-email` | `{ email, code, password, deviceName }` | `{ accessToken, expiresIn, refreshToken, user }` | 400 `auth.invalid_code` (código errado, vencido ou usado, ou senha diferente da do último cadastro), 429 |
 | POST | `/api/v1/auth/resend-code` | `{ email, purpose: "verifyEmail" \| "resetPassword" }` | 202 (sempre) | 400, 429 com `Retry-After`, 503 |
 | POST | `/api/v1/auth/login` | `{ email, password, deviceName }` | `{ accessToken, expiresIn, refreshToken, user }` | 401 `auth.invalid_credentials`, 403 `account.suspended`, 409 `account.email_not_verified` (só com a senha certa), 429 conta bloqueada com `Retry-After` |
 | POST | `/api/v1/auth/password/forgot` | `{ email }` | 202 (sempre) | 400, 429, 503 |
@@ -86,6 +86,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - **Sem revelar quais e-mails têm conta:** cadastro, reenvio de código e "Esqueci a senha" respondem sempre 202. Cadastro com e-mail de conta ativa não cria nada e manda ao dono o e-mail "Alguém tentou criar uma conta com seu e-mail"; "Esqueci a senha" com e-mail inexistente não envia nada. Login com e-mail inexistente roda uma verificação de senha falsa para levar o mesmo tempo e responde o mesmo `auth.invalid_credentials`.
 - **E-mail não confirmado:** login com a senha certa numa conta `PendingVerification` responde 409 `account.email_not_verified`; o app vai para a tela do código e chama `resend-code`. Com a senha errada, a resposta é a genérica.
 - **Cadastro repetido antes de confirmar:** troca nome e senha da conta pendente e envia código novo (dentro dos limites). Quem tem o e-mail sempre consegue tomar posse da conta pendente confirmando o código; ninguém usa uma conta sem provar acesso à caixa de e-mail.
+- **Confirmação exige a senha:** `verify-email` recebe a senha junto com o código, e ela precisa ser a do último cadastro. Sem isso, alguém que se cadastrasse de novo com o e-mail de uma conta pendente trocaria a senha, e o dono, ao digitar o código que chegou, ativaria a conta com a senha do outro. Senha diferente responde o mesmo `auth.invalid_code` e conta como tentativa errada do código; o dono se cadastra de novo e recebe outro código. O app já tem a senha na tela do código (veio do cadastro ou do login com 409).
 - **Código:** 6 dígitos de `RandomNumberGenerator`, válido por 10 min, uso único, comparação em tempo constante. Na 5ª tentativa errada o código é invalidado. Reenvio no mínimo 60 s depois do anterior e no máximo 5 códigos por e-mail por hora (429 com `Retry-After`).
 - **Senha errada repetida:** 5 erros em 15 min bloqueiam o login daquela conta por 15 min (429 com `Retry-After`); redefinir a senha desbloqueia. O bloqueio é da conta e o rate limit `auth` limita cada IP, para um atacante não conseguir testar muitas contas nem trancar muitas de uma vez.
 - **Redefinição de senha:** revoga todas as sessões e refresh tokens, abre uma sessão nova no aparelho que redefiniu, zera o bloqueio e envia o e-mail "Sua senha foi alterada". Troca de senha logado revoga as outras sessões e envia o mesmo aviso.
@@ -119,7 +120,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 ## Acceptance Criteria
 
 - **AC-1** Dado um e-mail sem conta, quando a pessoa se cadastra com nome, senha válida e aceite dos termos, então a resposta é 202, a conta fica `PendingVerification` sem sessão e um e-mail com código de 6 dígitos é enviado.
-- **AC-2** Dada uma conta pendente, quando a pessoa envia o código certo em até 10 min, então a conta vira `Active`, `EmailVerifiedAt` é preenchido e a resposta traz access e refresh tokens.
+- **AC-2** Dada uma conta pendente, quando a pessoa envia o código certo em até 10 min com a senha do cadastro, então a conta vira `Active`, `EmailVerifiedAt` é preenchido e a resposta traz access e refresh tokens.
 - **AC-3** Dado um código enviado há 11 min, ou já usado, ou com 5 tentativas erradas, quando é enviado, então a resposta é 400 `auth.invalid_code`.
 - **AC-4** Dado um e-mail de conta ativa, quando alguém tenta se cadastrar com ele, então a resposta é a mesma 202 do AC-1, nenhuma conta é criada e o dono recebe o aviso de tentativa de cadastro.
 - **AC-5** Dada uma conta ativa, quando entra com e-mail e senha certos, então recebe access e refresh tokens; com a senha errada ou um e-mail inexistente, recebe o mesmo 401 `auth.invalid_credentials`.
@@ -143,6 +144,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 - **AC-23** Dado qualquer endpoint desta spec que exige login, quando chamado sem token, então responde 401.
 - **AC-24** Dado um usuário que salva o celular `(16) 99123-4567`, quando consulta `GET /me`, então recebe `+5516991234567`; com um número fixo ou sem DDD, recebe 400 no campo `phoneNumber`.
 - **AC-25** Dado o nome "Mariana Ferreira Souza", quando o prestador vê um pedido dela antes do aceite, então aparece "Mariana F." (a regra de exibição completa fica na spec 005).
+- **AC-26** Dada uma conta pendente cuja senha foi trocada por um novo cadastro com o mesmo e-mail, quando chega o código certo com a senha anterior, então a resposta é 400 `auth.invalid_code` e a conta continua pendente.
 
 ## Deferred Decisions
 

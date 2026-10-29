@@ -180,14 +180,15 @@ public sealed class SendQuoteValidator : AbstractValidator<SendQuoteCommand>
     }
 }
 
-public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser, IClock clock)
-    : ICommandHandler<SendQuoteCommand, Result<QuoteResponse>>
+public sealed class SendQuoteHandler(
+    IOrderWritableRepository orders,
+    ICurrentUser currentUser,
+    IUnitOfWork unitOfWork,
+    IClock clock) : ICommandHandler<SendQuoteCommand, Result<QuoteResponse>>
 {
     public async ValueTask<Result<QuoteResponse>> Handle(SendQuoteCommand command, CancellationToken cancellationToken)
     {
-        var order = await db.Orders
-            .Where(o => o.Id == command.OrderId && o.ProviderId == currentUser.ProviderId)
-            .SingleOrDefaultAsync(cancellationToken);
+        var order = await orders.GetForProviderAsync(command.OrderId, currentUser.ProviderId, cancellationToken);
 
         if (order is null)
         {
@@ -206,17 +207,54 @@ public sealed class SendQuoteHandler(IAppDbContext db, ICurrentUser currentUser,
             return result.Error!;
         }
 
-        await db.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return QuoteResponse.From(order);
     }
 }
 ```
 
-- Filtro de dono **dentro da consulta** (`o.ProviderId == currentUser.ProviderId`), nunca buscar e comparar depois.
-- Consultas de leitura usam `AsNoTracking()` e projetam direto para DTO com `Select`; nada de carregar agregado inteiro para listar.
+Repositories por agregado, com interface na Application e implementação na Infrastructure:
+
+```csharp
+public interface IOrderWritableRepository
+{
+    Task<Order?> GetForProviderAsync(Guid orderId, Guid providerId, CancellationToken cancellationToken);
+
+    void Add(Order order);
+}
+
+public interface IOrderSearchableRepository
+{
+    Task<OrderDetailsResponse?> GetDetailsForCustomerAsync(Guid orderId, Guid customerId, CancellationToken cancellationToken);
+}
+
+internal sealed class OrderWritableRepository(AppDbContext db) : IOrderWritableRepository
+{
+    public Task<Order?> GetForProviderAsync(Guid orderId, Guid providerId, CancellationToken cancellationToken) =>
+        db.Orders.SingleOrDefaultAsync(order => order.Id == orderId && order.ProviderId == providerId, cancellationToken);
+
+    public void Add(Order order) => db.Orders.Add(order);
+}
+
+internal sealed class OrderSearchableRepository(AppDbContext db) : IOrderSearchableRepository
+{
+    public Task<OrderDetailsResponse?> GetDetailsForCustomerAsync(Guid orderId, Guid customerId, CancellationToken cancellationToken) =>
+        db.Orders
+            .AsNoTracking()
+            .Where(order => order.Id == orderId && order.CustomerId == customerId)
+            .Select(order => new OrderDetailsResponse(order.Id, order.Status, order.CreatedAt))
+            .SingleOrDefaultAsync(cancellationToken);
+}
+```
+
+- Filtro de dono **dentro da consulta do repository** (`GetForProviderAsync(orderId, providerId)`), nunca buscar e comparar depois.
+- **Writable repository** (`I<Agregado>WritableRepository`): só para comandos; devolve o agregado rastreado e adiciona novos. Métodos com nome de intenção (`GetPendingByEmailAsync`), sem `IQueryable`, sem `Update` (o EF rastreia a mudança) e sem `SaveChanges`.
+- **Searchable repository** (`I<Agregado>SearchableRepository`): só leitura, com `AsNoTracking()` e `Select` direto para o DTO; nada de carregar agregado inteiro para listar. Consultas usam só o Searchable; um comando pode usá-lo para ler um dado auxiliar sem rastrear. Só existe quando o agregado tem leitura.
+- **Unit of Work**: `IUnitOfWork.SaveChangesAsync` uma vez por comando, no fim do handler, numa transação só (estado, outbox e auditoria). Conflito de concorrência (`xmin`) vira `ConcurrencyConflictException`: o handler trata quando tem resposta melhor; sem tratamento, a API responde 409 `conflict`.
+- **Services** (`<Módulo>/Services/<Nome>Service.cs`): regra de aplicação extensa ou usada por mais de um caso de uso, para não poluir o handler (ex.: `EmailCodeService.IssueAsync` aplica o limite de envio e invalida os códigos anteriores; `SessionService.Start` abre sessão, refresh e access token; `PasswordService` normaliza, gera e confere hash). Recebem repositories e abstrações por injeção, nunca salvam nem chamam `ISender`. Regra que pertence ao agregado fica no agregado, não no service.
 - Pipeline behaviors, nesta ordem: log com duração → validação (devolve `Result` com erros por campo) → transação (só comandos).
 - Mapeamento sempre explícito, escrito à mão: método estático `From` no DTO de resposta (`QuoteResponse.From(order)`), `ToCommand` no DTO de request (`SendQuoteRequest.ToCommand(orderId)`) e projeção direta no `Select` das consultas. Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly ou parecidas); o teste de arquitetura barra.
-- CQRS com `Mediator`: comandos (`ICommand<Result<T>>`) mudam estado e passam pelo behavior de transação; consultas (`IQuery<Result<T>>`) só leem, com `AsNoTracking()` e projeção. Um mesmo banco e um mesmo `DbContext` para os dois lados.
+- CQRS com `Mediator`: comandos (`ICommand<Result<T>>`) mudam estado pelo Writable repository e fecham com `IUnitOfWork`; consultas (`IQuery<Result<T>>`) só leem pelo Searchable repository, com `AsNoTracking()` e projeção. Um mesmo banco para os dois lados.
 
 ## 5. Controllers
 

@@ -28,7 +28,18 @@ public sealed class LayerDependencyTests
     {
         var result = Types.InAssembly(Layers.Application)
             .ShouldNot()
-            .HaveDependencyOnAny("Vitrio.Infrastructure", "Vitrio.Api", "Microsoft.AspNetCore", "Npgsql")
+            .HaveDependencyOnAny("Vitrio.Infrastructure", "Vitrio.Api", "Microsoft.AspNetCore", "Microsoft.EntityFrameworkCore", "Npgsql")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void Api_DoesNotTouchThePersistenceLayer()
+    {
+        var result = Types.InAssembly(Layers.Api)
+            .ShouldNot()
+            .HaveDependencyOnAny("Vitrio.Infrastructure.Persistence", "Microsoft.EntityFrameworkCore")
             .GetResult();
 
         AssertSuccessful(result);

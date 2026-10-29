@@ -8,7 +8,11 @@
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Mediator.Abstractions" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Accounts\Common\CommonPasswords.txt" LogicalName="Vitrio.Application.CommonPasswords.txt" />
   </ItemGroup>
 
   <ItemGroup>

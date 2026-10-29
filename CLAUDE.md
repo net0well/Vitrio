@@ -28,8 +28,10 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - API com **Controllers** (`[ApiController]`, herdando `ApiControllerBase`). **Nunca Minimal APIs**, mesmo que `/scaffold` gere assim: adapte para controller.
 - Clean Architecture: `Vitrio.Domain` → `Vitrio.Application` → `Vitrio.Infrastructure` → `Vitrio.Api`. Casos de uso por funcionalidade na Application, com `Mediator` (MIT), FluentValidation e Result pattern.
 - Controllers só montam o comando e chamam `ISender`. Filtro de dono sempre dentro da consulta. Recurso alheio responde 404.
-- `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono; `DbContext` direto, sem repositório genérico.
-- CQRS com `Mediator`: comandos mudam estado, consultas só leem (`AsNoTracking` e projeção). Eventos de domínio seguem `docs/10-eventos.md` (padrão e catálogo único): só nos agregados, só quando algo fora do agregado reage, conteúdo só com ids e códigos, `IDomainEventHandler<T>` em vez do `Mediator`. Evento novo entra primeiro no catálogo.
+- `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono.
+- Persistência por **Repository e Unit of Work**: por agregado, um `I<Agregado>WritableRepository` (comandos: carrega o agregado rastreado e adiciona) e, quando houver leitura, um `I<Agregado>SearchableRepository` (`AsNoTracking` e projeção direto para DTO). Interfaces na Application (`<Módulo>/Repositories`), implementação com EF na Infrastructure. O comando termina em `IUnitOfWork.SaveChangesAsync`. Handler, service e controller nunca tocam no `DbContext`, e a Application não referencia EF Core. Sem repositório genérico (`IRepository<T>`) e sem `IQueryable` saindo do repository.
+- **Services** na Application (`<Módulo>/Services`) quando a regra do caso de uso é extensa ou usada por mais de um handler, para o handler só orquestrar (repository, service, `IUnitOfWork`). Service não salva nem chama `ISender`. Regra que pertence ao agregado continua no agregado.
+- CQRS com `Mediator`: comandos mudam estado (Writable + `IUnitOfWork`), consultas só leem (Searchable, com `AsNoTracking` e projeção). Eventos de domínio seguem `docs/10-eventos.md` (padrão e catálogo único): só nos agregados, só quando algo fora do agregado reage, conteúdo só com ids e códigos, `IDomainEventHandler<T>` em vez do `Mediator`. Evento novo entra primeiro no catálogo.
 - Mapeamento sempre explícito, escrito à mão (`Response.From(entidade)`, `Request.ToCommand()`, `Select` nas consultas). **Nenhuma biblioteca de mapeamento** (AutoMapper, Mapster, Mapperly ou parecidas).
 - Proibido também: MediatR 13+, FluentAssertions 8+, MassTransit 9+.
 - Cache segue `docs/09-cache.md`: banco é a fonte da verdade, Redis e memória só aceleram; toda mudança no prestador invalida o perfil público.
@@ -52,6 +54,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 3. `/tdd` e `/scaffold` (adaptado a Controllers), depois `/verify` antes de cada commit e `/code-review` antes do PR.
 4. Rastreabilidade só nos documentos. Código, testes, branches e commits não citam specs nem planos.
 5. Se a implementação mostrar que a spec está errada, volte a spec para In Review e corrija antes de seguir.
+6. Uma branch e um PR por spec. Os recortes do plano viram vários commits pequenos na mesma branch, e o PR só abre quando a spec inteira estiver implementada e testada de ponta a ponta (API e app). Nada de PR pequeno no meio do caminho.
 
 ## Onde está cada coisa
 
