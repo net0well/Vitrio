@@ -129,9 +129,9 @@ Cada caso de uso é uma pasta com `Command`/`Query`, `Handler`, `Validator` e `R
 Cada módulo tem também:
 
 - `Repositories/`: as interfaces do módulo, uma por agregado e lado. `I<Agregado>WritableRepository` carrega o agregado rastreado e adiciona (comandos); `I<Agregado>SearchableRepository` lê com `AsNoTracking` e projeta direto para o DTO (consultas, e comandos que só precisam ler um dado auxiliar). O Searchable só existe quando há leitura. As implementações ficam em `Vitrio.Infrastructure/Persistence/Repositories`.
-- `Services/`, quando preciso: regra de aplicação extensa ou usada por mais de um caso de uso (`EmailCodeService`, `SessionService`, `PasswordService`), para o handler só orquestrar. Service não salva nem chama `ISender`.
+- `Services/`, quando preciso: regra de aplicação extensa ou usada por mais de um caso de uso, para o handler só orquestrar. Cada service tem interface própria (`IEmailCodeService`, `ISessionService`, `IPasswordService`) e implementação `internal sealed`, registrada na injeção de dependência. Service não salva nem chama `ISender`.
 
-O handler carrega pelos repositories, chama o domínio e os services, e termina em `IUnitOfWork.SaveChangesAsync`, uma vez por comando.
+O handler carrega pelos repositories, chama o domínio e os services, e termina em `IUnitOfWork.SaveChangesAsync`, uma vez por comando. Handlers e services dependem só de interfaces (inversão de dependência); as implementações ficam escondidas (`internal`) na Application ou na Infrastructure.
 
 ### Controllers
 
