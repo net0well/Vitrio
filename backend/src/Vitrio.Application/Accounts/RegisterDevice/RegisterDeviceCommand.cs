@@ -1,6 +1,6 @@
 using Mediator;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.RegisterDevice;
 

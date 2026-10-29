@@ -1,5 +1,5 @@
 using Mediator;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.DeleteAccount;
 

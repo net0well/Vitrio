@@ -5,8 +5,8 @@ using Vitrio.Api.IntegrationTests.Infrastructure;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Common;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
 using Vitrio.Infrastructure.Persistence;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Api.IntegrationTests.Accounts;
 

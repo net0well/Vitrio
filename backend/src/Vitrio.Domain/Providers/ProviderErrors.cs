@@ -1,4 +1,4 @@
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Domain.Providers;
 

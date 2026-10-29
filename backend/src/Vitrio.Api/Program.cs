@@ -31,9 +31,9 @@ using Vitrio.Application.Abstractions;
 using Vitrio.Application.Common;
 using Vitrio.Application.Common.Behaviors;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
 using Vitrio.Infrastructure;
 using Vitrio.Infrastructure.Authentication;
+using Vitrio.Shared.Time;
 
 const int MaxRequestBodySize = 64 * 1024;
 

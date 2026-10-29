@@ -1,6 +1,6 @@
 using Vitrio.Application.Providers.Common;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Providers.Services;
 

@@ -1,4 +1,4 @@
-namespace Vitrio.Domain.Common;
+namespace Vitrio.Shared.Time;
 
 public interface IClock
 {

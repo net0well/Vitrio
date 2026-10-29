@@ -1,6 +1,6 @@
 using Vitrio.Application.Accounts.Emails;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.Services;
 

@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Infrastructure.Authentication;
 

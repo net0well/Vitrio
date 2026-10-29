@@ -3,6 +3,8 @@ using Vitrio.Application.Abstractions;
 using Vitrio.Application.Providers.Repositories;
 using Vitrio.Domain.Common;
 using Vitrio.Domain.Providers;
+using Vitrio.Shared.Results;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Application.Providers.SetProviderServices;
 

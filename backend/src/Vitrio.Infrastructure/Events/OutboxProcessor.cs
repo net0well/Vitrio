@@ -11,6 +11,7 @@ using Vitrio.Application.Events;
 using Vitrio.Domain.Common;
 using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Infrastructure.Events;
 

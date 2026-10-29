@@ -2,7 +2,7 @@ using Vitrio.Application.Abstractions;
 using Vitrio.Application.Events;
 using Vitrio.Application.Providers.Repositories;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Application.Providers.Events;
 

@@ -2,7 +2,7 @@ using Mediator;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.ForgotPassword;
 

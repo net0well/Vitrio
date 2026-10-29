@@ -1,6 +1,6 @@
 using Mediator;
 using Vitrio.Application.Providers.Common;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Providers.ListCategories;
 

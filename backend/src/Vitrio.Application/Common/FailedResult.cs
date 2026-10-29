@@ -1,5 +1,5 @@
 using System.Reflection;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Common;
 

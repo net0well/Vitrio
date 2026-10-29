@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Domain.Accounts;
 

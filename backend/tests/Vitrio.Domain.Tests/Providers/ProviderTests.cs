@@ -2,6 +2,8 @@ using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Common;
 using Vitrio.Domain.Locations;
 using Vitrio.Domain.Providers;
+using Vitrio.Shared.Results;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Domain.Tests.Providers;
 

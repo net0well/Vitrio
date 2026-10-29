@@ -2,7 +2,7 @@ using Mediator;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Providers.Common;
 using Vitrio.Application.Providers.Repositories;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Providers.ListCategories;
 

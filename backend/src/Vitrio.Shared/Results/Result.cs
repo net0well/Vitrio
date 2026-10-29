@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Vitrio.Domain.Common;
+namespace Vitrio.Shared.Results;
 
 public class Result
 {

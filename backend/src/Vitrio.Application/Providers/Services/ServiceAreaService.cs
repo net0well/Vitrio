@@ -5,6 +5,7 @@ using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Common;
 using Vitrio.Domain.Locations;
 using Vitrio.Domain.Providers;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Providers.Services;
 

@@ -1,5 +1,5 @@
 using Vitrio.Application.Accounts.Emails;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Abstractions;
 

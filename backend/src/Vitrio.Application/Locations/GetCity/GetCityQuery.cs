@@ -1,6 +1,6 @@
 using Mediator;
 using Vitrio.Application.Locations.Common;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Locations.GetCity;
 

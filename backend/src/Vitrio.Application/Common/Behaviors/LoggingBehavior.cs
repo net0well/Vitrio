@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Mediator;
 using Microsoft.Extensions.Logging;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Common.Behaviors;
 

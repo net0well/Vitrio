@@ -1,6 +1,6 @@
 using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Api.IntegrationTests.Infrastructure;
 

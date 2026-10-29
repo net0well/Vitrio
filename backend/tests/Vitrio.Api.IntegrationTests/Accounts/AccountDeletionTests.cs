@@ -100,7 +100,7 @@ public sealed class AccountDeletionTests(ApiFactory factory)
         Assert.Equal(AccountErrors.AccountNotFound, result.Error);
     }
 
-    private async Task<Vitrio.Domain.Common.Result> SendAsync(GrantAdminCommand command)
+    private async Task<Vitrio.Shared.Results.Result> SendAsync(GrantAdminCommand command)
     {
         await using var scope = factory.Services.CreateAsyncScope();
         return await scope.ServiceProvider.GetRequiredService<ISender>().Send(command, TestContext.Current.CancellationToken);

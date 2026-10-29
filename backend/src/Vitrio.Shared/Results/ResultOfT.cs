@@ -1,4 +1,4 @@
-namespace Vitrio.Domain.Common;
+namespace Vitrio.Shared.Results;
 
 public sealed class Result<T> : Result
 {

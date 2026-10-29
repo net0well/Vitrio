@@ -2,6 +2,8 @@ using System.Globalization;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Common;
 using Vitrio.Domain.Locations;
+using Vitrio.Shared.Results;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Domain.Providers;
 

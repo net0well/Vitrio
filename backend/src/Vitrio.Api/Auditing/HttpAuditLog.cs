@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Auditing.Repositories;
 using Vitrio.Domain.Auditing;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Api.Auditing;
 
