@@ -8,6 +8,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IAppDb
 {
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
+    public DbSet<OutboxDelivery> OutboxDeliveries => Set<OutboxDelivery>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder

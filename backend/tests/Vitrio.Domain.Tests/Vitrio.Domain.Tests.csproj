@@ -4,4 +4,8 @@
     <ProjectReference Include="..\..\src\Vitrio.Domain\Vitrio.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Contracts\*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

@@ -1,14 +1,12 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Vitrio.Domain.Common;
+using Vitrio.Infrastructure.Events;
 
 namespace Vitrio.Infrastructure.Persistence.Outbox;
 
-internal sealed class OutboxInterceptor(IClock clock) : SaveChangesInterceptor
+internal sealed class OutboxInterceptor(IClock clock, DomainEventRegistry registry) : SaveChangesInterceptor
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
-
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         if (eventData.Context is not null)
@@ -45,20 +43,15 @@ internal sealed class OutboxInterceptor(IClock clock) : SaveChangesInterceptor
             return;
         }
 
-        var occurredAt = clock.UtcNow;
-        var messages = aggregates
-            .SelectMany(aggregate => aggregate.DomainEvents)
-            .Select(domainEvent => OutboxMessage.Create(
-                domainEvent.GetType().FullName!,
-                JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), SerializerOptions),
-                occurredAt))
-            .ToList();
-
+        var now = clock.UtcNow;
         foreach (var aggregate in aggregates)
         {
+            foreach (var domainEvent in aggregate.DomainEvents)
+            {
+                OutboxWriter.Append(context, domainEvent, registry, now);
+            }
+
             aggregate.ClearDomainEvents();
         }
-
-        context.Set<OutboxMessage>().AddRange(messages);
     }
 }

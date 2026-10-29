@@ -12,9 +12,7 @@ public sealed class AggregateRootTests
         aggregate.Rename("primeiro");
         aggregate.Rename("segundo");
 
-        Assert.Equal(
-            [new SampleRenamed("primeiro"), new SampleRenamed("segundo")],
-            aggregate.DomainEvents.Cast<SampleRenamed>());
+        Assert.Equal(["primeiro", "segundo"], aggregate.DomainEvents.Cast<SampleRenamed>().Select(e => e.Name));
     }
 
     [Fact]
@@ -28,7 +26,8 @@ public sealed class AggregateRootTests
         Assert.Empty(aggregate.DomainEvents);
     }
 
-    private sealed record SampleRenamed(string Name) : IDomainEvent;
+    [EventType("sample.renamed", 1)]
+    private sealed record SampleRenamed(string Name) : DomainEvent;
 
     private sealed class SampleAggregate : AggregateRoot
     {

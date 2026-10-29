@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Common;
 using Vitrio.Infrastructure.Caching;
+using Vitrio.Infrastructure.Events;
 using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Time;
@@ -22,6 +23,7 @@ public static class DependencyInjection
 
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<IClock, SystemClock>();
+        services.AddDomainEvents(configuration);
         services.AddSingleton<OutboxInterceptor>();
 
         services.AddDbContext<AppDbContext>((serviceProvider, options) => options
