@@ -26,6 +26,152 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "unaccent");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("text")
+                        .HasColumnName("friendly_name");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("text")
+                        .HasColumnName("xml");
+
+                    b.HasKey("Id")
+                        .HasName("pk_data_protection_keys");
+
+                    b.ToTable("data_protection_keys", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Accounts.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("cep")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("city");
+
+                    b.Property<int>("CityIbgeCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("city_ibge_code");
+
+                    b.Property<string>("Complement")
+                        .HasColumnType("text")
+                        .HasColumnName("complement")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("label");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<string>("Neighborhood")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("neighborhood")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("number")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character(2)")
+                        .HasColumnName("state")
+                        .IsFixedLength();
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("street")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_addresses");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_addresses_user_id");
+
+                    b.ToTable("addresses", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Accounts.Device", b =>
+                {
+                    b.Property<string>("InstallationId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("installation_id");
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("platform");
+
+                    b.Property<string>("PushToken")
+                        .IsRequired()
+                        .HasMaxLength(4096)
+                        .HasColumnType("character varying(4096)")
+                        .HasColumnName("push_token");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("InstallationId")
+                        .HasName("pk_devices");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_devices_user_id");
+
+                    b.ToTable("devices", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Accounts.EmailCode", b =>
                 {
                     b.Property<Guid>("Id")
@@ -249,6 +395,11 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("password_hash");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text")
+                        .HasColumnName("phone_number")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
                     b.Property<DateTimeOffset?>("RegistrationAttemptNotifiedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("registration_attempt_notified_at");
@@ -412,6 +563,26 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_outbox_messages_occurred_at");
 
                     b.ToTable("outbox_messages", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Accounts.Address", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_addresses_users_user_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Accounts.Device", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_devices_users_user_id");
                 });
 
             modelBuilder.Entity("Vitrio.Domain.Accounts.RefreshToken", b =>

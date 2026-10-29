@@ -37,6 +37,16 @@ internal static class AccountRules
             }
         });
 
+    public static IRuleBuilderOptionsConditions<T, string> MustBePhoneNumber<T>(this IRuleBuilder<T, string> rule) =>
+        rule.Custom((value, context) =>
+        {
+            var phone = PhoneNumber.Create(value);
+            if (phone.IsFailure)
+            {
+                context.AddFailure(phone.Error.Message);
+            }
+        });
+
     public static IRuleBuilderOptions<T, string> MustBeCode<T>(this IRuleBuilder<T, string> rule) =>
         rule.Matches("^[0-9]{6}$").WithMessage("Digite os 6 números do código.");
 

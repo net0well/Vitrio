@@ -4,4 +4,5 @@ public static class AuditTargets
 {
     public const string User = "user";
     public const string Session = "session";
+    public const string Address = "address";
 }

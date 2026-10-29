@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Vitrio.Domain.Accounts;
+using Vitrio.Infrastructure.Persistence.Protection;
 
 namespace Vitrio.Infrastructure.Persistence.Configurations;
 
@@ -17,6 +18,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(user => user.Email).IsUnique();
         builder.Property(user => user.DisplayName).HasMaxLength(DisplayName.MaxLength);
         builder.Property(user => user.PasswordHash).HasMaxLength(PasswordHashMaxLength);
+        builder.Property(user => user.PhoneNumber).IsPersonalData();
         builder.Property(user => user.Status).HasConversion<string>().HasMaxLength(30);
         builder.Property(user => user.AcceptedTermsVersion).HasMaxLength(User.TermsVersionMaxLength);
         builder.HasIndex(user => user.CreatedAt)

@@ -17,6 +17,9 @@ public abstract class ApiControllerBase : ControllerBase
     protected IActionResult ToActionResult<T>(Result<T> result) =>
         result.IsSuccess ? Ok(result.Value) : ErrorResult(result.Error);
 
+    protected IActionResult ToCreatedResult<T>(Result<T> result) =>
+        result.IsSuccess ? StatusCode(StatusCodes.Status201Created, result.Value) : ErrorResult(result.Error);
+
     protected IActionResult ToAcceptedResult(Result result) =>
         result.IsSuccess ? StatusCode(StatusCodes.Status202Accepted) : ErrorResult(result.Error);
 

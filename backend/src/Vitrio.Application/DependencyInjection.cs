@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IPasswordChangeService, PasswordChangeService>();
+        services.AddScoped<IAddressLookupService, AddressLookupService>();
         return services;
     }
 }

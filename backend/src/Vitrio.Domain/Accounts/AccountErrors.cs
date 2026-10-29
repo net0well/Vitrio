@@ -42,6 +42,8 @@ public static class AccountErrors
     public static readonly Error InvalidAddressComplement =
         Error.Validation("address.invalid_complement", "O complemento pode ter até 60 caracteres, sem telefone ou link.");
 
+    public static readonly Error AccountNotFound = Error.NotFound("account.not_found", "Conta não encontrada.");
+
     public static readonly Error AddressNotFound = Error.NotFound("address.not_found", "Endereço não encontrado.");
 
     public static readonly Error TooManyAddresses =

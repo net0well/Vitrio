@@ -13,8 +13,6 @@ internal sealed class SessionService(
     ITokenIssuer tokenIssuer,
     IClock clock) : ISessionService
 {
-    private static readonly IReadOnlyCollection<string> CustomerRoles = [Roles.Customer];
-
     public AuthResponse Start(User user, string? deviceName)
     {
         var session = Session.Start(user.Id, deviceName, clock);
@@ -22,8 +20,8 @@ internal sealed class SessionService(
         sessions.Add(session);
         refreshTokens.Add(RefreshToken.IssueFor(session, refreshToken.Hash, clock));
 
-        var accessToken = tokenIssuer.Issue(user, session, CustomerRoles);
-        return new AuthResponse(accessToken.Value, accessToken.ExpiresInSeconds, refreshToken.Value, MeResponse.From(user, CustomerRoles));
+        var accessToken = tokenIssuer.Issue(user, session, AccountRoles.Customer);
+        return new AuthResponse(accessToken.Value, accessToken.ExpiresInSeconds, refreshToken.Value, MeResponse.From(user, AccountRoles.Customer));
     }
 
     public TokenResponse Rotate(User user, Session session, RefreshToken current)
@@ -34,7 +32,7 @@ internal sealed class SessionService(
         refreshTokens.Add(nextToken);
         session.Touch(clock);
 
-        var accessToken = tokenIssuer.Issue(user, session, CustomerRoles);
+        var accessToken = tokenIssuer.Issue(user, session, AccountRoles.Customer);
         return new TokenResponse(accessToken.Value, accessToken.ExpiresInSeconds, next.Value);
     }
 

@@ -12,7 +12,8 @@ public sealed class ProductionSettingsTests
         ["ConnectionStrings:Redis"] = "redis:6379,password=secret-value",
         ["Jwt:SigningKey"] = "configured-in-the-vault",
         ["Auth:CodeKey"] = "configured-in-the-vault",
-        ["Email:Smtp:Host"] = "smtp.vitrio.app"
+        ["Email:Smtp:Host"] = "smtp.vitrio.app",
+        ["DataProtection:Certificate"] = "configured-in-the-vault"
     };
 
     [Fact]
@@ -49,6 +50,7 @@ public sealed class ProductionSettingsTests
     [InlineData("Jwt:SigningKey")]
     [InlineData("Auth:CodeKey")]
     [InlineData("Email:Smtp:Host")]
+    [InlineData("DataProtection:Certificate")]
     public void FindProblems_WithoutAccountSetting_ReportsTheMissingKey(string key)
     {
         var problems = ProductionSettings.FindProblems(Build(CompleteSettings, (key, null)));

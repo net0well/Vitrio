@@ -18,6 +18,8 @@ services:
       Email__Smtp__Port: ${SMTP_PORT:-587}
       Email__Smtp__Username: ${SMTP_USERNAME:-}
       Email__Smtp__Password: ${SMTP_PASSWORD:-}
+      DataProtection__Certificate: ${DATA_PROTECTION_CERTIFICATE:?defina DATA_PROTECTION_CERTIFICATE no .env}
+      DataProtection__CertificatePassword: ${DATA_PROTECTION_CERTIFICATE_PASSWORD:?defina DATA_PROTECTION_CERTIFICATE_PASSWORD no .env}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     ports:
       - "127.0.0.1:8081:8080"

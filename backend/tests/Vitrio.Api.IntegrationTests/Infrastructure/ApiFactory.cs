@@ -55,6 +55,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.AddSingleton<IStartupFilter, TestClientAddressStartupFilter>();
             services.Replace(ServiceDescriptor.Singleton<TimeProvider>(Clock));
             services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
+            services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
+            services.Replace(ServiceDescriptor.Singleton<ICityDirectory, FakeCityDirectory>());
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {
                 limiter.PermitLimit = 1;

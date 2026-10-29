@@ -87,6 +87,14 @@ internal static class AuthApi
             WithBearer(new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout") { Content = JsonContent.Create(new { allDevices }) }, accessToken),
             TestContext.Current.CancellationToken);
 
+    public static Task<HttpResponseMessage> SendJsonAsAsync(
+        this HttpClient client,
+        HttpMethod method,
+        string url,
+        string accessToken,
+        object body) =>
+        client.SendAsync(WithBearer(new HttpRequestMessage(method, url) { Content = JsonContent.Create(body) }, accessToken), TestContext.Current.CancellationToken);
+
     public static Task<HttpResponseMessage> SendAsAsync(this HttpClient client, HttpMethod method, string url, string accessToken) =>
         client.SendAsync(WithBearer(new HttpRequestMessage(method, url), accessToken), TestContext.Current.CancellationToken);
 
