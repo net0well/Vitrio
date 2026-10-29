@@ -70,7 +70,7 @@ vitrio/
 | Eventos | Domain events → outbox com uma entrega por handler → despachante em `BackgroundService` | Padrão e catálogo em [10-eventos.md](10-eventos.md); sem broker no início (ADR-009) |
 | Cache | `HybridCache` com memória local (L1) e Redis (L2) | Política completa em [09-cache.md](09-cache.md) (ADR-013) |
 | Mapeamento | Manual, com métodos estáticos nos DTOs (`From`, `ToCommand`) | Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly) |
-| Imagens | S3 compatível (Cloudflare R2 em produção, MinIO local) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
+| Imagens | S3 compatível (Cloudflare R2 em produção, SeaweedFS local e nos testes) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
 | Push | Firebase Admin SDK (FCM) | |
 | Documentação da API | Swashbuckle: documento OpenAPI por versão e Swagger UI em `/swagger`, com o esquema Bearer nas rotas protegidas | Só em desenvolvimento |
 | Observabilidade | OpenTelemetry (traces e métricas) + Serilog (logs) → Seq em dev, Grafana/Loki/Tempo em produção | |
@@ -350,7 +350,7 @@ mobile/lib/
 
 ## 10. Infraestrutura e entrega
 
-- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq, Mailpit (caixa de e-mail de teste em `http://localhost:8025`) e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
+- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq, Mailpit (caixa de e-mail de teste em `http://localhost:8025`), SeaweedFS (storage S3 compatível; a edição comunitária do MinIO deixou de publicar imagens) e a API; `dotnet run` com user-secrets.
 - **Produção inicial:** um servidor Linux com Docker Compose (API, Hangfire server no mesmo processo, Redis sem persistência, Caddy com TLS automático), banco PostgreSQL gerenciado com backups diários e PITR, R2 para imagens. Migração para containers gerenciados quando a carga pedir; com mais de uma instância, Redis gerenciado e rate limit no Redis ([09-cache.md](09-cache.md)). Os arquivos ficam em `infra/production/`. A imagem da API (`backend/Dockerfile`) roda sem root, sem shell e com sistema de arquivos só de leitura, e a API se recusa a subir em produção sem domínio em `AllowedHosts`, sem o proxy conhecido e sem senha no Redis.
 - **CI (GitHub Actions):** build e testes (com Testcontainers), `dotnet format --verify-no-changes`, análise de vulnerabilidades de pacotes, CodeQL, gitleaks, `flutter analyze`, `flutter test` e build Android.
 - **CD:** imagem Docker assinada por tag, migrações aplicadas por job separado, deploy por SSH com healthcheck e rollback.
