@@ -7,8 +7,10 @@ using Vitrio.Infrastructure.Accounts;
 using Vitrio.Infrastructure.Caching;
 using Vitrio.Infrastructure.Email;
 using Vitrio.Infrastructure.Events;
+using Vitrio.Infrastructure.External;
 using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
+using Vitrio.Infrastructure.Persistence.Protection;
 using Vitrio.Infrastructure.Persistence.Repositories;
 using Vitrio.Infrastructure.Time;
 
@@ -35,6 +37,8 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddRepositories();
 
+        services.AddPersonalDataProtection(configuration);
+        services.AddExternalServices();
         services.AddAccounts();
         services.AddEmail();
 

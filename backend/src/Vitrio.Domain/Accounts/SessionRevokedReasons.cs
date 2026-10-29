@@ -1,0 +1,12 @@
+namespace Vitrio.Domain.Accounts;
+
+public static class SessionRevokedReasons
+{
+    public const string SignedOut = "signed_out";
+    public const string SignedOutEverywhere = "signed_out_everywhere";
+    public const string RevokedByUser = "revoked_by_user";
+    public const string RefreshReused = "refresh_reused";
+    public const string PasswordReset = "password_reset";
+    public const string PasswordChanged = "password_changed";
+    public const string AccountDeleted = "account_deleted";
+}

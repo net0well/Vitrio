@@ -11,7 +11,9 @@ public sealed class AccountEmailRendererTests
     public static TheoryData<AccountEmail> Emails() =>
     [
         new VerificationCodeEmail("ana@exemplo.com.br", "Ana", "482917"),
-        new RegistrationAttemptEmail("ana@exemplo.com.br", "Ana")
+        new RegistrationAttemptEmail("ana@exemplo.com.br", "Ana"),
+        new PasswordResetCodeEmail("ana@exemplo.com.br", "Ana", "482917"),
+        new PasswordChangedEmail("ana@exemplo.com.br", "Ana", new DateTimeOffset(2026, 10, 29, 17, 5, 0, TimeSpan.Zero))
     ];
 
     [Theory]
@@ -38,6 +40,26 @@ public sealed class AccountEmailRendererTests
         Assert.Equal("482917 é seu código do Vitrio", rendered.Subject);
         Assert.Contains(">482917</td>", rendered.Html, StringComparison.Ordinal);
         Assert.Contains("    482917", rendered.Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_PasswordChanged_ShowsTheMomentInSaoPauloTime()
+    {
+        var rendered = _renderer.Render(new PasswordChangedEmail("ana@exemplo.com.br", "Ana", new DateTimeOffset(2026, 10, 29, 17, 5, 0, TimeSpan.Zero)));
+
+        Assert.Equal("Sua senha do Vitrio foi alterada", rendered.Subject);
+        Assert.Contains("foi alterada em qui 29/10 às 14:05,", rendered.Text, StringComparison.Ordinal);
+        Assert.Contains("Não foi você?", rendered.Html, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_PasswordResetCode_ShowsTheCodeInSubjectAndBody()
+    {
+        var rendered = _renderer.Render(new PasswordResetCodeEmail("ana@exemplo.com.br", "Ana", "482917"));
+
+        Assert.Equal("482917 é seu código para redefinir a senha", rendered.Subject);
+        Assert.Contains(">482917</td>", rendered.Html, StringComparison.Ordinal);
+        Assert.Contains("Redefina sua senha", rendered.Text, StringComparison.Ordinal);
     }
 
     [Fact]

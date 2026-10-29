@@ -11,9 +11,15 @@ Um servidor Linux com Docker Compose: a API, o Redis (cache, sem persistência e
    - `AUTH_CODE_KEY` (chave dos códigos de e-mail): `openssl rand -base64 32`.
    - `JWT_SIGNING_KEY` (chave ES256 dos tokens), numa linha só entre aspas duplas: `openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 | awk '{printf "%s\\n", $0}'`.
    - `SMTP_*`: servidor do provedor de e-mail, com STARTTLS na porta 587.
+   - `DATA_PROTECTION_CERTIFICATE` e `DATA_PROTECTION_CERTIFICATE_PASSWORD`: certificado que protege as chaves da criptografia de celular e endereço (as chaves ficam no banco, cifradas por ele). Gere uma vez, guarde no cofre com cópia de segurança e não troque sem migrar os dados:
+     ```bash
+     openssl req -x509 -newkey rsa:3072 -nodes -days 3650 -subj "/CN=vitrio-data-protection" -keyout dp.key -out dp.crt
+     openssl pkcs12 -export -inkey dp.key -in dp.crt -out dp.pfx -passout pass:"$DATA_PROTECTION_CERTIFICATE_PASSWORD"
+     base64 -w0 dp.pfx   # valor de DATA_PROTECTION_CERTIFICATE
+     ```
 4. No banco, a API usa um usuário só com permissão de leitura e escrita nas tabelas do schema da aplicação. As migrações rodam com outro usuário, que pode alterar o schema.
 
-A API se recusa a subir em produção sem `AllowedHosts` com o domínio, sem o proxy conhecido (`ForwardedHeaders`), sem senha no Redis, sem as chaves de token e de código ou sem o servidor SMTP. Trocar `JWT_SIGNING_KEY` desconecta todo mundo; trocar `AUTH_CODE_KEY` invalida só os códigos ainda não usados. Sem o proxy conhecido, todos os clientes cairiam no mesmo balde de rate limit.
+A API se recusa a subir em produção sem `AllowedHosts` com o domínio, sem o proxy conhecido (`ForwardedHeaders`), sem senha no Redis, sem as chaves de token e de código, sem o servidor SMTP ou sem o certificado da Data Protection. Perder o certificado torna ilegíveis os celulares e endereços já salvos. Trocar `JWT_SIGNING_KEY` desconecta todo mundo; trocar `AUTH_CODE_KEY` invalida só os códigos ainda não usados. Sem o proxy conhecido, todos os clientes cairiam no mesmo balde de rate limit.
 
 ## Deploy de uma versão
 

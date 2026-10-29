@@ -81,6 +81,108 @@ public sealed class UserTests
         Assert.True(user.TryMarkRegistrationAttemptNotified(_clock));
     }
 
+    [Fact]
+    public void RegisterFailedSignIn_FifthFailureWithinFifteenMinutes_LocksForFifteenMinutes()
+    {
+        var user = ActiveUser();
+        for (var failure = 1; failure < User.MaxFailedSignIns; failure++)
+        {
+            Assert.False(user.RegisterFailedSignIn(_clock));
+            _clock.Advance(TimeSpan.FromMinutes(2));
+        }
+
+        Assert.True(user.RegisterFailedSignIn(_clock));
+
+        Assert.Equal(User.LockoutDuration, user.LockoutRemaining(_clock));
+        _clock.Advance(User.LockoutDuration);
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+    }
+
+    [Fact]
+    public void RegisterFailedSignIn_SpreadOverMoreThanFifteenMinutes_DoesNotLock()
+    {
+        var user = ActiveUser();
+        for (var failure = 0; failure < User.MaxFailedSignIns * 2; failure++)
+        {
+            Assert.False(user.RegisterFailedSignIn(_clock));
+            _clock.Advance(TimeSpan.FromMinutes(4));
+        }
+
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+    }
+
+    [Fact]
+    public void RegisterSuccessfulSignIn_ClearsFailuresAndLockout()
+    {
+        var user = ActiveUser();
+        for (var failure = 0; failure < User.MaxFailedSignIns; failure++)
+        {
+            user.RegisterFailedSignIn(_clock);
+        }
+
+        user.RegisterSuccessfulSignIn();
+
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+        Assert.Equal(0, user.FailedSignInCount);
+        Assert.False(user.RegisterFailedSignIn(_clock));
+    }
+
+    [Fact]
+    public void ChangePassword_ReplacesTheHashAndUnlocksTheAccount()
+    {
+        var user = ActiveUser();
+        for (var failure = 0; failure < User.MaxFailedSignIns; failure++)
+        {
+            user.RegisterFailedSignIn(_clock);
+        }
+
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        user.ChangePassword("new-hash", _clock);
+
+        Assert.Equal("new-hash", user.PasswordHash);
+        Assert.Equal(_clock.UtcNow, user.PasswordChangedAt);
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+    }
+
+    [Fact]
+    public void Delete_AnonymizesTheAccountAndRaisesUserDeleted()
+    {
+        var user = ActiveUser();
+        user.ChangePhoneNumber(PhoneNumber.Create("16991234567").Value);
+
+        var result = user.Delete(_clock);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(UserStatus.Deleted, user.Status);
+        Assert.Equal($"{user.Id:N}@removido.invalid", user.Email);
+        Assert.Equal(User.RemovedDisplayName, user.DisplayName);
+        Assert.Null(user.PhoneNumber);
+        Assert.Empty(user.PasswordHash);
+        Assert.Equal(_clock.UtcNow, user.DeletedAt);
+        Assert.Equal(new UserDeleted(user.Id) { EventId = user.DomainEvents.Single().EventId }, user.DomainEvents.Single());
+    }
+
+    [Fact]
+    public void Delete_Twice_Fails()
+    {
+        var user = ActiveUser();
+        user.Delete(_clock);
+
+        Assert.True(user.Delete(_clock).IsFailure);
+    }
+
+    private User ActiveUser()
+    {
+        var user = User.Register(
+            EmailAddress.Create("mariana@example.com").Value,
+            DisplayName.Create("Mariana Souza").Value,
+            "hash",
+            "2026-10-28",
+            _clock);
+        user.ConfirmEmail(_clock);
+        return user;
+    }
+
     private sealed class FixedClock(DateTimeOffset now) : IClock
     {
         public DateTimeOffset UtcNow { get; private set; } = now;

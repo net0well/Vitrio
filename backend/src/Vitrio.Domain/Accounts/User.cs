@@ -5,6 +5,11 @@ namespace Vitrio.Domain.Accounts;
 public sealed class User : AggregateRoot
 {
     public const int TermsVersionMaxLength = 20;
+    public const string RemovedDisplayName = "Usuário removido";
+    public const int MaxFailedSignIns = 5;
+
+    public static readonly TimeSpan FailedSignInWindow = TimeSpan.FromMinutes(15);
+    public static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
     private static readonly TimeSpan RegistrationAttemptNoticeInterval = TimeSpan.FromHours(24);
 
@@ -20,6 +25,8 @@ public sealed class User : AggregateRoot
 
     public string PasswordHash { get; private set; } = string.Empty;
 
+    public string? PhoneNumber { get; private set; }
+
     public DateTimeOffset PasswordChangedAt { get; private set; }
 
     public UserStatus Status { get; private set; }
@@ -32,7 +39,15 @@ public sealed class User : AggregateRoot
 
     public DateTimeOffset? RegistrationAttemptNotifiedAt { get; private set; }
 
+    public int FailedSignInCount { get; private set; }
+
+    public DateTimeOffset? FailedSignInWindowStartedAt { get; private set; }
+
+    public DateTimeOffset? LockedOutUntil { get; private set; }
+
     public DateTimeOffset CreatedAt { get; private set; }
+
+    public DateTimeOffset? DeletedAt { get; private set; }
 
     public static User Register(EmailAddress email, DisplayName displayName, string passwordHash, string termsVersion, IClock clock)
     {
@@ -77,6 +92,68 @@ public sealed class User : AggregateRoot
         Status = UserStatus.Active;
         EmailVerifiedAt = clock.UtcNow;
         return Result.Success();
+    }
+
+    public TimeSpan LockoutRemaining(IClock clock) =>
+        LockedOutUntil is { } until && until > clock.UtcNow ? until - clock.UtcNow : TimeSpan.Zero;
+
+    public bool RegisterFailedSignIn(IClock clock)
+    {
+        var now = clock.UtcNow;
+        if (FailedSignInWindowStartedAt is not { } startedAt || now - startedAt >= FailedSignInWindow)
+        {
+            FailedSignInWindowStartedAt = now;
+            FailedSignInCount = 0;
+        }
+
+        FailedSignInCount++;
+        if (FailedSignInCount < MaxFailedSignIns)
+        {
+            return false;
+        }
+
+        LockedOutUntil = now + LockoutDuration;
+        FailedSignInCount = 0;
+        FailedSignInWindowStartedAt = null;
+        return true;
+    }
+
+    public void RegisterSuccessfulSignIn()
+    {
+        FailedSignInCount = 0;
+        FailedSignInWindowStartedAt = null;
+        LockedOutUntil = null;
+    }
+
+    public void ReplacePasswordHash(string passwordHash) => PasswordHash = passwordHash;
+
+    public void Rename(DisplayName displayName) => DisplayName = displayName.Value;
+
+    public Result Delete(IClock clock)
+    {
+        if (Status is not (UserStatus.Active or UserStatus.Suspended))
+        {
+            return AccountErrors.AccountNotFound;
+        }
+
+        Status = UserStatus.Deleted;
+        DeletedAt = clock.UtcNow;
+        Email = $"{Id:N}@removido.invalid";
+        DisplayName = RemovedDisplayName;
+        PhoneNumber = null;
+        PasswordHash = string.Empty;
+        RegisterSuccessfulSignIn();
+        Raise(new UserDeleted(Id));
+        return Result.Success();
+    }
+
+    public void ChangePhoneNumber(PhoneNumber? phoneNumber) => PhoneNumber = phoneNumber?.Value;
+
+    public void ChangePassword(string passwordHash, IClock clock)
+    {
+        PasswordHash = passwordHash;
+        PasswordChangedAt = clock.UtcNow;
+        RegisterSuccessfulSignIn();
     }
 
     public bool TryMarkRegistrationAttemptNotified(IClock clock)

@@ -43,6 +43,14 @@ public sealed class Session
         };
     }
 
+    public bool IsActive(IClock clock)
+    {
+        var now = clock.UtcNow;
+        return RevokedAt is null && now < LastSeenAt + IdleLifetime && now < AbsoluteExpiresAt;
+    }
+
+    public void Touch(IClock clock) => LastSeenAt = clock.UtcNow;
+
     public void Revoke(string reason, IClock clock)
     {
         if (RevokedAt is not null)

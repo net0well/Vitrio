@@ -12,6 +12,7 @@ internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refre
         builder.HasKey(token => token.Id);
         builder.Property(token => token.Id).ValueGeneratedNever();
         builder.Property(token => token.TokenHash).HasMaxLength(64);
+        builder.Property<uint>("xmin").HasColumnType("xid").IsRowVersion();
         builder.HasIndex(token => token.TokenHash).IsUnique();
         builder.HasIndex(token => token.FamilyId);
         builder.HasIndex(token => token.ExpiresAt);

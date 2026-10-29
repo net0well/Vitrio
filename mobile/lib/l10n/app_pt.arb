@@ -17,5 +17,75 @@
   "ordersEmpty": "Você ainda não fez nenhum pedido. Que tal começar pela busca?",
   "ordersEmptyAction": "Buscar profissionais",
   "accountTitle": "Conta",
-  "accountEmpty": "Em breve você vai poder entrar com Google ou Apple para pedir orçamentos e oferecer seus serviços."
+  "accountEmpty": "Entre ou crie sua conta para pedir orçamentos e oferecer seus serviços.",
+  "authSignIn": "Entrar",
+  "authCreateAccount": "Criar conta",
+  "authEmail": "E-mail",
+  "authPassword": "Senha",
+  "authShowPassword": "Mostrar senha",
+  "authHidePassword": "Esconder senha",
+  "authForgotPassword": "Esqueci a senha",
+  "authName": "Nome",
+  "authPasswordRule": "Use pelo menos 10 caracteres. Uma frase com espaços vale.",
+  "authAcceptTerms": "Li e aceito os termos de uso e a política de privacidade.",
+  "authAcceptTermsRequired": "Aceite os termos para continuar.",
+  "authVerifyTitle": "Confirme seu e-mail",
+  "authVerifyMessage": "Enviamos um código de 6 números para {email}. Digite o código para terminar.",
+  "authCode": "Código",
+  "authConfirm": "Confirmar",
+  "authResendCode": "Reenviar código",
+  "authResendIn": "Reenviar em {seconds} s",
+  "authCodeResent": "Enviamos um novo código.",
+  "authChangeEmail": "Trocar e-mail",
+  "authForgotTitle": "Redefinir senha",
+  "authForgotMessage": "Digite o e-mail da sua conta. Vamos enviar um código para você criar uma senha nova.",
+  "authSendCode": "Enviar código",
+  "authCodeSentIfExists": "Se houver uma conta com este e-mail, enviamos um código para ele.",
+  "authNewPassword": "Senha nova",
+  "authSaveNewPassword": "Salvar senha nova",
+  "errorConnection": "Sem conexão. Confira a internet e tente de novo.",
+  "errorGeneric": "Algo deu errado. Tente de novo.",
+  "commonRetry": "Tentar de novo",
+  "commonCancel": "Cancelar",
+  "commonSave": "Salvar",
+  "accountEditProfile": "Editar dados",
+  "accountChangePassword": "Trocar senha",
+  "accountDevices": "Aparelhos conectados",
+  "accountSignOut": "Sair",
+  "accountDelete": "Excluir conta",
+  "accountDeleteTitle": "Excluir sua conta?",
+  "accountDeleteMessage": "Seus dados pessoais serão apagados e você sai de todos os aparelhos. Isso não pode ser desfeito. Para confirmar, digite EXCLUIR.",
+  "accountDeleteWord": "EXCLUIR",
+  "accountDeleteConfirm": "Excluir",
+  "profilePhone": "Celular",
+  "profilePhoneHint": "(16) 99123-4567",
+  "profileSaved": "Dados salvos.",
+  "passwordCurrent": "Senha atual",
+  "passwordChanged": "Senha trocada. Os outros aparelhos foram desconectados.",
+  "devicesThisDevice": "Este aparelho",
+  "devicesLastSeen": "Último acesso em {date}",
+  "devicesDisconnect": "Desconectar",
+  "devicesSignOutAll": "Sair de todos os aparelhos",
+  "devicesOnlyThis": "Só este aparelho está conectado.",
+  "@authVerifyMessage": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@authResendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@devicesLastSeen": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

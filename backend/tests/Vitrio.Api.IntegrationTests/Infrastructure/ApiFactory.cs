@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.RateLimiting;
@@ -21,6 +22,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public string ConnectionString => _database.GetConnectionString();
 
+    private static readonly string SigningKey = CreateSigningKey();
+    private static readonly string CodeKey = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+
     public AdjustableTimeProvider Clock { get; } = new();
 
     public CapturingEmailSender Emails { get; } = new();
@@ -43,12 +47,16 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseEnvironment("Testing");
         builder.UseSetting("ConnectionStrings:Database", ConnectionString);
+        builder.UseSetting("Jwt:SigningKey", SigningKey);
+        builder.UseSetting("Auth:CodeKey", CodeKey);
         builder.ConfigureTestServices(services =>
         {
             services.AddControllers().AddApplicationPart(typeof(ApiFactory).Assembly);
             services.AddSingleton<IStartupFilter, TestClientAddressStartupFilter>();
             services.Replace(ServiceDescriptor.Singleton<TimeProvider>(Clock));
             services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
+            services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
+            services.Replace(ServiceDescriptor.Singleton<ICityDirectory, FakeCityDirectory>());
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {
                 limiter.PermitLimit = 1;
@@ -56,5 +64,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 limiter.QueueLimit = 0;
             }));
         });
+    }
+
+    private static string CreateSigningKey()
+    {
+        using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        return key.ExportPkcs8PrivateKeyPem();
     }
 }

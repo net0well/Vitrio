@@ -45,6 +45,7 @@ public static class ProductionSettings
         RequireValue(configuration, "Jwt:SigningKey", "an ECDSA P-256 private key in PEM", problems);
         RequireValue(configuration, "Auth:CodeKey", "a random key of at least 32 bytes in base64", problems);
         RequireValue(configuration, "Email:Smtp:Host", "the SMTP server", problems);
+        RequireValue(configuration, "DataProtection:Certificate", "a PFX certificate in base64 that protects the personal data keys", problems);
 
         return problems;
     }

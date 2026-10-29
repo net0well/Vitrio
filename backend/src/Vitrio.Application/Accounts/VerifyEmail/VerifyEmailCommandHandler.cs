@@ -11,9 +11,9 @@ namespace Vitrio.Application.Accounts.VerifyEmail;
 public sealed class VerifyEmailCommandHandler(
     IUserWritableRepository users,
     IEmailCodeWritableRepository emailCodes,
-    EmailCodeService emailCodeService,
-    PasswordService passwords,
-    SessionService sessions,
+    IEmailCodeService emailCodeService,
+    IPasswordService passwords,
+    ISessionService sessions,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork,
     IClock clock) : ICommandHandler<VerifyEmailCommand, Result<AuthResponse>>
@@ -43,7 +43,7 @@ public sealed class VerifyEmailCommandHandler(
         }
 
         user.ConfirmEmail(clock);
-        var response = sessions.Start(user, command.DeviceName);
+        var response = await sessions.StartAsync(user, command.DeviceName, cancellationToken);
         auditLog.Record(AuditActions.EmailVerified, user.Id, AuditTargets.User, user.Id);
 
         return await TrySaveAsync(cancellationToken) ? response : AccountErrors.InvalidCode;

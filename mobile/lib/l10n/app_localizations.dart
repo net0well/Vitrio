@@ -199,8 +199,302 @@ abstract class AppLocalizations {
   /// No description provided for @accountEmpty.
   ///
   /// In pt, this message translates to:
-  /// **'Em breve você vai poder entrar com Google ou Apple para pedir orçamentos e oferecer seus serviços.'**
+  /// **'Entre ou crie sua conta para pedir orçamentos e oferecer seus serviços.'**
   String get accountEmpty;
+
+  /// No description provided for @authSignIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar'**
+  String get authSignIn;
+
+  /// No description provided for @authCreateAccount.
+  ///
+  /// In pt, this message translates to:
+  /// **'Criar conta'**
+  String get authCreateAccount;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In pt, this message translates to:
+  /// **'E-mail'**
+  String get authEmail;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Senha'**
+  String get authPassword;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostrar senha'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esconder senha'**
+  String get authHidePassword;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esqueci a senha'**
+  String get authForgotPassword;
+
+  /// No description provided for @authName.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nome'**
+  String get authName;
+
+  /// No description provided for @authPasswordRule.
+  ///
+  /// In pt, this message translates to:
+  /// **'Use pelo menos 10 caracteres. Uma frase com espaços vale.'**
+  String get authPasswordRule;
+
+  /// No description provided for @authAcceptTerms.
+  ///
+  /// In pt, this message translates to:
+  /// **'Li e aceito os termos de uso e a política de privacidade.'**
+  String get authAcceptTerms;
+
+  /// No description provided for @authAcceptTermsRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aceite os termos para continuar.'**
+  String get authAcceptTermsRequired;
+
+  /// No description provided for @authVerifyTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Confirme seu e-mail'**
+  String get authVerifyTitle;
+
+  /// No description provided for @authVerifyMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviamos um código de 6 números para {email}. Digite o código para terminar.'**
+  String authVerifyMessage(String email);
+
+  /// No description provided for @authCode.
+  ///
+  /// In pt, this message translates to:
+  /// **'Código'**
+  String get authCode;
+
+  /// No description provided for @authConfirm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Confirmar'**
+  String get authConfirm;
+
+  /// No description provided for @authResendCode.
+  ///
+  /// In pt, this message translates to:
+  /// **'Reenviar código'**
+  String get authResendCode;
+
+  /// No description provided for @authResendIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Reenviar em {seconds} s'**
+  String authResendIn(int seconds);
+
+  /// No description provided for @authCodeResent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviamos um novo código.'**
+  String get authCodeResent;
+
+  /// No description provided for @authChangeEmail.
+  ///
+  /// In pt, this message translates to:
+  /// **'Trocar e-mail'**
+  String get authChangeEmail;
+
+  /// No description provided for @authForgotTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Redefinir senha'**
+  String get authForgotTitle;
+
+  /// No description provided for @authForgotMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Digite o e-mail da sua conta. Vamos enviar um código para você criar uma senha nova.'**
+  String get authForgotMessage;
+
+  /// No description provided for @authSendCode.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviar código'**
+  String get authSendCode;
+
+  /// No description provided for @authCodeSentIfExists.
+  ///
+  /// In pt, this message translates to:
+  /// **'Se houver uma conta com este e-mail, enviamos um código para ele.'**
+  String get authCodeSentIfExists;
+
+  /// No description provided for @authNewPassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Senha nova'**
+  String get authNewPassword;
+
+  /// No description provided for @authSaveNewPassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar senha nova'**
+  String get authSaveNewPassword;
+
+  /// No description provided for @errorConnection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem conexão. Confira a internet e tente de novo.'**
+  String get errorConnection;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In pt, this message translates to:
+  /// **'Algo deu errado. Tente de novo.'**
+  String get errorGeneric;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tentar de novo'**
+  String get commonRetry;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar'**
+  String get commonCancel;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar'**
+  String get commonSave;
+
+  /// No description provided for @accountEditProfile.
+  ///
+  /// In pt, this message translates to:
+  /// **'Editar dados'**
+  String get accountEditProfile;
+
+  /// No description provided for @accountChangePassword.
+  ///
+  /// In pt, this message translates to:
+  /// **'Trocar senha'**
+  String get accountChangePassword;
+
+  /// No description provided for @accountDevices.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aparelhos conectados'**
+  String get accountDevices;
+
+  /// No description provided for @accountSignOut.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sair'**
+  String get accountSignOut;
+
+  /// No description provided for @accountDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Excluir conta'**
+  String get accountDelete;
+
+  /// No description provided for @accountDeleteTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Excluir sua conta?'**
+  String get accountDeleteTitle;
+
+  /// No description provided for @accountDeleteMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seus dados pessoais serão apagados e você sai de todos os aparelhos. Isso não pode ser desfeito. Para confirmar, digite EXCLUIR.'**
+  String get accountDeleteMessage;
+
+  /// No description provided for @accountDeleteWord.
+  ///
+  /// In pt, this message translates to:
+  /// **'EXCLUIR'**
+  String get accountDeleteWord;
+
+  /// No description provided for @accountDeleteConfirm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Excluir'**
+  String get accountDeleteConfirm;
+
+  /// No description provided for @profilePhone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Celular'**
+  String get profilePhone;
+
+  /// No description provided for @profilePhoneHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'(16) 99123-4567'**
+  String get profilePhoneHint;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Dados salvos.'**
+  String get profileSaved;
+
+  /// No description provided for @passwordCurrent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Senha atual'**
+  String get passwordCurrent;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In pt, this message translates to:
+  /// **'Senha trocada. Os outros aparelhos foram desconectados.'**
+  String get passwordChanged;
+
+  /// No description provided for @devicesThisDevice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este aparelho'**
+  String get devicesThisDevice;
+
+  /// No description provided for @devicesLastSeen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Último acesso em {date}'**
+  String devicesLastSeen(String date);
+
+  /// No description provided for @devicesDisconnect.
+  ///
+  /// In pt, this message translates to:
+  /// **'Desconectar'**
+  String get devicesDisconnect;
+
+  /// No description provided for @devicesSignOutAll.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sair de todos os aparelhos'**
+  String get devicesSignOutAll;
+
+  /// No description provided for @devicesOnlyThis.
+  ///
+  /// In pt, this message translates to:
+  /// **'Só este aparelho está conectado.'**
+  String get devicesOnlyThis;
 }
 
 class _AppLocalizationsDelegate

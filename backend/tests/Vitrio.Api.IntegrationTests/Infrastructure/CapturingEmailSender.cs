@@ -28,4 +28,6 @@ public sealed class CapturingEmailSender : IEmailSender
         _sent.Where(message => string.Equals(message.To, email, StringComparison.OrdinalIgnoreCase)).ToList();
 
     public string LastCodeFor(string email) => SentTo(email).OfType<VerificationCodeEmail>().Last().Code;
+
+    public string LastResetCodeFor(string email) => SentTo(email).OfType<PasswordResetCodeEmail>().Last().Code;
 }

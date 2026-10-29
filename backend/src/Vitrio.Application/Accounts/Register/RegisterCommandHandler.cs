@@ -11,8 +11,8 @@ namespace Vitrio.Application.Accounts.Register;
 
 public sealed class RegisterCommandHandler(
     IUserWritableRepository users,
-    PasswordService passwords,
-    EmailCodeService emailCodes,
+    IPasswordService passwords,
+    IEmailCodeService emailCodes,
     IEmailSender emailSender,
     IAuditLog auditLog,
     IUnitOfWork unitOfWork,

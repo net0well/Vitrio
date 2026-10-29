@@ -30,7 +30,8 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Controllers só montam o comando e chamam `ISender`. Filtro de dono sempre dentro da consulta. Recurso alheio responde 404.
 - `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono.
 - Persistência por **Repository e Unit of Work**: por agregado, um `I<Agregado>WritableRepository` (comandos: carrega o agregado rastreado e adiciona) e, quando houver leitura, um `I<Agregado>SearchableRepository` (`AsNoTracking` e projeção direto para DTO). Interfaces na Application (`<Módulo>/Repositories`), implementação com EF na Infrastructure. O comando termina em `IUnitOfWork.SaveChangesAsync`. Handler, service e controller nunca tocam no `DbContext`, e a Application não referencia EF Core. Sem repositório genérico (`IRepository<T>`) e sem `IQueryable` saindo do repository.
-- **Services** na Application (`<Módulo>/Services`) quando a regra do caso de uso é extensa ou usada por mais de um handler, para o handler só orquestrar (repository, service, `IUnitOfWork`). Service não salva nem chama `ISender`. Regra que pertence ao agregado continua no agregado.
+- **Services** na Application (`<Módulo>/Services`) quando a regra do caso de uso é extensa ou usada por mais de um handler, para o handler só orquestrar (repository, service, `IUnitOfWork`). Todo service tem interface própria (`ISessionService`, com a implementação `SessionService` `internal sealed`). Service não salva nem chama `ISender`. Regra que pertence ao agregado continua no agregado.
+- **SOLID, clean code e inversão de dependência sempre.** Cada classe tem uma responsabilidade e recebe tudo por injeção, dependendo de interfaces (repositories, services e abstrações como `IEmailSender`, `IClock` e `ISessionStatusChecker`), nunca de uma implementação concreta. Handlers e services só recebem interfaces no construtor, e o teste de arquitetura barra o contrário. Nomes que dizem o que fazem, métodos curtos, sem duplicação.
 - CQRS com `Mediator`: comandos mudam estado (Writable + `IUnitOfWork`), consultas só leem (Searchable, com `AsNoTracking` e projeção). Eventos de domínio seguem `docs/10-eventos.md` (padrão e catálogo único): só nos agregados, só quando algo fora do agregado reage, conteúdo só com ids e códigos, `IDomainEventHandler<T>` em vez do `Mediator`. Evento novo entra primeiro no catálogo.
 - Mapeamento sempre explícito, escrito à mão (`Response.From(entidade)`, `Request.ToCommand()`, `Select` nas consultas). **Nenhuma biblioteca de mapeamento** (AutoMapper, Mapster, Mapperly ou parecidas).
 - Proibido também: MediatR 13+, FluentAssertions 8+, MassTransit 9+.
@@ -55,6 +56,10 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 4. Rastreabilidade só nos documentos. Código, testes, branches e commits não citam specs nem planos.
 5. Se a implementação mostrar que a spec está errada, volte a spec para In Review e corrija antes de seguir.
 6. Uma branch e um PR por spec. Os recortes do plano viram vários commits pequenos na mesma branch, e o PR só abre quando a spec inteira estiver implementada e testada de ponta a ponta (API e app). Nada de PR pequeno no meio do caminho.
+7. Fechamento da spec, antes do PR:
+   - `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); os achados são corrigidos ou registrados.
+   - Subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
+   - O resultado das revisões e dos testes manuais vai na descrição do PR.
 
 ## Onde está cada coisa
 

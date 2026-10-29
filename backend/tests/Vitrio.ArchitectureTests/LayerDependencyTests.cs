@@ -46,6 +46,19 @@ public sealed class LayerDependencyTests
     }
 
     [Fact]
+    public void Api_UsesInfrastructureOnlyInTheComposition()
+    {
+        var result = Types.InAssembly(Layers.Api)
+            .That()
+            .ResideInNamespaceStartingWith("Vitrio.Api")
+            .ShouldNot()
+            .HaveDependencyOn("Vitrio.Infrastructure")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
     public void Infrastructure_DoesNotDependOnApi()
     {
         var result = Types.InAssembly(Layers.Infrastructure)

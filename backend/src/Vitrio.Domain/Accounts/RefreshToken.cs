@@ -43,4 +43,14 @@ public sealed class RefreshToken
             AbsoluteExpiresAt = session.AbsoluteExpiresAt
         };
     }
+
+    public bool IsUsable(IClock clock) => UsedAt is null && RevokedAt is null && clock.UtcNow < ExpiresAt;
+
+    public void MarkUsed(Guid replacedById, IClock clock)
+    {
+        UsedAt = clock.UtcNow;
+        ReplacedById = replacedById;
+    }
+
+    public void Revoke(IClock clock) => RevokedAt ??= clock.UtcNow;
 }

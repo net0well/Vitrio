@@ -6,6 +6,9 @@ namespace Vitrio.Infrastructure.Persistence.Repositories;
 
 internal sealed class UserWritableRepository(AppDbContext db) : IUserWritableRepository
 {
+    public Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
+        db.Users.SingleOrDefaultAsync(user => user.Id == id, cancellationToken);
+
     public Task<User?> GetByEmailAsync(EmailAddress email, CancellationToken cancellationToken) =>
         db.Users.SingleOrDefaultAsync(user => user.Email == email.Value, cancellationToken);
 

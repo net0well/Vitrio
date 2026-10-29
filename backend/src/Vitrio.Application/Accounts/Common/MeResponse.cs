@@ -11,12 +11,15 @@ public sealed record MeResponse(
     IReadOnlyCollection<string> Roles,
     bool HasProviderProfile)
 {
-    public static MeResponse From(User user, IReadOnlyCollection<string> roles) => new(
-        user.Id,
-        user.DisplayName,
-        Domain.Accounts.DisplayName.FromStored(user.DisplayName).Initials,
-        user.Email,
-        null,
+    public static MeResponse From(User user, IReadOnlyCollection<string> roles) =>
+        Create(user.Id, user.DisplayName, user.Email, user.PhoneNumber, roles);
+
+    public static MeResponse Create(Guid id, string displayName, string email, string? phoneNumber, IReadOnlyCollection<string> roles) => new(
+        id,
+        displayName,
+        Domain.Accounts.DisplayName.FromStored(displayName).Initials,
+        email,
+        phoneNumber,
         roles,
         roles.Contains(Domain.Accounts.Roles.Provider));
 }
