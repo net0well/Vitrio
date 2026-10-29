@@ -38,6 +38,7 @@ services:
       ConnectionStrings__Database: Host=postgres;Database=vitrio;Username=vitrio;Password=${POSTGRES_PASSWORD}
       ConnectionStrings__Redis: redis:6379
       Serilog__WriteTo__1__Args__serverUrl: http://seq
+      Email__Smtp__Host: mailpit
     ports:
       - "127.0.0.1:5080:8080"
     depends_on:
@@ -45,6 +46,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      mailpit:
+        condition: service_started
 
   mailpit:
     image: axllent/mailpit:v1.32
