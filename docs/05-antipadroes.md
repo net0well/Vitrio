@@ -7,6 +7,10 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Não faça | Por quê | Faça |
 | --- | --- | --- |
 | Minimal APIs (`app.MapGet`, `MapGroup`, `IEndpointGroup`), mesmo quando o `/scaffold` gerar assim | Decisão do projeto (ADR-001); mistura dois estilos e quebra a organização por controller | Controller com `[ApiController]` herdando `ApiControllerBase`; adapte a saída do scaffold |
+| Hangfire fora do `Vitrio.Jobs` (`BackgroundJob.Enqueue` num handler, `AddHangfire` na Infrastructure) | Prende as camadas a um agendador específico e espalha a configuração | Abstração na Application (`IPhotoProcessingQueue`) implementada no `Vitrio.Jobs` |
+| Job com regra de negócio, repository ou `IUnitOfWork` | A regra fica fora do caso de uso, sem validação nem teste de handler | Job fino que só envia um comando pelo `ISender` |
+| Regra de negócio, framework ou referência a outra camada no `Vitrio.Shared` | O núcleo compartilhado vira depósito e arrasta dependências para todas as camadas | Shared só com tipos técnicos; conceito de negócio no Domain |
+| Helper técnico copiado em duas camadas | Duplicação que diverge com o tempo | Um tipo só, no `Vitrio.Shared` |
 | Controller com regra de negócio, `DbContext` ou `if` de estado | Regra espalhada e sem teste de unidade | Controller só monta comando e chama `ISender` |
 | `Domain` referenciando EF Core, ASP.NET ou pacotes externos | Domínio deixa de ser testável e portável | Domínio puro; mapeamento na Infrastructure |
 | Repositório genérico (`IRepository<T>`) sobre EF Core | Métodos sem intenção (`GetAll`, `Find(predicate)`) que acabam expondo `IQueryable` e espalhando consultas | Repository por agregado com métodos de intenção: `I<Agregado>WritableRepository` e `I<Agregado>SearchableRepository` |

@@ -10,6 +10,7 @@ Como o código do Vitrio é escrito. Quando o dotnet-claude-kit sugerir algo dif
 - Classes `sealed` por padrão; `record` para DTOs, comandos, consultas e value objects; construtores primários para injeção.
 - Assíncrono de ponta a ponta, com `CancellationToken` em todo método assíncrono público.
 - Tempo sempre de `IClock` (injetado, implementado sobre `TimeProvider`), nunca `DateTime.Now`/`UtcNow`.
+- **Projetos de apoio.** `Vitrio.Shared` guarda os tipos técnicos usados por mais de uma camada (`Result`, `Error`, `IClock`, `ClockTime`, `ClaimNames`, `ConcurrencyConflictException`), sem regra de negócio e sem referência a outro projeto ou framework. Antes de criar um helper técnico numa camada, veja se ele serve a outras: se servir, vai para o Shared, numa pasta por assunto (`Results`, `Time`, `Security`, `Exceptions`). `Vitrio.Jobs` concentra o Hangfire; cada job é uma classe fina que envia um comando pelo `ISender`, e o agendamento entra por uma abstração da Application implementada no Jobs.
 - `IHttpClientFactory` para HTTP; `IOptions<T>` validado no startup (`ValidateDataAnnotations().ValidateOnStart()`).
 - Nomes em inglês, claros e completos (`CustomerId`, não `CustId`). Termos de domínio seguem o glossário de [README.md](README.md).
 - Comentários só quando o porquê não é óbvio. Ver [06-regras-de-desenvolvimento.md](06-regras-de-desenvolvimento.md).

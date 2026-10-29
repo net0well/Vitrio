@@ -6,7 +6,9 @@
 **Camadas afetadas:**
 - Domain: `Providers`, `Common` (`Money`, ponto geográfico).
 - Application: `Providers`, papéis em `Accounts`, abstrações de storage, imagem, CNPJ e jobs.
-- Infrastructure: tabelas da vitrine, SeaweedFS/R2, SkiaSharp, BrasilAPI CNPJ, Hangfire.
+- Shared: núcleo técnico (`Result`, `Error`, `IClock`, `ClockTime`, `ClaimNames`, `ConcurrencyConflictException`), criado nesta spec.
+- Infrastructure: tabelas da vitrine, SeaweedFS/R2, SkiaSharp, BrasilAPI CNPJ.
+- Jobs: Hangfire, criado nesta spec.
 - Api: `ProviderController`, `ProvidersController`, `CategoriesController`, página `/p/{id}` e `assetlinks.json`.
 - App Flutter: modo prestador.
 
@@ -39,7 +41,7 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 | Storage | `IObjectStorage` na Application; implementação com AWSSDK.S3 (Apache 2.0) e `ForcePathStyle`, que serve para R2 e SeaweedFS. Chaves: `uploads/{guid}` (temporária) e `public/providers/{id}/{guid}.webp`. URL assinada de `PUT` de 5 min com `Content-Type` e `Content-Length` assinados. URL pública por configuração. SeaweedFS no `docker-compose` e em Testcontainers. |
 | Imagem | `IImageProcessor` na Application; SkiaSharp na Infrastructure. Confere a assinatura binária, aplica a orientação do EXIF, limita a 10 MB e 8000 px, reencoda em WebP (2048 px e miniatura de 480 px; perfil quadrado de 512 px) sem metadados e apaga o original. |
 | CNPJ | `ICnpjLookup` (BrasilAPI CNPJ v1) com resiliência; validação do dígito verificador no Domain. Dublê nos testes. |
-| Jobs | Hangfire com Hangfire.PostgreSql no processo da API, desligável por configuração (desligado nos testes de integração). Os jobs só chamam comandos da Application pelo `ISender`: processamento da foto, novas tentativas do MEI pendente, revalidação diária em lotes de 200 e limpeza de uploads sem confirmação. A confirmação da foto enfileira o processamento por `IPhotoProcessingQueue` depois do commit; a limpeza também reenfileira foto presa em `Processing` há mais de 10 min, para nenhum envio se perder. Painel só para admin, fora da internet pública. Os testes chamam os comandos direto, com o relógio ajustável. |
+| Jobs | Hangfire com Hangfire.PostgreSql no projeto `Vitrio.Jobs`, no processo da API, desligável por `Jobs:Enabled` (desligado nos testes de integração). Os jobs só chamam comandos da Application pelo `ISender`: processamento da foto, novas tentativas do MEI pendente, revalidação diária em lotes de 200 e limpeza de uploads sem confirmação. A confirmação da foto enfileira o processamento por `IPhotoProcessingQueue` depois do commit; a limpeza também reenfileira foto presa em `Processing` há mais de 10 min, para nenhum envio se perder. Painel só para admin, fora da internet pública. Os testes chamam os comandos direto, com o relógio ajustável. |
 | Página do link | `ShareController` responde `/p/{id}` com HTML montado por template embutido, texto codificado, Open Graph (título, descrição e imagem) e `Cache-Control: public, max-age=300`. `WellKnownController` responde o `assetlinks.json` pela configuração. Os dois são anônimos e usam a política `profile`. |
 | Rate limit | Escritas pelo limitador global já existente (60/min por usuário); `uploads` no `upload-url`; `profile` nas leituras e nas rotas públicas; `search` nas categorias. |
 | App | Pacotes `image_picker` (galeria e câmera) e `share_plus`. Upload direto à URL assinada. Modo ativo salvo no aparelho. Shell do prestador com Painel e Meu perfil. Rota `/p/:id` com intent-filter `autoVerify` para `vitrio.app/p/`. |

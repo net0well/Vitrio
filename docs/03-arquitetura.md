@@ -85,9 +85,11 @@ backend/
   Directory.Build.props
   Directory.Packages.props
   src/
-    Vitrio.Domain/            entidades, value objects, regras, eventos de domínio, Result/Error, IClock. Sem dependências externas.
+    Vitrio.Shared/            núcleo técnico compartilhado: Result/Error, IClock, ClockTime, ClaimNames, ConcurrencyConflictException. Sem dependências.
+    Vitrio.Domain/            entidades, value objects, regras, eventos de domínio. Referencia só o Shared.
     Vitrio.Application/       casos de uso por funcionalidade (comandos, consultas, validadores, DTOs), abstrações.
-    Vitrio.Infrastructure/    EF Core, PostGIS, storage, FCM, BrasilAPI, Hangfire, outbox, autenticação.
+    Vitrio.Infrastructure/    EF Core, PostGIS, storage, imagens, FCM, BrasilAPI, outbox, autenticação.
+    Vitrio.Jobs/              Hangfire: storage, servidor, jobs recorrentes e filas. Cada job só envia um comando.
     Vitrio.Api/               Controllers, filtros, middlewares, composição (Program.cs), Swagger.
   tests/
     Vitrio.Domain.Tests/
@@ -98,11 +100,13 @@ backend/
 
 Regras de dependência (verificadas por teste de arquitetura):
 
-- `Domain` não referencia nenhum outro projeto nem pacote de infraestrutura.
+- `Shared` não referencia nenhum projeto nem framework, e não tem regra de negócio. Entra nele o tipo técnico usado por mais de uma camada; conceito de negócio fica no `Domain`, mesmo que várias camadas o usem.
+- `Domain` referencia só o `Shared`, sem pacote de infraestrutura.
 - `Application` referencia só `Domain` (e pacotes de abstração: Mediator e FluentValidation). Não referencia EF Core: lê e grava só por repositories e `IUnitOfWork`.
 - Só a `Infrastructure` conhece o `AppDbContext`; a `Api` usa repositories quando precisa gravar algo (auditoria).
 - `Infrastructure` referencia `Application` e `Domain`.
-- `Api` referencia `Application` e `Infrastructure` só para composição; Controllers falam apenas com `ISender`.
+- `Jobs` referencia só a `Application` (e, por ela, `Domain` e `Shared`). É o único projeto com Hangfire. Um job não usa repository, `IUnitOfWork` nem `DbContext`: envia um comando pelo `ISender`, e a regra fica no handler. Quem precisa agendar algo usa uma abstração da Application (ex.: `IPhotoProcessingQueue`), implementada no `Jobs`.
+- `Api` referencia `Application`, `Infrastructure` e `Jobs` só para composição; Controllers falam apenas com `ISender`.
 
 ### Application por funcionalidade
 
@@ -284,7 +288,7 @@ where p.status = 'Published'
 - **Eventos de domínio seguem [10-eventos.md](10-eventos.md)**, que tem o padrão completo e o **catálogo único** (evento, agregado, conteúdo, versão, quem consome e o que cada consumidor faz). Nenhum outro documento lista eventos.
 - Resumo: só agregados geram eventos, e só nas transições a que algo fora do agregado reage (notificação, dado derivado de outro agregado, cache, outro módulo). No `SaveChanges`, cada evento vira uma linha de `outbox_messages` e uma de `outbox_deliveries` por handler, na mesma transação. Um `BackgroundService` entrega cada handler em transação própria, com retry por handler e `Failed` após 10 tentativas. Eventos não passam pelo `Mediator`.
 - Auditoria não é evento: o comando grava `audit_events` na própria transação, com `IAuditLog`.
-- Hangfire roda os jobs recorrentes. Painel do Hangfire só para admin, fora da internet pública.
+- Hangfire roda os jobs recorrentes e as filas (processamento de imagem), tudo no projeto `Vitrio.Jobs`, no mesmo processo da API e desligável por `Jobs:Enabled` (desligado nos testes de integração, que chamam os comandos direto). Painel do Hangfire só para admin, fora da internet pública.
 
 | Job | Frequência | O que faz |
 | --- | --- | --- |
@@ -376,3 +380,4 @@ mobile/lib/
 | 014 | Lançar primeiro só no Android | Público-alvo majoritariamente Android; uma loja e um fluxo de login no início | Android e iOS juntos |
 | 015 | Mapeamento manual entre entidades e DTOs | Explícito, verificado pelo compilador, sem reflexão nem convenções escondidas | AutoMapper, Mapster, Mapperly |
 | 016 | Repository por agregado, separado em escrita (Writable) e leitura (Searchable), com Unit of Work; services para regra extensa ou reaproveitada | Handlers curtos, consultas com nome de intenção, leitura sempre projetada e Application sem EF Core | `DbContext` direto nos handlers; repositório genérico `IRepository<T>` |
+| 017 | `Vitrio.Shared` para o núcleo técnico e `Vitrio.Jobs` para o Hangfire | O Shared evita que tipos técnicos (Result, relógio, claims) morem numa camada que não é a deles; o Jobs isola o Hangfire e deixa cada job só como gatilho de um comando | Result no Domain; Hangfire dentro da Infrastructure |
