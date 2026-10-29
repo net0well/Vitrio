@@ -97,6 +97,8 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Não faça | Por quê | Faça |
 | --- | --- | --- |
 | Cor, fonte, tamanho ou raio literais | Quebra tema escuro e consistência | Tokens do design system |
+| Tela prototipada diferente do protótipo (outra ordem, outro componente, outro texto, elemento faltando) | O app deixa de ser o produto desenhado e cada tela vira uma interpretação | Ler a prancheta e reproduzir; diferença só com aprovação registrada na spec |
+| Componente próprio quando o design system já tem um | Duas versões do mesmo elemento | O widget do design system (`VitrioChip`, `VitrioBadge`, `VitrioAvatar`...) |
 | Chamar HTTP direto da tela | Mistura UI e dados | Repositório + controller Riverpod |
 | Lógica de negócio na UI (ex.: decidir se pode avaliar) | Regras divergem da API | A API diz o que é permitido (`canReview`, `allowedActions`) |
 | Pedir permissão de localização sem contexto | Usuário nega para sempre | Pré-permissão explicando o uso, com alternativa "Escolher cidade" |

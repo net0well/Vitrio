@@ -41,6 +41,12 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - **Um tipo por arquivo**, com o nome do tipo: classe, record, interface e enum separados (`User.cs` e `UserStatus.cs`). Só tipos aninhados privados ficam dentro da classe. No Dart, o mesmo; hierarquia `sealed` e rotas tipadas usam `part`.
 - Código em inglês; interface, documentação, branches e commits em português.
 
+### Design do app
+- O app segue **estritamente** o design system (`docs/design-system/`): tokens, componentes, ícones, textos e tom. Nada de cor, fonte, tamanho ou raio fora dos tokens, nem componente inventado quando o design system tem um.
+- Toda tela marcada como **prototipada** em `docs/design-system/telas.md` fica **igual ao protótipo do app** (artifact "Vitrio — Protótipo do app", https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt): mesma estrutura, ordem, hierarquia, componentes e textos. Leia a prancheta da tela antes de implementá-la ou alterá-la. Dado que vem da API substitui o exemplo do protótipo.
+- Tela sem protótipo segue os componentes e padrões do design system e das telas prototipadas parecidas.
+- Diferença do protótipo só com aprovação explícita do usuário, registrada na spec. Sem aprovação, a tela é ajustada até ficar igual.
+
 ### Segurança
 - Siga `docs/08-seguranca.md`. Nada de dados pessoais, tokens ou coordenadas em logs; nada de segredo no repositório.
 - Todo endpoint novo: política de autorização explícita, validação, rate limit e testes de 401 e de 404 para recurso alheio.
@@ -61,6 +67,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 7. Fechamento da spec, antes do PR:
    - `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); os achados são corrigidos ou registrados.
    - Subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
+   - Comparar no emulador cada tela criada ou alterada com a prancheta do protótipo e com o design system; as diferenças são corrigidas.
    - O resultado das revisões e dos testes manuais vai na descrição do PR.
 
 ## Onde está cada coisa

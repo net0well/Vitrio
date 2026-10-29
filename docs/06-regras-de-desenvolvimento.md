@@ -63,5 +63,6 @@ Uma funcionalidade está pronta quando:
 - os estados vazio, carregando e erro existem no app;
 - autorização testada (401 sem token, 404 para recurso alheio);
 - textos revisados no tom do design system;
+- cada tela segue estritamente o design system e, quando prototipada, está igual à prancheta do protótipo do app ([Vitrio — Protótipo do app](https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt)), conferida por captura no emulador;
 - métricas e logs do fluxo no lugar, sem dados pessoais;
 - documentação atualizada quando a regra de negócio mudou.
