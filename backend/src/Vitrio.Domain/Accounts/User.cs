@@ -5,6 +5,10 @@ namespace Vitrio.Domain.Accounts;
 public sealed class User : AggregateRoot
 {
     public const int TermsVersionMaxLength = 20;
+    public const int MaxFailedSignIns = 5;
+
+    public static readonly TimeSpan FailedSignInWindow = TimeSpan.FromMinutes(15);
+    public static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
     private static readonly TimeSpan RegistrationAttemptNoticeInterval = TimeSpan.FromHours(24);
 
@@ -31,6 +35,12 @@ public sealed class User : AggregateRoot
     public DateTimeOffset TermsAcceptedAt { get; private set; }
 
     public DateTimeOffset? RegistrationAttemptNotifiedAt { get; private set; }
+
+    public int FailedSignInCount { get; private set; }
+
+    public DateTimeOffset? FailedSignInWindowStartedAt { get; private set; }
+
+    public DateTimeOffset? LockedOutUntil { get; private set; }
 
     public DateTimeOffset CreatedAt { get; private set; }
 
@@ -78,6 +88,39 @@ public sealed class User : AggregateRoot
         EmailVerifiedAt = clock.UtcNow;
         return Result.Success();
     }
+
+    public TimeSpan LockoutRemaining(IClock clock) =>
+        LockedOutUntil is { } until && until > clock.UtcNow ? until - clock.UtcNow : TimeSpan.Zero;
+
+    public bool RegisterFailedSignIn(IClock clock)
+    {
+        var now = clock.UtcNow;
+        if (FailedSignInWindowStartedAt is not { } startedAt || now - startedAt >= FailedSignInWindow)
+        {
+            FailedSignInWindowStartedAt = now;
+            FailedSignInCount = 0;
+        }
+
+        FailedSignInCount++;
+        if (FailedSignInCount < MaxFailedSignIns)
+        {
+            return false;
+        }
+
+        LockedOutUntil = now + LockoutDuration;
+        FailedSignInCount = 0;
+        FailedSignInWindowStartedAt = null;
+        return true;
+    }
+
+    public void RegisterSuccessfulSignIn()
+    {
+        FailedSignInCount = 0;
+        FailedSignInWindowStartedAt = null;
+        LockedOutUntil = null;
+    }
+
+    public void ReplacePasswordHash(string passwordHash) => PasswordHash = passwordHash;
 
     public bool TryMarkRegistrationAttemptNotified(IClock clock)
     {

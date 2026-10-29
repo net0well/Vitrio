@@ -81,6 +81,64 @@ public sealed class UserTests
         Assert.True(user.TryMarkRegistrationAttemptNotified(_clock));
     }
 
+    [Fact]
+    public void RegisterFailedSignIn_FifthFailureWithinFifteenMinutes_LocksForFifteenMinutes()
+    {
+        var user = ActiveUser();
+        for (var failure = 1; failure < User.MaxFailedSignIns; failure++)
+        {
+            Assert.False(user.RegisterFailedSignIn(_clock));
+            _clock.Advance(TimeSpan.FromMinutes(2));
+        }
+
+        Assert.True(user.RegisterFailedSignIn(_clock));
+
+        Assert.Equal(User.LockoutDuration, user.LockoutRemaining(_clock));
+        _clock.Advance(User.LockoutDuration);
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+    }
+
+    [Fact]
+    public void RegisterFailedSignIn_SpreadOverMoreThanFifteenMinutes_DoesNotLock()
+    {
+        var user = ActiveUser();
+        for (var failure = 0; failure < User.MaxFailedSignIns * 2; failure++)
+        {
+            Assert.False(user.RegisterFailedSignIn(_clock));
+            _clock.Advance(TimeSpan.FromMinutes(4));
+        }
+
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+    }
+
+    [Fact]
+    public void RegisterSuccessfulSignIn_ClearsFailuresAndLockout()
+    {
+        var user = ActiveUser();
+        for (var failure = 0; failure < User.MaxFailedSignIns; failure++)
+        {
+            user.RegisterFailedSignIn(_clock);
+        }
+
+        user.RegisterSuccessfulSignIn();
+
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+        Assert.Equal(0, user.FailedSignInCount);
+        Assert.False(user.RegisterFailedSignIn(_clock));
+    }
+
+    private User ActiveUser()
+    {
+        var user = User.Register(
+            EmailAddress.Create("mariana@example.com").Value,
+            DisplayName.Create("Mariana Souza").Value,
+            "hash",
+            "2026-10-28",
+            _clock);
+        user.ConfirmEmail(_clock);
+        return user;
+    }
+
     private sealed class FixedClock(DateTimeOffset now) : IClock
     {
         public DateTimeOffset UtcNow { get; private set; } = now;

@@ -42,6 +42,27 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
 4. **Api:** `AuthController` com `POST /auth/register`, `/auth/verify-email`, `/auth/resend-code`; `[AllowAnonymous]` e política `auth`; configuração de `Email:Smtp` (Mailpit em Development) e `Auth:CodeKey`.
 5. **Testes de integração:** AC-1, AC-2, AC-3, AC-4, AC-9 (cadastro), AC-15, AC-16, AC-26 e respostas iguais com e sem conta.
 
+## Recorte 2: login, sessão longa e aparelhos conectados
+
+1. **Domain:**
+   - `User` ganha `FailedSignInCount`, `FailedSignInWindowStartedAt` e `LockedOutUntil`, com `RegisterFailedSignIn` (5 erros numa janela de 15 min bloqueiam por 15 min), `RegisterSuccessfulSignIn`, `IsLockedOut` e `ReplacePasswordHash` (rehash pedido pelo hasher).
+   - `Session` ganha `Touch` e `IsActive` (não revogada, dentro de 60 dias sem uso e de 1 ano do login).
+   - `RefreshToken` ganha `IsUsable`, `MarkUsed` e `Revoke`, e passa a ter `xmin`. Dois refresh simultâneos do mesmo token: um vence, o outro recebe 401.
+2. **Application:**
+   - Casos de uso: `Login`, `RefreshSession`, `Logout`, `ListSessions` (consulta) e `RevokeSession`.
+   - `SessionService` passa a revogar a sessão e todos os refresh dela (logout, sair de todos, encerrar aparelho, reuso de refresh) e devolve os ids para limpar o cache depois do commit.
+   - `PasswordService.Check` informa se o hash precisa ser refeito.
+   - `ICurrentUser.SessionId` e `ISessionStatusCache` (limpa `session:{sid}:revoked`).
+   - Repositories: `ISessionWritableRepository` (por id e dono, ativas do usuário), `ISessionSearchableRepository` (lista de aparelhos), `IRefreshTokenWritableRepository` (por hash, por sessão) e `IUserWritableRepository.GetByIdAsync`.
+3. **Infrastructure:**
+   - `SessionStatusChecker` consulta `session:{sid}:revoked` no `HybridCache` (1 min no Redis, 30 s local) e, na falta, o banco: sessão não revogada e conta `Active`.
+   - Migração `AddSignInLockout`.
+4. **Api:**
+   - `AuthController`: `login`, `refresh` e `logout` (este com `[Authorize]`; os outros, anônimos com a política `auth`).
+   - `MeController` com `GET /me/sessions` (política `profile`) e `DELETE /me/sessions/{id}`.
+   - O JwtBearer recusa token de sessão revogada no `OnTokenValidated`.
+5. **Testes de integração:** AC-5, AC-6 (bloqueio e desbloqueio após 15 min; desbloqueio pela redefinição fica para o recorte 3), AC-7, AC-10, AC-11, AC-12, AC-13, AC-14, AC-22 (segundo host com o mesmo banco e cache vazio) e AC-23.
+
 ## Recortes seguintes
 
 Detalhados aqui quando o recorte anterior estiver pronto.
