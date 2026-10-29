@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
 using Vitrio.Application.Abstractions;
+using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Common;
 
-namespace Vitrio.Application.Accounts.Common;
+namespace Vitrio.Application.Accounts.Services;
 
-public sealed class EmailCodeIssuer(IAppDbContext db, IVerificationCodes codes, IClock clock)
+public sealed class EmailCodeService(IEmailCodeWritableRepository emailCodes, IVerificationCodes codes, IClock clock)
 {
     public const int MaxCodesPerWindow = 5;
 
@@ -15,11 +15,7 @@ public sealed class EmailCodeIssuer(IAppDbContext db, IVerificationCodes codes, 
     public async Task<Result<string>> IssueAsync(EmailAddress email, EmailCodePurpose purpose, CancellationToken cancellationToken)
     {
         var now = clock.UtcNow;
-        var windowStart = now - Window;
-        var recent = await db.EmailCodes
-            .Where(code => code.Email == email.Value && code.CreatedAt > windowStart)
-            .OrderBy(code => code.CreatedAt)
-            .ToListAsync(cancellationToken);
+        var recent = await emailCodes.ListIssuedSinceAsync(email, now - Window, cancellationToken);
 
         var wait = WaitBeforeNextCode(recent, now);
         if (wait > TimeSpan.Zero)
@@ -33,11 +29,14 @@ public sealed class EmailCodeIssuer(IAppDbContext db, IVerificationCodes codes, 
         }
 
         var value = codes.Generate();
-        db.EmailCodes.Add(EmailCode.Issue(email, purpose, codes.Hash(email, purpose, value), clock));
+        emailCodes.Add(EmailCode.Issue(email, purpose, codes.Hash(email, purpose, value), clock));
         return value;
     }
 
-    private static TimeSpan WaitBeforeNextCode(List<EmailCode> recent, DateTimeOffset now)
+    public bool Matches(EmailCode emailCode, EmailAddress email, string candidate) =>
+        emailCode.Verify(codes.Hash(email, emailCode.Purpose, candidate), clock).IsSuccess;
+
+    private static TimeSpan WaitBeforeNextCode(IReadOnlyList<EmailCode> recent, DateTimeOffset now)
     {
         if (recent.Count == 0)
         {

@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Auditing;
 using Vitrio.Infrastructure.Persistence.Outbox;
 
 namespace Vitrio.Infrastructure.Persistence;
 
-public class AppDbContext(DbContextOptions options) : DbContext(options), IAppDbContext
+public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<User> Users => Set<User>();
 

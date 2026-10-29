@@ -107,6 +107,7 @@ builder.Services
     })
     .AddOpenApi();
 
+builder.Services.AddExceptionHandler<ConcurrencyConflictExceptionHandler>();
 builder.Services.AddProblemDetails(problemDetails => problemDetails.CustomizeProblemDetails = context =>
 {
     var problem = context.ProblemDetails;

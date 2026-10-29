@@ -2,12 +2,16 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Vitrio.Application.Abstractions;
+using Vitrio.Application.Auditing.Repositories;
 using Vitrio.Domain.Auditing;
 using Vitrio.Domain.Common;
 
 namespace Vitrio.Api.Auditing;
 
-internal sealed class HttpAuditLog(IAppDbContext db, IHttpContextAccessor httpContextAccessor, IClock clock) : IAuditLog
+internal sealed class HttpAuditLog(
+    IAuditEventWritableRepository auditEvents,
+    IHttpContextAccessor httpContextAccessor,
+    IClock clock) : IAuditLog
 {
     private const int IPv4PrefixLength = 24;
     private const int IPv6PrefixLength = 48;
@@ -16,7 +20,7 @@ internal sealed class HttpAuditLog(IAppDbContext db, IHttpContextAccessor httpCo
     {
         var context = httpContextAccessor.HttpContext;
         var traceId = Activity.Current?.TraceId.ToHexString() ?? context?.TraceIdentifier;
-        db.AuditEvents.Add(AuditEvent.Record(
+        auditEvents.Add(AuditEvent.Record(
             action,
             actorId,
             targetType,

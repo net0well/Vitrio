@@ -1,66 +1,62 @@
 using Mediator;
-using Microsoft.EntityFrameworkCore;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Common;
+using Vitrio.Application.Accounts.Repositories;
+using Vitrio.Application.Accounts.Services;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Common;
 
 namespace Vitrio.Application.Accounts.VerifyEmail;
 
 public sealed class VerifyEmailCommandHandler(
-    IAppDbContext db,
-    IVerificationCodes codes,
-    IPasswordHasher passwordHasher,
-    SessionStarter sessionStarter,
+    IUserWritableRepository users,
+    IEmailCodeWritableRepository emailCodes,
+    EmailCodeService emailCodeService,
+    PasswordService passwords,
+    SessionService sessions,
     IAuditLog auditLog,
+    IUnitOfWork unitOfWork,
     IClock clock) : ICommandHandler<VerifyEmailCommand, Result<AuthResponse>>
 {
     public async ValueTask<Result<AuthResponse>> Handle(VerifyEmailCommand command, CancellationToken cancellationToken)
     {
         var email = EmailAddress.Create(command.Email).Value;
-        var user = await db.Users.SingleOrDefaultAsync(
-            account => account.Email == email.Value && account.Status == UserStatus.PendingVerification,
-            cancellationToken);
-        var emailCode = await db.EmailCodes
-            .Where(code => code.Email == email.Value && code.Purpose == EmailCodePurpose.VerifyEmail)
-            .OrderByDescending(code => code.CreatedAt)
-            .FirstOrDefaultAsync(cancellationToken);
-        var password = PasswordPolicy.Normalize(command.Password);
+        var user = await users.GetPendingByEmailAsync(email, cancellationToken);
+        var emailCode = await emailCodes.GetLatestAsync(email, EmailCodePurpose.VerifyEmail, cancellationToken);
         if (user is null || emailCode is null)
         {
-            passwordHasher.Hash(password);
+            passwords.MatchWithoutAccount(command.Password);
             return AccountErrors.InvalidCode;
         }
 
-        if (passwordHasher.Verify(user.PasswordHash, password) == PasswordCheck.Failed)
+        if (!passwords.Matches(user.PasswordHash, command.Password))
         {
             emailCode.CountFailedAttempt();
-            await SaveAsync(cancellationToken);
+            await TrySaveAsync(cancellationToken);
             return AccountErrors.InvalidCode;
         }
 
-        var verification = emailCode.Verify(codes.Hash(email, EmailCodePurpose.VerifyEmail, command.Code), clock);
-        if (verification.IsFailure)
+        if (!emailCodeService.Matches(emailCode, email, command.Code))
         {
-            await SaveAsync(cancellationToken);
-            return verification.Error;
+            await TrySaveAsync(cancellationToken);
+            return AccountErrors.InvalidCode;
         }
 
         user.ConfirmEmail(clock);
-        var response = sessionStarter.Start(user, command.DeviceName);
+        var response = sessions.Start(user, command.DeviceName);
         auditLog.Record(AuditActions.EmailVerified, user.Id, AuditTargets.User, user.Id);
 
-        return await SaveAsync(cancellationToken) ? response : AccountErrors.InvalidCode;
+        return await TrySaveAsync(cancellationToken) ? response : AccountErrors.InvalidCode;
     }
 
-    private async Task<bool> SaveAsync(CancellationToken cancellationToken)
+    private async Task<bool> TrySaveAsync(CancellationToken cancellationToken)
     {
         try
         {
-            await db.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return true;
         }
-        catch (DbUpdateConcurrencyException)
+        catch (ConcurrencyConflictException)
         {
             return false;
         }

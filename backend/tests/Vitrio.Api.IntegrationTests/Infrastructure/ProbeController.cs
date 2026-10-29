@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Vitrio.Api.Controllers;
 using Vitrio.Api.RateLimiting;
+using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Common;
 
 namespace Vitrio.Api.IntegrationTests.Infrastructure;
@@ -49,6 +50,10 @@ public sealed class ProbeController : ApiControllerBase
     [HttpGet("crash")]
     [AllowAnonymous]
     public IActionResult Crash() => throw new InvalidOperationException(CrashMessage);
+
+    [HttpGet("concurrency-conflict")]
+    [AllowAnonymous]
+    public IActionResult ConcurrencyConflict() => throw new ConcurrencyConflictException();
 
     [HttpGet("private")]
     [Authorize]

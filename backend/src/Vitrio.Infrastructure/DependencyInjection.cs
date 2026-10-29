@@ -9,6 +9,7 @@ using Vitrio.Infrastructure.Email;
 using Vitrio.Infrastructure.Events;
 using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
+using Vitrio.Infrastructure.Persistence.Repositories;
 using Vitrio.Infrastructure.Time;
 
 namespace Vitrio.Infrastructure;
@@ -31,7 +32,8 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>((serviceProvider, options) => options
             .UseVitrioDatabase(connectionString)
             .AddInterceptors(serviceProvider.GetRequiredService<OutboxInterceptor>()));
-        services.AddScoped<IAppDbContext>(serviceProvider => serviceProvider.GetRequiredService<AppDbContext>());
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddRepositories();
 
         services.AddAccounts();
         services.AddEmail();

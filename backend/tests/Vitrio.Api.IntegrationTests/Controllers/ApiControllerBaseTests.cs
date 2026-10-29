@@ -28,6 +28,14 @@ public sealed class ApiControllerBaseTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task ConcurrencyConflict_ReturnsConflictProblem()
+    {
+        var response = await _client.GetAsync("/api/v1/probe/concurrency-conflict", TestContext.Current.CancellationToken);
+
+        await response.AssertProblemAsync(HttpStatusCode.Conflict, "conflict");
+    }
+
+    [Fact]
     public async Task ValidationFailure_ReturnsFieldErrorsInCamelCase()
     {
         var response = await _client.GetAsync("/api/v1/probe/validation", TestContext.Current.CancellationToken);
