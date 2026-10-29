@@ -29,6 +29,8 @@ Todos na branch `feat/localizacao-e-cidades`, em vários commits. O PR só abre 
 
 ## Recorte 1: API
 
+**Situação:** pronto. Carga real do IBGE: 5.570 municípios em cerca de 20 s, tabela de 5,4 MB; a busca põe as cidades maiores primeiro pela estimativa de população do IBGE; municípios ainda sem limite na malha do IBGE são pulados com aviso.
+
 1. Domain: `SearchText`, `BrazilTimeZones`, erros de cidade.
 2. Application: `Locations` (`LocateCity`, `SearchCities`, `GetCity`, `LoadCities`, `LookupCep`), repositories e `IIbgeCitySource`; `AddressLookupService` passa a usar a tabela.
 3. Infrastructure: `CityRecord`, configuração (geografia, GIST, trigram), migração `AddCities`, repositories, `IbgeCitySource` com resiliência, `HybridCacheTags`.
@@ -37,4 +39,10 @@ Todos na branch `feat/localizacao-e-cidades`, em vários commits. O PR só abre 
 
 ## Recorte 2: app
 
-Detalhado aqui quando o recorte 1 estiver pronto.
+1. Pacotes: `geolocator` (permissão e posição) e `geocoding` (geocodificador do Android para o bairro). Permissões `ACCESS_COARSE_LOCATION` e `ACCESS_FINE_LOCATION` no Android.
+2. `features/location`:
+   - `domain`: `CitySummary`, `LocationMode` (`nearMe`, `chosenCity`) e `LocationState` (modo, cidade, bairro opcional).
+   - `data`: `CitiesRepository` (`locate`, `search`) sobre o `ApiClient`; `DeviceLocation` (permissão, posição com precisão, bairro pelo geocodificador); `LocationPreferences` (modo, cidade escolhida e até 5 recentes no aparelho, nunca coordenadas).
+   - `presentation`: `LocationController` resolve a cidade ao abrir o app (GPS → `locate`; sem GPS → cidade escolhida); tela de pré-permissão ("Usar minha localização" e "Escolher cidade", com o mesmo peso); folha "Escolher cidade" (busca, recentes, "Usar minha localização"); pílula da Início ("Bairro, Cidade" com GPS preciso, só a cidade se a precisão passar de 1 km, ou a cidade escolhida) e "Mostrando profissionais de <cidade>".
+3. Permissão negada para sempre: "Usar minha localização" abre as configurações do sistema.
+4. Testes de widget com dublês da localização e da API (AC-7, AC-8, recentes, bairro só com precisão boa) e teste no emulador com a posição simulada.
