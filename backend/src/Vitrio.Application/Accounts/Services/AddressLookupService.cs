@@ -27,6 +27,11 @@ internal sealed class AddressLookupService(ICepLookup cepLookup, ICityDirectory 
 
     private async Task<Result<PostalLocation>> FromLookupAsync(CepLookupResult found, ManualAddress manual, CancellationToken cancellationToken)
     {
+        if (!PostalLocation.IsState(found.State))
+        {
+            return AccountErrors.CityNotFound;
+        }
+
         var list = await cities.ListAsync(found.State, cancellationToken);
         if (list.IsFailure)
         {
