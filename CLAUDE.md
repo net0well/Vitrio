@@ -54,6 +54,7 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 3. `/tdd` e `/scaffold` (adaptado a Controllers), depois `/verify` antes de cada commit e `/code-review` antes do PR.
 4. Rastreabilidade só nos documentos. Código, testes, branches e commits não citam specs nem planos.
 5. Se a implementação mostrar que a spec está errada, volte a spec para In Review e corrija antes de seguir.
+6. Uma branch e um PR por spec. Os recortes do plano viram vários commits pequenos na mesma branch, e o PR só abre quando a spec inteira estiver implementada e testada de ponta a ponta (API e app). Nada de PR pequeno no meio do caminho.
 
 ## Onde está cada coisa
 

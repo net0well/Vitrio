@@ -7,7 +7,7 @@
 
 ## Recortes
 
-Cada recorte é uma branch e um PR, nesta ordem. Os critérios de aceite da spec ficam mapeados no recorte que os cobre.
+Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao`, em vários commits. O PR só abre quando os seis estiverem prontos e testados de ponta a ponta. Os critérios de aceite da spec ficam mapeados no recorte que os cobre.
 
 | # | Recorte | Critérios | Depende de |
 | --- | --- | --- | --- |
@@ -34,6 +34,8 @@ Cada recorte é uma branch e um PR, nesta ordem. Os critérios de aceite da spec
 
 ## Recorte 1: cadastro com confirmação de e-mail
 
+**Situação:** pronto.
+
 1. **Domain:** `User` (`PendingVerification` → `Active`), `EmailCode`, `EmailAddress`, `DisplayName`; erros em `AccountErrors`. Testes de unidade das transições e dos value objects.
 2. **Application:** `Register`, `VerifyEmail`, `ResendCode` com validadores; abstrações `IPasswordHasher`, `IVerificationCodes`, `IEmailSender`, `ITokenIssuer`; `PasswordPolicy`. Testes de validadores e da política.
 3. **Infrastructure:** configurações EF (`users`, `email_codes`, `sessions`, `refresh_tokens`), migração `AddAccounts`; hasher de senha, códigos HMAC, `SmtpEmailSender` e modelos de e-mail; `TokenIssuer` ES256 com emissão de sessão e refresh (hash SHA-256 do refresh).
@@ -42,7 +44,7 @@ Cada recorte é uma branch e um PR, nesta ordem. Os critérios de aceite da spec
 
 ## Recortes seguintes
 
-Detalhados aqui quando o recorte anterior entrar na `main`.
+Detalhados aqui quando o recorte anterior estiver pronto.
 
 ## Riscos
 
