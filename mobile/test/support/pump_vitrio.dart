@@ -44,6 +44,7 @@ Future<VitrioHarness> pumpVitrio(
   MemoryTokenStore? tokens,
   FakeDeviceLocation? device,
   FakeCitiesRepository? cities,
+  bool settle = true,
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
   final instance = await SharedPreferences.getInstance();
@@ -66,7 +67,10 @@ Future<VitrioHarness> pumpVitrio(
   addTearDown(container.dispose);
 
   await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const VitrioApp()));
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  }
+
   return VitrioHarness(
     container: container,
     tokens: harnessTokens,

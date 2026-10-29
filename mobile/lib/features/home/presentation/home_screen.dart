@@ -18,7 +18,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final location = ref.watch(locationControllerProvider).value ?? LocationState.unset;
+    final locating = ref.watch(locationControllerProvider);
+    final location = locating.value ?? LocationState.unset;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.homeTitle)),
       body: ListView(
@@ -33,7 +34,12 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: VitrioSpace.sp12),
               Text(l10n.locationShowingCity(location.city!.name), style: VitrioText.meta),
             ],
-          ] else
+          ] else if (locating.isLoading)
+            const Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: SizedBox.square(dimension: VitrioSpace.sp20, child: CircularProgressIndicator(strokeWidth: 2)),
+            )
+          else
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: OutlinedButton(onPressed: () => CityPickerSheet.show(context), child: Text(l10n.locationChooseCity)),

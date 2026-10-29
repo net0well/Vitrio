@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vitrio/core/network/problem_details.dart';
@@ -55,6 +57,23 @@ void main() {
 
     expect(find.text('Centro, Jaboticabal'), findsOneWidget);
     expect(find.textContaining('Mostrando profissionais'), findsNothing);
+  });
+
+  testWidgets('while near me is still locating the home shows progress instead of asking for a city', (tester) async {
+    final device = FakeDeviceLocation()
+      ..current = DevicePermission.granted
+      ..positionGate = Completer<void>();
+    final harness = await pumpVitrio(tester, preferences: nearMe, device: device, settle: false);
+    harness.go('/home');
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Escolher cidade'), findsNothing);
+
+    device.positionGate!.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('Centro, Jaboticabal'), findsOneWidget);
   });
 
   testWidgets('an imprecise position shows only the city', (tester) async {
