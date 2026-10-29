@@ -15,13 +15,31 @@ public sealed class ChangePasswordCommandHandler(
     IPasswordChangeService passwordChanges,
     ISessionStatusCache sessionStatusCache,
     IAuditLog auditLog,
-    IUnitOfWork unitOfWork) : ICommandHandler<ChangePasswordCommand, Result>
+    IUnitOfWork unitOfWork,
+    IClock clock) : ICommandHandler<ChangePasswordCommand, Result>
 {
     public async ValueTask<Result> Handle(ChangePasswordCommand command, CancellationToken cancellationToken)
     {
         var user = await users.GetByIdAsync(currentUser.Id, cancellationToken);
-        if (user is null || !passwords.Matches(user.PasswordHash, command.CurrentPassword))
+        if (user is null)
         {
+            return AccountErrors.AccountNotFound;
+        }
+
+        var lockout = user.LockoutRemaining(clock);
+        if (lockout > TimeSpan.Zero)
+        {
+            return AccountErrors.LockedOut(lockout);
+        }
+
+        if (!passwords.Matches(user.PasswordHash, command.CurrentPassword))
+        {
+            if (user.RegisterFailedSignIn(clock))
+            {
+                auditLog.Record(AuditActions.SignInLockedOut, user.Id, AuditTargets.User, user.Id);
+            }
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return AccountErrors.WrongCurrentPassword;
         }
 

@@ -146,6 +146,22 @@ public sealed class PasswordTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task ChangePassword_WithFiveWrongCurrentPasswords_LocksTheAccount()
+    {
+        var auth = await factory.SignInNewAccountAsync(_client);
+        for (var attempt = 0; attempt < User.MaxFailedSignIns; attempt++)
+        {
+            await (await _client.ChangePasswordAsync(auth.AccessToken, "senha que não é a certa", NewPassword))
+                .AssertProblemAsync(HttpStatusCode.Forbidden, "auth.invalid_credentials");
+        }
+
+        var response = await _client.ChangePasswordAsync(auth.AccessToken, AuthApi.Password, NewPassword);
+
+        await response.AssertProblemAsync(HttpStatusCode.TooManyRequests, "auth.locked_out");
+        await (await _client.LoginAsync(auth.User.Email)).AssertProblemAsync(HttpStatusCode.TooManyRequests, "auth.locked_out");
+    }
+
+    [Fact]
     public async Task ChangePassword_ToAWeakPasswordOrTheEmail_ReturnsValidationErrorOnNewPassword()
     {
         var auth = await factory.SignInNewAccountAsync(_client);

@@ -59,7 +59,7 @@ Clientes e prestadores precisam de uma conta para pedir orçamento, anunciar, av
 | POST | `/api/v1/auth/password/reset` | `{ email, code, newPassword, deviceName }` | `{ accessToken, expiresIn, refreshToken, user }` | 400 `auth.invalid_code` ou senha fraca, 429 |
 | POST | `/api/v1/auth/refresh` | `{ refreshToken }` | `{ accessToken, expiresIn, refreshToken }` | 401 inválido, expirado, revogado ou reuso detectado |
 | POST | `/api/v1/auth/logout` | `{ allDevices: bool }` | 204 | 401 |
-| PUT | `/api/v1/me/password` | `{ currentPassword, newPassword }` | 204 | 400 senha fraca, 401, 403 `auth.invalid_credentials` (senha atual errada) |
+| PUT | `/api/v1/me/password` | `{ currentPassword, newPassword }` | 204 | 400 senha fraca, 401, 403 `auth.invalid_credentials` (senha atual errada; conta para o bloqueio de 5 erros em 15 min do login), 429 conta bloqueada com `Retry-After` |
 | GET | `/api/v1/me/sessions` | — | `[{ id, deviceName, createdAt, lastSeenAt, current }]` | 401 |
 | DELETE | `/api/v1/me/sessions/{id}` | — | 204 | 401, 404 |
 | GET | `/api/v1/me` | — | `{ id, displayName, initials, email, phoneNumber, roles, hasProviderProfile }` | 401 |
