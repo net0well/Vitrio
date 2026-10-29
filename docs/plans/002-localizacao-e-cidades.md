@@ -1,6 +1,6 @@
 # Plano: Localização e cidades
 
-**Status:** Em andamento
+**Status:** Concluído
 **Spec:** [002-localizacao-e-cidades](../specs/002-localizacao-e-cidades.md) (Approved)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:** Domain (`Locations`), Application (`Locations`, endereços de `Accounts`), Infrastructure (tabela `cities`, carga do IBGE, cache), Api (`CitiesController`, `CepsController`, comando `load-cities`), app Flutter.
