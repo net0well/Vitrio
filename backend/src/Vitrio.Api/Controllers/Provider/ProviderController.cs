@@ -10,6 +10,7 @@ using Vitrio.Application.Providers.GetProvider;
 using Vitrio.Application.Providers.GetProviderDashboard;
 using Vitrio.Application.Providers.PauseProvider;
 using Vitrio.Application.Providers.PublishProvider;
+using Vitrio.Domain.Providers;
 
 namespace Vitrio.Api.Controllers.Provider;
 
@@ -118,6 +119,21 @@ public sealed class ProviderController(ISender sender) : ApiControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Pause(CancellationToken cancellationToken) =>
         ToActionResult(await sender.Send(new PauseProviderCommand(), cancellationToken));
+
+    [HttpPost("mei-verification")]
+    [Authorize(Policy = Policies.Provider)]
+    [EndpointSummary("Verifica o CNPJ para o selo MEI; responde 202 quando a consulta fica pendente")]
+    [ProducesResponseType<MeiVerificationResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MeiVerificationResponse>(StatusCodes.Status202Accepted)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> VerifyMei(MeiVerificationRequest request, CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(request.ToCommand(), cancellationToken);
+        return result is { IsSuccess: true, Value.Status: MeiStatus.Pending } ? ToAcceptedResult(result) : ToActionResult(result);
+    }
 
     [HttpGet("dashboard")]
     [Authorize(Policy = Policies.Provider)]

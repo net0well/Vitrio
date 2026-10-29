@@ -113,6 +113,8 @@ public sealed class Provider : AggregateRoot
 
     public bool CanReceivePhoto => _photos.Count(photo => photo.Status != PhotoStatus.Rejected) < MaxPhotos;
 
+    public MeiVerification? Mei { get; private set; }
+
     public bool HasServiceArea => CityIbgeCode is not null;
 
     public IReadOnlyList<string> MissingForPublication =>
@@ -459,8 +461,73 @@ public sealed class Provider : AggregateRoot
         return previous;
     }
 
+    public void RecordMeiCheck(Cnpj cnpj, MeiCheckOutcome outcome, string? companyName, IClock clock)
+    {
+        var now = clock.UtcNow;
+        var sameCnpj = Mei?.Cnpj == cnpj.Value;
+        var wasPending = sameCnpj && Mei!.Status == MeiStatus.Pending;
+        var wasVerified = sameCnpj && Mei!.Status == MeiStatus.Verified;
+        if (outcome == MeiCheckOutcome.Unavailable && wasVerified)
+        {
+            return;
+        }
+
+        if (Mei is null)
+        {
+            Mei = MeiVerification.Start(Id, cnpj, now);
+        }
+        else if (!sameCnpj)
+        {
+            Mei.Restart(cnpj, now);
+        }
+
+        switch (outcome)
+        {
+            case MeiCheckOutcome.ActiveMei:
+                Mei.Verify(companyName, now);
+                if (!wasVerified)
+                {
+                    Raise(new MeiVerified(Id, wasPending));
+                }
+
+                break;
+            case MeiCheckOutcome.Unavailable:
+                Mei.MarkPending(now);
+                break;
+            default:
+                var reason = MeiReasons.For(outcome);
+                if (wasVerified)
+                {
+                    Mei.Lose(reason, now);
+                    Raise(new MeiVerificationLost(Id));
+                }
+                else
+                {
+                    Mei.Fail(reason, companyName, now);
+                    Raise(new MeiVerificationFailed(Id, reason, wasPending));
+                }
+
+                break;
+        }
+
+        UpdatedAt = now;
+    }
+
+    public void GiveUpPendingMei(IClock clock)
+    {
+        if (Mei is not { Status: MeiStatus.Pending })
+        {
+            return;
+        }
+
+        Mei.Fail(MeiReasons.LookupUnavailable, null, clock.UtcNow);
+        UpdatedAt = clock.UtcNow;
+        Raise(new MeiVerificationFailed(Id, MeiReasons.LookupUnavailable, true));
+    }
+
     public void Remove(IClock clock)
     {
+        Mei = null;
         Status = ProviderStatus.Removed;
         AvailableToday = false;
         UpdatedAt = clock.UtcNow;

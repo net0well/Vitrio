@@ -6,5 +6,5 @@ public sealed record ProviderDashboardResponse(
     ProviderStatus Status,
     int ProfileCompleteness,
     string NextStep,
-    string? MeiStatus,
+    MeiStatus? MeiStatus,
     bool AvailableToday);

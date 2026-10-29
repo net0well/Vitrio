@@ -271,6 +271,61 @@ public sealed class ProviderTests
         Assert.Equal("avatar-2.webp", provider.AvatarKey);
     }
 
+    [Fact]
+    public void RecordMeiCheck_PendingThenActive_VerifiesAndSaysItCameFromPending()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        var cnpj = Cnpj.Create("11222333000181").Value;
+        provider.RecordMeiCheck(cnpj, MeiCheckOutcome.Unavailable, null, _clock);
+        Assert.Equal(MeiStatus.Pending, provider.Mei!.Status);
+        Assert.Empty(provider.DomainEvents);
+
+        provider.RecordMeiCheck(cnpj, MeiCheckOutcome.ActiveMei, "CARLOS ELETRICISTA", _clock);
+
+        Assert.Equal(MeiStatus.Verified, provider.Mei.Status);
+        Assert.True(Assert.IsType<MeiVerified>(Assert.Single(provider.DomainEvents)).FromPending);
+    }
+
+    [Fact]
+    public void RecordMeiCheck_VerifiedThenNotMei_LosesTheBadge()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        var cnpj = Cnpj.Create("11222333000181").Value;
+        provider.RecordMeiCheck(cnpj, MeiCheckOutcome.ActiveMei, null, _clock);
+        provider.ClearDomainEvents();
+
+        provider.RecordMeiCheck(cnpj, MeiCheckOutcome.NotMei, null, _clock);
+
+        Assert.Equal(MeiStatus.Lost, provider.Mei!.Status);
+        Assert.IsType<MeiVerificationLost>(Assert.Single(provider.DomainEvents));
+    }
+
+    [Fact]
+    public void RecordMeiCheck_VerifiedButLookupDown_KeepsTheBadge()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        var cnpj = Cnpj.Create("11222333000181").Value;
+        provider.RecordMeiCheck(cnpj, MeiCheckOutcome.ActiveMei, null, _clock);
+        provider.ClearDomainEvents();
+
+        provider.RecordMeiCheck(cnpj, MeiCheckOutcome.Unavailable, null, _clock);
+
+        Assert.Equal(MeiStatus.Verified, provider.Mei!.Status);
+        Assert.Empty(provider.DomainEvents);
+    }
+
+    [Fact]
+    public void Remove_FreesTheCnpj()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        provider.RecordMeiCheck(Cnpj.Create("11222333000181").Value, MeiCheckOutcome.ActiveMei, null, _clock);
+
+        provider.Remove(_clock);
+
+        Assert.Null(provider.Mei);
+        Assert.Equal(ProviderStatus.Removed, provider.Status);
+    }
+
     private Provider CompleteDraft()
     {
         var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;

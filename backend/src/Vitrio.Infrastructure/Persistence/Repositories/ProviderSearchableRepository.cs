@@ -52,6 +52,9 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
                 provider.BaseNeighborhood,
                 provider.ServiceRadiusMeters,
                 provider.LocationApproximate,
+                Mei = provider.Mei == null
+                    ? null
+                    : new { provider.Mei.Cnpj, provider.Mei.Status, provider.Mei.CompanyName, provider.Mei.ReasonCode, provider.Mei.CheckedAt },
                 City = db.Cities
                     .Where(city => city.IbgeCode == provider.CityIbgeCode)
                     .Select(city => new { city.IbgeCode, city.Name, city.State, city.TimeZone })
@@ -118,6 +121,9 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
             row.Availability
                 .Select(slot => new AvailabilitySlotResponse(slot.DayOfWeek, ClockTime.Format(slot.StartMinute), ClockTime.Format(slot.EndMinute)))
                 .ToList(),
+            row.Mei is null
+                ? null
+                : new ProviderMeiResponse(row.Mei.Cnpj, row.Mei.Status, row.Mei.CompanyName, MeiReasons.MessageFor(row.Mei.ReasonCode), row.Mei.CheckedAt),
             PublishChecklist.Missing(row.About is not null, row.Categories.Count, serviceArea is not null, row.Services.Count, row.ContactPhone is not null));
     }
 
@@ -162,6 +168,7 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
                     .Select(slot => new { slot.DayOfWeek, slot.StartMinute, slot.EndMinute })
                     .ToList(),
                 provider.HandlesEmergencies,
+                MeiVerified = provider.Mei != null && provider.Mei.Status == MeiStatus.Verified,
                 provider.RatingScore,
                 provider.ReviewCount,
                 provider.ResponseTimeBucket,
@@ -206,7 +213,7 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
                 .Select(slot => new AvailabilitySlotResponse(slot.DayOfWeek, ClockTime.Format(slot.StartMinute), ClockTime.Format(slot.EndMinute)))
                 .ToList(),
             row.HandlesEmergencies,
-            false,
+            row.MeiVerified,
             row.RatingScore,
             row.ReviewCount,
             row.ResponseTimeBucket,
@@ -274,6 +281,26 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
             .Select(photo => new PendingPhoto(photo.ProviderId, photo.Id))
             .ToListAsync(cancellationToken);
 
+    public Task<bool> IsCnpjInUseAsync(string cnpj, Guid exceptProviderId, CancellationToken cancellationToken) =>
+        db.Providers.AsNoTracking().AnyAsync(
+            provider => provider.Id != exceptProviderId && provider.Mei != null && provider.Mei.Cnpj == cnpj,
+            cancellationToken);
+
+    public async Task<IReadOnlyList<Guid>> ListMeiDueAsync(
+        DateTimeOffset pendingCheckedBefore,
+        DateTimeOffset verifiedCheckedBefore,
+        int take,
+        CancellationToken cancellationToken) =>
+        await db.Providers
+            .AsNoTracking()
+            .Where(provider => provider.Status != ProviderStatus.Removed && provider.Mei != null
+                && ((provider.Mei.Status == MeiStatus.Pending && provider.Mei.CheckedAt <= pendingCheckedBefore)
+                    || (provider.Mei.Status == MeiStatus.Verified && provider.Mei.CheckedAt <= verifiedCheckedBefore)))
+            .OrderBy(provider => provider.Mei!.CheckedAt)
+            .Take(take)
+            .Select(provider => provider.Id)
+            .ToListAsync(cancellationToken);
+
     public async Task<IReadOnlyCollection<string>> ListPendingUploadKeysAsync(CancellationToken cancellationToken)
     {
         var photos = await db.PortfolioPhotos
@@ -313,6 +340,7 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
                 HasAvailability = provider.Availability.Any(),
                 provider.AvailableToday,
                 provider.AvailableTodaySetAt,
+                MeiStatus = provider.Mei == null ? (MeiStatus?)null : provider.Mei.Status,
                 TimeZone = db.Cities.Where(city => city.IbgeCode == provider.CityIbgeCode).Select(city => city.TimeZone).FirstOrDefault()
             })
             .SingleOrDefaultAsync(cancellationToken);
@@ -327,7 +355,7 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
             row.Status,
             PublishChecklist.Completeness(missing, row.HasAvailability),
             PublishChecklist.NextStep(missing, row.Status, row.HasAvailability),
-            null,
+            row.MeiStatus,
             AvailableTodayRule.IsOn(row.AvailableToday, row.AvailableTodaySetAt, now, row.TimeZone));
     }
 }

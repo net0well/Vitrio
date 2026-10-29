@@ -21,5 +21,6 @@ internal sealed class ProviderWritableRepository(AppDbContext db) : IProviderWri
             .Include(provider => provider.Neighborhoods)
             .Include(provider => provider.Availability)
             .Include(provider => provider.Photos)
+            .Include(provider => provider.Mei)
             .AsSplitQuery();
 }

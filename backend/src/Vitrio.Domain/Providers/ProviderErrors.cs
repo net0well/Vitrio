@@ -54,6 +54,12 @@ public static class ProviderErrors
     public static readonly Error InvalidPhotoOrder =
         Error.Validation("provider.invalid_photo_order", "Envie a ordem com as fotos da vitrine, sem repetir.");
 
+    public static readonly Error InvalidCnpj = Error.Validation("provider.invalid_cnpj", "CNPJ inválido. Confira os 14 números.");
+
+    public static readonly Error CnpjUnavailable = Error.Unavailable("provider.cnpj_unavailable", "Não conseguimos consultar o CNPJ agora.");
+
+    public static readonly Error CnpjInUse = Error.Conflict("provider.cnpj_in_use", "Este CNPJ já está ligado a outra vitrine.");
+
     public static readonly Error NotPublished = Error.Conflict("provider.not_published", "Publique a vitrine primeiro.");
 
     public static readonly Error Suspended = Error.Conflict("provider.suspended", "Esta vitrine está suspensa.");

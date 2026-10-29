@@ -714,6 +714,56 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.ToTable("availability_slots", (string)null);
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Providers.MeiVerification", b =>
+                {
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<DateTimeOffset>("CheckedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("checked_at");
+
+                    b.Property<string>("Cnpj")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("character(14)")
+                        .HasColumnName("cnpj")
+                        .IsFixedLength();
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text")
+                        .HasColumnName("company_name")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<DateTimeOffset?>("PendingSince")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pending_since");
+
+                    b.Property<string>("ReasonCode")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("reason_code");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.HasKey("ProviderId")
+                        .HasName("pk_mei_verifications");
+
+                    b.HasIndex("Cnpj")
+                        .IsUnique()
+                        .HasDatabaseName("ix_mei_verifications_cnpj");
+
+                    b.HasIndex("Status", "CheckedAt")
+                        .HasDatabaseName("ix_mei_verifications_status_checked_at");
+
+                    b.ToTable("mei_verifications", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.PortfolioPhoto", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1275,6 +1325,16 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_availability_slots_providers_provider_id");
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Providers.MeiVerification", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithOne("Mei")
+                        .HasForeignKey("Vitrio.Domain.Providers.MeiVerification", "ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_mei_verifications_providers_provider_id");
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.PortfolioPhoto", b =>
                 {
                     b.HasOne("Vitrio.Domain.Providers.Provider", null)
@@ -1353,6 +1413,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.Navigation("Availability");
 
                     b.Navigation("Categories");
+
+                    b.Navigation("Mei");
 
                     b.Navigation("Neighborhoods");
 

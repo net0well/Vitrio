@@ -11,6 +11,8 @@ public sealed class InvalidateProviderProfileCache(IReadCache cache, IProviderSe
     : IDomainEventHandler<ProviderPublished>,
         IDomainEventHandler<ProviderPaused>,
         IDomainEventHandler<ProviderProfileUpdated>,
+        IDomainEventHandler<MeiVerified>,
+        IDomainEventHandler<MeiVerificationLost>,
         IDomainEventHandler<UserDeleted>
 {
     public ValueTask Handle(ProviderPublished domainEvent, CancellationToken cancellationToken) =>
@@ -20,6 +22,12 @@ public sealed class InvalidateProviderProfileCache(IReadCache cache, IProviderSe
         InvalidateAsync(domainEvent.ProviderId, cancellationToken);
 
     public ValueTask Handle(ProviderProfileUpdated domainEvent, CancellationToken cancellationToken) =>
+        InvalidateAsync(domainEvent.ProviderId, cancellationToken);
+
+    public ValueTask Handle(MeiVerified domainEvent, CancellationToken cancellationToken) =>
+        InvalidateAsync(domainEvent.ProviderId, cancellationToken);
+
+    public ValueTask Handle(MeiVerificationLost domainEvent, CancellationToken cancellationToken) =>
         InvalidateAsync(domainEvent.ProviderId, cancellationToken);
 
     public async ValueTask Handle(UserDeleted domainEvent, CancellationToken cancellationToken)

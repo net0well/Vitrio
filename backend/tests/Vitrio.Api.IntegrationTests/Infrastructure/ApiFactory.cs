@@ -39,6 +39,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public RecordingPhotoQueue Photos { get; } = new();
 
+    public FakeCnpjLookup Cnpj { get; } = new();
+
     public string PublicStorageUrl => $"{_storage.ServiceUrl}/{SeaweedFsContainer.PublicBucket}";
 
     public async ValueTask InitializeAsync()
@@ -78,6 +80,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
             services.Replace(ServiceDescriptor.Singleton<IIbgeCitySource>(Ibge));
             services.Replace(ServiceDescriptor.Singleton<IPhotoProcessingQueue>(Photos));
+            services.Replace(ServiceDescriptor.Singleton<ICnpjLookup>(Cnpj));
             services.AddSingleton<ILogEventSink>(Logs);
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {

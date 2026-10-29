@@ -39,6 +39,7 @@ internal sealed class ProviderConfiguration : IEntityTypeConfiguration<Provider>
         builder.HasMany(provider => provider.Services).WithOne().HasForeignKey(service => service.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Neighborhoods).WithOne().HasForeignKey(neighborhood => neighborhood.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Availability).WithOne().HasForeignKey(slot => slot.ProviderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(provider => provider.Mei).WithOne().HasForeignKey<MeiVerification>(mei => mei.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Photos).WithOne().HasForeignKey(photo => photo.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.Ignore(provider => provider.HasServiceArea);
         builder.Ignore(provider => provider.CanReceivePhoto);

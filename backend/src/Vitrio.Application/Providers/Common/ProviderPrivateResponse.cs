@@ -18,4 +18,5 @@ public sealed record ProviderPrivateResponse(
     ServiceAreaResponse? ServiceArea,
     IReadOnlyList<ProviderServiceResponse> Services,
     IReadOnlyList<AvailabilitySlotResponse> Availability,
+    ProviderMeiResponse? Mei,
     IReadOnlyList<string> Missing);

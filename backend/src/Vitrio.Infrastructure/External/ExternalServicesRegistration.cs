@@ -25,6 +25,13 @@ internal static class ExternalServicesRegistration
             })
             .AddStandardResilienceHandler(ConfigureResilience);
 
+        services.AddHttpClient<ICnpjLookup, BrasilApiCnpjLookup>((provider, http) =>
+            {
+                http.BaseAddress = provider.GetRequiredService<IOptions<ExternalServicesOptions>>().Value.BrasilApiBaseUrl;
+                http.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+            })
+            .AddStandardResilienceHandler(ConfigureResilience);
+
         services.AddHttpClient<IIbgeCitySource, IbgeCitySource>((provider, http) =>
             {
                 http.BaseAddress = provider.GetRequiredService<IOptions<ExternalServicesOptions>>().Value.IbgeBaseUrl;

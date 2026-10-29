@@ -79,6 +79,12 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 
 ## Recorte 4: selo MEI
 
+**Situação:** pronto.
+- **Consulta:** um service (`IMeiCheckService`) traduz a consulta de CNPJ em resultado de domínio, usado na verificação e na revalidação.
+- **Revalidação:** o job roda de hora em hora, em lotes de 200 com pausa de 1 s entre consultas. Repete o pendente a cada 6 h, desiste depois de 3 dias e revalida o selo a cada 30 dias.
+- **Consulta fora do ar:** durante a revalidação, mantém o selo e tenta de novo.
+- **CNPJ e razão social:** a razão social fica criptografada, porque a de MEI costuma trazer o nome e às vezes o CPF. O CNPJ fica em claro, com índice único, e é liberado quando a vitrine é removida.
+
 1. Dígito verificador, `ICnpjLookup` e a verificação (`Verified`, `Failed`, `Pending`, 409 de CNPJ vinculado).
 2. Comandos de nova tentativa (a cada 6 h, `Failed` depois de 3 dias) e de revalidação (30 dias, lotes de 200), agendados no Hangfire.
 3. Eventos `mei.*` e invalidação do perfil.

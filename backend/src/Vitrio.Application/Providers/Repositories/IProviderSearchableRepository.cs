@@ -23,4 +23,12 @@ public interface IProviderSearchableRepository
     Task<IReadOnlyList<PendingPhoto>> ListPhotosProcessingSinceAsync(DateTimeOffset createdBefore, CancellationToken cancellationToken);
 
     Task<IReadOnlyCollection<string>> ListPendingUploadKeysAsync(CancellationToken cancellationToken);
+
+    Task<bool> IsCnpjInUseAsync(string cnpj, Guid exceptProviderId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> ListMeiDueAsync(
+        DateTimeOffset pendingCheckedBefore,
+        DateTimeOffset verifiedCheckedBefore,
+        int take,
+        CancellationToken cancellationToken);
 }
