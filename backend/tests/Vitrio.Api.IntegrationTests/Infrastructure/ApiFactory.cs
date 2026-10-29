@@ -22,6 +22,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public const string TightRateLimitPolicy = "probe-tight";
 
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgis/postgis:17-3.6").Build();
+    private readonly SeaweedFsContainer _storage = new();
 
     public string ConnectionString => _database.GetConnectionString();
 
@@ -36,9 +37,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public CapturedLogs Logs { get; } = new();
 
+    public RecordingPhotoQueue Photos { get; } = new();
+
+    public string PublicStorageUrl => $"{_storage.ServiceUrl}/{SeaweedFsContainer.PublicBucket}";
+
     public async ValueTask InitializeAsync()
     {
-        await _database.StartAsync();
+        await Task.WhenAll(_database.StartAsync(), _storage.StartAsync());
 
         using var scope = Services.CreateScope();
         await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
@@ -49,6 +54,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await base.DisposeAsync();
         await _database.DisposeAsync();
+        await _storage.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -58,6 +64,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Jwt:SigningKey", SigningKey);
         builder.UseSetting("Auth:CodeKey", CodeKey);
         builder.UseSetting("Jobs:Enabled", "false");
+        builder.UseSetting("Storage:ServiceUrl", _storage.ServiceUrl);
+        builder.UseSetting("Storage:AccessKey", SeaweedFsContainer.AccessKey);
+        builder.UseSetting("Storage:SecretKey", SeaweedFsContainer.SecretKey);
+        builder.UseSetting("Storage:PublicBaseUrl", PublicStorageUrl);
+        builder.UseSetting("Storage:CreateBuckets", "true");
         builder.ConfigureTestServices(services =>
         {
             services.AddControllers().AddApplicationPart(typeof(ApiFactory).Assembly);
@@ -66,6 +77,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
             services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
             services.Replace(ServiceDescriptor.Singleton<IIbgeCitySource>(Ibge));
+            services.Replace(ServiceDescriptor.Singleton<IPhotoProcessingQueue>(Photos));
             services.AddSingleton<ILogEventSink>(Logs);
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {

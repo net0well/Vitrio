@@ -23,6 +23,9 @@ public abstract class ApiControllerBase : ControllerBase
     protected IActionResult ToAcceptedResult(Result result) =>
         result.IsSuccess ? StatusCode(StatusCodes.Status202Accepted) : ErrorResult(result.Error);
 
+    protected IActionResult ToAcceptedResult<T>(Result<T> result) =>
+        result.IsSuccess ? StatusCode(StatusCodes.Status202Accepted, result.Value) : ErrorResult(result.Error);
+
     protected ObjectResult ErrorResult(Error error)
     {
         var statusCode = StatusCodeFor(error.Type);

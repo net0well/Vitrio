@@ -15,4 +15,12 @@ public interface IProviderSearchableRepository
     Task<ProviderPublicSnapshot?> GetPublicSnapshotAsync(Guid providerId, CancellationToken cancellationToken);
 
     Task<Guid?> FindIdByUserAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<ProviderPhotoResponse>?> ListOwnPhotosAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<PublicPhotoResponse>?> GetPublicPhotosAsync(Guid providerId, int skip, int take, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<PendingPhoto>> ListPhotosProcessingSinceAsync(DateTimeOffset createdBefore, CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<string>> ListPendingUploadKeysAsync(CancellationToken cancellationToken);
 }

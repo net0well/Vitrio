@@ -22,6 +22,7 @@ internal sealed class ProviderConfiguration : IEntityTypeConfiguration<Provider>
         builder.Property(provider => provider.Headline).HasMaxLength(Provider.HeadlineMaxLength);
         builder.Property(provider => provider.About).HasMaxLength(Provider.AboutMaxLength);
         builder.Property(provider => provider.AvatarKey).HasMaxLength(ObjectKeyMaxLength);
+        builder.Property(provider => provider.AvatarUploadKey).HasMaxLength(ObjectKeyMaxLength);
         builder.Property(provider => provider.ContactPhone).IsPersonalData();
         builder.Property(provider => provider.Status).HasConversion<string>().HasMaxLength(20);
         builder.HasOne<CityRecord>().WithMany().HasForeignKey(provider => provider.CityIbgeCode).OnDelete(DeleteBehavior.Restrict);
@@ -38,7 +39,9 @@ internal sealed class ProviderConfiguration : IEntityTypeConfiguration<Provider>
         builder.HasMany(provider => provider.Services).WithOne().HasForeignKey(service => service.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Neighborhoods).WithOne().HasForeignKey(neighborhood => neighborhood.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Availability).WithOne().HasForeignKey(slot => slot.ProviderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(provider => provider.Photos).WithOne().HasForeignKey(photo => photo.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.Ignore(provider => provider.HasServiceArea);
+        builder.Ignore(provider => provider.CanReceivePhoto);
         builder.Ignore(provider => provider.MissingForPublication);
         builder.Ignore(provider => provider.DomainEvents);
     }

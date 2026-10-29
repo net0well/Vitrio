@@ -33,6 +33,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
 
     public DbSet<Provider> Providers => Set<Provider>();
 
+    public DbSet<PortfolioPhoto> PortfolioPhotos => Set<PortfolioPhoto>();
+
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();

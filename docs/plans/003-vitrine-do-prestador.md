@@ -66,6 +66,12 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 
 ## Recorte 3: fotos
 
+**Situação:** pronto.
+- **Envio:** a URL assinada fixa o tipo e o tamanho; o teste prova que o storage recusa corpo maior que o assinado.
+- **Processamento:** gera WebP de até 2048 px, miniatura de 480 px com até 60 KB e foto de perfil quadrada de 512 px, sem nenhum metadado (o teste envia um JPEG com GPS no EXIF).
+- **Buckets:** `vitrio-uploads` é privado; `vitrio-public` tem leitura anônima e só recebe a versão processada.
+- **Ambiente:** no local, as URLs saem com `10.0.2.2` para o emulador alcançar o storage.
+
 1. SeaweedFS no `docker-compose` e em Testcontainers; `IObjectStorage`.
 2. `upload-url`, confirmação, lista, legenda, ordem, exclusão, foto de perfil e fotos públicas paginadas.
 3. Hangfire, `IPhotoProcessingQueue` e o processamento com SkiaSharp.

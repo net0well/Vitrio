@@ -9,6 +9,7 @@ public sealed record ProviderPrivateResponse(
     string Headline,
     string? About,
     int? YearsOfExperience,
+    string? AvatarUrl,
     string? ContactPhone,
     bool WhatsAppEnabled,
     bool HandlesEmergencies,

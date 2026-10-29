@@ -12,6 +12,7 @@ using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Persistence.Protection;
 using Vitrio.Infrastructure.Persistence.Repositories;
+using Vitrio.Infrastructure.Storage;
 using Vitrio.Infrastructure.Time;
 using Vitrio.Shared.Time;
 
@@ -43,6 +44,7 @@ public static class DependencyInjection
         services.AddAccounts();
         services.AddEmail();
         services.AddPublicLinks();
+        services.AddStorage();
 
         services.AddHealthChecks().AddDbContextCheck<AppDbContext>("database", tags: [ReadinessTag]);
         services.AddVitrioCaching(configuration);

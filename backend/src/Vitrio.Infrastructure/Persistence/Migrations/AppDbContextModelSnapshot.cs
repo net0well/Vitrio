@@ -714,6 +714,68 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.ToTable("availability_slots", (string)null);
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Providers.PortfolioPhoto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("caption");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("ObjectKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("object_key");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("rejection_reason");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("ThumbnailKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("thumbnail_key");
+
+                    b.Property<string>("UploadKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("upload_key");
+
+                    b.HasKey("Id")
+                        .HasName("pk_portfolio_photos");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_portfolio_photos_processing")
+                        .HasFilter("status = 'Processing'");
+
+                    b.HasIndex("ProviderId", "SortOrder")
+                        .HasDatabaseName("ix_portfolio_photos_provider_id_sort_order");
+
+                    b.ToTable("portfolio_photos", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.Provider", b =>
                 {
                     b.Property<Guid>("Id")
@@ -737,6 +799,11 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("avatar_key");
+
+                    b.Property<string>("AvatarUploadKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("avatar_upload_key");
 
                     b.Property<string>("BaseCep")
                         .HasColumnType("text")
@@ -1208,6 +1275,16 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_availability_slots_providers_provider_id");
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Providers.PortfolioPhoto", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_portfolio_photos_providers_provider_id");
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.Provider", b =>
                 {
                     b.HasOne("Vitrio.Infrastructure.Persistence.Cities.CityRecord", null)
@@ -1278,6 +1355,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Neighborhoods");
+
+                    b.Navigation("Photos");
 
                     b.Navigation("Services");
                 });

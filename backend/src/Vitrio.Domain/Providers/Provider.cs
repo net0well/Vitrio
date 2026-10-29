@@ -19,6 +19,7 @@ public sealed class Provider : AggregateRoot
     public const int MaxNeighborhoods = 30;
     public const int MinRadiusKm = 1;
     public const int MaxRadiusKm = 50;
+    public const int MaxPhotos = 30;
 
     private const int MetersPerKm = 1000;
 
@@ -26,6 +27,7 @@ public sealed class Provider : AggregateRoot
     private readonly List<ProviderService> _services = [];
     private readonly List<ServedNeighborhood> _neighborhoods = [];
     private readonly List<AvailabilitySlot> _availability = [];
+    private readonly List<PortfolioPhoto> _photos = [];
 
     private Provider()
     {
@@ -44,6 +46,8 @@ public sealed class Provider : AggregateRoot
     public int? YearsOfExperience { get; private set; }
 
     public string? AvatarKey { get; private set; }
+
+    public string? AvatarUploadKey { get; private set; }
 
     public string? ContactPhone { get; private set; }
 
@@ -104,6 +108,10 @@ public sealed class Provider : AggregateRoot
     public IReadOnlyList<ServedNeighborhood> Neighborhoods => _neighborhoods;
 
     public IReadOnlyList<AvailabilitySlot> Availability => _availability;
+
+    public IReadOnlyList<PortfolioPhoto> Photos => _photos;
+
+    public bool CanReceivePhoto => _photos.Count(photo => photo.Status != PhotoStatus.Rejected) < MaxPhotos;
 
     public bool HasServiceArea => CityIbgeCode is not null;
 
@@ -322,6 +330,135 @@ public sealed class Provider : AggregateRoot
         return Result.Success();
     }
 
+    public Result<PortfolioPhoto> AddPhoto(string uploadKey, string? caption, IClock clock)
+    {
+        if (!CanReceivePhoto)
+        {
+            return ProviderErrors.TooManyPhotos;
+        }
+
+        var normalized = PortfolioPhoto.NormalizeCaption(caption, out var valid);
+        if (!valid)
+        {
+            return ProviderErrors.InvalidCaption;
+        }
+
+        var photo = PortfolioPhoto.Create(Id, uploadKey, normalized, _photos.Count == 0 ? 0 : _photos.Max(existing => existing.SortOrder) + 1, clock.UtcNow);
+        _photos.Add(photo);
+        UpdatedAt = clock.UtcNow;
+        return photo;
+    }
+
+    public Result CompletePhoto(Guid photoId, string objectKey, string thumbnailKey, IClock clock)
+    {
+        if (FindPhoto(photoId) is not { Status: PhotoStatus.Processing } photo)
+        {
+            return ProviderErrors.PhotoNotFound;
+        }
+
+        photo.Activate(objectKey, thumbnailKey);
+        Touch(clock);
+        return Result.Success();
+    }
+
+    public Result RejectPhoto(Guid photoId, string reason, IClock clock)
+    {
+        if (FindPhoto(photoId) is not { Status: PhotoStatus.Processing } photo)
+        {
+            return ProviderErrors.PhotoNotFound;
+        }
+
+        photo.Reject(reason);
+        Touch(clock);
+        return Result.Success();
+    }
+
+    public Result RenamePhoto(Guid photoId, string? caption, IClock clock)
+    {
+        if (FindPhoto(photoId) is not { } photo)
+        {
+            return ProviderErrors.PhotoNotFound;
+        }
+
+        var normalized = PortfolioPhoto.NormalizeCaption(caption, out var valid);
+        if (!valid)
+        {
+            return ProviderErrors.InvalidCaption;
+        }
+
+        photo.Rename(normalized);
+        Touch(clock);
+        return Result.Success();
+    }
+
+    public Result ReorderPhotos(IReadOnlyList<Guid> photoIds, IClock clock)
+    {
+        if (photoIds.Distinct().Count() != photoIds.Count || photoIds.Any(id => FindPhoto(id) is null))
+        {
+            return ProviderErrors.InvalidPhotoOrder;
+        }
+
+        var ordered = photoIds.Select(id => FindPhoto(id)!)
+            .Concat(_photos.Where(photo => !photoIds.Contains(photo.Id)).OrderBy(photo => photo.SortOrder))
+            .ToList();
+        foreach (var (photo, index) in ordered.Select((photo, index) => (photo, index)))
+        {
+            photo.MoveTo(index);
+        }
+
+        Touch(clock);
+        return Result.Success();
+    }
+
+    public Result<PortfolioPhoto> DeletePhoto(Guid photoId, IClock clock)
+    {
+        if (FindPhoto(photoId) is not { } photo)
+        {
+            return ProviderErrors.PhotoNotFound;
+        }
+
+        _photos.Remove(photo);
+        Touch(clock);
+        return photo;
+    }
+
+    public void RequestAvatar(string uploadKey, IClock clock)
+    {
+        AvatarUploadKey = uploadKey;
+        UpdatedAt = clock.UtcNow;
+    }
+
+    public Result<string?> CompleteAvatar(string uploadKey, string avatarKey, IClock clock)
+    {
+        if (AvatarUploadKey != uploadKey)
+        {
+            return ProviderErrors.UploadNotFound;
+        }
+
+        var previous = AvatarKey;
+        AvatarKey = avatarKey;
+        AvatarUploadKey = null;
+        Touch(clock);
+        return previous;
+    }
+
+    public void RejectAvatar(string uploadKey, IClock clock)
+    {
+        if (AvatarUploadKey == uploadKey)
+        {
+            AvatarUploadKey = null;
+            UpdatedAt = clock.UtcNow;
+        }
+    }
+
+    public string? RemoveAvatar(IClock clock)
+    {
+        var previous = AvatarKey;
+        AvatarKey = null;
+        Touch(clock);
+        return previous;
+    }
+
     public void Remove(IClock clock)
     {
         Status = ProviderStatus.Removed;
@@ -351,6 +488,8 @@ public sealed class Provider : AggregateRoot
         return ordered.Count > AvailabilitySlot.MaxPerDay
             || ordered.Zip(ordered.Skip(1)).Any(pair => pair.Second.StartMinute < pair.First.EndMinute);
     }
+
+    private PortfolioPhoto? FindPhoto(Guid photoId) => _photos.Find(photo => photo.Id == photoId);
 
     private void Touch(IClock clock)
     {

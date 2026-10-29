@@ -213,6 +213,64 @@ public sealed class ProviderTests
         Assert.IsType<ProviderPaused>(Assert.Single(provider.DomainEvents));
     }
 
+    [Fact]
+    public void AddPhoto_AfterThirtyPhotos_Fails_ButRejectedOnesDoNotCount()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        var photos = Enumerable.Range(0, Provider.MaxPhotos).Select(index => provider.AddPhoto($"key-{index}", null, _clock).Value).ToList();
+
+        Assert.Equal(ProviderErrors.TooManyPhotos, provider.AddPhoto("key-31", null, _clock).Error);
+
+        provider.RejectPhoto(photos[0].Id, PhotoRejections.NotAnImage, _clock);
+        Assert.True(provider.AddPhoto("key-31", null, _clock).IsSuccess);
+    }
+
+    [Fact]
+    public void AddPhoto_WithContactInTheCaption_Fails()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+
+        Assert.Equal(ProviderErrors.InvalidCaption, provider.AddPhoto("key", "chama no 16 99123-4567", _clock).Error);
+    }
+
+    [Fact]
+    public void CompletePhoto_OnAPublishedShowcase_ActivatesItAndRaisesProfileUpdated()
+    {
+        var provider = CompleteDraft();
+        provider.Publish(_clock);
+        var photo = provider.AddPhoto("key", "Quadro novo", _clock).Value;
+        provider.ClearDomainEvents();
+
+        provider.CompletePhoto(photo.Id, "providers/full.webp", "providers/thumb.webp", _clock);
+
+        Assert.Equal(PhotoStatus.Active, photo.Status);
+        Assert.Null(photo.UploadKey);
+        Assert.IsType<ProviderProfileUpdated>(Assert.Single(provider.DomainEvents));
+    }
+
+    [Fact]
+    public void ReorderPhotos_WithRepeatedOrUnknownIds_Fails()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        var photo = provider.AddPhoto("key", null, _clock).Value;
+
+        Assert.Equal(ProviderErrors.InvalidPhotoOrder, provider.ReorderPhotos([photo.Id, photo.Id], _clock).Error);
+        Assert.Equal(ProviderErrors.InvalidPhotoOrder, provider.ReorderPhotos([Guid.NewGuid()], _clock).Error);
+    }
+
+    [Fact]
+    public void CompleteAvatar_ForAnOlderUpload_IsIgnored()
+    {
+        var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;
+        provider.RequestAvatar("first", _clock);
+        provider.RequestAvatar("second", _clock);
+
+        Assert.True(provider.CompleteAvatar("first", "avatar-1.webp", _clock).IsFailure);
+        Assert.Null(provider.AvatarKey);
+        Assert.True(provider.CompleteAvatar("second", "avatar-2.webp", _clock).IsSuccess);
+        Assert.Equal("avatar-2.webp", provider.AvatarKey);
+    }
+
     private Provider CompleteDraft()
     {
         var provider = Provider.Create(Guid.NewGuid(), Name, "Eletricista", Phone, _clock).Value;

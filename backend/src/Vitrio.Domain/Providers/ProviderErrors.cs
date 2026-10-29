@@ -40,6 +40,20 @@ public static class ProviderErrors
         "provider.invalid_availability",
         "Use faixas de 30 em 30 minutos, até 3 por dia e sem sobreposição.");
 
+    public static readonly Error TooManyPhotos =
+        Error.Conflict("provider.too_many_photos", "A vitrine já tem 30 fotos. Apague uma para enviar outra.");
+
+    public static readonly Error PhotoNotFound = Error.NotFound("provider.photo_not_found", "Foto não encontrada.");
+
+    public static readonly Error UploadNotFound =
+        Error.NotFound("provider.upload_not_found", "Não encontramos o arquivo enviado. Peça um novo endereço de envio.");
+
+    public static readonly Error InvalidCaption =
+        Error.Validation("provider.invalid_caption", "Use até 60 caracteres na legenda, sem telefone, e-mail ou link.");
+
+    public static readonly Error InvalidPhotoOrder =
+        Error.Validation("provider.invalid_photo_order", "Envie a ordem com as fotos da vitrine, sem repetir.");
+
     public static readonly Error NotPublished = Error.Conflict("provider.not_published", "Publique a vitrine primeiro.");
 
     public static readonly Error Suspended = Error.Conflict("provider.suspended", "Esta vitrine está suspensa.");

@@ -2,6 +2,8 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Vitrio.Application.Abstractions;
+using Vitrio.Jobs.Photos;
 
 namespace Vitrio.Jobs;
 
@@ -28,6 +30,8 @@ public static class JobsRegistration
                 storage => storage.UseNpgsqlConnection(connectionString),
                 new PostgreSqlStorageOptions { SchemaName = options.Schema, PrepareSchemaIfNecessary = true }));
         services.AddHangfireServer();
+        services.AddSingleton<IPhotoProcessingQueue, HangfirePhotoProcessingQueue>();
+        services.AddHostedService<RecurringJobsRegistrar>();
         return services;
     }
 }
