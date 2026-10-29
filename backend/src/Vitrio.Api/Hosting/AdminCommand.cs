@@ -9,10 +9,10 @@ public static class AdminCommand
 
     public static bool IsRequested(string[] args) => args is [GrantAdmin, _];
 
-    public static async Task<int> RunAsync(IServiceProvider services, string[] args)
+    public static async Task<int> RunAsync(IServiceProvider services, string[] args, CancellationToken cancellationToken)
     {
         await using var scope = services.CreateAsyncScope();
-        var result = await scope.ServiceProvider.GetRequiredService<ISender>().Send(new GrantAdminCommand(args[1]));
+        var result = await scope.ServiceProvider.GetRequiredService<ISender>().Send(new GrantAdminCommand(args[1]), cancellationToken);
         if (result.IsFailure)
         {
             await Console.Error.WriteLineAsync($"Could not grant admin: {result.Error.Code}");

@@ -215,7 +215,7 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 
 if (AdminCommand.IsRequested(args))
 {
-    Environment.ExitCode = await AdminCommand.RunAsync(app.Services, args);
+    Environment.ExitCode = await AdminCommand.RunAsync(app.Services, args, app.Lifetime.ApplicationStopping);
     return;
 }
 

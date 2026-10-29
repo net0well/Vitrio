@@ -1,5 +1,4 @@
 using Vitrio.Application.Abstractions;
-using Vitrio.Infrastructure.Authentication;
 
 namespace Vitrio.Api.Authentication;
 
