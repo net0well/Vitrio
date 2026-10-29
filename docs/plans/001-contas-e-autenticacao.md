@@ -67,6 +67,8 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
 
 ## Recorte 3: esqueci a senha e troca de senha
 
+**Situação:** pronto.
+
 1. **Domain:** `User.ChangePassword` troca o hash, grava `PasswordChangedAt` e zera falhas e bloqueio. Motivos de revogação `password_reset` e `password_changed`.
 2. **Application:**
    - `ForgotPassword` e `ResendCode` (agora também com `resetPassword`) usam `IEmailCodeService.PrepareAsync`, que emite o código dentro dos limites e monta o e-mail só quando há destinatário: conta pendente para `verifyEmail`, conta ativa para `resetPassword`. O handler salva e envia depois do commit.
@@ -76,6 +78,36 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
 3. **Infrastructure:** modelos `password-reset-code` e `password-changed`; a data da troca sai como "qui 29/10 às 14:05", no fuso de São Paulo.
 4. **Api:** `POST /auth/password/forgot` e `/auth/password/reset` (anônimos, política `auth`); `PUT /me/password` (`[Authorize]`).
 5. **Testes de integração:** AC-8, AC-9 (redefinição e troca), desbloqueio do AC-6 pela redefinição, reenvio do código de redefinição, 401 sem token e todos os modelos de e-mail no Mailpit.
+
+## Recorte 4: conta, celular, endereços e aparelhos de push
+
+1. **Domain:**
+   - `PhoneNumber` (celular brasileiro com DDD válido, guardado em E.164) e `User.Rename`/`ChangePhoneNumber`.
+   - `Cep`, `PostalLocation` (rua, bairro, cidade, UF, código IBGE e coordenadas do CEP quando houver) e `Address` (rótulo, número, complemento; até 10 por pessoa).
+   - `Device` (instalação, plataforma `android`/`ios`, token FCM), que troca de dono quando outra conta entra no mesmo aparelho.
+2. **Application:**
+   - Casos de uso: `GetMe`, `UpdateMe`, `ListAddresses`, `AddAddress`, `UpdateAddress`, `DeleteAddress`, `RegisterDevice` e `RemoveDevice`.
+   - `IAddressLookupService` resolve o CEP. A rua, o bairro e a cidade vêm da BrasilAPI, e o código IBGE vem da lista de municípios do IBGE pelo nome da cidade.
+   - CEP não encontrado:
+     - sem rua, bairro e cidade no request, a resposta é 400 `address.cep_not_found`;
+     - com `street`, `neighborhood`, `state` e `cityIbgeCode`, o endereço é aceito, e a cidade é validada contra a lista do IBGE da UF.
+   - BrasilAPI fora do ar, sem os dados manuais: 503 `address.cep_unavailable`.
+3. **Infrastructure:**
+   - **Criptografia de coluna:** celular, CEP, rua, número, complemento e bairro são criptografados com Data Protection. As chaves ficam na tabela `data_protection_keys`. Em produção, elas são protegidas por um certificado vindo do cofre (`DataProtection:Certificate`), e a API não sobe sem ele.
+   - **Clientes HTTP:** `BrasilApiCepLookup` e `IbgeCityDirectory`, com resiliência padrão. A lista de municípios fica no `HybridCache` por 1 dia.
+   - Migração `AddProfileAddressesAndDevices`.
+4. **Api:** no `MeController`, todos com `[Authorize]`:
+   - `GET /me` e `GET /me/addresses`, com a política `profile`;
+   - `PATCH /me`;
+   - `POST`, `PUT` e `DELETE /me/addresses`;
+   - `PUT` e `DELETE /me/devices/{installationId}`.
+5. **Testes:**
+   - AC-17, AC-18, AC-24 e AC-25 (já coberto no domínio);
+   - limite de 10 endereços;
+   - cadastro manual com CEP não encontrado;
+   - endereço e aparelho de outra pessoa respondem 404, e todas as rotas respondem 401 sem token;
+   - dados criptografados no banco;
+   - leitura das respostas da BrasilAPI e do IBGE com um handler HTTP falso (sem rede nos testes).
 
 ## Recortes seguintes
 

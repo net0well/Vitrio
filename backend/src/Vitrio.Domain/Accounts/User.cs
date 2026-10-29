@@ -24,6 +24,8 @@ public sealed class User : AggregateRoot
 
     public string PasswordHash { get; private set; } = string.Empty;
 
+    public string? PhoneNumber { get; private set; }
+
     public DateTimeOffset PasswordChangedAt { get; private set; }
 
     public UserStatus Status { get; private set; }
@@ -121,6 +123,10 @@ public sealed class User : AggregateRoot
     }
 
     public void ReplacePasswordHash(string passwordHash) => PasswordHash = passwordHash;
+
+    public void Rename(DisplayName displayName) => DisplayName = displayName.Value;
+
+    public void ChangePhoneNumber(PhoneNumber? phoneNumber) => PhoneNumber = phoneNumber?.Value;
 
     public void ChangePassword(string passwordHash, IClock clock)
     {
