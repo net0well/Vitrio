@@ -4,5 +4,5 @@ namespace Vitrio.Application.Accounts.Repositories;
 
 public interface IUserSearchableRepository
 {
-    Task<string?> FindPendingDisplayNameAsync(EmailAddress email, CancellationToken cancellationToken);
+    Task<string?> FindDisplayNameAsync(EmailAddress email, UserStatus status, CancellationToken cancellationToken);
 }

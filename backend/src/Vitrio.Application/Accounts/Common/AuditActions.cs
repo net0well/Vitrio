@@ -10,4 +10,6 @@ public static class AuditActions
     public const string SignedOutEverywhere = "account.signed_out_everywhere";
     public const string SessionRevoked = "account.session_revoked";
     public const string RefreshReused = "account.refresh_reused";
+    public const string PasswordReset = "account.password_reset";
+    public const string PasswordChanged = "account.password_changed";
 }

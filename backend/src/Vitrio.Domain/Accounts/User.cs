@@ -122,6 +122,13 @@ public sealed class User : AggregateRoot
 
     public void ReplacePasswordHash(string passwordHash) => PasswordHash = passwordHash;
 
+    public void ChangePassword(string passwordHash, IClock clock)
+    {
+        PasswordHash = passwordHash;
+        PasswordChangedAt = clock.UtcNow;
+        RegisterSuccessfulSignIn();
+    }
+
     public bool TryMarkRegistrationAttemptNotified(IClock clock)
     {
         var now = clock.UtcNow;

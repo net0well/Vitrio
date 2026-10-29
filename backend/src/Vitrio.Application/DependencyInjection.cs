@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailCodeService, EmailCodeService>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<IPasswordChangeService, PasswordChangeService>();
         return services;
     }
 }

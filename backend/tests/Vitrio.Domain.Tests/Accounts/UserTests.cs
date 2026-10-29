@@ -127,6 +127,23 @@ public sealed class UserTests
         Assert.False(user.RegisterFailedSignIn(_clock));
     }
 
+    [Fact]
+    public void ChangePassword_ReplacesTheHashAndUnlocksTheAccount()
+    {
+        var user = ActiveUser();
+        for (var failure = 0; failure < User.MaxFailedSignIns; failure++)
+        {
+            user.RegisterFailedSignIn(_clock);
+        }
+
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        user.ChangePassword("new-hash", _clock);
+
+        Assert.Equal("new-hash", user.PasswordHash);
+        Assert.Equal(_clock.UtcNow, user.PasswordChangedAt);
+        Assert.Equal(TimeSpan.Zero, user.LockoutRemaining(_clock));
+    }
+
     private User ActiveUser()
     {
         var user = User.Register(

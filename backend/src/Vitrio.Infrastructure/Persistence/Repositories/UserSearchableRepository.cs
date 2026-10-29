@@ -6,10 +6,10 @@ namespace Vitrio.Infrastructure.Persistence.Repositories;
 
 internal sealed class UserSearchableRepository(AppDbContext db) : IUserSearchableRepository
 {
-    public Task<string?> FindPendingDisplayNameAsync(EmailAddress email, CancellationToken cancellationToken) =>
+    public Task<string?> FindDisplayNameAsync(EmailAddress email, UserStatus status, CancellationToken cancellationToken) =>
         db.Users
             .AsNoTracking()
-            .Where(user => user.Email == email.Value && user.Status == UserStatus.PendingVerification)
+            .Where(user => user.Email == email.Value && user.Status == status)
             .Select(user => user.DisplayName)
             .SingleOrDefaultAsync(cancellationToken);
 }

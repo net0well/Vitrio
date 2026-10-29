@@ -41,8 +41,8 @@ internal static class AuthApi
             new { email, code, password, deviceName },
             TestContext.Current.CancellationToken);
 
-    public static Task<HttpResponseMessage> ResendCodeAsync(this HttpClient client, string email) =>
-        client.PostAsJsonAsync("/api/v1/auth/resend-code", new { email, purpose = "verifyEmail" }, TestContext.Current.CancellationToken);
+    public static Task<HttpResponseMessage> ResendCodeAsync(this HttpClient client, string email, string purpose = "verifyEmail") =>
+        client.PostAsJsonAsync("/api/v1/auth/resend-code", new { email, purpose }, TestContext.Current.CancellationToken);
 
     public static Task<HttpResponseMessage> LoginAsync(
         this HttpClient client,
@@ -50,6 +50,34 @@ internal static class AuthApi
         string password = Password,
         string deviceName = "Pixel 8") =>
         client.PostAsJsonAsync("/api/v1/auth/login", new { email, password, deviceName }, TestContext.Current.CancellationToken);
+
+    public static Task<HttpResponseMessage> ForgotPasswordAsync(this HttpClient client, string email) =>
+        client.PostAsJsonAsync("/api/v1/auth/password/forgot", new { email }, TestContext.Current.CancellationToken);
+
+    public static Task<HttpResponseMessage> ResetPasswordAsync(
+        this HttpClient client,
+        string email,
+        string code,
+        string newPassword,
+        string deviceName = "Pixel 8") =>
+        client.PostAsJsonAsync(
+            "/api/v1/auth/password/reset",
+            new { email, code, newPassword, deviceName },
+            TestContext.Current.CancellationToken);
+
+    public static Task<HttpResponseMessage> ChangePasswordAsync(
+        this HttpClient client,
+        string accessToken,
+        string currentPassword,
+        string newPassword) =>
+        client.SendAsync(
+            WithBearer(
+                new HttpRequestMessage(HttpMethod.Put, "/api/v1/me/password")
+                {
+                    Content = JsonContent.Create(new { currentPassword, newPassword })
+                },
+                accessToken),
+            TestContext.Current.CancellationToken);
 
     public static Task<HttpResponseMessage> RefreshAsync(this HttpClient client, string refreshToken) =>
         client.PostAsJsonAsync("/api/v1/auth/refresh", new { refreshToken }, TestContext.Current.CancellationToken);

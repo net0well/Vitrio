@@ -21,6 +21,9 @@ public static class AccountErrors
     public static readonly Error InvalidCredentials =
         Error.Unauthorized("auth.invalid_credentials", "E-mail ou senha incorretos.");
 
+    public static readonly Error WrongCurrentPassword =
+        Error.Forbidden("auth.invalid_credentials", "A senha atual está incorreta.");
+
     public static readonly Error EmailNotVerified =
         Error.Conflict("account.email_not_verified", "Confirme seu e-mail com o código que enviamos para entrar.");
 

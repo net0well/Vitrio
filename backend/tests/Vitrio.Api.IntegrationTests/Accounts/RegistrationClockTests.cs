@@ -66,6 +66,35 @@ public sealed class RegistrationClockTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task ForgotPassword_ForPendingAccount_RespondsAcceptedAndSendsNoResetCode()
+    {
+        var email = AuthApi.NewEmail();
+        await _client.RegisterAsync(email);
+        factory.Clock.Advance(PastResendInterval);
+
+        var response = await _client.ForgotPasswordAsync(email);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Empty(factory.Emails.SentTo(email).OfType<PasswordResetCodeEmail>());
+    }
+
+    [Fact]
+    public async Task ResendCode_ForPasswordReset_SendsANewResetCode()
+    {
+        var email = AuthApi.NewEmail();
+        await factory.SeedActiveUserAsync(email);
+        await _client.ForgotPasswordAsync(email);
+        factory.Clock.Advance(PastResendInterval);
+
+        var response = await _client.ResendCodeAsync(email, "resetPassword");
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(2, factory.Emails.SentTo(email).OfType<PasswordResetCodeEmail>().Count());
+        var reset = await _client.ResetPasswordAsync(email, factory.Emails.LastResetCodeFor(email), "janela nova de vidro");
+        Assert.Equal(HttpStatusCode.OK, reset.StatusCode);
+    }
+
+    [Fact]
     public async Task Register_AgainBeforeConfirming_UpdatesTheAccountAndSendsANewCode()
     {
         var email = AuthApi.NewEmail();

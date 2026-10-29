@@ -40,7 +40,7 @@ internal static class AccountRules
     public static IRuleBuilderOptions<T, string> MustBeCode<T>(this IRuleBuilder<T, string> rule) =>
         rule.Matches("^[0-9]{6}$").WithMessage("Digite os 6 números do código.");
 
-    private static string MessageFor(PasswordProblem problem) => problem switch
+    public static string MessageFor(PasswordProblem problem) => problem switch
     {
         PasswordProblem.TooShort => $"A senha precisa ter pelo menos {PasswordPolicy.MinLength} caracteres.",
         PasswordProblem.TooLong => $"A senha pode ter no máximo {PasswordPolicy.MaxLength} caracteres.",

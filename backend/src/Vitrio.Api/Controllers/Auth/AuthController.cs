@@ -67,6 +67,27 @@ public sealed class AuthController(ISender sender) : ApiControllerBase
     public async Task<IActionResult> Refresh(RefreshRequest request, CancellationToken cancellationToken) =>
         ToActionResult(await sender.Send(request.ToCommand(), cancellationToken));
 
+    [HttpPost("password/forgot")]
+    [AllowAnonymous]
+    [EnableRateLimiting(RateLimitPolicies.Auth)]
+    [EndpointSummary("Envia o código para redefinir a senha")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status429TooManyRequests)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request, CancellationToken cancellationToken) =>
+        ToAcceptedResult(await sender.Send(request.ToCommand(), cancellationToken));
+
+    [HttpPost("password/reset")]
+    [AllowAnonymous]
+    [EnableRateLimiting(RateLimitPolicies.Auth)]
+    [EndpointSummary("Redefine a senha com o código e abre uma sessão nova")]
+    [ProducesResponseType<AuthResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> ResetPassword(ResetPasswordRequest request, CancellationToken cancellationToken) =>
+        ToActionResult(await sender.Send(request.ToCommand(), cancellationToken));
+
     [HttpPost("logout")]
     [Authorize]
     [EndpointSummary("Encerra a sessão deste aparelho ou de todos")]

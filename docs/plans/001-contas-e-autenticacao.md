@@ -44,6 +44,8 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
 
 ## Recorte 2: login, sessão longa e aparelhos conectados
 
+**Situação:** pronto.
+
 1. **Domain:**
    - `User` ganha `FailedSignInCount`, `FailedSignInWindowStartedAt` e `LockedOutUntil`, com `RegisterFailedSignIn` (5 erros numa janela de 15 min bloqueiam por 15 min), `RegisterSuccessfulSignIn`, `IsLockedOut` e `ReplacePasswordHash` (rehash pedido pelo hasher).
    - `Session` ganha `Touch` e `IsActive` (não revogada, dentro de 60 dias sem uso e de 1 ano do login).
@@ -62,6 +64,18 @@ Os recortes são feitos nesta ordem, todos na branch `feat/contas-e-autenticacao
    - `MeController` com `GET /me/sessions` (política `profile`) e `DELETE /me/sessions/{id}`.
    - O JwtBearer recusa token de sessão revogada no `OnTokenValidated`.
 5. **Testes de integração:** AC-5, AC-6 (bloqueio e desbloqueio após 15 min; desbloqueio pela redefinição fica para o recorte 3), AC-7, AC-10, AC-11, AC-12, AC-13, AC-14, AC-22 (segundo host com o mesmo banco e cache vazio) e AC-23.
+
+## Recorte 3: esqueci a senha e troca de senha
+
+1. **Domain:** `User.ChangePassword` troca o hash, grava `PasswordChangedAt` e zera falhas e bloqueio. Motivos de revogação `password_reset` e `password_changed`.
+2. **Application:**
+   - `ForgotPassword` e `ResendCode` (agora também com `resetPassword`) usam `IEmailCodeService.PrepareAsync`, que emite o código dentro dos limites e monta o e-mail só quando há destinatário: conta pendente para `verifyEmail`, conta ativa para `resetPassword`. O handler salva e envia depois do commit.
+   - `ResetPassword` confere o código, troca a senha, revoga todas as sessões, abre uma nova no aparelho e avisa por e-mail.
+   - `ChangePassword` confere a senha atual (403 `auth.invalid_credentials` se errada), recusa a senha igual ao e-mail, troca a senha e revoga as outras sessões.
+   - `IPasswordChangeService` concentra a troca (hash, revogação, aviso), usada pelos dois.
+3. **Infrastructure:** modelos `password-reset-code` e `password-changed`; a data da troca sai como "qui 29/10 às 14:05", no fuso de São Paulo.
+4. **Api:** `POST /auth/password/forgot` e `/auth/password/reset` (anônimos, política `auth`); `PUT /me/password` (`[Authorize]`).
+5. **Testes de integração:** AC-8, AC-9 (redefinição e troca), desbloqueio do AC-6 pela redefinição, reenvio do código de redefinição, 401 sem token e todos os modelos de e-mail no Mailpit.
 
 ## Recortes seguintes
 

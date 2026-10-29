@@ -68,6 +68,34 @@ public sealed class SmtpEmailSenderTests : IAsyncLifetime
         Assert.True(htmlCheck.GetProperty("Total").GetProperty("Supported").GetDouble() >= MinimumHtmlSupport);
     }
 
+    public static TheoryData<string> EveryEmail() => ["verification", "attempt", "reset", "changed"];
+
+    [Theory]
+    [MemberData(nameof(EveryEmail))]
+    public async Task SendAsync_EveryAccountEmail_HasHtmlAndTextAndPassesTheHtmlCheck(string kind)
+    {
+        var recipient = $"{kind}@exemplo.com.br";
+        AccountEmail email = kind switch
+        {
+            "verification" => new VerificationCodeEmail(recipient, "Ana", "482917"),
+            "attempt" => new RegistrationAttemptEmail(recipient, "Ana"),
+            "reset" => new PasswordResetCodeEmail(recipient, "Ana", "482917"),
+            _ => new PasswordChangedEmail(recipient, "Ana", DateTimeOffset.UtcNow)
+        };
+        var sender = CreateSender(_mailpit.Hostname, _mailpit.GetMappedPublicPort(SmtpPort));
+
+        Assert.True((await sender.SendAsync(email, TestContext.Current.CancellationToken)).IsSuccess);
+
+        var message = await ReadMessageAsync(recipient);
+        Assert.False(string.IsNullOrWhiteSpace(message.GetProperty("HTML").GetString()));
+        Assert.False(string.IsNullOrWhiteSpace(message.GetProperty("Text").GetString()));
+        Assert.DoesNotContain("href", message.GetProperty("HTML").GetString(), StringComparison.OrdinalIgnoreCase);
+        var htmlCheck = await _mailbox.GetFromJsonAsync<JsonElement>(
+            $"/api/v1/message/{message.GetProperty("ID").GetString()}/html-check",
+            TestContext.Current.CancellationToken);
+        Assert.True(htmlCheck.GetProperty("Total").GetProperty("Supported").GetDouble() >= MinimumHtmlSupport);
+    }
+
     [Fact]
     public async Task SendAsync_RegistrationAttempt_DeliversTheWarningWithoutCode()
     {

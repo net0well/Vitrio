@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,6 +9,9 @@ namespace Vitrio.Infrastructure.Email;
 public sealed partial class AccountEmailRenderer : IAccountEmailRenderer
 {
     public const string LogoContentId = "vitrio-wordmark";
+
+    private static readonly TimeZoneInfo SaoPaulo = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+    private static readonly string[] WeekDays = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
     private readonly string _htmlLayout = ReadText("layout.html");
     private readonly string _textLayout = ReadText("layout.txt");
@@ -26,6 +30,16 @@ public sealed partial class AccountEmailRenderer : IAccountEmailRenderer
             "Sua conta continua segura.",
             "registration-attempt",
             new() { ["firstName"] = attempt.FirstName }),
+        PasswordResetCodeEmail reset => Compose(
+            $"{reset.Code} é seu código para redefinir a senha",
+            "Use este código para criar uma senha nova.",
+            "password-reset-code",
+            new() { ["firstName"] = reset.FirstName, ["code"] = reset.Code }),
+        PasswordChangedEmail changed => Compose(
+            "Sua senha do Vitrio foi alterada",
+            "Se não foi você, redefina a senha agora.",
+            "password-changed",
+            new() { ["firstName"] = changed.FirstName, ["changedAt"] = FormatMoment(changed.ChangedAt) }),
         _ => throw new ArgumentOutOfRangeException(nameof(email), email.GetType().Name, "There is no template for this e-mail.")
     };
 
@@ -40,6 +54,12 @@ public sealed partial class AccountEmailRenderer : IAccountEmailRenderer
         });
         var text = Fill(_textLayout, new(StringComparer.Ordinal) { ["content"] = Fill(ReadText($"{template}.txt"), values) });
         return new RenderedEmail(subject, html, text);
+    }
+
+    public static string FormatMoment(DateTimeOffset moment)
+    {
+        var local = TimeZoneInfo.ConvertTime(moment, SaoPaulo);
+        return $"{WeekDays[(int)local.DayOfWeek]} {local.ToString("dd/MM 'às' HH:mm", CultureInfo.InvariantCulture)}";
     }
 
     private static string Fill(string template, Dictionary<string, string> values) =>
