@@ -1,6 +1,6 @@
 # Plano: Contas e autenticação
 
-**Status:** Em andamento
+**Status:** Concluído
 **Spec:** [001-contas-e-autenticacao](../specs/001-contas-e-autenticacao.md) (Approved)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:** Domain (`Accounts`), Application (`Accounts`), Infrastructure (persistência, senha, códigos, e-mail, tokens), Api (`AuthController`, `MeController`), app Flutter.
