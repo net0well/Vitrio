@@ -9,7 +9,7 @@ public static class AppDbContextOptions
     public static DbContextOptionsBuilder UseVitrioDatabase(this DbContextOptionsBuilder options, string connectionString) =>
         options
             .UseNpgsql(connectionString, npgsql => npgsql
-                .UseNetTopologySuite()
+                .UseNetTopologySuite(geographyAsDefault: true)
                 .MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention();
 }

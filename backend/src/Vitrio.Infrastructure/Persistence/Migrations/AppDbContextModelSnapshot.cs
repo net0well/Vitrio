@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Vitrio.Infrastructure.Persistence;
 
@@ -501,6 +502,72 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_audit_events_target_type_target_id");
 
                     b.ToTable("audit_events", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Cities.CityRecord", b =>
+                {
+                    b.Property<int>("IbgeCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("ibge_code");
+
+                    b.Property<MultiPolygon>("Boundary")
+                        .IsRequired()
+                        .HasColumnType("geography (multipolygon, 4326)")
+                        .HasColumnName("boundary");
+
+                    b.Property<Point>("Centroid")
+                        .IsRequired()
+                        .HasColumnType("geography (point, 4326)")
+                        .HasColumnName("centroid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("name_normalized");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character(2)")
+                        .HasColumnName("state")
+                        .IsFixedLength();
+
+                    b.Property<string>("TimeZone")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("time_zone");
+
+                    b.HasKey("IbgeCode")
+                        .HasName("pk_cities");
+
+                    b.HasIndex("Boundary")
+                        .HasDatabaseName("ix_cities_boundary");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Boundary"), "gist");
+
+                    b.HasIndex("Centroid")
+                        .HasDatabaseName("ix_cities_centroid");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Centroid"), "gist");
+
+                    b.HasIndex("NameNormalized")
+                        .HasDatabaseName("ix_cities_name_normalized");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("NameNormalized"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("NameNormalized"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("State")
+                        .HasDatabaseName("ix_cities_state");
+
+                    b.ToTable("cities", (string)null);
                 });
 
             modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Outbox.OutboxDelivery", b =>

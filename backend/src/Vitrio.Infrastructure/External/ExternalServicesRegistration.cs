@@ -25,14 +25,21 @@ internal static class ExternalServicesRegistration
             })
             .AddStandardResilienceHandler(ConfigureResilience);
 
-        services.AddHttpClient<ICityDirectory, IbgeCityDirectory>((provider, http) =>
+        services.AddHttpClient<IIbgeCitySource, IbgeCitySource>((provider, http) =>
             {
                 http.BaseAddress = provider.GetRequiredService<IOptions<ExternalServicesOptions>>().Value.IbgeBaseUrl;
                 http.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
             })
-            .AddStandardResilienceHandler(ConfigureResilience);
+            .AddStandardResilienceHandler(ConfigureBulkResilience);
 
         return services;
+    }
+
+    private static void ConfigureBulkResilience(HttpStandardResilienceOptions options)
+    {
+        options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(30);
+        options.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(90);
+        options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(2);
     }
 
     private static void ConfigureResilience(HttpStandardResilienceOptions options)

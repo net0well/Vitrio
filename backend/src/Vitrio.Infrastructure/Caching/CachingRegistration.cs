@@ -2,6 +2,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using Vitrio.Application.Abstractions;
 
 namespace Vitrio.Infrastructure.Caching;
 
@@ -16,6 +17,8 @@ internal static class CachingRegistration
             Expiration = TimeSpan.FromMinutes(5),
             LocalCacheExpiration = TimeSpan.FromSeconds(30)
         });
+
+        services.AddSingleton<IReadCache, HybridReadCache>();
 
         var redis = configuration.GetConnectionString(RedisConnectionStringName);
         if (string.IsNullOrWhiteSpace(redis))
