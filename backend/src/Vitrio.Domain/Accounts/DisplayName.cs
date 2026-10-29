@@ -43,5 +43,7 @@ public sealed record DisplayName
         return new DisplayName(normalized);
     }
 
+    public static DisplayName FromStored(string value) => new(value);
+
     public override string ToString() => Value;
 }

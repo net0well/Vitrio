@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Net;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Serilog;
+using Vitrio.Api.Auditing;
 using Vitrio.Api.Authentication;
 using Vitrio.Api.Authorization;
 using Vitrio.Api.Controllers;
@@ -26,7 +28,10 @@ using Vitrio.Application;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Common;
 using Vitrio.Application.Common.Behaviors;
+using Vitrio.Domain.Accounts;
+using Vitrio.Domain.Common;
 using Vitrio.Infrastructure;
+using Vitrio.Infrastructure.Authentication;
 
 const int MaxRequestBodySize = 64 * 1024;
 
@@ -77,13 +82,14 @@ builder.Services.AddMediator((Mediator.MediatorOptions options) =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<IAuditLog, HttpAuditLog>();
 
 builder.Services
     .AddControllers()
     .AddJsonOptions(json =>
     {
         json.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
-        json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
     });
 
 builder.Services
@@ -126,14 +132,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
     }
 });
 
-builder.Services.AddOptions<JwtOptions>()
-    .BindConfiguration(JwtOptions.SectionName)
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-    .Configure<IOptions<JwtOptions>>((bearer, jwt) =>
+    .Configure<IOptions<JwtOptions>, JwtSigningKey, IClock>((bearer, jwt, signingKey, clock) =>
     {
         bearer.MapInboundClaims = false;
         bearer.TokenValidationParameters = new TokenValidationParameters
@@ -145,11 +146,19 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
             ValidateLifetime = true,
             RequireExpirationTime = true,
             ValidateIssuerSigningKey = true,
+            IssuerSigningKey = signingKey.Key,
             RequireSignedTokens = true,
             ValidAlgorithms = [SecurityAlgorithms.EcdsaSha256],
             NameClaimType = ClaimNames.Subject,
             RoleClaimType = ClaimNames.Roles,
-            ClockSkew = TimeSpan.FromSeconds(30)
+            ClockSkew = TimeSpan.FromSeconds(30),
+            LifetimeValidator = (notBefore, expires, _, parameters) =>
+            {
+                var now = clock.UtcNow.UtcDateTime;
+                return expires is { } expiresAt
+                    && expiresAt + parameters.ClockSkew > now
+                    && (notBefore is not { } notBeforeAt || notBeforeAt - parameters.ClockSkew <= now);
+            }
         };
     });
 

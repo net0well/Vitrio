@@ -4,6 +4,8 @@ namespace Vitrio.Domain.Accounts;
 
 public sealed class User : AggregateRoot
 {
+    public const int TermsVersionMaxLength = 20;
+
     private static readonly TimeSpan RegistrationAttemptNoticeInterval = TimeSpan.FromHours(24);
 
     private User()

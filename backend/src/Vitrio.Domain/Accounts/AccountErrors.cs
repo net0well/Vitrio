@@ -18,9 +18,19 @@ public static class AccountErrors
     public static readonly Error NotPending =
         Error.Conflict("account.not_pending", "Esta conta já foi confirmada.");
 
-    public static readonly Error TooManyCodes =
-        Error.RateLimited("auth.too_many_codes", "Você pediu muitos códigos. Espere um pouco e tente de novo.");
+    public static readonly Error EmailUnavailable = new(
+        "email.unavailable",
+        "Não conseguimos enviar o e-mail agora. Tente de novo em alguns minutos.",
+        ErrorType.Unavailable)
+    {
+        RetryAfter = TimeSpan.FromSeconds(60)
+    };
 
-    public static readonly Error EmailUnavailable =
-        Error.Unavailable("email.unavailable", "Não conseguimos enviar o e-mail agora. Tente de novo em alguns minutos.");
+    public static Error TooManyCodes(TimeSpan retryAfter) => new(
+        "auth.too_many_codes",
+        "Você pediu muitos códigos. Espere um pouco e tente de novo.",
+        ErrorType.RateLimited)
+    {
+        RetryAfter = retryAfter
+    };
 }

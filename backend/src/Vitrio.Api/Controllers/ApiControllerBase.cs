@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,6 +16,9 @@ public abstract class ApiControllerBase : ControllerBase
 
     protected IActionResult ToActionResult<T>(Result<T> result) =>
         result.IsSuccess ? Ok(result.Value) : ErrorResult(result.Error);
+
+    protected IActionResult ToAcceptedResult(Result result) =>
+        result.IsSuccess ? StatusCode(StatusCodes.Status202Accepted) : ErrorResult(result.Error);
 
     protected ObjectResult ErrorResult(Error error)
     {
@@ -40,6 +44,11 @@ public abstract class ApiControllerBase : ControllerBase
         {
             problem = ProblemDetailsFactory.CreateProblemDetails(
                 HttpContext, statusCode, type: type, detail: error.Message);
+        }
+
+        if (error.RetryAfter is { } retryAfter)
+        {
+            Response.Headers.RetryAfter = Math.Ceiling(retryAfter.TotalSeconds).ToString(CultureInfo.InvariantCulture);
         }
 
         return new ObjectResult(problem)

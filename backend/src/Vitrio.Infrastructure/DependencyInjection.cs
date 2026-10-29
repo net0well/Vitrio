@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vitrio.Application.Abstractions;
 using Vitrio.Domain.Common;
+using Vitrio.Infrastructure.Accounts;
 using Vitrio.Infrastructure.Caching;
+using Vitrio.Infrastructure.Email;
 using Vitrio.Infrastructure.Events;
 using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
@@ -30,6 +32,9 @@ public static class DependencyInjection
             .UseVitrioDatabase(connectionString)
             .AddInterceptors(serviceProvider.GetRequiredService<OutboxInterceptor>()));
         services.AddScoped<IAppDbContext>(serviceProvider => serviceProvider.GetRequiredService<AppDbContext>());
+
+        services.AddAccounts();
+        services.AddEmail();
 
         services.AddHealthChecks().AddDbContextCheck<AppDbContext>("database", tags: [ReadinessTag]);
         services.AddVitrioCaching(configuration);

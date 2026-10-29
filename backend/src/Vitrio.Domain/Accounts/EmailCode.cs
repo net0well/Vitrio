@@ -63,5 +63,13 @@ public sealed class EmailCode
         return Result.Success();
     }
 
+    public void CountFailedAttempt()
+    {
+        if (Attempts < MaxAttempts)
+        {
+            Attempts++;
+        }
+    }
+
     public void Invalidate(IClock clock) => ConsumedAt ??= clock.UtcNow;
 }

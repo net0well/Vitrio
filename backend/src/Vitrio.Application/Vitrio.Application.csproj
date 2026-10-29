@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Accounts\Common\CommonPasswords.txt" LogicalName="Vitrio.Application.CommonPasswords.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Vitrio.Application.Tests" />
   </ItemGroup>
 

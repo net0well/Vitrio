@@ -1,4 +1,4 @@
-namespace Vitrio.Api.Authorization;
+namespace Vitrio.Domain.Accounts;
 
 public static class Roles
 {

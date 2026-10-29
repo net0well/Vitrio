@@ -52,6 +52,19 @@ public sealed class EmailCodeTests
     }
 
     [Fact]
+    public void CountFailedAttempt_BeyondTheLimit_StopsAtFiveAndBlocksTheCode()
+    {
+        var code = EmailCode.Issue(Email, EmailCodePurpose.VerifyEmail, "hash-1", _clock);
+        for (var attempt = 0; attempt < EmailCode.MaxAttempts + 1; attempt++)
+        {
+            code.CountFailedAttempt();
+        }
+
+        Assert.Equal(EmailCode.MaxAttempts, code.Attempts);
+        Assert.Equal(AccountErrors.InvalidCode, code.Verify("hash-1", _clock).Error);
+    }
+
+    [Fact]
     public void Invalidate_MakesTheCodeUnusable()
     {
         var code = EmailCode.Issue(Email, EmailCodePurpose.VerifyEmail, "hash-1", _clock);
