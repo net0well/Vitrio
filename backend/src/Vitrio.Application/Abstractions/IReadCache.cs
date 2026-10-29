@@ -6,6 +6,7 @@ public interface IReadCache
         string key,
         Func<CancellationToken, ValueTask<T>> factory,
         TimeSpan expiration,
+        TimeSpan localExpiration,
         IReadOnlyCollection<string> tags,
         CancellationToken cancellationToken);
 

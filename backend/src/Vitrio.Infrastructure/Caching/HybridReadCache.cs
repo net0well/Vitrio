@@ -7,23 +7,18 @@ namespace Vitrio.Infrastructure.Caching;
 
 internal sealed partial class HybridReadCache(HybridCache cache, ILogger<HybridReadCache> logger) : IReadCache
 {
-    private static readonly TimeSpan MaxLocalLifetime = TimeSpan.FromMinutes(5);
-
     public ValueTask<T> GetOrCreateAsync<T>(
         string key,
         Func<CancellationToken, ValueTask<T>> factory,
         TimeSpan expiration,
+        TimeSpan localExpiration,
         IReadOnlyCollection<string> tags,
         CancellationToken cancellationToken) =>
         cache.GetOrCreateAsync(
             key,
             factory,
             static (factory, token) => factory(token),
-            new HybridCacheEntryOptions
-            {
-                Expiration = expiration,
-                LocalCacheExpiration = expiration < MaxLocalLifetime ? expiration : MaxLocalLifetime
-            },
+            new HybridCacheEntryOptions { Expiration = expiration, LocalCacheExpiration = localExpiration },
             tags,
             cancellationToken);
 

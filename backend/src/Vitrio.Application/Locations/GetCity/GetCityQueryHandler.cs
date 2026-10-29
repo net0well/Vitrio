@@ -12,6 +12,7 @@ public sealed class GetCityQueryHandler(ICitySearchableRepository cities, IReadC
     : IQueryHandler<GetCityQuery, Result<CityDetails>>
 {
     private static readonly TimeSpan Lifetime = TimeSpan.FromHours(24);
+    private static readonly TimeSpan LocalLifetime = TimeSpan.FromHours(1);
 
     public async ValueTask<Result<CityDetails>> Handle(GetCityQuery query, CancellationToken cancellationToken)
     {
@@ -19,6 +20,7 @@ public sealed class GetCityQueryHandler(ICitySearchableRepository cities, IReadC
             string.Create(CultureInfo.InvariantCulture, $"cities:get:{query.IbgeCode}"),
             token => new ValueTask<CityDetails?>(cities.GetAsync(query.IbgeCode, token)),
             Lifetime,
+            LocalLifetime,
             [CacheTags.Cities],
             cancellationToken);
         return found is null ? LocationErrors.CityNotFound : found;

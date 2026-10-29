@@ -14,6 +14,7 @@ public sealed class LocateCityQueryHandler(ICitySearchableRepository cities, IRe
     public const double NearestWithinMeters = 30_000;
 
     private static readonly TimeSpan CellLifetime = TimeSpan.FromMinutes(10);
+    private static readonly TimeSpan LocalCellLifetime = TimeSpan.FromMinutes(1);
 
     public async ValueTask<Result<LocateResponse>> Handle(LocateCityQuery query, CancellationToken cancellationToken)
     {
@@ -25,6 +26,7 @@ public sealed class LocateCityQueryHandler(ICitySearchableRepository cities, IRe
             key,
             token => new ValueTask<LocateResponse?>(cities.LocateAsync(query.Latitude.Value, query.Longitude!.Value, NearestWithinMeters, token)),
             CellLifetime,
+            LocalCellLifetime,
             [CacheTags.Cities],
             cancellationToken);
 

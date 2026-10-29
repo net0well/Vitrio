@@ -10,6 +10,7 @@ public sealed class SearchCitiesQueryHandler(ICitySearchableRepository cities, I
     : IQueryHandler<SearchCitiesQuery, Result<IReadOnlyList<CitySummary>>>
 {
     private static readonly TimeSpan Lifetime = TimeSpan.FromHours(24);
+    private static readonly TimeSpan LocalLifetime = TimeSpan.FromHours(1);
 
     public async ValueTask<Result<IReadOnlyList<CitySummary>>> Handle(SearchCitiesQuery query, CancellationToken cancellationToken)
     {
@@ -19,6 +20,7 @@ public sealed class SearchCitiesQueryHandler(ICitySearchableRepository cities, I
             $"cities:search:{query.State}:{limit}:{term}",
             token => new ValueTask<IReadOnlyList<CitySummary>>(cities.SearchAsync(term, query.State, limit, token)),
             Lifetime,
+            LocalLifetime,
             [CacheTags.Cities],
             cancellationToken);
         return Result<IReadOnlyList<CitySummary>>.Success(found);
