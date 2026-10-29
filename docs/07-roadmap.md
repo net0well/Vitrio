@@ -29,7 +29,7 @@ Backend:
 - `/dotnet-init` em modo greenfield com Clean Architecture; trocar o estilo de endpoint para Controllers e mesclar o `CLAUDE.md` do projeto.
 - `Directory.Build.props` e `Directory.Packages.props`; analisadores; `TreatWarningsAsErrors`.
 - `ApiControllerBase`, `Result`/`Error`, ProblemDetails, versionamento, política de autorização padrão, rate limiting com as políticas de [08-seguranca.md](08-seguranca.md), cabeçalhos de segurança, health checks.
-- EF Core com PostGIS, `IAppDbContext`, interceptor de outbox e auditoria, `TimeProvider`.
+- EF Core com PostGIS, repositories (Writable e Searchable) e Unit of Work, interceptor de outbox e auditoria, `TimeProvider`.
 - OpenTelemetry + Serilog com mascaramento; Seq no docker-compose.
 - Projetos de teste com Testcontainers (PostGIS) e testes de arquitetura.
 - CI: build, testes, format, CodeQL, pacotes vulneráveis, gitleaks.

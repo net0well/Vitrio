@@ -62,7 +62,7 @@ vitrio/
 | Mensageria interna | `Mediator` (martinothamar, MIT, source generator) | MediatR 13+ é comercial (ADR-003) |
 | Validação | FluentValidation via pipeline behavior | |
 | Erros | Result pattern + ProblemDetails (RFC 9457) | Exceções só para o excepcional (ADR-004) |
-| Persistência | EF Core 10 + Npgsql + NetTopologySuite | `DbContext` direto, sem repositório genérico |
+| Persistência | EF Core 10 + Npgsql + NetTopologySuite | Repository por agregado (Writable para comandos, Searchable para leituras) e Unit of Work; sem repositório genérico (ADR-016) |
 | Banco | PostgreSQL 17 + PostGIS, `unaccent`, `pg_trgm` | ADR-005 |
 | Autenticação | Cadastro e login próprios (e-mail e senha, e-mail confirmado por código) + JWT próprio + refresh token rotativo; senha com o `PasswordHasher` do ASP.NET Core Identity (sem o resto do Identity) | Sem login social nem Keycloak (ADR-006) |
 | E-mail | SMTP com MailKit; Mailpit em desenvolvimento, provedor transacional em produção | Layout em [design-system/emails.md](design-system/emails.md) |
@@ -99,7 +99,8 @@ backend/
 Regras de dependência (verificadas por teste de arquitetura):
 
 - `Domain` não referencia nenhum outro projeto nem pacote de infraestrutura.
-- `Application` referencia só `Domain` (e pacotes de abstração: Mediator, FluentValidation e `Microsoft.EntityFrameworkCore` sem provedor, para `IAppDbContext` expor `DbSet`).
+- `Application` referencia só `Domain` (e pacotes de abstração: Mediator e FluentValidation). Não referencia EF Core: lê e grava só por repositories e `IUnitOfWork`.
+- Só a `Infrastructure` conhece o `AppDbContext`; a `Api` usa repositories quando precisa gravar algo (auditoria).
 - `Infrastructure` referencia `Application` e `Domain`.
 - `Api` referencia `Application` e `Infrastructure` só para composição; Controllers falam apenas com `ISender`.
 
@@ -107,7 +108,7 @@ Regras de dependência (verificadas por teste de arquitetura):
 
 ```text
 Vitrio.Application/
-  Abstractions/          IAppDbContext, ICurrentUser, IAuditLog, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
+  Abstractions/          IUnitOfWork, ICurrentUser, IAuditLog, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
   Events/                IDomainEventHandler<T> e os handlers de evento (notificações, dados derivados, cache)
   Common/                PagedResult, behaviors (log, validação, transação)
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
@@ -124,6 +125,13 @@ Vitrio.Application/
 ```
 
 Cada caso de uso é uma pasta com `Command`/`Query`, `Handler`, `Validator` e `Response`. Exemplo: `Orders/SendQuote/SendQuoteCommand.cs`, `SendQuoteHandler.cs`, `SendQuoteValidator.cs`.
+
+Cada módulo tem também:
+
+- `Repositories/`: as interfaces do módulo, uma por agregado e lado. `I<Agregado>WritableRepository` carrega o agregado rastreado e adiciona (comandos); `I<Agregado>SearchableRepository` lê com `AsNoTracking` e projeta direto para o DTO (consultas, e comandos que só precisam ler um dado auxiliar). O Searchable só existe quando há leitura. As implementações ficam em `Vitrio.Infrastructure/Persistence/Repositories`.
+- `Services/`, quando preciso: regra de aplicação extensa ou usada por mais de um caso de uso (`EmailCodeService`, `SessionService`, `PasswordService`), para o handler só orquestrar. Service não salva nem chama `ISender`.
+
+O handler carrega pelos repositories, chama o domínio e os services, e termina em `IUnitOfWork.SaveChangesAsync`, uma vez por comando.
 
 ### Controllers
 
@@ -367,3 +375,4 @@ mobile/lib/
 | 013 | `HybridCache` com Redis como segunda camada; banco como fonte da verdade | Cache compartilhado entre instâncias e reinícios; nada crítico (sessão revogada, idempotência) depende só do cache | Cache só em memória |
 | 014 | Lançar primeiro só no Android | Público-alvo majoritariamente Android; uma loja e um fluxo de login no início | Android e iOS juntos |
 | 015 | Mapeamento manual entre entidades e DTOs | Explícito, verificado pelo compilador, sem reflexão nem convenções escondidas | AutoMapper, Mapster, Mapperly |
+| 016 | Repository por agregado, separado em escrita (Writable) e leitura (Searchable), com Unit of Work; services para regra extensa ou reaproveitada | Handlers curtos, consultas com nome de intenção, leitura sempre projetada e Application sem EF Core | `DbContext` direto nos handlers; repositório genérico `IRepository<T>` |
