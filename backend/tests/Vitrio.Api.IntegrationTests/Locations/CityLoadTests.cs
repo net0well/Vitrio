@@ -36,6 +36,18 @@ public sealed class CityLoadTests(ApiFactory factory)
         }
     }
 
+    [Fact]
+    public async Task LoadCities_WithAnUnknownState_FailsValidationWithoutCallingTheIbge()
+    {
+        await using var scope = factory.Services.CreateAsyncScope();
+
+        var result = await scope.ServiceProvider.GetRequiredService<ISender>()
+            .Send(new LoadCitiesCommand(["SP", "XX"]), TestContext.Current.CancellationToken);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("validation", result.Error!.Code);
+    }
+
     private async Task<int> SendAsync(LoadCitiesCommand command)
     {
         await using var scope = factory.Services.CreateAsyncScope();
