@@ -25,4 +25,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Share\Templates\*.html" LogicalName="Vitrio.Share.%(Filename)%(Extension)" />
+  </ItemGroup>
+
 </Project>

@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IAccountRolesService, AccountRolesService>();
         services.AddScoped<IServiceAreaService, ServiceAreaService>();
         services.AddScoped<IMeiCheckService, MeiCheckService>();
+        services.AddScoped<IPublicProfileService, PublicProfileService>();
         return services;
     }
 }

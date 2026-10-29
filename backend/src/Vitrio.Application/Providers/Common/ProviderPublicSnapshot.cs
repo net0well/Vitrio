@@ -27,4 +27,7 @@ public sealed record ProviderPublicSnapshot(
     double PublicLongitude,
     bool AvailableToday,
     DateTimeOffset? AvailableTodaySetAt,
-    IReadOnlyList<PublicPhotoResponse> FirstPhotos);
+    IReadOnlyList<PublicPhotoResponse> FirstPhotos)
+{
+    public bool IsRated(int minimumReviews) => ReviewCount >= minimumReviews && RatingScore is not null;
+}

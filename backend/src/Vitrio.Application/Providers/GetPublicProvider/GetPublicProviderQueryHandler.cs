@@ -1,7 +1,7 @@
 using Mediator;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Providers.Common;
-using Vitrio.Application.Providers.Repositories;
+using Vitrio.Application.Providers.Services;
 using Vitrio.Domain.Locations;
 using Vitrio.Domain.Providers;
 using Vitrio.Shared.Results;
@@ -10,33 +10,22 @@ using Vitrio.Shared.Time;
 namespace Vitrio.Application.Providers.GetPublicProvider;
 
 public sealed class GetPublicProviderQueryHandler(
-    IProviderSearchableRepository providers,
-    IReadCache cache,
+    IPublicProfileService profiles,
     IPublicLinks links,
     IClock clock) : IQueryHandler<GetPublicProviderQuery, Result<ProviderPublicResponse>>
 {
     private const int MinReviewsForRating = 3;
     private const int MinCompletedOrdersShown = 5;
 
-    private static readonly TimeSpan Lifetime = TimeSpan.FromMinutes(5);
-    private static readonly TimeSpan LocalLifetime = TimeSpan.FromSeconds(30);
-
     public async ValueTask<Result<ProviderPublicResponse>> Handle(GetPublicProviderQuery query, CancellationToken cancellationToken)
     {
-        var tag = ProviderCacheTags.Provider(query.ProviderId);
-        var snapshot = await cache.GetOrCreateAsync(
-            tag,
-            token => new ValueTask<ProviderPublicSnapshot?>(providers.GetPublicSnapshotAsync(query.ProviderId, token)),
-            Lifetime,
-            LocalLifetime,
-            [tag],
-            cancellationToken);
+        var snapshot = await profiles.GetSnapshotAsync(query.ProviderId, cancellationToken);
         if (snapshot is null)
         {
             return ProviderErrors.NotFound;
         }
 
-        var rated = snapshot.ReviewCount >= MinReviewsForRating && snapshot.RatingScore is not null;
+        var rated = snapshot.IsRated(MinReviewsForRating);
         return new ProviderPublicResponse(
             snapshot.Id,
             snapshot.DisplayName,

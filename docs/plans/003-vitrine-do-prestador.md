@@ -91,6 +91,11 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 
 ## Recorte 5: link de compartilhar
 
+**Situação:** pronto.
+- **Página `/p/{id}`:** HTML de template embutido na Api, com o texto codificado e Open Graph, `Cache-Control: public, max-age=300` e CSP próprio (só estilo inline e imagens do storage). O perfil em cache vem de um service compartilhado com o perfil público.
+- **`assetlinks.json`:** pacote e impressões digitais vêm de `PublicLinks`. No local, usa `app.vitrio.dev` e a chave de depuração.
+- **Produção:** o proxy precisa encaminhar `vitrio.app/p/*` e `/.well-known/assetlinks.json` para a API.
+
 1. `/p/{id}` com HTML e Open Graph; página de perfil não disponível.
 2. `assetlinks.json` pela configuração.
 

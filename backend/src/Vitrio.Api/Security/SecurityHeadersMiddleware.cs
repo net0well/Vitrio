@@ -9,7 +9,10 @@ public sealed class SecurityHeadersMiddleware(RequestDelegate next)
             var headers = context.Response.Headers;
             headers.XContentTypeOptions = "nosniff";
             headers.XFrameOptions = "DENY";
-            headers.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'";
+            if (string.IsNullOrEmpty(headers.ContentSecurityPolicy))
+            {
+                headers.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'";
+            }
             headers["Referrer-Policy"] = "no-referrer";
 
             var authenticated = context.User.Identity?.IsAuthenticated == true || context.Request.Headers.Authorization.Count > 0;
