@@ -56,6 +56,10 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 4. Rastreabilidade só nos documentos. Código, testes, branches e commits não citam specs nem planos.
 5. Se a implementação mostrar que a spec está errada, volte a spec para In Review e corrija antes de seguir.
 6. Uma branch e um PR por spec. Os recortes do plano viram vários commits pequenos na mesma branch, e o PR só abre quando a spec inteira estiver implementada e testada de ponta a ponta (API e app). Nada de PR pequeno no meio do caminho.
+7. Fechamento da spec, antes do PR:
+   - `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); os achados são corrigidos ou registrados.
+   - Subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
+   - O resultado das revisões e dos testes manuais vai na descrição do PR.
 
 ## Onde está cada coisa
 
