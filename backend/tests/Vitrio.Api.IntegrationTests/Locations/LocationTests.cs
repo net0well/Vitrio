@@ -133,6 +133,16 @@ public sealed class LocationTests(ApiFactory factory)
         Assert.Equal(new CitySummary(FakeIbgeCitySource.JaboticabalCode, "Jaboticabal", "SP"), cep.City);
     }
 
+    [Fact]
+    public async Task LookupCep_NeverWritesTheCepToTheLogs()
+    {
+        var auth = await factory.SignInNewAccountAsync(_client);
+
+        await _client.SendAsAsync(HttpMethod.Get, $"/api/v1/ceps/{FakeCepLookup.Jaboticabal}", auth.AccessToken);
+
+        Assert.DoesNotContain(factory.Logs.Rendered, line => line.Contains(FakeCepLookup.Jaboticabal, StringComparison.Ordinal));
+    }
+
     [Theory]
     [InlineData(FakeCepLookup.Unknown, HttpStatusCode.NotFound, "cep.not_found")]
     [InlineData(FakeCepLookup.Unreachable, HttpStatusCode.ServiceUnavailable, "address.cep_unavailable")]

@@ -16,6 +16,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Core;
 using Vitrio.Api.Auditing;
 using Vitrio.Api.Authentication;
 using Vitrio.Api.Authorization;
@@ -82,6 +83,7 @@ builder.Services.AddMediator((Mediator.MediatorOptions options) =>
 });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ILogEventEnricher, RouteTemplateEnricher>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IAuditLog, HttpAuditLog>();
 builder.Services.AddScoped<SessionValidationEvents>();
