@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Vitrio.Application.Accounts.Services;
+using Vitrio.Application.Locations.Services;
 using Vitrio.Application.Providers.Services;
 
 namespace Vitrio.Application;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<IServiceAreaService, ServiceAreaService>();
         services.AddScoped<IMeiCheckService, MeiCheckService>();
         services.AddScoped<IPublicProfileService, PublicProfileService>();
+        services.AddScoped<ICityLocator, CityLocator>();
         return services;
     }
 }
