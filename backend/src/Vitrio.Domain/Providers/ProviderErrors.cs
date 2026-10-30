@@ -1,0 +1,72 @@
+using Vitrio.Shared.Results;
+
+namespace Vitrio.Domain.Providers;
+
+public static class ProviderErrors
+{
+    public static readonly Error AlreadyExists = Error.Conflict("provider.already_exists", "Você já tem uma vitrine.");
+
+    public static readonly Error NotFound = Error.NotFound("provider.not_found", "Vitrine não encontrada.");
+
+    public static readonly Error InvalidHeadline =
+        Error.Validation("provider.invalid_headline", "Informe a profissão com até 60 caracteres.");
+
+    public static readonly Error InvalidAbout =
+        Error.Validation("provider.invalid_about", "Escreva sobre você e o seu trabalho com 40 a 600 caracteres.");
+
+    public static readonly Error ContactInText =
+        Error.Validation("provider.contact_in_text", "Use o botão de WhatsApp para contato. Tire telefone, e-mail e links do texto.");
+
+    public static readonly Error InvalidYearsOfExperience =
+        Error.Validation("provider.invalid_years_of_experience", "Informe de 0 a 60 anos de experiência.");
+
+    public static readonly Error InvalidCategories =
+        Error.Validation("provider.invalid_categories", "Escolha de 1 a 3 categorias e marque uma como principal.");
+
+    public static readonly Error UnknownCategory = Error.Validation("provider.unknown_category", "Categoria não encontrada.");
+
+    public static readonly Error BaseCepNotFound =
+        Error.Validation("address.cep_not_found", "Não encontramos este CEP. Confira os 8 números do endereço base.");
+
+    public static readonly Error InvalidRadius = Error.Validation("provider.invalid_radius", "O raio de atendimento vai de 1 a 50 km.");
+
+    public static readonly Error InvalidNeighborhoods =
+        Error.Validation("provider.invalid_neighborhoods", "Informe até 30 bairros, cada um com 2 a 60 caracteres.");
+
+    public static readonly Error InvalidServices =
+        Error.Validation("provider.invalid_services", "Cadastre até 20 serviços, cada um com nome de até 60 caracteres.");
+
+    public static readonly Error InvalidPrice =
+        Error.Validation("provider.invalid_price", "Informe o preço de R$ 1,00 a R$ 100.000,00 ou marque \"Sob orçamento\".");
+
+    public static readonly Error InvalidAvailability = Error.Validation(
+        "provider.invalid_availability",
+        "Use faixas de 30 em 30 minutos, até 3 por dia e sem sobreposição.");
+
+    public static readonly Error TooManyPhotos =
+        Error.Conflict("provider.too_many_photos", "A vitrine já tem 30 fotos. Apague uma para enviar outra.");
+
+    public static readonly Error PhotoNotFound = Error.NotFound("provider.photo_not_found", "Foto não encontrada.");
+
+    public static readonly Error UploadNotFound =
+        Error.NotFound("provider.upload_not_found", "Não encontramos o arquivo enviado. Peça um novo endereço de envio.");
+
+    public static readonly Error InvalidCaption =
+        Error.Validation("provider.invalid_caption", "Use até 60 caracteres na legenda, sem telefone, e-mail ou link.");
+
+    public static readonly Error InvalidPhotoOrder =
+        Error.Validation("provider.invalid_photo_order", "Envie a ordem com as fotos da vitrine, sem repetir.");
+
+    public static readonly Error InvalidCnpj = Error.Validation("provider.invalid_cnpj", "CNPJ inválido. Confira os 14 números.");
+
+    public static readonly Error CnpjUnavailable = Error.Unavailable("provider.cnpj_unavailable", "Não conseguimos consultar o CNPJ agora.");
+
+    public static readonly Error CnpjInUse = Error.Conflict("provider.cnpj_in_use", "Este CNPJ já está ligado a outra vitrine.");
+
+    public static readonly Error NotPublished = Error.Conflict("provider.not_published", "Publique a vitrine primeiro.");
+
+    public static readonly Error Suspended = Error.Conflict("provider.suspended", "Esta vitrine está suspensa.");
+
+    public static MissingFieldsError Incomplete(IReadOnlyList<string> missing) =>
+        new("provider.incomplete", "Complete a vitrine antes de publicar.", missing);
+}

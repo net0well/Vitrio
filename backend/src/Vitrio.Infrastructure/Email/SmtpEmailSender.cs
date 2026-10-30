@@ -8,7 +8,7 @@ using MimeKit;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Emails;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Infrastructure.Email;
 

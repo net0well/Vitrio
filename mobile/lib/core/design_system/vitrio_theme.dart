@@ -80,7 +80,7 @@ ThemeData vitrioTheme(Brightness brightness) {
       focusedBorder: border(c.plum, 1.5),
       errorBorder: border(c.danger),
       focusedErrorBorder: border(c.danger, 1.5),
-      errorStyle: VitrioText.caption.copyWith(color: c.danger, fontWeight: FontWeight.w600),
+      errorStyle: VitrioText.weighted(VitrioText.caption, 600).copyWith(color: c.danger),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
@@ -96,10 +96,8 @@ ThemeData vitrioTheme(Brightness brightness) {
       indicatorColor: c.plumSoft,
       surfaceTintColor: Colors.transparent,
       labelTextStyle: WidgetStateProperty.resolveWith(
-        (states) => VitrioText.micro.copyWith(
-          color: states.contains(WidgetState.selected) ? c.plum : c.inkMuted,
-          fontWeight: states.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w700,
-        ),
+        (states) => VitrioText.weighted(VitrioText.micro, states.contains(WidgetState.selected) ? 800 : 700)
+            .copyWith(color: states.contains(WidgetState.selected) ? c.plum : c.inkMuted),
       ),
       iconTheme: WidgetStateProperty.resolveWith(
         (states) => IconThemeData(size: 20, color: states.contains(WidgetState.selected) ? c.plum : c.inkMuted),
@@ -111,5 +109,35 @@ ThemeData vitrioTheme(Brightness brightness) {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: VitrioRadius.hero)),
     ),
     dividerTheme: DividerThemeData(color: c.lineSoft, thickness: 1, space: 1),
+    dialogTheme: DialogThemeData(
+      backgroundColor: c.surfaceRaised,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(VitrioRadius.card)),
+      titleTextStyle: VitrioText.title.copyWith(color: c.ink),
+      contentTextStyle: VitrioText.body.copyWith(color: c.ink2),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? c.plum : Colors.transparent),
+      checkColor: WidgetStatePropertyAll(c.plumAccent),
+      side: BorderSide(color: c.lineStrong, width: 1.5),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: c.ink,
+      contentTextStyle: VitrioText.weighted(VitrioText.meta, 700).copyWith(color: c.surfaceRaised),
+      behavior: SnackBarBehavior.floating,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(VitrioRadius.md)),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: c.plum, linearTrackColor: c.track),
+    sliderTheme: SliderThemeData(
+      tickMarkShape: SliderTickMarkShape.noTickMark,
+      padding: EdgeInsets.zero,
+      trackHeight: 6,
+      activeTrackColor: c.plum,
+      inactiveTrackColor: c.track,
+      thumbColor: c.plum,
+      overlayColor: c.plum.withValues(alpha: 0.12),
+      valueIndicatorColor: c.plum,
+      valueIndicatorTextStyle: VitrioText.caption.copyWith(color: c.onPlum),
+    ),
   );
 }

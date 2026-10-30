@@ -9,11 +9,15 @@ import 'package:vitrio/core/network/network_providers.dart';
 import 'package:vitrio/core/storage/preferences.dart';
 import 'package:vitrio/features/auth/data/auth_providers.dart';
 import 'package:vitrio/features/location/data/location_providers.dart';
+import 'package:vitrio/features/provider/data/provider_providers.dart';
 
 import 'fake_account_repository.dart';
 import 'fake_auth_repository.dart';
 import 'fake_cities_repository.dart';
 import 'fake_device_location.dart';
+import 'fake_photo_picker.dart';
+import 'fake_photo_storage.dart';
+import 'fake_provider_repository.dart';
 import 'memory_token_store.dart';
 
 final class VitrioHarness {
@@ -24,6 +28,8 @@ final class VitrioHarness {
     required this.account,
     required this.device,
     required this.cities,
+    required this.provider,
+    required this.photos,
   });
 
   final ProviderContainer container;
@@ -32,6 +38,8 @@ final class VitrioHarness {
   final FakeAccountRepository account;
   final FakeDeviceLocation device;
   final FakeCitiesRepository cities;
+  final FakeProviderRepository provider;
+  final FakePhotoStorage photos;
 
   void go(String location) => container.read(routerProvider).go(location);
 }
@@ -44,6 +52,7 @@ Future<VitrioHarness> pumpVitrio(
   MemoryTokenStore? tokens,
   FakeDeviceLocation? device,
   FakeCitiesRepository? cities,
+  FakeProviderRepository? provider,
   bool settle = true,
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
@@ -53,6 +62,8 @@ Future<VitrioHarness> pumpVitrio(
   final harnessAccount = account ?? FakeAccountRepository();
   final harnessDevice = device ?? FakeDeviceLocation();
   final harnessCities = cities ?? FakeCitiesRepository();
+  final harnessProvider = provider ?? FakeProviderRepository();
+  final harnessPhotos = FakePhotoStorage();
   final container = ProviderContainer(
     overrides: [
       appConfigProvider.overrideWithValue(AppConfig.forFlavor(Flavor.dev)),
@@ -62,6 +73,9 @@ Future<VitrioHarness> pumpVitrio(
       accountRepositoryProvider.overrideWithValue(harnessAccount),
       deviceLocationProvider.overrideWithValue(harnessDevice),
       citiesRepositoryProvider.overrideWithValue(harnessCities),
+      providerRepositoryProvider.overrideWithValue(harnessProvider),
+      photoStorageProvider.overrideWithValue(harnessPhotos),
+      photoPickerProvider.overrideWithValue(FakePhotoPicker()),
     ],
   );
   addTearDown(container.dispose);
@@ -78,5 +92,7 @@ Future<VitrioHarness> pumpVitrio(
     account: harnessAccount,
     device: harnessDevice,
     cities: harnessCities,
+    provider: harnessProvider,
+    photos: harnessPhotos,
   );
 }

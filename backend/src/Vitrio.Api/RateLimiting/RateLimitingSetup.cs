@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
-using Vitrio.Application.Abstractions;
+using Vitrio.Shared.Security;
 
 namespace Vitrio.Api.RateLimiting;
 

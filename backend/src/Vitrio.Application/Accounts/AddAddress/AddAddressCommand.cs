@@ -1,6 +1,6 @@
 using Mediator;
 using Vitrio.Application.Accounts.Common;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.AddAddress;
 

@@ -479,24 +479,26 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 
 | Componente do sistema | Widget no app | Observação |
 | --- | --- | --- |
-| `Button` | `FilledButton` (primary), `OutlinedButton` (secondary), `TextButton` (ghost), `VitrioButton` para accent e on-hero | Temas acima; 56px na barra de ação |
-| `IconButton` | `IconButton.outlined` / `IconButton.filledTonal` com `minimumSize` 44 | Sempre com `tooltip` (vira rótulo acessível) |
+| `Button` | `VitrioButton(variant:, size:)` | Variantes primary, secondary, ghost, danger, accent e on-hero; tamanhos lg (56), md (44) e sm (36); `trailingIcon` em `plumAccent` no primary; `busy` mostra o progresso |
+| `IconButton` | `VitrioIconButton(variant:)` | surface, soft, solid e glass (sobre `hero`); 44px; `label` vira o `tooltip` acessível; `dot` mostra o ponto de notificação |
 | `Chip` | `VitrioChip` | `Semantics(selected:)`, `AnimatedContainer` 180ms |
 | `Badge` | `VitrioBadge` | Exemplo acima |
 | `Avatar` | `VitrioAvatar(kind: provider/client)` | Prestador: `VitrioRadius.providerAvatar(size)`; cliente: círculo |
 | `Rating` / `RatingInput` | `VitrioRating` / `VitrioRatingInput` | Semântica "Nota 4,9 de 5" |
 | `SearchField` | `VitrioSearchField` | `TextField` + botão de envio de 40px |
-| `TextField` / `TextArea` | `TextFormField` com `inputDecorationTheme` | `maxLength` mostra o contador |
+| `TextField` / `TextArea` | `VitrioTextField` | Rótulo visível acima da caixa, dica ou erro abaixo, contador com `maxLength`; `maxLines` diferente de 1 vira TextArea; `prefix: 'R\$'` usa a fonte de números |
 | `SegmentedControl` | `VitrioSegmented` | `SegmentedButton` não tem o visual de trilho |
-| `Switch` | `SwitchListTile` com `switchTheme` | Linha inteira tocável |
-| `CategoryTile` | `CategoryTile` | Grade de 4 colunas |
-| `ProviderCard` | `ProviderCard` | Toda a área é tocável (`InkWell`) |
+| `Switch` | `VitrioSwitchRow` (e `VitrioSwitch`) | Linha inteira tocável com rótulo e descrição; `onHero` para o cabeçalho do Painel |
+| `CategoryTile` | `VitrioCategoryTile` | Grade de 4 colunas; `more` para o último tile |
+| `ProviderCard` | `VitrioProviderCard` | Toda a área é tocável (`InkWell`) |
 | `ReviewCard` | `ReviewCard` | Resposta do prestador em `surfaceInset` |
 | `StatusTimeline` | `OrderTimeline` | Recebe a lista de etapas do pedido |
 | `QuoteCard` | `QuoteCard` | Único card com `shadow-md` na tela |
 | `PaymentMethodPicker` | `PaymentMethodPicker` | `Semantics(inMutuallyExclusiveGroup: true)` |
 | `PaymentReceipt` | `PaymentReceiptCard` | Borda 1.5 `green` |
 | `BottomNav` | `NavigationBar` | `navigationBarTheme` acima |
-| `TopBar` | `AppBar(centerTitle: true)` | Título em `label` 17px |
-| `ActionBar` | `bottomNavigationBar` com `SafeArea` | Nunca junto com `NavigationBar` |
-| `HeroCard` | `HeroCard` | Fundo `hero`, ícone decorativo a 30% |
+| `TopBar` | `VitrioTopBar` | Voltar redondo de 44px, título em `label` 17px, `trailing` opcional; usado como `appBar` do `Scaffold` |
+| `ActionBar` | `VitrioActionBar` | `bottomNavigationBar` com `note` opcional e erro do formulário acima do botão; nunca junto com `NavigationBar` |
+| `HeroCard` | `VitrioHeroCard` | Fundo `hero`, selo `lime` com ponto, ícone decorativo a 30% com traço 1.2 |
+
+Padrões do sistema montados com os tokens: `VitrioSectionHeader` (título de seção com link "Ver todas"), `VitrioListCard` e `VitrioListRow` (listas em card, como "Serviços e preços"), `VitrioNotice` (faixa de aviso e erro), `VitrioStar` (estrela de nota preenchida), `VitrioAddPhotoTile` (tracejado de "Adicionar foto") e `VitrioShadow` (sombras `sm`, `md` e `lg` nos dois temas).

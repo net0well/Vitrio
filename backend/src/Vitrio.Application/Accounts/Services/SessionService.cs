@@ -2,7 +2,7 @@ using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Common;
 using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Application.Accounts.Services;
 

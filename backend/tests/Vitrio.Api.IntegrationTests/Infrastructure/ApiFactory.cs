@@ -20,8 +20,10 @@ namespace Vitrio.Api.IntegrationTests.Infrastructure;
 public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public const string TightRateLimitPolicy = "probe-tight";
+    public const string AndroidFingerprint = "14:6D:E9:83:C5:73:06:50:D8:EE:B9:95:2F:34:FC:64:16:A0:83:42:E6:1D:BE:A8:8A:04:96:B2:3F:CF:44:E5";
 
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgis/postgis:17-3.6").Build();
+    private readonly SeaweedFsContainer _storage = new();
 
     public string ConnectionString => _database.GetConnectionString();
 
@@ -36,9 +38,15 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public CapturedLogs Logs { get; } = new();
 
+    public RecordingPhotoQueue Photos { get; } = new();
+
+    public FakeCnpjLookup Cnpj { get; } = new();
+
+    public string PublicStorageUrl => $"{_storage.ServiceUrl}/{SeaweedFsContainer.PublicBucket}";
+
     public async ValueTask InitializeAsync()
     {
-        await _database.StartAsync();
+        await Task.WhenAll(_database.StartAsync(), _storage.StartAsync());
 
         using var scope = Services.CreateScope();
         await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
@@ -49,6 +57,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await base.DisposeAsync();
         await _database.DisposeAsync();
+        await _storage.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -57,6 +66,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("ConnectionStrings:Database", ConnectionString);
         builder.UseSetting("Jwt:SigningKey", SigningKey);
         builder.UseSetting("Auth:CodeKey", CodeKey);
+        builder.UseSetting("Jobs:Enabled", "false");
+        builder.UseSetting("Storage:ServiceUrl", _storage.ServiceUrl);
+        builder.UseSetting("Storage:AccessKey", SeaweedFsContainer.AccessKey);
+        builder.UseSetting("Storage:SecretKey", SeaweedFsContainer.SecretKey);
+        builder.UseSetting("Storage:PublicBaseUrl", PublicStorageUrl);
+        builder.UseSetting("Storage:CreateBuckets", "true");
+        builder.UseSetting("PublicLinks:AndroidCertificateFingerprints:0", AndroidFingerprint);
         builder.ConfigureTestServices(services =>
         {
             services.AddControllers().AddApplicationPart(typeof(ApiFactory).Assembly);
@@ -65,6 +81,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
             services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
             services.Replace(ServiceDescriptor.Singleton<IIbgeCitySource>(Ibge));
+            services.Replace(ServiceDescriptor.Singleton<IPhotoProcessingQueue>(Photos));
+            services.Replace(ServiceDescriptor.Singleton<ICnpjLookup>(Cnpj));
             services.AddSingleton<ILogEventSink>(Logs);
             services.Configure<RateLimiterOptions>(options => options.AddFixedWindowLimiter(TightRateLimitPolicy, limiter =>
             {

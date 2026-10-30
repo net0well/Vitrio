@@ -1,6 +1,7 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_result.dart';
-import '../../auth/data/json_body.dart';
+import '../../../core/network/json_body.dart';
+import '../domain/cep_address.dart';
 import '../domain/city_summary.dart';
 import 'cities_repository.dart';
 
@@ -22,4 +23,8 @@ final class HttpCitiesRepository implements CitiesRepository {
         query: {'search': term, 'limit': '20'},
         decode: (json) => jsonObjects(json).map(CitySummary.fromJson).toList(growable: false),
       );
+
+  @override
+  Future<ApiResult<CepAddress>> lookupCep(String cep) =>
+      _api.get('/api/v1/ceps/$cep', decode: (json) => CepAddress.fromJson(jsonObject(json)));
 }

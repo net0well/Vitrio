@@ -3,8 +3,8 @@ using Mediator;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Locations.Common;
 using Vitrio.Application.Locations.Repositories;
-using Vitrio.Domain.Common;
 using Vitrio.Domain.Locations;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Locations.GetCity;
 

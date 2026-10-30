@@ -4,7 +4,8 @@ using Vitrio.Application.Accounts.Common;
 using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Exceptions;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.ResetPassword;
 

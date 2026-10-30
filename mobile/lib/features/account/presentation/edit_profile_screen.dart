@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design_system/tokens/vitrio_space.dart';
+import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
+import '../../../core/presentation/form_page.dart';
+import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/data/auth_providers.dart';
 import '../../auth/presentation/session_controller.dart';
-import '../../auth/presentation/widgets/form_page.dart';
-import '../../auth/presentation/widgets/problem_message.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -72,21 +73,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       onAction: _save,
       message: _problem == null || _problem!.isValidation ? null : problemMessage(l10n, _problem!),
       children: [
-        TextField(
+        VitrioTextField(
+          label: l10n.authName,
           controller: _name,
           textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(labelText: l10n.authName, errorText: fieldError(_problem, 'displayName')),
+          error: fieldError(_problem, 'displayName'),
         ),
         const SizedBox(height: VitrioSpace.sp16),
-        TextField(
+        VitrioTextField(
+          label: l10n.profilePhone,
           controller: _phone,
           keyboardType: TextInputType.phone,
           autofillHints: const [AutofillHints.telephoneNumber],
-          decoration: InputDecoration(
-            labelText: l10n.profilePhone,
-            hintText: l10n.profilePhoneHint,
-            errorText: fieldError(_problem, 'phoneNumber'),
-          ),
+          placeholder: l10n.profilePhoneHint,
+          error: fieldError(_problem, 'phoneNumber'),
         ),
       ],
     );

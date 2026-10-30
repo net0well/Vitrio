@@ -1,8 +1,8 @@
 using Mediator;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
 using Vitrio.Domain.Locations;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Locations.LookupCep;
 

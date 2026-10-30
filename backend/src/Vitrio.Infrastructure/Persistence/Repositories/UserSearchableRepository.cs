@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Vitrio.Application.Accounts.Common;
 using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Domain.Accounts;
+using Vitrio.Domain.Providers;
 
 namespace Vitrio.Infrastructure.Persistence.Repositories;
 
@@ -25,12 +26,15 @@ internal sealed class UserSearchableRepository(AppDbContext db) : IUserSearchabl
                 account.DisplayName,
                 account.Email,
                 account.PhoneNumber,
-                IsAdmin = db.AdminGrants.Any(grant => grant.UserId == account.Id)
+                IsAdmin = db.AdminGrants.Any(grant => grant.UserId == account.Id),
+                IsProvider = db.Providers.Any(provider =>
+                    provider.UserId == account.Id
+                    && (provider.Status == ProviderStatus.Draft || provider.Status == ProviderStatus.Published || provider.Status == ProviderStatus.Paused))
             })
             .SingleOrDefaultAsync(cancellationToken);
 
         return user is null
             ? null
-            : MeResponse.Create(user.Id, user.DisplayName, user.Email, user.PhoneNumber, AccountRoles.For(user.IsAdmin));
+            : MeResponse.Create(user.Id, user.DisplayName, user.Email, user.PhoneNumber, AccountRoles.For(user.IsAdmin, user.IsProvider));
     }
 }

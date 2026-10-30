@@ -23,28 +23,37 @@ class LocationPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.vitrio;
+    final l10n = AppLocalizations.of(context);
+    const shape = BorderRadius.all(VitrioRadius.full);
     return Semantics(
       button: true,
-      hint: AppLocalizations.of(context).locationPillHint,
+      hint: l10n.locationPillHint,
       child: Material(
-        color: c.plumSoft,
-        borderRadius: const BorderRadius.all(VitrioRadius.full),
+        color: c.surfaceRaised,
+        shape: RoundedRectangleBorder(borderRadius: shape, side: BorderSide(color: c.line)),
         child: InkWell(
-          borderRadius: const BorderRadius.all(VitrioRadius.full),
+          borderRadius: shape,
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp14, vertical: VitrioSpace.sp8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                VitrioIcon(VitrioIconName.pin, size: 18, color: c.plum),
-                const SizedBox(width: VitrioSpace.sp6),
-                Flexible(
-                  child: Text(labelOf(location), style: VitrioText.label.copyWith(color: c.plum), overflow: TextOverflow.ellipsis),
-                ),
-                const SizedBox(width: VitrioSpace.sp4),
-                VitrioIcon(VitrioIconName.chevronDown, size: 18, color: c.plum),
-              ],
+          child: SizedBox(
+            height: VitrioSpace.tap,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(start: VitrioSpace.sp12, end: VitrioSpace.sp14),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  VitrioIcon(VitrioIconName.pin, size: 18, color: c.plum),
+                  const SizedBox(width: VitrioSpace.sp8),
+                  Flexible(
+                    child: Text(
+                      location.isSet ? labelOf(location) : l10n.locationChooseCity,
+                      style: VitrioText.label.copyWith(color: c.ink),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: VitrioSpace.sp8),
+                  VitrioIcon(VitrioIconName.chevronDown, size: 16, color: c.inkMuted),
+                ],
+              ),
             ),
           ),
         ),

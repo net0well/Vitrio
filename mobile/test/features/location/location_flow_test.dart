@@ -14,7 +14,7 @@ void main() {
   const nearMe = {'welcome_seen': true, 'location_mode': 'nearMe'};
 
   Future<void> chooseInPicker(WidgetTester tester, String term, String city) async {
-    await tester.enterText(find.byType(TextField), term);
+    await tester.enterText(find.descendant(of: find.byType(BottomSheet), matching: find.byType(TextField)), term);
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
     await tester.tap(find.text(city));
@@ -33,7 +33,7 @@ void main() {
 
     await chooseInPicker(tester, 'jab', 'Jaboticabal · SP');
 
-    expect(find.text('Mostrando profissionais de Jaboticabal'), findsOneWidget);
+    expect(find.text('Mostrando profissionais de Jaboticabal, SP.'), findsOneWidget);
     expect(harness.device.settingsOpened, 0);
   });
 
@@ -48,7 +48,7 @@ void main() {
     await tester.tap(find.text('Centro, Jaboticabal'));
     await tester.pumpAndSettle();
     await chooseInPicker(tester, 'paulo', 'São Paulo · SP');
-    expect(find.text('Mostrando profissionais de São Paulo'), findsOneWidget);
+    expect(find.text('Mostrando profissionais de São Paulo, SP.'), findsOneWidget);
 
     await tester.tap(find.text('São Paulo'));
     await tester.pumpAndSettle();

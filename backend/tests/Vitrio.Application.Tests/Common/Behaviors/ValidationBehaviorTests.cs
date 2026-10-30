@@ -1,7 +1,7 @@
 using FluentValidation;
 using Mediator;
 using Vitrio.Application.Common.Behaviors;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Tests.Common.Behaviors;
 

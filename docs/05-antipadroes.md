@@ -7,6 +7,10 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Não faça | Por quê | Faça |
 | --- | --- | --- |
 | Minimal APIs (`app.MapGet`, `MapGroup`, `IEndpointGroup`), mesmo quando o `/scaffold` gerar assim | Decisão do projeto (ADR-001); mistura dois estilos e quebra a organização por controller | Controller com `[ApiController]` herdando `ApiControllerBase`; adapte a saída do scaffold |
+| Hangfire fora do `Vitrio.Jobs` (`BackgroundJob.Enqueue` num handler, `AddHangfire` na Infrastructure) | Prende as camadas a um agendador específico e espalha a configuração | Abstração na Application (`IPhotoProcessingQueue`) implementada no `Vitrio.Jobs` |
+| Job com regra de negócio, repository ou `IUnitOfWork` | A regra fica fora do caso de uso, sem validação nem teste de handler | Job fino que só envia um comando pelo `ISender` |
+| Regra de negócio, framework ou referência a outra camada no `Vitrio.Shared` | O núcleo compartilhado vira depósito e arrasta dependências para todas as camadas | Shared só com tipos técnicos; conceito de negócio no Domain |
+| Helper técnico copiado em duas camadas | Duplicação que diverge com o tempo | Um tipo só, no `Vitrio.Shared` |
 | Controller com regra de negócio, `DbContext` ou `if` de estado | Regra espalhada e sem teste de unidade | Controller só monta comando e chama `ISender` |
 | `Domain` referenciando EF Core, ASP.NET ou pacotes externos | Domínio deixa de ser testável e portável | Domínio puro; mapeamento na Infrastructure |
 | Repositório genérico (`IRepository<T>`) sobre EF Core | Métodos sem intenção (`GetAll`, `Find(predicate)`) que acabam expondo `IQueryable` e espalhando consultas | Repository por agregado com métodos de intenção: `I<Agregado>WritableRepository` e `I<Agregado>SearchableRepository` |
@@ -93,6 +97,8 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Não faça | Por quê | Faça |
 | --- | --- | --- |
 | Cor, fonte, tamanho ou raio literais | Quebra tema escuro e consistência | Tokens do design system |
+| Tela prototipada diferente do protótipo (outra ordem, outro componente, outro texto, elemento faltando) | O app deixa de ser o produto desenhado e cada tela vira uma interpretação | Ler a prancheta e reproduzir; diferença só com aprovação registrada na spec |
+| Componente próprio quando o design system já tem um | Duas versões do mesmo elemento | O widget do design system (`VitrioChip`, `VitrioBadge`, `VitrioAvatar`...) |
 | Chamar HTTP direto da tela | Mistura UI e dados | Repositório + controller Riverpod |
 | Lógica de negócio na UI (ex.: decidir se pode avaliar) | Regras divergem da API | A API diz o que é permitido (`canReview`, `allowedActions`) |
 | Pedir permissão de localização sem contexto | Usuário nega para sempre | Pré-permissão explicando o uso, com alternativa "Escolher cidade" |

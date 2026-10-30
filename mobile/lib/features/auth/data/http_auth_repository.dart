@@ -1,10 +1,10 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_result.dart';
+import '../../../core/network/json_body.dart';
 import '../domain/auth_session.dart';
 import '../domain/email_code_purpose.dart';
 import 'auth_repository.dart';
 import 'device_name.dart';
-import 'json_body.dart';
 
 final class HttpAuthRepository implements AuthRepository {
   const HttpAuthRepository(this._api);

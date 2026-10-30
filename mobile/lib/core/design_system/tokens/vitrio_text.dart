@@ -17,6 +17,11 @@ abstract final class VitrioText {
     );
   }
 
+  static TextStyle weighted(TextStyle style, int weight) => style.copyWith(
+        fontWeight: FontWeight.values[weight ~/ 100 - 1],
+        fontVariations: [FontVariation('wght', weight.toDouble())],
+      );
+
   static final displayXl = _style(displayFamily, 34, 37, 800, -0.8);
   static final display = _style(displayFamily, 30, 33, 700, -0.7);
   static final title = _style(displayFamily, 22, 26, 700, -0.4);

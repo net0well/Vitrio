@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Vitrio.Domain.Common;
 using Vitrio.Infrastructure.Events;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Infrastructure.Persistence.Outbox;
 

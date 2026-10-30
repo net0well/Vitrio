@@ -70,7 +70,7 @@ vitrio/
 | Eventos | Domain events → outbox com uma entrega por handler → despachante em `BackgroundService` | Padrão e catálogo em [10-eventos.md](10-eventos.md); sem broker no início (ADR-009) |
 | Cache | `HybridCache` com memória local (L1) e Redis (L2) | Política completa em [09-cache.md](09-cache.md) (ADR-013) |
 | Mapeamento | Manual, com métodos estáticos nos DTOs (`From`, `ToCommand`) | Nenhuma biblioteca de mapeamento (AutoMapper, Mapster, Mapperly) |
-| Imagens | S3 compatível (Cloudflare R2 em produção, MinIO local) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
+| Imagens | S3 compatível (Cloudflare R2 em produção, SeaweedFS local e nos testes) + SkiaSharp para processar | ADR-010; ImageSharp tem licença restrita |
 | Push | Firebase Admin SDK (FCM) | |
 | Documentação da API | Swashbuckle: documento OpenAPI por versão e Swagger UI em `/swagger`, com o esquema Bearer nas rotas protegidas | Só em desenvolvimento |
 | Observabilidade | OpenTelemetry (traces e métricas) + Serilog (logs) → Seq em dev, Grafana/Loki/Tempo em produção | |
@@ -85,9 +85,11 @@ backend/
   Directory.Build.props
   Directory.Packages.props
   src/
-    Vitrio.Domain/            entidades, value objects, regras, eventos de domínio, Result/Error, IClock. Sem dependências externas.
+    Vitrio.Shared/            núcleo técnico compartilhado: Result/Error, IClock, ClockTime, ClaimNames, ConcurrencyConflictException. Sem dependências.
+    Vitrio.Domain/            entidades, value objects, regras, eventos de domínio. Referencia só o Shared.
     Vitrio.Application/       casos de uso por funcionalidade (comandos, consultas, validadores, DTOs), abstrações.
-    Vitrio.Infrastructure/    EF Core, PostGIS, storage, FCM, BrasilAPI, Hangfire, outbox, autenticação.
+    Vitrio.Infrastructure/    EF Core, PostGIS, storage, imagens, FCM, BrasilAPI, outbox, autenticação.
+    Vitrio.Jobs/              Hangfire: storage, servidor, jobs recorrentes e filas. Cada job só envia um comando.
     Vitrio.Api/               Controllers, filtros, middlewares, composição (Program.cs), Swagger.
   tests/
     Vitrio.Domain.Tests/
@@ -98,11 +100,13 @@ backend/
 
 Regras de dependência (verificadas por teste de arquitetura):
 
-- `Domain` não referencia nenhum outro projeto nem pacote de infraestrutura.
+- `Shared` não referencia nenhum projeto nem framework, e não tem regra de negócio. Entra nele o tipo técnico usado por mais de uma camada; conceito de negócio fica no `Domain`, mesmo que várias camadas o usem. Não é o *shared kernel* do DDD: conceito de domínio compartilhado entre módulos (`AggregateRoot`, eventos de domínio, `FreeText`, `Money`) fica em `Domain/Common`. Exemplo: `ClaimNames` é o formato do token que a Infrastructure grava e a Api lê, então é Shared; os papéis (`Roles`) são conceito de negócio, então são Domain.
+- `Domain` referencia só o `Shared`, sem pacote de infraestrutura.
 - `Application` referencia só `Domain` (e pacotes de abstração: Mediator e FluentValidation). Não referencia EF Core: lê e grava só por repositories e `IUnitOfWork`.
 - Só a `Infrastructure` conhece o `AppDbContext`; a `Api` usa repositories quando precisa gravar algo (auditoria).
 - `Infrastructure` referencia `Application` e `Domain`.
-- `Api` referencia `Application` e `Infrastructure` só para composição; Controllers falam apenas com `ISender`.
+- `Jobs` referencia só a `Application` (e, por ela, `Domain` e `Shared`). É o único projeto com Hangfire. Um job não usa repository, `IUnitOfWork` nem `DbContext`: envia um comando pelo `ISender`, e a regra fica no handler. Quem precisa agendar algo usa uma abstração da Application (ex.: `IPhotoProcessingQueue`), implementada no `Jobs`.
+- `Api` referencia `Application`, `Infrastructure` e `Jobs` só para composição; Controllers falam apenas com `ISender`.
 
 ### Application por funcionalidade
 
@@ -284,7 +288,7 @@ where p.status = 'Published'
 - **Eventos de domínio seguem [10-eventos.md](10-eventos.md)**, que tem o padrão completo e o **catálogo único** (evento, agregado, conteúdo, versão, quem consome e o que cada consumidor faz). Nenhum outro documento lista eventos.
 - Resumo: só agregados geram eventos, e só nas transições a que algo fora do agregado reage (notificação, dado derivado de outro agregado, cache, outro módulo). No `SaveChanges`, cada evento vira uma linha de `outbox_messages` e uma de `outbox_deliveries` por handler, na mesma transação. Um `BackgroundService` entrega cada handler em transação própria, com retry por handler e `Failed` após 10 tentativas. Eventos não passam pelo `Mediator`.
 - Auditoria não é evento: o comando grava `audit_events` na própria transação, com `IAuditLog`.
-- Hangfire roda os jobs recorrentes. Painel do Hangfire só para admin, fora da internet pública.
+- Hangfire roda os jobs recorrentes e as filas (processamento de imagem), tudo no projeto `Vitrio.Jobs`, no mesmo processo da API e desligável por `Jobs:Enabled` (desligado nos testes de integração, que chamam os comandos direto). Painel do Hangfire só para admin, fora da internet pública.
 
 | Job | Frequência | O que faz |
 | --- | --- | --- |
@@ -350,7 +354,7 @@ mobile/lib/
 
 ## 10. Infraestrutura e entrega
 
-- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq, Mailpit (caixa de e-mail de teste em `http://localhost:8025`) e a API; `dotnet run` com user-secrets. O storage S3 local é definido junto com os uploads, porque a edição comunitária do MinIO deixou de publicar imagens.
+- **Local:** `infra/docker-compose.yml` com PostGIS, Redis, Seq, Mailpit (caixa de e-mail de teste em `http://localhost:8025`), SeaweedFS (storage S3 compatível; a edição comunitária do MinIO deixou de publicar imagens) e a API; `dotnet run` com user-secrets.
 - **Produção inicial:** um servidor Linux com Docker Compose (API, Hangfire server no mesmo processo, Redis sem persistência, Caddy com TLS automático), banco PostgreSQL gerenciado com backups diários e PITR, R2 para imagens. Migração para containers gerenciados quando a carga pedir; com mais de uma instância, Redis gerenciado e rate limit no Redis ([09-cache.md](09-cache.md)). Os arquivos ficam em `infra/production/`. A imagem da API (`backend/Dockerfile`) roda sem root, sem shell e com sistema de arquivos só de leitura, e a API se recusa a subir em produção sem domínio em `AllowedHosts`, sem o proxy conhecido e sem senha no Redis.
 - **CI (GitHub Actions):** build e testes (com Testcontainers), `dotnet format --verify-no-changes`, análise de vulnerabilidades de pacotes, CodeQL, gitleaks, `flutter analyze`, `flutter test` e build Android.
 - **CD:** imagem Docker assinada por tag, migrações aplicadas por job separado, deploy por SSH com healthcheck e rollback.
@@ -376,3 +380,4 @@ mobile/lib/
 | 014 | Lançar primeiro só no Android | Público-alvo majoritariamente Android; uma loja e um fluxo de login no início | Android e iOS juntos |
 | 015 | Mapeamento manual entre entidades e DTOs | Explícito, verificado pelo compilador, sem reflexão nem convenções escondidas | AutoMapper, Mapster, Mapperly |
 | 016 | Repository por agregado, separado em escrita (Writable) e leitura (Searchable), com Unit of Work; services para regra extensa ou reaproveitada | Handlers curtos, consultas com nome de intenção, leitura sempre projetada e Application sem EF Core | `DbContext` direto nos handlers; repositório genérico `IRepository<T>` |
+| 017 | `Vitrio.Shared` para o núcleo técnico e `Vitrio.Jobs` para o Hangfire | O Shared evita que tipos técnicos (Result, relógio, claims) morem numa camada que não é a deles; o Jobs isola o Hangfire e deixa cada job só como gatilho de um comando | Result no Domain; Hangfire dentro da Infrastructure |

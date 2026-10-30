@@ -3,14 +3,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_colors.dart';
+import '../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/tokens/vitrio_text.dart';
+import '../../../core/design_system/widgets/vitrio_avatar.dart';
+import '../../../core/design_system/widgets/vitrio_avatar_kind.dart';
+import '../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../core/design_system/widgets/vitrio_button_variant.dart';
 import '../../../core/design_system/widgets/vitrio_empty_state.dart';
-import '../../../core/design_system/widgets/vitrio_icon.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../core/design_system/widgets/vitrio_list_card.dart';
+import '../../../core/design_system/widgets/vitrio_list_row.dart';
+import '../../../core/design_system/widgets/vitrio_top_bar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/domain/me.dart';
 import '../../auth/presentation/session_controller.dart';
+import '../../provider/domain/app_mode.dart';
+import '../../provider/presentation/app_mode_controller.dart';
+import '../../provider/presentation/provider_step.dart';
 import 'delete_account_dialog.dart';
 
 class AccountScreen extends ConsumerWidget {
@@ -21,12 +31,16 @@ class AccountScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final session = ref.watch(sessionControllerProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.accountTitle)),
+      appBar: VitrioTopBar(title: l10n.accountTitle),
       body: switch (session) {
         AsyncData(value: final Me me) => _SignedIn(me: me),
         AsyncData() => const _SignedOut(),
         AsyncError() => Center(
-            child: TextButton(onPressed: () => ref.invalidate(sessionControllerProvider), child: Text(l10n.commonRetry)),
+            child: VitrioButton(
+              label: l10n.commonRetry,
+              variant: VitrioButtonVariant.ghost,
+              onPressed: () => ref.invalidate(sessionControllerProvider),
+            ),
           ),
         _ => const Center(child: CircularProgressIndicator()),
       },
@@ -41,13 +55,17 @@ class _SignedOut extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return ListView(
-      padding: const EdgeInsets.all(VitrioSpace.sp20),
+      padding: const EdgeInsets.fromLTRB(VitrioSpace.sp20, VitrioSpace.sp32, VitrioSpace.sp20, VitrioSpace.sp24),
       children: [
         VitrioEmptyState(icon: VitrioIconName.user, message: l10n.accountEmpty),
         const SizedBox(height: VitrioSpace.sp24),
-        FilledButton(onPressed: () => const SignInRoute().push<void>(context), child: Text(l10n.authSignIn)),
+        VitrioButton(label: l10n.authSignIn, onPressed: () => const SignInRoute().push<void>(context)),
         const SizedBox(height: VitrioSpace.sp12),
-        OutlinedButton(onPressed: () => const SignUpRoute().push<void>(context), child: Text(l10n.authCreateAccount)),
+        VitrioButton(
+          label: l10n.authCreateAccount,
+          variant: VitrioButtonVariant.secondary,
+          onPressed: () => const SignUpRoute().push<void>(context),
+        ),
       ],
     );
   }
@@ -63,45 +81,105 @@ class _SignedIn extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final c = context.vitrio;
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: VitrioSpace.sp16),
+      padding: const EdgeInsets.fromLTRB(VitrioSpace.sp20, VitrioSpace.sp16, VitrioSpace.sp20, VitrioSpace.sp24),
       children: [
-        ListTile(
-          leading: CircleAvatar(
-            backgroundColor: c.plumSoft,
-            child: Text(me.initials, style: VitrioText.label.copyWith(color: c.plum)),
+        Container(
+          padding: const EdgeInsets.all(VitrioSpace.sp16),
+          decoration: BoxDecoration(
+            color: c.surfaceRaised,
+            borderRadius: const BorderRadius.all(VitrioRadius.card),
+            border: Border.all(color: c.lineSoft),
           ),
-          title: Text(me.displayName, style: VitrioText.bodyStrong),
-          subtitle: Text(me.phoneNumber == null ? me.email : '${me.email}\n${me.phoneNumber}'),
-          isThreeLine: me.phoneNumber != null,
+          child: Row(
+            children: [
+              VitrioAvatar(name: me.displayName, initials: me.initials, seed: me.id, size: 52, kind: VitrioAvatarKind.client),
+              const SizedBox(width: VitrioSpace.sp14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(me.displayName, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
+                    const SizedBox(height: 2),
+                    Text(me.email, style: VitrioText.meta.copyWith(color: c.inkMuted)),
+                    if (me.phoneNumber case final phone?) Text(phone, style: VitrioText.meta.copyWith(color: c.inkMuted)),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        const Divider(),
-        ListTile(
-          leading: const VitrioIcon(VitrioIconName.user),
-          title: Text(l10n.accountEditProfile),
-          onTap: () => const EditProfileRoute().push<void>(context),
+        const SizedBox(height: VitrioSpace.sp12),
+        VitrioListCard(children: [_ModeRow(me: me)]),
+        const SizedBox(height: VitrioSpace.sp12),
+        VitrioListCard(
+          children: [
+            VitrioListRow(
+              icon: VitrioIconName.user,
+              title: l10n.accountEditProfile,
+              onTap: () => const EditProfileRoute().push<void>(context),
+            ),
+            VitrioListRow(
+              icon: VitrioIconName.lock,
+              title: l10n.accountChangePassword,
+              onTap: () => const ChangePasswordRoute().push<void>(context),
+            ),
+            VitrioListRow(
+              icon: VitrioIconName.shieldCheck,
+              title: l10n.accountDevices,
+              onTap: () => const ConnectedDevicesRoute().push<void>(context),
+            ),
+          ],
         ),
-        ListTile(
-          leading: const VitrioIcon(VitrioIconName.lock),
-          title: Text(l10n.accountChangePassword),
-          onTap: () => const ChangePasswordRoute().push<void>(context),
-        ),
-        ListTile(
-          leading: const VitrioIcon(VitrioIconName.shieldCheck),
-          title: Text(l10n.accountDevices),
-          onTap: () => const ConnectedDevicesRoute().push<void>(context),
-        ),
-        const Divider(),
-        ListTile(
-          leading: const VitrioIcon(VitrioIconName.arrowRight),
-          title: Text(l10n.accountSignOut),
-          onTap: () => ref.read(sessionControllerProvider.notifier).signOut(allDevices: false),
-        ),
-        ListTile(
-          leading: VitrioIcon(VitrioIconName.x, color: c.danger),
-          title: Text(l10n.accountDelete, style: TextStyle(color: c.danger)),
-          onTap: () => showDialog<void>(context: context, builder: (_) => const DeleteAccountDialog()),
+        const SizedBox(height: VitrioSpace.sp12),
+        VitrioListCard(
+          children: [
+            VitrioListRow(
+              icon: VitrioIconName.arrowRight,
+              title: l10n.accountSignOut,
+              chevron: false,
+              onTap: () => ref.read(sessionControllerProvider.notifier).signOut(allDevices: false),
+            ),
+            VitrioListRow(
+              icon: VitrioIconName.x,
+              title: l10n.accountDelete,
+              danger: true,
+              onTap: () => showDialog<void>(context: context, builder: (_) => const DeleteAccountDialog()),
+            ),
+          ],
         ),
       ],
+    );
+  }
+}
+
+class _ModeRow extends ConsumerWidget {
+  const _ModeRow({required this.me});
+
+  final Me me;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final mode = ref.watch(appModeControllerProvider);
+    if (!me.hasProviderProfile) {
+      return VitrioListRow(
+        icon: VitrioIconName.wrench,
+        title: l10n.providerOfferServices,
+        subtitle: l10n.providerOfferServicesHint,
+        onTap: () => const ProviderOnboardingRoute(step: ProviderStep.about).push<void>(context),
+      );
+    }
+
+    final toProvider = mode == AppMode.client;
+    return VitrioListRow(
+      icon: toProvider ? VitrioIconName.chart : VitrioIconName.home,
+      title: toProvider ? l10n.providerEnterMode : l10n.providerLeaveMode,
+      onTap: () async {
+        await ref.read(appModeControllerProvider.notifier).change(toProvider ? AppMode.provider : AppMode.client);
+        if (context.mounted) {
+          toProvider ? const ProviderDashboardRoute().go(context) : const HomeRoute().go(context);
+        }
+      },
     );
   }
 }

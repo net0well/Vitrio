@@ -4,7 +4,7 @@ Vitrio é um app para encontrar, contratar e avaliar profissionais autônomos e 
 
 - **App:** Flutter, um app com modo cliente e modo prestador. Primeiro lançamento só Android; iOS depois.
 - **API:** .NET 10, ASP.NET Core com **Controllers**, Clean Architecture, PostgreSQL + PostGIS, Redis como cache.
-- **Design:** sistema de design Vitrio (artifact "Vitrio — Sistema de design") e protótipo navegável (artifact "Vitrio — Protótipo do app").
+- **Design:** sistema de design Vitrio (artifact "Vitrio — Sistema de design") e protótipo navegável (["Vitrio — Protótipo do app"](https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt)). O app segue o design system à risca e as telas prototipadas ficam iguais ao protótipo.
 
 ## Mapa dos documentos
 

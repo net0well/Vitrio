@@ -1,5 +1,5 @@
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Domain.Tests.Accounts;
 

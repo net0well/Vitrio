@@ -1,5 +1,6 @@
 using Vitrio.Domain.Common;
 using Vitrio.Domain.Locations;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Domain.Accounts;
 

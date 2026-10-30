@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Api.Controllers;
 
@@ -22,6 +22,9 @@ public abstract class ApiControllerBase : ControllerBase
 
     protected IActionResult ToAcceptedResult(Result result) =>
         result.IsSuccess ? StatusCode(StatusCodes.Status202Accepted) : ErrorResult(result.Error);
+
+    protected IActionResult ToAcceptedResult<T>(Result<T> result) =>
+        result.IsSuccess ? StatusCode(StatusCodes.Status202Accepted, result.Value) : ErrorResult(result.Error);
 
     protected ObjectResult ErrorResult(Error error)
     {
@@ -47,6 +50,11 @@ public abstract class ApiControllerBase : ControllerBase
         {
             problem = ProblemDetailsFactory.CreateProblemDetails(
                 HttpContext, statusCode, type: type, detail: error.Message);
+        }
+
+        if (error is MissingFieldsError incomplete)
+        {
+            problem.Extensions["missing"] = incomplete.Missing;
         }
 
         if (error.RetryAfter is { } retryAfter)

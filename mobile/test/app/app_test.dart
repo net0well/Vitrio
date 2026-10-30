@@ -49,6 +49,7 @@ void main() {
   testWidgets('finding a professional asks where to search and remembers the welcome', (tester) async {
     final preferences = await pumpApp(tester);
 
+    await tester.ensureVisible(find.text('Encontrar um profissional'));
     await tester.tap(find.text('Encontrar um profissional'));
     await tester.pumpAndSettle();
 
@@ -56,21 +57,23 @@ void main() {
     expect(preferences.getBool('welcome_seen'), isTrue);
   });
 
-  testWidgets('offering services opens the account tab', (tester) async {
+  testWidgets('offering services without an account opens the sign-up', (tester) async {
     await pumpApp(tester);
 
+    await tester.ensureVisible(find.text('Quero oferecer meus serviços'));
     await tester.tap(find.text('Quero oferecer meus serviços'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.textContaining('Entre ou crie sua conta'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text('Criar conta'), findsWidgets);
+    expect(find.byType(CheckboxListTile), findsOneWidget);
   });
 
   testWidgets('returning users start on the home tab of their city', (tester) async {
     await pumpApp(tester, preferences: returning);
 
-    expect(find.text('Perto de você'), findsOneWidget);
-    expect(find.text('Mostrando profissionais de Jaboticabal'), findsOneWidget);
+    expect(find.text('Do que você precisa hoje?'), findsOneWidget);
+    expect(find.text('Mostrando profissionais de Jaboticabal, SP.'), findsOneWidget);
   });
 
   testWidgets('the empty orders tab leads to search', (tester) async {

@@ -1,6 +1,6 @@
 # Plano de telas e fluxos
 
-Um só app com dois modos: **cliente** (padrão) e **prestador** (ativado em "Quero oferecer meus serviços"). Funciona em qualquer cidade do Brasil: com o GPS ativo mostra os profissionais mais próximos; sem ele, o cliente escolhe a cidade. Telas marcadas como **prototipada** já existem no canvas de protótipo; as demais seguem os mesmos componentes.
+Um só app com dois modos: **cliente** (padrão) e **prestador** (ativado em "Quero oferecer meus serviços"). Funciona em qualquer cidade do Brasil: com o GPS ativo mostra os profissionais mais próximos; sem ele, o cliente escolhe a cidade. Telas marcadas como **prototipada** já existem no canvas de protótipo ([Vitrio — Protótipo do app](https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt)) e o app as reproduz **igual**: mesma estrutura, componentes e textos, com os dados reais no lugar dos exemplos. As demais seguem os mesmos componentes. Diferença só com aprovação registrada na spec.
 
 ## Navegação
 

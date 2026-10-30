@@ -6,11 +6,13 @@ import '../tokens/vitrio_text.dart';
 import 'vitrio_badge_tone.dart';
 
 class VitrioBadge extends StatelessWidget {
-  const VitrioBadge({super.key, required this.label, this.tone = VitrioBadgeTone.brand, this.icon});
+  const VitrioBadge({super.key, required this.label, this.tone = VitrioBadgeTone.brand, this.icon, this.dot = false, this.dotColor});
 
   final String label;
   final VitrioBadgeTone tone;
   final Widget? icon;
+  final bool dot;
+  final Color? dotColor;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,14 @@ class VitrioBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (dot) ...[
+            Container(
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(color: dotColor ?? foreground, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: VitrioSpace.sp6),
+          ],
           if (icon != null) ...[
             IconTheme(data: IconThemeData(size: 14, color: foreground), child: icon!),
             const SizedBox(width: VitrioSpace.sp6),

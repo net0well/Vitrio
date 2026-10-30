@@ -504,6 +504,615 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.ToTable("audit_events", (string)null);
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Categories.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("icon");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("slug");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_categories");
+
+                    b.HasIndex("Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_categories_slug");
+
+                    b.ToTable("categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Active = true,
+                            Icon = "bolt",
+                            Name = "Elétrica",
+                            Slug = "eletrica",
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Active = true,
+                            Icon = "droplet",
+                            Name = "Hidráulica",
+                            Slug = "hidraulica",
+                            SortOrder = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Active = true,
+                            Icon = "brick",
+                            Name = "Pedreiro",
+                            Slug = "pedreiro",
+                            SortOrder = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Active = true,
+                            Icon = "roller",
+                            Name = "Pintura",
+                            Slug = "pintura",
+                            SortOrder = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Active = true,
+                            Icon = "broom",
+                            Name = "Diarista",
+                            Slug = "diarista",
+                            SortOrder = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Active = true,
+                            Icon = "leaf",
+                            Name = "Jardinagem",
+                            Slug = "jardinagem",
+                            SortOrder = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Active = true,
+                            Icon = "wrench",
+                            Name = "Montagem de móveis",
+                            Slug = "montagem-de-moveis",
+                            SortOrder = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Active = true,
+                            Icon = "sliders",
+                            Name = "Ar-condicionado",
+                            Slug = "ar-condicionado",
+                            SortOrder = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Active = true,
+                            Icon = "wrench",
+                            Name = "Marido de aluguel",
+                            Slug = "marido-de-aluguel",
+                            SortOrder = 9
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Active = true,
+                            Icon = "transfer",
+                            Name = "Fretes e mudanças",
+                            Slug = "fretes-e-mudancas",
+                            SortOrder = 10
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Active = true,
+                            Icon = "star",
+                            Name = "Beleza a domicílio",
+                            Slug = "beleza-a-domicilio",
+                            SortOrder = 11
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Active = true,
+                            Icon = "message",
+                            Name = "Aulas particulares",
+                            Slug = "aulas-particulares",
+                            SortOrder = 12
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Active = true,
+                            Icon = "grid",
+                            Name = "Informática",
+                            Slug = "informatica",
+                            SortOrder = 13
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Active = true,
+                            Icon = "user",
+                            Name = "Cuidador(a)",
+                            Slug = "cuidador",
+                            SortOrder = 14
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Active = true,
+                            Icon = "heart",
+                            Name = "Pet",
+                            Slug = "pet",
+                            SortOrder = 15
+                        });
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer")
+                        .HasColumnName("day_of_week");
+
+                    b.Property<int>("EndMinute")
+                        .HasColumnType("integer")
+                        .HasColumnName("end_minute");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<int>("StartMinute")
+                        .HasColumnType("integer")
+                        .HasColumnName("start_minute");
+
+                    b.HasKey("Id")
+                        .HasName("pk_availability_slots");
+
+                    b.HasIndex("ProviderId")
+                        .HasDatabaseName("ix_availability_slots_provider_id");
+
+                    b.ToTable("availability_slots", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.MeiVerification", b =>
+                {
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<DateTimeOffset>("CheckedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("checked_at");
+
+                    b.Property<string>("Cnpj")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("character(14)")
+                        .HasColumnName("cnpj")
+                        .IsFixedLength();
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text")
+                        .HasColumnName("company_name")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<DateTimeOffset?>("PendingSince")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pending_since");
+
+                    b.Property<string>("ReasonCode")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("reason_code");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.HasKey("ProviderId")
+                        .HasName("pk_mei_verifications");
+
+                    b.HasIndex("Cnpj")
+                        .IsUnique()
+                        .HasDatabaseName("ix_mei_verifications_cnpj");
+
+                    b.HasIndex("Status", "CheckedAt")
+                        .HasDatabaseName("ix_mei_verifications_status_checked_at");
+
+                    b.ToTable("mei_verifications", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.PortfolioPhoto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("caption");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("ObjectKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("object_key");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("rejection_reason");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("ThumbnailKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("thumbnail_key");
+
+                    b.Property<string>("UploadKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("upload_key");
+
+                    b.HasKey("Id")
+                        .HasName("pk_portfolio_photos");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_portfolio_photos_processing")
+                        .HasFilter("status = 'Processing'");
+
+                    b.HasIndex("ProviderId", "SortOrder")
+                        .HasDatabaseName("ix_portfolio_photos_provider_id_sort_order");
+
+                    b.ToTable("portfolio_photos", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.Provider", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("About")
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("about");
+
+                    b.Property<bool>("AvailableToday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("available_today");
+
+                    b.Property<DateTimeOffset?>("AvailableTodaySetAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("available_today_set_at");
+
+                    b.Property<string>("AvatarKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("avatar_key");
+
+                    b.Property<string>("AvatarUploadKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("avatar_upload_key");
+
+                    b.Property<string>("BaseCep")
+                        .HasColumnType("text")
+                        .HasColumnName("base_cep")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("BaseComplement")
+                        .HasColumnType("text")
+                        .HasColumnName("base_complement")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("BaseLocation")
+                        .HasColumnType("text")
+                        .HasColumnName("base_location")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("BaseNeighborhood")
+                        .HasColumnType("text")
+                        .HasColumnName("base_neighborhood")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("BaseNumber")
+                        .HasColumnType("text")
+                        .HasColumnName("base_number")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<string>("BaseStreet")
+                        .HasColumnType("text")
+                        .HasColumnName("base_street")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<int?>("CityIbgeCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("city_ibge_code");
+
+                    b.Property<int>("CompletedOrders")
+                        .HasColumnType("integer")
+                        .HasColumnName("completed_orders");
+
+                    b.Property<string>("ContactPhone")
+                        .HasColumnType("text")
+                        .HasColumnName("contact_phone")
+                        .HasAnnotation("Vitrio:PersonalData", true);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("display_name");
+
+                    b.Property<bool>("HandlesEmergencies")
+                        .HasColumnType("boolean")
+                        .HasColumnName("handles_emergencies");
+
+                    b.Property<string>("Headline")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("headline");
+
+                    b.Property<int>("LateCancellations90d")
+                        .HasColumnType("integer")
+                        .HasColumnName("late_cancellations90d");
+
+                    b.Property<bool>("LocationApproximate")
+                        .HasColumnType("boolean")
+                        .HasColumnName("location_approximate");
+
+                    b.Property<double?>("PublicLatitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("public_latitude");
+
+                    b.Property<double?>("PublicLongitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("public_longitude");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at");
+
+                    b.Property<decimal?>("RatingScore")
+                        .HasPrecision(3, 2)
+                        .HasColumnType("numeric(3,2)")
+                        .HasColumnName("rating_score");
+
+                    b.Property<int>("ResponseSampleSize")
+                        .HasColumnType("integer")
+                        .HasColumnName("response_sample_size");
+
+                    b.Property<string>("ResponseTimeBucket")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("response_time_bucket");
+
+                    b.Property<int>("ReviewCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("review_count");
+
+                    b.Property<int>("ServiceRadiusMeters")
+                        .HasColumnType("integer")
+                        .HasColumnName("service_radius_meters");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<bool>("WhatsAppEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("whats_app_enabled");
+
+                    b.Property<int?>("YearsOfExperience")
+                        .HasColumnType("integer")
+                        .HasColumnName("years_of_experience");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_providers");
+
+                    b.HasIndex("CityIbgeCode")
+                        .HasDatabaseName("ix_providers_city_ibge_code");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_providers_user_id")
+                        .HasFilter("status <> 'Removed'");
+
+                    b.ToTable("providers", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.ProviderCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("category_id");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_primary");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_provider_categories");
+
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("ix_provider_categories_category_id");
+
+                    b.HasIndex("ProviderId", "CategoryId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_provider_categories_provider_id_category_id");
+
+                    b.ToTable("provider_categories", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.ProviderService", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(140)
+                        .HasColumnType("character varying(140)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("OnQuote")
+                        .HasColumnType("boolean")
+                        .HasColumnName("on_quote");
+
+                    b.Property<long?>("PriceFromCents")
+                        .HasColumnType("bigint")
+                        .HasColumnName("price_from_cents");
+
+                    b.Property<string>("PriceUnit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("price_unit");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pk_provider_services");
+
+                    b.HasIndex("ProviderId")
+                        .HasDatabaseName("ix_provider_services_provider_id");
+
+                    b.ToTable("provider_services", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.ServedNeighborhood", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("name_normalized");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_served_neighborhoods");
+
+                    b.HasIndex("ProviderId", "NameNormalized")
+                        .IsUnique()
+                        .HasDatabaseName("ix_served_neighborhoods_provider_id_name_normalized");
+
+                    b.ToTable("served_neighborhoods", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Cities.CityRecord", b =>
                 {
                     b.Property<int>("IbgeCode")
@@ -706,6 +1315,89 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_sessions_users_user_id");
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany("Availability")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_availability_slots_providers_provider_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.MeiVerification", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithOne("Mei")
+                        .HasForeignKey("Vitrio.Domain.Providers.MeiVerification", "ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_mei_verifications_providers_provider_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.PortfolioPhoto", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_portfolio_photos_providers_provider_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.Provider", b =>
+                {
+                    b.HasOne("Vitrio.Infrastructure.Persistence.Cities.CityRecord", null)
+                        .WithMany()
+                        .HasForeignKey("CityIbgeCode")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_providers_cities_city_ibge_code");
+
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_providers_users_user_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.ProviderCategory", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Categories.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_provider_categories_categories_category_id");
+
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_provider_categories_providers_provider_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.ProviderService", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany("Services")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_provider_services_providers_provider_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.ServedNeighborhood", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany("Neighborhoods")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_served_neighborhoods_providers_provider_id");
+                });
+
             modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Outbox.OutboxDelivery", b =>
                 {
                     b.HasOne("Vitrio.Infrastructure.Persistence.Outbox.OutboxMessage", null)
@@ -714,6 +1406,21 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_outbox_deliveries_outbox_messages_message_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Providers.Provider", b =>
+                {
+                    b.Navigation("Availability");
+
+                    b.Navigation("Categories");
+
+                    b.Navigation("Mei");
+
+                    b.Navigation("Neighborhoods");
+
+                    b.Navigation("Photos");
+
+                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

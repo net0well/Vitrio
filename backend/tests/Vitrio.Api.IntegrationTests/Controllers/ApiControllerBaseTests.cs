@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Vitrio.Api.IntegrationTests.Infrastructure;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Api.IntegrationTests.Controllers;
 

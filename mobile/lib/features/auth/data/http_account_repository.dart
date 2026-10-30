@@ -1,9 +1,9 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_result.dart';
+import '../../../core/network/json_body.dart';
 import '../domain/connected_session.dart';
 import '../domain/me.dart';
 import 'account_repository.dart';
-import 'json_body.dart';
 
 final class HttpAccountRepository implements AccountRepository {
   const HttpAccountRepository(this._api);

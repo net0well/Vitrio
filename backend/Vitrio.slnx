@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Vitrio.Shared/Vitrio.Shared.csproj" />
     <Project Path="src/Vitrio.Domain/Vitrio.Domain.csproj" />
     <Project Path="src/Vitrio.Application/Vitrio.Application.csproj" />
     <Project Path="src/Vitrio.Infrastructure/Vitrio.Infrastructure.csproj" />
+    <Project Path="src/Vitrio.Jobs/Vitrio.Jobs.csproj" />
     <Project Path="src/Vitrio.Api/Vitrio.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">

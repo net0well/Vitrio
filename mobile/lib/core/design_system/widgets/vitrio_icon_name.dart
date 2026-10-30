@@ -43,6 +43,9 @@ enum VitrioIconName {
 
   const VitrioIconName(this.fileName);
 
+  static VitrioIconName fromFileName(String name, {VitrioIconName fallback = VitrioIconName.grid}) =>
+      values.firstWhere((icon) => icon.fileName == name, orElse: () => fallback);
+
   final String fileName;
 
   String get assetPath => 'assets/icons/$fileName.svg';

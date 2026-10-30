@@ -31,9 +31,11 @@ using Vitrio.Application.Abstractions;
 using Vitrio.Application.Common;
 using Vitrio.Application.Common.Behaviors;
 using Vitrio.Domain.Accounts;
-using Vitrio.Domain.Common;
 using Vitrio.Infrastructure;
 using Vitrio.Infrastructure.Authentication;
+using Vitrio.Jobs;
+using Vitrio.Shared.Security;
+using Vitrio.Shared.Time;
 
 const int MaxRequestBodySize = 64 * 1024;
 
@@ -75,6 +77,7 @@ if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOIN
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddJobs(builder.Configuration);
 builder.Services.AddMediator((Mediator.MediatorOptions options) =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Vitrio.Api.Controllers;
 using Vitrio.Api.RateLimiting;
-using Vitrio.Application.Abstractions;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Exceptions;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Api.IntegrationTests.Infrastructure;
 

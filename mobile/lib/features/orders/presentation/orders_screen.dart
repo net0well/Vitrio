@@ -4,6 +4,7 @@ import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/widgets/vitrio_empty_state.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../core/design_system/widgets/vitrio_top_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
 class OrdersScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class OrdersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.ordersTitle)),
+      appBar: VitrioTopBar(title: l10n.ordersTitle),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp20),

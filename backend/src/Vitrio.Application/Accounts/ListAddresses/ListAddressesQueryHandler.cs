@@ -2,7 +2,7 @@ using Mediator;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Common;
 using Vitrio.Application.Accounts.Repositories;
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Accounts.ListAddresses;
 

@@ -18,7 +18,7 @@ public sealed class ClockUsageTests
     [Fact]
     public void NoLayer_ReadsTheSystemClockDirectly()
     {
-        var violations = new[] { Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api }
+        var violations = Layers.All
             .SelectMany(FindForbiddenCalls)
             .ToList();
 

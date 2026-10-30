@@ -1,4 +1,4 @@
-using Vitrio.Domain.Common;
+using Vitrio.Shared.Time;
 
 namespace Vitrio.Domain.Auditing;
 

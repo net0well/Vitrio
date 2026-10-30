@@ -5,6 +5,29 @@ namespace Vitrio.ArchitectureTests;
 public sealed class LayerDependencyTests
 {
     [Fact]
+    public void Shared_DependsOnNoLayerOrFramework()
+    {
+        var result = Types.InAssembly(Layers.Shared)
+            .ShouldNot()
+            .HaveDependencyOnAny(
+                "Vitrio.Domain",
+                "Vitrio.Application",
+                "Vitrio.Infrastructure",
+                "Vitrio.Jobs",
+                "Vitrio.Api",
+                "Microsoft.EntityFrameworkCore",
+                "Microsoft.AspNetCore",
+                "Microsoft.Extensions",
+                "Mediator",
+                "FluentValidation",
+                "Hangfire",
+                "Npgsql")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
     public void Domain_DependsOnNoOtherLayerOrFramework()
     {
         var result = Types.InAssembly(Layers.Domain)
@@ -12,11 +35,13 @@ public sealed class LayerDependencyTests
             .HaveDependencyOnAny(
                 "Vitrio.Application",
                 "Vitrio.Infrastructure",
+                "Vitrio.Jobs",
                 "Vitrio.Api",
                 "Microsoft.EntityFrameworkCore",
                 "Microsoft.AspNetCore",
                 "Mediator",
                 "FluentValidation",
+                "Hangfire",
                 "Npgsql")
             .GetResult();
 
@@ -28,7 +53,7 @@ public sealed class LayerDependencyTests
     {
         var result = Types.InAssembly(Layers.Application)
             .ShouldNot()
-            .HaveDependencyOnAny("Vitrio.Infrastructure", "Vitrio.Api", "Microsoft.AspNetCore", "Microsoft.EntityFrameworkCore", "Npgsql")
+            .HaveDependencyOnAny("Vitrio.Infrastructure", "Vitrio.Jobs", "Vitrio.Api", "Microsoft.AspNetCore", "Microsoft.EntityFrameworkCore", "Npgsql", "Hangfire")
             .GetResult();
 
         AssertSuccessful(result);
@@ -59,11 +84,48 @@ public sealed class LayerDependencyTests
     }
 
     [Fact]
-    public void Infrastructure_DoesNotDependOnApi()
+    public void Api_UsesJobsOnlyInTheComposition()
+    {
+        var result = Types.InAssembly(Layers.Api)
+            .That()
+            .ResideInNamespaceStartingWith("Vitrio.Api")
+            .ShouldNot()
+            .HaveDependencyOnAny("Vitrio.Jobs", "Hangfire")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void Jobs_DependOnlyOnTheApplication()
+    {
+        var result = Types.InAssembly(Layers.Jobs)
+            .ShouldNot()
+            .HaveDependencyOnAny("Vitrio.Infrastructure", "Vitrio.Api", "Microsoft.EntityFrameworkCore", "Microsoft.AspNetCore")
+            .GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void Jobs_OnlySendCommands_NeverTouchRepositoriesOrTheUnitOfWork()
+    {
+        var persistence = Layers.Application.GetTypes()
+            .Where(type => type.IsInterface && (type.Namespace?.EndsWith(".Repositories", StringComparison.Ordinal) == true || type.Name == "IUnitOfWork"))
+            .Select(type => type.FullName!)
+            .ToArray();
+
+        var result = Types.InAssembly(Layers.Jobs).ShouldNot().HaveDependencyOnAny(persistence).GetResult();
+
+        AssertSuccessful(result);
+    }
+
+    [Fact]
+    public void Infrastructure_DoesNotDependOnApiOrJobs()
     {
         var result = Types.InAssembly(Layers.Infrastructure)
             .ShouldNot()
-            .HaveDependencyOn("Vitrio.Api")
+            .HaveDependencyOnAny("Vitrio.Api", "Vitrio.Jobs", "Hangfire")
             .GetResult();
 
         AssertSuccessful(result);
@@ -72,7 +134,7 @@ public sealed class LayerDependencyTests
     [Fact]
     public void NoLayer_UsesMappingLibraries()
     {
-        var result = Types.InAssemblies([Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api])
+        var result = Types.InAssemblies(Layers.All)
             .ShouldNot()
             .HaveDependencyOnAny("AutoMapper", "Mapster", "Riok.Mapperly", "AgileObjects.AgileMapper", "ExpressMapper", "Nelibur.ObjectMapper")
             .GetResult();
@@ -83,7 +145,7 @@ public sealed class LayerDependencyTests
     [Fact]
     public void NoLayer_UsesMediatR()
     {
-        var result = Types.InAssemblies([Layers.Domain, Layers.Application, Layers.Infrastructure, Layers.Api])
+        var result = Types.InAssemblies(Layers.All)
             .ShouldNot()
             .HaveDependencyOn("MediatR")
             .GetResult();

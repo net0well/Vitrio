@@ -23,11 +23,12 @@ void main() {
     expect(find.textContaining('Mostrando profissionais'), findsNothing);
 
     await tester.tap(find.textContaining('Jaboticabal'));
-    await pumpUntil(tester, find.byType(TextField));
-    await tester.enterText(find.byType(TextField), 'sao paulo');
+    final cityField = find.descendant(of: find.byType(BottomSheet), matching: find.byType(TextField));
+    await pumpUntil(tester, cityField);
+    await tester.enterText(cityField, 'sao paulo');
     await pumpUntil(tester, find.text('São Paulo · SP'));
     await tester.tap(find.text('São Paulo · SP'));
-    await pumpUntil(tester, find.text('Mostrando profissionais de São Paulo'));
+    await pumpUntil(tester, find.text('Mostrando profissionais de São Paulo, SP.'));
 
     await tester.tap(find.text('São Paulo'));
     await pumpUntil(tester, find.text('Usar minha localização'));

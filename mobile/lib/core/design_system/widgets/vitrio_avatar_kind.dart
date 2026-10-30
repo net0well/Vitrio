@@ -1,0 +1,1 @@
+enum VitrioAvatarKind { provider, client }

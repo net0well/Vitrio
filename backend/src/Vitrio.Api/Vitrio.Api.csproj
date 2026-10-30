@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Vitrio.Application\Vitrio.Application.csproj" />
     <ProjectReference Include="..\Vitrio.Infrastructure\Vitrio.Infrastructure.csproj" />
+    <ProjectReference Include="..\Vitrio.Jobs\Vitrio.Jobs.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +23,10 @@
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Sinks.Seq" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Share\Templates\*.html" LogicalName="Vitrio.Share.%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

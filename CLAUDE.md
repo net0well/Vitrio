@@ -27,6 +27,8 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 ### Arquitetura
 - API com **Controllers** (`[ApiController]`, herdando `ApiControllerBase`). **Nunca Minimal APIs**, mesmo que `/scaffold` gere assim: adapte para controller.
 - Clean Architecture: `Vitrio.Domain` → `Vitrio.Application` → `Vitrio.Infrastructure` → `Vitrio.Api`. Casos de uso por funcionalidade na Application, com `Mediator` (MIT), FluentValidation e Result pattern.
+- `Vitrio.Shared` é o núcleo compartilhado por todas as camadas: só tipos técnicos sem regra de negócio e sem framework (`Result`, `Error`, `IClock`, `ClockTime`, `ClaimNames`, `ConcurrencyConflictException`). Não referencia nenhum outro projeto. Tipo técnico usado por mais de uma camada vai para o Shared; conceito ou regra de negócio fica no Domain (conceito de domínio compartilhado entre módulos, como no *shared kernel* do DDD, fica em `Domain/Common`).
+- `Vitrio.Jobs` é o único projeto que conhece o Hangfire (storage, servidor, jobs recorrentes e filas). Referencia só a Application; cada job apenas envia um comando pelo `ISender` (nada de repository, `IUnitOfWork` ou `DbContext`), e a regra fica no handler. A Api usa o Jobs só na composição (`Program.cs`); Application e Infrastructure enfileiram por abstração (`IPhotoProcessingQueue`), nunca pelo Hangfire.
 - Controllers só montam o comando e chamam `ISender`. Filtro de dono sempre dentro da consulta. Recurso alheio responde 404.
 - `IClock` (sobre `TimeProvider`) em vez de `DateTime.Now`; `CancellationToken` em todo método assíncrono.
 - Persistência por **Repository e Unit of Work**: por agregado, um `I<Agregado>WritableRepository` (comandos: carrega o agregado rastreado e adiciona) e, quando houver leitura, um `I<Agregado>SearchableRepository` (`AsNoTracking` e projeção direto para DTO). Interfaces na Application (`<Módulo>/Repositories`), implementação com EF na Infrastructure. O comando termina em `IUnitOfWork.SaveChangesAsync`. Handler, service e controller nunca tocam no `DbContext`, e a Application não referencia EF Core. Sem repositório genérico (`IRepository<T>`) e sem `IQueryable` saindo do repository.
@@ -38,6 +40,12 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 - Cache segue `docs/09-cache.md`: banco é a fonte da verdade, Redis e memória só aceleram; toda mudança no prestador invalida o perfil público.
 - **Um tipo por arquivo**, com o nome do tipo: classe, record, interface e enum separados (`User.cs` e `UserStatus.cs`). Só tipos aninhados privados ficam dentro da classe. No Dart, o mesmo; hierarquia `sealed` e rotas tipadas usam `part`.
 - Código em inglês; interface, documentação, branches e commits em português.
+
+### Design do app
+- O app segue **estritamente** o design system (`docs/design-system/`): tokens, componentes, ícones, textos e tom. Nada de cor, fonte, tamanho ou raio fora dos tokens, nem componente inventado quando o design system tem um.
+- Toda tela marcada como **prototipada** em `docs/design-system/telas.md` fica **igual ao protótipo do app** (artifact "Vitrio — Protótipo do app", https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt): mesma estrutura, ordem, hierarquia, componentes e textos. Leia a prancheta da tela antes de implementá-la ou alterá-la. Dado que vem da API substitui o exemplo do protótipo.
+- Tela sem protótipo segue os componentes e padrões do design system e das telas prototipadas parecidas.
+- Diferença do protótipo só com aprovação explícita do usuário, registrada na spec. Sem aprovação, a tela é ajustada até ficar igual.
 
 ### Segurança
 - Siga `docs/08-seguranca.md`. Nada de dados pessoais, tokens ou coordenadas em logs; nada de segredo no repositório.
@@ -56,10 +64,10 @@ Estas regras vencem qualquer padrão de skill, comando, agente ou regra do dotne
 4. Rastreabilidade só nos documentos. Código, testes, branches e commits não citam specs nem planos.
 5. Se a implementação mostrar que a spec está errada, volte a spec para In Review e corrija antes de seguir.
 6. Uma branch e um PR por spec. Os recortes do plano viram vários commits pequenos na mesma branch, e o PR só abre quando a spec inteira estiver implementada e testada de ponta a ponta (API e app). Nada de PR pequeno no meio do caminho.
-7. Fechamento da spec, antes do PR:
-   - `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); os achados são corrigidos ou registrados.
-   - Subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
-   - O resultado das revisões e dos testes manuais vai na descrição do PR.
+7. Fechamento de cada etapa (spec), antes do PR, com duas revisões:
+   - **Revisão de back:** `/code-review`, `/security-scan` e `/arch-check` do dotnet-claude-kit, conferindo a arquitetura proposta, os padrões (`docs/04-padroes.md`) e os antipadrões (`docs/05-antipadroes.md`); depois subir a API (`docker compose -f infra/docker-compose.yml up -d` e `dotnet run`) e testar endpoint por endpoint criado na spec, com os casos de sucesso e de erro, conferindo os e-mails no Mailpit quando houver.
+   - **Revisão de front:** confrontar no emulador, por captura, cada tela do app com a prancheta do protótipo e com o design system (estrutura, ordem, componentes, textos, tokens, ícones e funcionalidades), e validar o código do app que já existe: componentes do design system em vez de widgets próprios, nada fora dos tokens, textos no ARB, um tipo por arquivo, padrões e antipadrões da parte Flutter, `flutter analyze` e `flutter test` verdes.
+   - Os achados das duas revisões são corrigidos ou registrados, e o resultado delas e dos testes manuais vai na descrição do PR.
 
 ## Onde está cada coisa
 
