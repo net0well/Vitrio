@@ -309,6 +309,7 @@ internal sealed class OrderSearchableRepository(AppDbContext db) : IOrderSearcha
 - Acessibilidade: `Semantics` em controles customizados, alvos de 44 px, `tooltip` em botões de ícone, textos escaláveis até 200% sem quebrar layout.
 - Rotas tipadas do go_router; redirecionamento central para sessão, modo e permissão de localização.
 - Formatação brasileira centralizada (`formatMoney`, `formatDistance`, `formatRating`).
+- Dinheiro no app só é exibido e enviado como foi digitado; somas, diferenças e comparações vêm calculadas da API.
 
 ## 10. Git e revisão
 

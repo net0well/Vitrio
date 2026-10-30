@@ -101,6 +101,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Componente próprio quando o design system já tem um | Duas versões do mesmo elemento | O widget do design system (`VitrioChip`, `VitrioBadge`, `VitrioAvatar`...) |
 | Chamar HTTP direto da tela | Mistura UI e dados | Repositório + controller Riverpod |
 | Lógica de negócio na UI (ex.: decidir se pode avaliar) | Regras divergem da API | A API diz o que é permitido (`canReview`, `allowedActions`) |
+| Conta com dinheiro no app (soma, diferença, desconto) | `double` perde precisão e a regra diverge da API | A API devolve o valor calculado; o app só formata e envia o que foi digitado |
 | Pedir permissão de localização sem contexto | Usuário nega para sempre | Pré-permissão explicando o uso, com alternativa "Escolher cidade" |
 | `setState` espalhado em telas complexas | Estado imprevisível | Notifiers com estados explícitos |
 | Ignorar estados vazio, carregando e erro | Tela em branco ou travada | Os quatro estados em toda tela de dados |

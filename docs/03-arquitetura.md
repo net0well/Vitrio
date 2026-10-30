@@ -255,7 +255,7 @@ where p.status = 'Published'
 - Paginação: `page` e `pageSize` com resposta `{ items, page, pageSize, hasMore }` (sem total em buscas públicas).
 - `Idempotency-Key` obrigatório em `POST /orders`, `POST /provider/orders/{id}/quote` e `POST /provider/orders/{id}/payment-confirmation`; as chaves ficam no banco ([09-cache.md §5](09-cache.md)).
 - `Cache-Control: no-store` por padrão em toda resposta; exceções só para categorias e cidades ([09-cache.md §7](09-cache.md)).
-- Datas ISO 8601 com offset; dinheiro como string decimal (`"180.00"`) e moeda implícita BRL.
+- Datas ISO 8601 com offset; dinheiro como número com até duas casas (`180.5`), lido e gravado como `decimal` na API, com moeda implícita BRL. O app não faz conta com dinheiro: só exibe e envia o valor digitado; somas, diferenças e comparações são da API.
 - Detalhes de segurança da API em [08-seguranca.md](08-seguranca.md).
 
 ### Catálogo de endpoints (v1)
