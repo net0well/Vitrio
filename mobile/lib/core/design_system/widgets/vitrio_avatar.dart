@@ -17,6 +17,7 @@ class VitrioAvatar extends StatelessWidget {
     this.size = 44,
     this.kind = VitrioAvatarKind.provider,
     this.seed,
+    this.initials,
     this.tone,
     this.onHero = false,
   });
@@ -27,6 +28,7 @@ class VitrioAvatar extends StatelessWidget {
   final double size;
   final VitrioAvatarKind kind;
   final String? seed;
+  final String? initials;
   final VitrioAvatarTone? tone;
   final bool onHero;
 
@@ -53,7 +55,7 @@ class VitrioAvatar extends StatelessWidget {
           };
     final fallback = ColoredBox(
       color: background,
-      child: Center(child: Text(_initials, style: VitrioText.label.copyWith(color: foreground, fontSize: size * 0.33))),
+      child: Center(child: Text(initials ?? _initials, style: VitrioText.label.copyWith(color: foreground, fontSize: size * 0.33))),
     );
     final image = imageBytes != null
         ? Image.memory(imageBytes!, fit: BoxFit.cover)

@@ -92,7 +92,7 @@ class _SignedIn extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              VitrioAvatar(name: me.displayName, seed: me.id, size: 52, kind: VitrioAvatarKind.client),
+              VitrioAvatar(name: me.displayName, initials: me.initials, seed: me.id, size: 52, kind: VitrioAvatarKind.client),
               const SizedBox(width: VitrioSpace.sp14),
               Expanded(
                 child: Column(
