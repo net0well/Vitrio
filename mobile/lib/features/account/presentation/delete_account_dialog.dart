@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/design_system/tokens/vitrio_space.dart';
+import '../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../core/design_system/widgets/vitrio_button_size.dart';
+import '../../../core/design_system/widgets/vitrio_button_variant.dart';
+import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
@@ -51,19 +56,30 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(l10n.accountDeleteMessage),
-          TextField(
+          const SizedBox(height: VitrioSpace.sp16),
+          VitrioTextField(
+            label: l10n.accountDeleteWord,
+            showLabel: false,
             controller: _confirmation,
+            placeholder: l10n.accountDeleteWord,
             onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(hintText: l10n.accountDeleteWord, errorText: _error),
+            error: _error,
           ),
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
-        FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-          onPressed: _busy || _confirmation.text.trim() != l10n.accountDeleteWord ? null : _delete,
-          child: Text(l10n.accountDeleteConfirm),
+        VitrioButton(
+          label: l10n.commonCancel,
+          variant: VitrioButtonVariant.ghost,
+          size: VitrioButtonSize.md,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        VitrioButton(
+          label: l10n.accountDeleteConfirm,
+          variant: VitrioButtonVariant.danger,
+          size: VitrioButtonSize.md,
+          busy: _busy,
+          onPressed: _confirmation.text.trim() != l10n.accountDeleteWord ? null : _delete,
         ),
       ],
     );

@@ -13,6 +13,8 @@ List<RouteBase> get $appRoutes => [
   $forgotPasswordRoute,
   $clientShellRoute,
   $locationPermissionRoute,
+  $notificationsRoute,
+  $providerAccountRoute,
   $providerAvailabilityRoute,
   $providerEditRoute,
   $providerOnboardingRoute,
@@ -287,6 +289,60 @@ mixin $LocationPermissionRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $notificationsRoute => GoRouteData.$route(
+  path: '/notifications',
+  hasOverriddenOnExit: false,
+  factory: $NotificationsRoute._fromState,
+);
+
+mixin $NotificationsRoute on GoRouteData {
+  static NotificationsRoute _fromState(GoRouterState state) =>
+      const NotificationsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/notifications');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $providerAccountRoute => GoRouteData.$route(
+  path: '/provider-account',
+  hasOverriddenOnExit: false,
+  factory: $ProviderAccountRoute._fromState,
+);
+
+mixin $ProviderAccountRoute on GoRouteData {
+  static ProviderAccountRoute _fromState(GoRouterState state) =>
+      const ProviderAccountRoute();
+
+  @override
+  String get location => GoRouteData.$location('/provider-account');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $providerAvailabilityRoute => GoRouteData.$route(
   path: '/provider-availability',
   hasOverriddenOnExit: false,
@@ -406,18 +462,27 @@ RouteBase get $providerShellRoute => StatefulShellRouteData.$route(
     StatefulShellBranchData.$branch(
       routes: [
         GoRouteData.$route(
-          path: '/provider-profile',
+          path: '/provider-orders',
           hasOverriddenOnExit: false,
-          factory: $ProviderProfileRoute._fromState,
+          factory: $ProviderOrdersRoute._fromState,
         ),
       ],
     ),
     StatefulShellBranchData.$branch(
       routes: [
         GoRouteData.$route(
-          path: '/provider-account',
+          path: '/provider-agenda',
           hasOverriddenOnExit: false,
-          factory: $ProviderAccountRoute._fromState,
+          factory: $ProviderAgendaRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/provider-profile',
+          hasOverriddenOnExit: false,
+          factory: $ProviderProfileRoute._fromState,
         ),
       ],
     ),
@@ -450,12 +515,12 @@ mixin $ProviderDashboardRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $ProviderProfileRoute on GoRouteData {
-  static ProviderProfileRoute _fromState(GoRouterState state) =>
-      const ProviderProfileRoute();
+mixin $ProviderOrdersRoute on GoRouteData {
+  static ProviderOrdersRoute _fromState(GoRouterState state) =>
+      const ProviderOrdersRoute();
 
   @override
-  String get location => GoRouteData.$location('/provider-profile');
+  String get location => GoRouteData.$location('/provider-orders');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -471,12 +536,33 @@ mixin $ProviderProfileRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $ProviderAccountRoute on GoRouteData {
-  static ProviderAccountRoute _fromState(GoRouterState state) =>
-      const ProviderAccountRoute();
+mixin $ProviderAgendaRoute on GoRouteData {
+  static ProviderAgendaRoute _fromState(GoRouterState state) =>
+      const ProviderAgendaRoute();
 
   @override
-  String get location => GoRouteData.$location('/provider-account');
+  String get location => GoRouteData.$location('/provider-agenda');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProviderProfileRoute on GoRouteData {
+  static ProviderProfileRoute _fromState(GoRouterState state) =>
+      const ProviderProfileRoute();
+
+  @override
+  String get location => GoRouteData.$location('/provider-profile');
 
   @override
   void go(BuildContext context) => context.go(location);

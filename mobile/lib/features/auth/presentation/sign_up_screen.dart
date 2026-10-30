@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
+import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
 import '../../../core/presentation/form_page.dart';
@@ -79,6 +80,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     return FormPage(
       title: l10n.authCreateAccount,
       actionLabel: l10n.authCreateAccount,
+      onBack: Navigator.of(context).canPop() ? null : () => const HomeRoute().go(context),
       busy: _busy,
       onAction: _submit,
       message: _termsMissing && !_acceptedTerms
@@ -87,19 +89,21 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               ? null
               : problemMessage(l10n, _problem!),
       children: [
-        TextField(
+        VitrioTextField(
+          label: l10n.authName,
           controller: _name,
           textCapitalization: TextCapitalization.words,
           autofillHints: const [AutofillHints.name],
-          decoration: InputDecoration(labelText: l10n.authName, errorText: fieldError(_problem, 'displayName')),
+          error: fieldError(_problem, 'displayName'),
         ),
         const SizedBox(height: VitrioSpace.sp16),
-        TextField(
+        VitrioTextField(
+          label: l10n.authEmail,
           controller: _email,
           keyboardType: TextInputType.emailAddress,
           autocorrect: false,
           autofillHints: const [AutofillHints.email],
-          decoration: InputDecoration(labelText: l10n.authEmail, errorText: fieldError(_problem, 'email')),
+          error: fieldError(_problem, 'email'),
         ),
         const SizedBox(height: VitrioSpace.sp16),
         PasswordField(

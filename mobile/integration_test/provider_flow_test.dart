@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:vitrio/app/bootstrap.dart';
 import 'package:vitrio/app/flavor.dart';
+import 'package:vitrio/core/design_system/widgets/vitrio_switch_row.dart';
+import 'package:vitrio/core/design_system/widgets/vitrio_text_field.dart';
 import 'package:vitrio/features/provider/data/provider_providers.dart';
 
 import 'support/generated_photo_picker.dart';
@@ -18,7 +20,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   Future<void> fill(WidgetTester tester, String label, String text) async {
-    final field = find.widgetWithText(TextField, label);
+    final field = find.widgetWithText(VitrioTextField, label);
     await tester.scrollUntilVisible(field, 200, scrollable: find.byType(Scrollable).first);
     await tester.enterText(field, text);
     await tester.pump();
@@ -40,7 +42,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'jaboticabal');
       await pumpUntil(tester, find.text('Jaboticabal · SP'));
       await tester.tap(find.text('Jaboticabal · SP'));
-      await pumpUntil(tester, find.text('Mostrando profissionais de Jaboticabal'));
+      await pumpUntil(tester, find.text('Mostrando profissionais de Jaboticabal, SP.'));
     }
 
     await tester.tap(find.text('Conta').last);
@@ -68,14 +70,14 @@ void main() {
     await tester.tap(find.text('Elétrica'));
     await fill(tester, 'CEP do endereço base', '01001-000');
     await fill(tester, 'Número', '100');
-    await fill(tester, 'Telefone de contato', '(16) 99123-4567');
-    final whatsApp = find.byType(SwitchListTile);
+    await fill(tester, '(16) 9 0000-0000', '(16) 99123-4567');
+    final whatsApp = find.byType(VitrioSwitchRow);
     await tester.scrollUntilVisible(whatsApp, 200, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(whatsApp);
     await tester.pumpAndSettle();
     await tester.tap(whatsApp);
     await tester.pumpAndSettle();
-    expect(tester.widget<SwitchListTile>(whatsApp).value, isTrue);
+    expect(tester.widget<VitrioSwitchRow>(whatsApp).value, isTrue);
     await tester.tap(find.text('Continuar'));
     await pumpUntil(tester, find.text('Passo 3 de 4'));
 
@@ -85,20 +87,22 @@ void main() {
     final addService = find.text('Adicionar serviço');
     await tester.scrollUntilVisible(addService, 200, scrollable: find.byType(Scrollable).first);
     await tester.tap(addService);
-    await pumpUntil(tester, find.widgetWithText(TextField, 'Nome do serviço'));
-    await tester.enterText(find.widgetWithText(TextField, 'Nome do serviço'), 'Troca de tomada');
-    await tester.enterText(find.widgetWithText(TextField, 'A partir de (R\$)'), '50');
+    await pumpUntil(tester, find.widgetWithText(VitrioTextField, 'Nome do serviço'));
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Nome do serviço'), 'Troca de tomada');
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'A partir de'), '50');
     await tester.tap(find.widgetWithText(FilledButton, 'Salvar'));
     await pumpUntil(tester, find.text('Troca de tomada'));
     await tester.tap(find.text('Continuar'));
     await pumpUntil(tester, find.text('Tudo pronto para publicar.'));
 
     await tester.tap(find.widgetWithText(FilledButton, 'Publicar'));
-    await pumpUntil(tester, find.text('Publicada'));
+    await pumpUntil(tester, find.text('Novos pedidos'));
+    await tester.tap(find.text('Meu perfil'));
+    await pumpUntil(tester, find.text('Ver como os clientes veem'));
     await tester.tap(find.text('Ver como os clientes veem'));
     await pumpUntil(tester, find.text('Trabalhos'));
     expect(find.text(_name), findsOneWidget);
-    expect(find.text('Novo no Vitrio'), findsOneWidget);
-    expect(find.text('Chamar no WhatsApp'), findsOneWidget);
+    expect(find.text('Novo no Vitrio'), findsWidgets);
+    expect(find.text('WhatsApp'), findsOneWidget);
   });
 }

@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeMessage.
   ///
   /// In pt, this message translates to:
-  /// **'Encontre quem atende perto de você, peça orçamento sem compromisso e veja o que os vizinhos acharam.'**
+  /// **'Encontre, contrate e avalie eletricistas, diaristas, pedreiros e muito mais, com a nota de quem já contratou.'**
   String get welcomeMessage;
 
   /// No description provided for @welcomeFindProfessional.
@@ -541,7 +541,7 @@ abstract class AppLocalizations {
   /// No description provided for @locationShowingCity.
   ///
   /// In pt, this message translates to:
-  /// **'Mostrando profissionais de {city}'**
+  /// **'Mostrando profissionais de {city}.'**
   String locationShowingCity(String city);
 
   /// No description provided for @locationDenied.
@@ -685,13 +685,13 @@ abstract class AppLocalizations {
   /// No description provided for @providerCategories.
   ///
   /// In pt, this message translates to:
-  /// **'Categorias'**
+  /// **'O que você faz?'**
   String get providerCategories;
 
   /// No description provided for @providerCategoriesHint.
   ///
   /// In pt, this message translates to:
-  /// **'Escolha até 3. A primeira é a principal.'**
+  /// **'Escolha até 3 categorias. A primeira é a principal.'**
   String get providerCategoriesHint;
 
   /// No description provided for @providerCategoriesRequired.
@@ -709,7 +709,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerServiceArea.
   ///
   /// In pt, this message translates to:
-  /// **'Onde você atende'**
+  /// **'Onde você atende?'**
   String get providerServiceArea;
 
   /// No description provided for @providerCep.
@@ -739,7 +739,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerRadius.
   ///
   /// In pt, this message translates to:
-  /// **'Atende até {km} km'**
+  /// **'até {km} km'**
   String providerRadius(int km);
 
   /// No description provided for @providerNeighborhoods.
@@ -775,7 +775,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerContactPhone.
   ///
   /// In pt, this message translates to:
-  /// **'Telefone de contato'**
+  /// **'WhatsApp para contato'**
   String get providerContactPhone;
 
   /// No description provided for @providerWhatsApp.
@@ -793,13 +793,13 @@ abstract class AppLocalizations {
   /// No description provided for @providerMei.
   ///
   /// In pt, this message translates to:
-  /// **'Selo MEI verificado'**
+  /// **'Tem MEI? Ganhe o selo verificado'**
   String get providerMei;
 
   /// No description provided for @providerMeiHint.
   ///
   /// In pt, this message translates to:
-  /// **'Opcional. Confirma na Receita que o seu CNPJ está ativo e é MEI.'**
+  /// **'Consultamos seu CNPJ na Receita Federal.'**
   String get providerMeiHint;
 
   /// No description provided for @providerCnpj.
@@ -817,7 +817,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerMeiVerified.
   ///
   /// In pt, this message translates to:
-  /// **'MEI verificado (CNPJ ativo)'**
+  /// **'CNPJ ativo e optante pelo MEI. O selo já aparece no seu perfil.'**
   String get providerMeiVerified;
 
   /// No description provided for @providerMeiPending.
@@ -907,7 +907,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerServicePrice.
   ///
   /// In pt, this message translates to:
-  /// **'A partir de (R\$)'**
+  /// **'A partir de'**
   String get providerServicePrice;
 
   /// No description provided for @providerServiceOnQuote.
@@ -1003,7 +1003,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerMissingContactPhone.
   ///
   /// In pt, this message translates to:
-  /// **'o telefone de contato'**
+  /// **'o WhatsApp para contato'**
   String get providerMissingContactPhone;
 
   /// No description provided for @providerPublished.
@@ -1183,13 +1183,13 @@ abstract class AppLocalizations {
   /// No description provided for @providerBadgeMei.
   ///
   /// In pt, this message translates to:
-  /// **'MEI verificado (CNPJ ativo)'**
+  /// **'MEI verificado'**
   String get providerBadgeMei;
 
   /// No description provided for @providerBadgeToday.
   ///
   /// In pt, this message translates to:
-  /// **'Disponível hoje'**
+  /// **'Atende hoje'**
   String get providerBadgeToday;
 
   /// No description provided for @providerNew.
@@ -1219,7 +1219,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerWhatsAppAction.
   ///
   /// In pt, this message translates to:
-  /// **'Chamar no WhatsApp'**
+  /// **'WhatsApp'**
   String get providerWhatsAppAction;
 
   /// No description provided for @providerNotFound.
@@ -1245,6 +1245,588 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Horários'**
   String get providerHours;
+
+  /// No description provided for @authShow.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostrar'**
+  String get authShow;
+
+  /// No description provided for @authHide.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esconder'**
+  String get authHide;
+
+  /// No description provided for @providerOfferServicesHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Monte sua vitrine e receba pedidos de clientes da sua cidade.'**
+  String get providerOfferServicesHint;
+
+  /// No description provided for @welcomeHaveAccount.
+  ///
+  /// In pt, this message translates to:
+  /// **'Já tem conta?'**
+  String get welcomeHaveAccount;
+
+  /// No description provided for @welcomeNearYou.
+  ///
+  /// In pt, this message translates to:
+  /// **'Perto\nde você'**
+  String get welcomeNearYou;
+
+  /// No description provided for @welcomeSampleAnaName.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ana Paula'**
+  String get welcomeSampleAnaName;
+
+  /// No description provided for @welcomeSampleAnaRole.
+  ///
+  /// In pt, this message translates to:
+  /// **'Diarista'**
+  String get welcomeSampleAnaRole;
+
+  /// No description provided for @welcomeSampleAnaRating.
+  ///
+  /// In pt, this message translates to:
+  /// **'5,0'**
+  String get welcomeSampleAnaRating;
+
+  /// No description provided for @welcomeSampleJoseName.
+  ///
+  /// In pt, this message translates to:
+  /// **'José Lima'**
+  String get welcomeSampleJoseName;
+
+  /// No description provided for @welcomeSampleJoseRole.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedreiro'**
+  String get welcomeSampleJoseRole;
+
+  /// No description provided for @welcomeSampleJoseRating.
+  ///
+  /// In pt, this message translates to:
+  /// **'4,8'**
+  String get welcomeSampleJoseRating;
+
+  /// No description provided for @welcomeSampleCarlosName.
+  ///
+  /// In pt, this message translates to:
+  /// **'Carlos Menezes'**
+  String get welcomeSampleCarlosName;
+
+  /// No description provided for @welcomeSampleCarlosRole.
+  ///
+  /// In pt, this message translates to:
+  /// **'Eletricista · Vila Serra'**
+  String get welcomeSampleCarlosRole;
+
+  /// No description provided for @welcomeSampleCarlosRating.
+  ///
+  /// In pt, this message translates to:
+  /// **'4,9'**
+  String get welcomeSampleCarlosRating;
+
+  /// No description provided for @welcomeSampleCarlosMeta.
+  ///
+  /// In pt, this message translates to:
+  /// **'(127 avaliações) · 1,2 km'**
+  String get welcomeSampleCarlosMeta;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Notificações'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não tem notificações.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In pt, this message translates to:
+  /// **'Olá, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeQuestion.
+  ///
+  /// In pt, this message translates to:
+  /// **'Do que você precisa hoje?'**
+  String get homeQuestion;
+
+  /// No description provided for @searchFieldLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscar serviço'**
+  String get searchFieldLabel;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Eletricista, diarista, pintor…'**
+  String get searchPlaceholder;
+
+  /// No description provided for @homeHeroTag.
+  ///
+  /// In pt, this message translates to:
+  /// **'Disponíveis agora'**
+  String get homeHeroTag;
+
+  /// No description provided for @homeHeroTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Imprevisto em casa?'**
+  String get homeHeroTitle;
+
+  /// No description provided for @homeHeroText.
+  ///
+  /// In pt, this message translates to:
+  /// **'Veja quem atende hoje perto de você, com nota e preço.'**
+  String get homeHeroText;
+
+  /// No description provided for @homeHeroAction.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver disponíveis'**
+  String get homeHeroAction;
+
+  /// No description provided for @homeCategories.
+  ///
+  /// In pt, this message translates to:
+  /// **'Categorias'**
+  String get homeCategories;
+
+  /// No description provided for @homeSeeAll.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver todas'**
+  String get homeSeeAll;
+
+  /// No description provided for @homeMore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mais'**
+  String get homeMore;
+
+  /// No description provided for @tabAgenda.
+  ///
+  /// In pt, this message translates to:
+  /// **'Agenda'**
+  String get tabAgenda;
+
+  /// No description provided for @providerOrdersEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não recebeu pedidos. Quando um cliente pedir orçamento, ele aparece aqui.'**
+  String get providerOrdersEmpty;
+
+  /// No description provided for @providerAgendaEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum serviço agendado. Quando um cliente aceitar seu orçamento, o serviço aparece aqui.'**
+  String get providerAgendaEmpty;
+
+  /// No description provided for @providerNewOrders.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novos pedidos'**
+  String get providerNewOrders;
+
+  /// No description provided for @providerNoOrders.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum pedido novo por enquanto.'**
+  String get providerNoOrders;
+
+  /// No description provided for @providerNoOrdersShare.
+  ///
+  /// In pt, this message translates to:
+  /// **'Compartilhe seu perfil para chegar aos primeiros clientes.'**
+  String get providerNoOrdersShare;
+
+  /// No description provided for @providerNoOrdersPublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Publique sua vitrine para começar a receber pedidos.'**
+  String get providerNoOrdersPublish;
+
+  /// No description provided for @providerAvailableTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Disponível para novos pedidos'**
+  String get providerAvailableTitle;
+
+  /// No description provided for @providerAvailableSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você aparece em “Atende hoje”'**
+  String get providerAvailableSubtitle;
+
+  /// No description provided for @providerUnavailableTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pausado para novos pedidos'**
+  String get providerUnavailableTitle;
+
+  /// No description provided for @providerUnavailableSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Clientes ainda veem seu perfil'**
+  String get providerUnavailableSubtitle;
+
+  /// No description provided for @providerAvailableNeedsPublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Fica disponível depois que a vitrine for publicada.'**
+  String get providerAvailableNeedsPublish;
+
+  /// No description provided for @providerMetricNewOrders.
+  ///
+  /// In pt, this message translates to:
+  /// **'pedidos novos'**
+  String get providerMetricNewOrders;
+
+  /// No description provided for @providerMetricRating.
+  ///
+  /// In pt, this message translates to:
+  /// **'sua nota'**
+  String get providerMetricRating;
+
+  /// No description provided for @providerMetricServicesMonth.
+  ///
+  /// In pt, this message translates to:
+  /// **'serviços no mês'**
+  String get providerMetricServicesMonth;
+
+  /// No description provided for @providerProfileAlmostReady.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu perfil está quase pronto'**
+  String get providerProfileAlmostReady;
+
+  /// No description provided for @providerProfileComplete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu perfil está completo'**
+  String get providerProfileComplete;
+
+  /// No description provided for @providerPercent.
+  ///
+  /// In pt, this message translates to:
+  /// **'{percent}%'**
+  String providerPercent(int percent);
+
+  /// No description provided for @providerCompleteProfile.
+  ///
+  /// In pt, this message translates to:
+  /// **'Completar perfil'**
+  String get providerCompleteProfile;
+
+  /// No description provided for @providerHintAbout.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conte sobre você e o seu trabalho para os clientes te conhecerem.'**
+  String get providerHintAbout;
+
+  /// No description provided for @providerHintCategories.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha as categorias do que você faz.'**
+  String get providerHintCategories;
+
+  /// No description provided for @providerHintServiceArea.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe onde você atende.'**
+  String get providerHintServiceArea;
+
+  /// No description provided for @providerHintContactPhone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe o WhatsApp para contato.'**
+  String get providerHintContactPhone;
+
+  /// No description provided for @providerHintServices.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cadastre seus serviços e preços.'**
+  String get providerHintServices;
+
+  /// No description provided for @providerHintPublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Falta publicar a vitrine para aparecer nas buscas.'**
+  String get providerHintPublish;
+
+  /// No description provided for @providerHintAvailability.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe seus dias e horários para os clientes saberem quando você atende.'**
+  String get providerHintAvailability;
+
+  /// No description provided for @providerHintShare.
+  ///
+  /// In pt, this message translates to:
+  /// **'Compartilhe seu perfil para receber os primeiros pedidos.'**
+  String get providerHintShare;
+
+  /// No description provided for @providerShareShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'Compartilhar'**
+  String get providerShareShort;
+
+  /// No description provided for @providerYourShowcase.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sua vitrine'**
+  String get providerYourShowcase;
+
+  /// No description provided for @providerSkip.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pular'**
+  String get providerSkip;
+
+  /// No description provided for @providerAboutSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu nome, sua profissão e um pouco da sua história.'**
+  String get providerAboutSubtitle;
+
+  /// No description provided for @providerShowcaseSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha o que você faz e onde atende. Dá para mudar quando quiser.'**
+  String get providerShowcaseSubtitle;
+
+  /// No description provided for @providerPhotosSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostre trabalhos que você já fez e quanto cobra pelos serviços.'**
+  String get providerPhotosSubtitle;
+
+  /// No description provided for @providerReviewSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Confira como os clientes vão ver sua vitrine antes de publicar.'**
+  String get providerReviewSubtitle;
+
+  /// No description provided for @providerNextAfterAbout.
+  ///
+  /// In pt, this message translates to:
+  /// **'Próximo: o que você faz e onde atende'**
+  String get providerNextAfterAbout;
+
+  /// No description provided for @providerNextAfterShowcase.
+  ///
+  /// In pt, this message translates to:
+  /// **'Próximo: fotos dos seus trabalhos e preços'**
+  String get providerNextAfterShowcase;
+
+  /// No description provided for @providerNextAfterPhotos.
+  ///
+  /// In pt, this message translates to:
+  /// **'Próximo: revisar e publicar'**
+  String get providerNextAfterPhotos;
+
+  /// No description provided for @providerCepPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'00000-000'**
+  String get providerCepPlaceholder;
+
+  /// No description provided for @providerRadiusLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Raio de atendimento'**
+  String get providerRadiusLabel;
+
+  /// No description provided for @providerContactPhoneHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Usado no botão de WhatsApp do seu perfil.'**
+  String get providerContactPhoneHint;
+
+  /// No description provided for @providerPhonePlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'(16) 9 0000-0000'**
+  String get providerPhonePlaceholder;
+
+  /// No description provided for @providerCnpjPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'00.000.000/0001-00'**
+  String get providerCnpjPlaceholder;
+
+  /// No description provided for @providerServiceEdit.
+  ///
+  /// In pt, this message translates to:
+  /// **'Editar serviço'**
+  String get providerServiceEdit;
+
+  /// No description provided for @providerServiceOnQuoteHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'O preço é combinado depois de ver o serviço.'**
+  String get providerServiceOnQuoteHint;
+
+  /// No description provided for @providerFromLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'a partir de'**
+  String get providerFromLabel;
+
+  /// No description provided for @providerFromCapital.
+  ///
+  /// In pt, this message translates to:
+  /// **'A partir de'**
+  String get providerFromCapital;
+
+  /// No description provided for @providerPriceLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preço'**
+  String get providerPriceLabel;
+
+  /// No description provided for @providerSeeProfile.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver perfil'**
+  String get providerSeeProfile;
+
+  /// No description provided for @providerPreviewTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Como você aparece na busca'**
+  String get providerPreviewTitle;
+
+  /// No description provided for @providerMetricReviews.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count} avaliações'**
+  String providerMetricReviews(int count);
+
+  /// No description provided for @providerDistance.
+  ///
+  /// In pt, this message translates to:
+  /// **'{km} km'**
+  String providerDistance(String km);
+
+  /// No description provided for @providerMetricDistance.
+  ///
+  /// In pt, this message translates to:
+  /// **'de você'**
+  String get providerMetricDistance;
+
+  /// No description provided for @providerWhereWhen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Onde e quando atende'**
+  String get providerWhereWhen;
+
+  /// No description provided for @providerRadiusFrom.
+  ///
+  /// In pt, this message translates to:
+  /// **'Até {km} km de {place}'**
+  String providerRadiusFrom(int km, String place);
+
+  /// No description provided for @providerMoreNeighborhoods.
+  ///
+  /// In pt, this message translates to:
+  /// **'+ {count} bairros'**
+  String providerMoreNeighborhoods(int count);
+
+  /// No description provided for @providerNoPhotos.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ainda não há fotos de trabalhos.'**
+  String get providerNoPhotos;
+
+  /// No description provided for @providerReviews.
+  ///
+  /// In pt, this message translates to:
+  /// **'Avaliações'**
+  String get providerReviews;
+
+  /// No description provided for @providerNoReviews.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ainda não há avaliações. Elas aparecem aqui depois dos primeiros serviços contratados pelo app.'**
+  String get providerNoReviews;
+
+  /// No description provided for @providerRatingOf.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nota {score} de 5'**
+  String providerRatingOf(String score);
+
+  /// No description provided for @providerDayShortMonday.
+  ///
+  /// In pt, this message translates to:
+  /// **'seg'**
+  String get providerDayShortMonday;
+
+  /// No description provided for @providerDayShortTuesday.
+  ///
+  /// In pt, this message translates to:
+  /// **'ter'**
+  String get providerDayShortTuesday;
+
+  /// No description provided for @providerDayShortWednesday.
+  ///
+  /// In pt, this message translates to:
+  /// **'qua'**
+  String get providerDayShortWednesday;
+
+  /// No description provided for @providerDayShortThursday.
+  ///
+  /// In pt, this message translates to:
+  /// **'qui'**
+  String get providerDayShortThursday;
+
+  /// No description provided for @providerDayShortFriday.
+  ///
+  /// In pt, this message translates to:
+  /// **'sex'**
+  String get providerDayShortFriday;
+
+  /// No description provided for @providerDayShortSaturday.
+  ///
+  /// In pt, this message translates to:
+  /// **'sáb'**
+  String get providerDayShortSaturday;
+
+  /// No description provided for @providerDayShortSunday.
+  ///
+  /// In pt, this message translates to:
+  /// **'dom'**
+  String get providerDayShortSunday;
+
+  /// No description provided for @providerDaysRange.
+  ///
+  /// In pt, this message translates to:
+  /// **'{first} a {last}'**
+  String providerDaysRange(String first, String last);
+
+  /// No description provided for @providerHoursRange.
+  ///
+  /// In pt, this message translates to:
+  /// **'{start} às {end}'**
+  String providerHoursRange(String start, String end);
+
+  /// No description provided for @providerEmergenciesShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'atende emergências'**
+  String get providerEmergenciesShort;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 part of '../routes.dart';
 
+@TypedGoRoute<ProviderAccountRoute>(path: '/provider-account')
 class ProviderAccountRoute extends GoRouteData with $ProviderAccountRoute {
   const ProviderAccountRoute();
 

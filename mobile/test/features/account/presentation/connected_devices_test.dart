@@ -25,7 +25,7 @@ void main() {
     expect(find.text('Android · Este aparelho'), findsOneWidget);
     expect(find.textContaining('Último acesso em'), findsNWidgets(2));
 
-    await tester.tap(find.widgetWithText(TextButton, 'Desconectar'));
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Desconectar'));
     await tester.pumpAndSettle();
 
     expect(account.revoked, ['tablet']);

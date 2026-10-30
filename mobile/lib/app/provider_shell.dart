@@ -21,8 +21,9 @@ class ProviderShell extends StatelessWidget {
             navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
         destinations: [
           NavigationDestination(icon: const VitrioIcon(VitrioIconName.chart), label: l10n.tabDashboard),
-          NavigationDestination(icon: const VitrioIcon(VitrioIconName.grid), label: l10n.tabMyProfile),
-          NavigationDestination(icon: const VitrioIcon(VitrioIconName.user), label: l10n.tabAccount),
+          NavigationDestination(icon: const VitrioIcon(VitrioIconName.orders), label: l10n.tabOrders),
+          NavigationDestination(icon: const VitrioIcon(VitrioIconName.calendar), label: l10n.tabAgenda),
+          NavigationDestination(icon: const VitrioIcon(VitrioIconName.user), label: l10n.tabMyProfile),
         ],
       ),
     );

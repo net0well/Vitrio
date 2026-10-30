@@ -31,7 +31,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'jaboticabal');
       await pumpUntil(tester, find.text('Jaboticabal · SP'));
       await tester.tap(find.text('Jaboticabal · SP'));
-      await pumpUntil(tester, find.text('Mostrando profissionais de Jaboticabal'));
+      await pumpUntil(tester, find.text('Mostrando profissionais de Jaboticabal, SP.'));
     }
 
     await tester.tap(find.text('Conta').last);

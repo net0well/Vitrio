@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/design_system/tokens/vitrio_colors.dart';
+import '../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
+import '../../../core/design_system/tokens/vitrio_text.dart';
+import '../../../core/design_system/widgets/vitrio_icon.dart';
+import '../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../core/design_system/widgets/vitrio_switch_row.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
 import '../../../core/presentation/form_page.dart';
@@ -68,12 +74,6 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
     }
   }
 
-  Widget _timePicker(String value, ValueChanged<String> onChanged) => DropdownButton<String>(
-        value: value,
-        items: [for (final time in _times) DropdownMenuItem(value: time, child: Text(time))],
-        onChanged: (selected) => onChanged(selected ?? value),
-      );
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -85,33 +85,87 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       message: _problem == null ? null : problemMessage(l10n, _problem!),
       children: [
         for (final day in AvailabilitySlot.days) ...[
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(dayLabel(l10n, day)),
+          VitrioSwitchRow(
+            label: dayLabel(l10n, day),
             value: _days[day]!.open,
             onChanged: (open) => setState(() => _days[day] = (open: open, start: _days[day]!.start, end: _days[day]!.end)),
           ),
-          if (_days[day]!.open)
+          if (_days[day]!.open) ...[
+            const SizedBox(height: VitrioSpace.sp8),
             Row(
               children: [
-                Text(l10n.providerFrom),
-                const SizedBox(width: VitrioSpace.sp8),
-                _timePicker(_days[day]!.start, (start) => setState(() => _days[day] = (open: true, start: start, end: _days[day]!.end))),
-                const SizedBox(width: VitrioSpace.sp8),
-                Text(l10n.providerTo),
-                const SizedBox(width: VitrioSpace.sp8),
-                _timePicker(_days[day]!.end, (end) => setState(() => _days[day] = (open: true, start: _days[day]!.start, end: end))),
+                Expanded(
+                  child: _TimeField(
+                    label: l10n.providerFrom,
+                    value: _days[day]!.start,
+                    times: _times,
+                    onChanged: (start) => setState(() => _days[day] = (open: true, start: start, end: _days[day]!.end)),
+                  ),
+                ),
+                const SizedBox(width: VitrioSpace.sp10),
+                Expanded(
+                  child: _TimeField(
+                    label: l10n.providerTo,
+                    value: _days[day]!.end,
+                    times: _times,
+                    onChanged: (end) => setState(() => _days[day] = (open: true, start: _days[day]!.start, end: end)),
+                  ),
+                ),
               ],
             ),
+          ],
+          const SizedBox(height: VitrioSpace.sp10),
         ],
-        const Divider(),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.providerEmergencies),
+        const SizedBox(height: VitrioSpace.sp14),
+        VitrioSwitchRow(
+          label: l10n.providerEmergencies,
           value: _emergencies,
           onChanged: (value) => setState(() => _emergencies = value),
         ),
       ],
+    );
+  }
+}
+
+class _TimeField extends StatelessWidget {
+  const _TimeField({required this.label, required this.value, required this.times, required this.onChanged});
+
+  final String label;
+  final String value;
+  final List<String> times;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.vitrio;
+    return Container(
+      height: VitrioSpace.tap,
+      padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp12),
+      decoration: BoxDecoration(
+        color: c.surfaceRaised,
+        borderRadius: const BorderRadius.all(VitrioRadius.lg),
+        border: Border.all(color: c.lineStrong),
+      ),
+      child: Row(
+        children: [
+          Text(label, style: VitrioText.meta.copyWith(color: c.inkMuted)),
+          const SizedBox(width: VitrioSpace.sp8),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: value,
+                isExpanded: true,
+                borderRadius: const BorderRadius.all(VitrioRadius.lg),
+                dropdownColor: c.surfaceRaised,
+                icon: VitrioIcon(VitrioIconName.chevronDown, size: 16, color: c.inkMuted),
+                style: VitrioText.bodyStrong.copyWith(color: c.ink),
+                items: [for (final time in times) DropdownMenuItem(value: time, child: Text(time))],
+                onChanged: (selected) => onChanged(selected ?? value),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

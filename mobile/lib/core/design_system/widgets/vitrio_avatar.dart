@@ -6,6 +6,7 @@ import '../tokens/vitrio_colors.dart';
 import '../tokens/vitrio_radius.dart';
 import '../tokens/vitrio_text.dart';
 import 'vitrio_avatar_kind.dart';
+import 'vitrio_avatar_tone.dart';
 
 class VitrioAvatar extends StatelessWidget {
   const VitrioAvatar({
@@ -15,6 +16,9 @@ class VitrioAvatar extends StatelessWidget {
     this.imageBytes,
     this.size = 44,
     this.kind = VitrioAvatarKind.provider,
+    this.seed,
+    this.tone,
+    this.onHero = false,
   });
 
   final String name;
@@ -22,6 +26,9 @@ class VitrioAvatar extends StatelessWidget {
   final Uint8List? imageBytes;
   final double size;
   final VitrioAvatarKind kind;
+  final String? seed;
+  final VitrioAvatarTone? tone;
+  final bool onHero;
 
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
@@ -35,9 +42,18 @@ class VitrioAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.vitrio;
+    final chosen = tone ?? VitrioAvatarTone.values[(seed ?? '').codeUnits.fold(0, (sum, unit) => sum + unit) % VitrioAvatarTone.values.length];
+    final (background, foreground) = onHero
+        ? (c.lime, c.onLime)
+        : switch (chosen) {
+            VitrioAvatarTone.plum => (c.plumSoft, c.plum),
+            VitrioAvatarTone.green => (c.greenSoft, c.green),
+            VitrioAvatarTone.amber => (c.amberSoft, c.amberInk),
+            VitrioAvatarTone.info => (c.infoSoft, c.info),
+          };
     final fallback = ColoredBox(
-      color: c.plumSoft,
-      child: Center(child: Text(_initials, style: VitrioText.label.copyWith(color: c.plum, fontSize: size * 0.34))),
+      color: background,
+      child: Center(child: Text(_initials, style: VitrioText.label.copyWith(color: foreground, fontSize: size * 0.33))),
     );
     final image = imageBytes != null
         ? Image.memory(imageBytes!, fit: BoxFit.cover)

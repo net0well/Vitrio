@@ -6,13 +6,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/tokens/vitrio_colors.dart';
 import '../../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../../core/design_system/tokens/vitrio_space.dart';
+import '../../../../core/design_system/widgets/vitrio_add_photo_tile.dart';
 import '../../../../core/design_system/widgets/vitrio_badge.dart';
 import '../../../../core/design_system/widgets/vitrio_badge_tone.dart';
+import '../../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../../core/design_system/widgets/vitrio_button_size.dart';
+import '../../../../core/design_system/widgets/vitrio_button_variant.dart';
 import '../../../../core/design_system/widgets/vitrio_icon.dart';
 import '../../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../../core/design_system/widgets/vitrio_list_card.dart';
+import '../../../../core/design_system/widgets/vitrio_section_header.dart';
 import '../../../../core/network/api_result.dart';
 import '../../../../core/network/problem_details.dart';
-import '../../../../core/presentation/form_page.dart';
 import '../../../../core/presentation/problem_message.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/photo_status.dart';
@@ -20,11 +25,11 @@ import '../../domain/provider_photo.dart';
 import '../../domain/provider_service.dart';
 import '../photo_outcome.dart';
 import '../provider_controller.dart';
-import '../provider_labels.dart';
 import '../provider_queries.dart';
-import '../widgets/section_title.dart';
+import '../provider_step.dart';
+import '../widgets/provider_step_page.dart';
 import '../widgets/service_editor_sheet.dart';
-import '../widgets/step_progress.dart';
+import '../widgets/service_price_row.dart';
 
 class PhotosStep extends ConsumerStatefulWidget {
   const PhotosStep({super.key, required this.editing, required this.onDone});
@@ -37,6 +42,8 @@ class PhotosStep extends ConsumerStatefulWidget {
 }
 
 class _PhotosStepState extends ConsumerState<PhotosStep> {
+  static const _maxServices = 20;
+
   late final List<ProviderService> _services = [...?ref.read(providerControllerProvider).value?.services];
   Timer? _refresh;
   bool _uploading = false;
@@ -71,12 +78,23 @@ class _PhotosStepState extends ConsumerState<PhotosStep> {
   }
 
   Future<void> _editService([int? index]) async {
-    final service = await ServiceEditorSheet.show(context, service: index == null ? null : _services[index]);
-    if (service == null || !mounted) {
+    final edit = await ServiceEditorSheet.show(context, service: index == null ? null : _services[index]);
+    if (edit == null || !mounted) {
       return;
     }
 
-    setState(() => index == null ? _services.add(service) : _services[index] = service);
+    setState(() {
+      switch ((edit.service, index)) {
+        case (null, final int index):
+          _services.removeAt(index);
+        case (final ProviderService service, final int index):
+          _services[index] = service;
+        case (final ProviderService service, null):
+          _services.add(service);
+        case (null, null):
+          break;
+      }
+    });
   }
 
   Future<void> _save() async {
@@ -114,21 +132,20 @@ class _PhotosStepState extends ConsumerState<PhotosStep> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final c = context.vitrio;
     final photos = ref.watch(providerPhotosProvider);
     if (photos case AsyncData(:final value)) {
       _scheduleRefresh(value);
     }
 
-    return FormPage(
-      title: l10n.providerStepPhotos,
-      actionLabel: widget.editing ? l10n.commonSave : l10n.providerContinue,
+    return ProviderStepPage(
+      step: ProviderStep.photos,
+      editing: widget.editing,
       busy: _busy,
       onAction: _save,
       message: _message ?? (_problem == null ? null : problemMessage(l10n, _problem!)),
       children: [
-        if (!widget.editing) const StepProgress(step: 3, total: 4),
-        SectionTitle(l10n.providerPhotos, hint: l10n.providerPhotosHint),
+        VitrioSectionHeader(l10n.providerPhotos, hint: l10n.providerPhotosHint),
+        const SizedBox(height: VitrioSpace.sp12),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
@@ -137,45 +154,28 @@ class _PhotosStepState extends ConsumerState<PhotosStep> {
           crossAxisSpacing: VitrioSpace.sp8,
           children: [
             for (final photo in photos.value ?? const <ProviderPhoto>[]) _PhotoTile(photo: photo, onDelete: () => _deletePhoto(photo)),
-            Semantics(
-              button: true,
-              label: l10n.providerPhotoAdd,
-              child: InkWell(
-                borderRadius: const BorderRadius.all(VitrioRadius.lg),
-                onTap: _uploading ? null : _addPhoto,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: c.surfaceInset,
-                    borderRadius: const BorderRadius.all(VitrioRadius.lg),
-                    border: Border.all(color: c.line),
-                  ),
-                  child: Center(
-                    child: _uploading ? const CircularProgressIndicator() : VitrioIcon(VitrioIconName.camera, color: c.plum),
-                  ),
-                ),
-              ),
-            ),
+            VitrioAddPhotoTile(label: l10n.providerPhotoAdd, busy: _uploading, onTap: _addPhoto),
           ],
         ),
-        SectionTitle(l10n.providerServices),
-        for (final (index, service) in _services.indexed)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(service.title),
-            subtitle: Text(priceText(l10n, service)),
-            onTap: () => _editService(index),
-            trailing: IconButton(
-              tooltip: l10n.providerServiceRemove,
-              icon: const VitrioIcon(VitrioIconName.x),
-              onPressed: () => setState(() => _services.removeAt(index)),
-            ),
+        const SizedBox(height: VitrioSpace.sp24),
+        VitrioSectionHeader(l10n.providerServices),
+        const SizedBox(height: VitrioSpace.sp12),
+        if (_services.isNotEmpty) ...[
+          VitrioListCard(
+            children: [
+              for (final (index, service) in _services.indexed) ServicePriceRow(service: service, onTap: () => _editService(index)),
+            ],
           ),
+          const SizedBox(height: VitrioSpace.sp12),
+        ],
         Align(
           alignment: AlignmentDirectional.centerStart,
-          child: TextButton.icon(
-            onPressed: _services.length >= 20 ? null : _editService,
-            icon: const VitrioIcon(VitrioIconName.plus),
-            label: Text(l10n.providerServiceAdd),
+          child: VitrioButton(
+            label: l10n.providerServiceAdd,
+            variant: VitrioButtonVariant.secondary,
+            size: VitrioButtonSize.md,
+            leadingIcon: VitrioIconName.plus,
+            onPressed: _services.length >= _maxServices ? null : _editService,
           ),
         ),
       ],
@@ -193,15 +193,19 @@ class _PhotoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final c = context.vitrio;
+    final placeholder = ColoredBox(
+      color: c.plum,
+      child: Center(child: Opacity(opacity: 0.45, child: VitrioIcon(VitrioIconName.image, size: 30, color: c.onPlum))),
+    );
     return ClipRRect(
-      borderRadius: const BorderRadius.all(VitrioRadius.lg),
+      borderRadius: const BorderRadius.all(VitrioRadius.xl),
       child: Stack(
         fit: StackFit.expand,
         children: [
           if (photo.thumbnailUrl != null)
-            Image.network(photo.thumbnailUrl!, fit: BoxFit.cover, errorBuilder: (_, _, _) => ColoredBox(color: c.surfaceInset))
+            Image.network(photo.thumbnailUrl!, fit: BoxFit.cover, errorBuilder: (_, _, _) => placeholder)
           else
-            ColoredBox(color: c.surfaceInset),
+            placeholder,
           if (photo.status != PhotoStatus.active)
             Center(
               child: VitrioBadge(
@@ -209,14 +213,34 @@ class _PhotoTile extends StatelessWidget {
                 tone: photo.status == PhotoStatus.processing ? VitrioBadgeTone.info : VitrioBadgeTone.danger,
               ),
             ),
-          Positioned(
+          PositionedDirectional(
             top: 0,
-            right: 0,
-            child: IconButton(
-              tooltip: l10n.providerPhotoDelete,
-              onPressed: onDelete,
-              icon: VitrioIcon(VitrioIconName.x, color: c.onPlum),
-              style: IconButton.styleFrom(backgroundColor: c.plum.withValues(alpha: 0.6)),
+            end: 0,
+            child: Semantics(
+              button: true,
+              label: l10n.providerPhotoDelete,
+              excludeSemantics: true,
+              child: InkResponse(
+                onTap: onDelete,
+                radius: VitrioSpace.tap / 2,
+                child: Container(
+                  width: VitrioSpace.tap,
+                  height: VitrioSpace.tap,
+                  alignment: AlignmentDirectional.topEnd,
+                  padding: const EdgeInsets.all(VitrioSpace.sp6),
+                  child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: c.ink,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: c.surface, width: 2),
+                  ),
+                  alignment: Alignment.center,
+                  child: VitrioIcon(VitrioIconName.x, size: 11, color: c.surfaceRaised, strokeWidth: 3),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

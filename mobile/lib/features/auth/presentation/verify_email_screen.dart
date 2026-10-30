@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/tokens/vitrio_text.dart';
+import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
 import '../../../core/presentation/form_page.dart';
@@ -14,6 +15,7 @@ import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_providers.dart';
 import '../domain/email_code_purpose.dart';
+import 'go_after_sign_in.dart';
 import 'pending_verification.dart';
 import 'session_controller.dart';
 
@@ -85,7 +87,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         await ref.read(sessionControllerProvider.notifier).start(data);
         ref.read(pendingVerificationProvider.notifier).clear();
         if (mounted) {
-          const AccountRoute().go(context);
+          goAfterSignIn(context, ref);
         }
       case ApiFailure(:final problem):
         setState(() {
@@ -132,15 +134,16 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       children: [
         Text(l10n.authVerifyMessage(pending?.email ?? ''), style: VitrioText.body),
         const SizedBox(height: VitrioSpace.sp20),
-        TextField(
+        VitrioTextField(
+          label: l10n.authCode,
           controller: _code,
           keyboardType: TextInputType.number,
           maxLength: 6,
           autofillHints: const [AutofillHints.oneTimeCode],
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          style: VitrioText.priceLg,
+          inputStyle: VitrioText.priceLg,
           textAlign: TextAlign.center,
-          decoration: InputDecoration(labelText: l10n.authCode, errorText: fieldError(_problem, 'code')),
+          error: fieldError(_problem, 'code'),
         ),
         if (_notice != null) Text(_notice!, style: VitrioText.meta),
         const SizedBox(height: VitrioSpace.sp8),

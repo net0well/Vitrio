@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../../core/design_system/widgets/vitrio_avatar.dart';
+import '../../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../../core/design_system/widgets/vitrio_button_size.dart';
+import '../../../../core/design_system/widgets/vitrio_button_variant.dart';
+import '../../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../../core/network/api_result.dart';
 import '../../../../core/network/problem_details.dart';
-import '../../../../core/presentation/form_page.dart';
 import '../../../../core/presentation/problem_message.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/session_controller.dart';
@@ -14,7 +18,8 @@ import '../../domain/picked_photo.dart';
 import '../../domain/profile_changes.dart';
 import '../photo_outcome.dart';
 import '../provider_controller.dart';
-import '../widgets/step_progress.dart';
+import '../provider_step.dart';
+import '../widgets/provider_step_page.dart';
 
 class AboutStep extends ConsumerStatefulWidget {
   const AboutStep({super.key, required this.editing, required this.onDone});
@@ -113,62 +118,61 @@ class _AboutStepState extends ConsumerState<AboutStep> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final profile = ref.watch(providerControllerProvider).value;
-    return FormPage(
-      title: l10n.providerStepAbout,
-      actionLabel: widget.editing ? l10n.commonSave : l10n.providerContinue,
+    return ProviderStepPage(
+      step: ProviderStep.about,
+      editing: widget.editing,
       busy: _busy,
       onAction: _save,
       message: _problem == null || _problem!.isValidation ? null : problemMessage(l10n, _problem!),
       children: [
-        if (!widget.editing) const StepProgress(step: 1, total: 4),
         Row(
           children: [
-            VitrioAvatar(name: _name.text, imageUrl: profile?.avatarUrl, imageBytes: _avatar?.bytes, size: 72),
+            VitrioAvatar(name: _name.text, imageUrl: profile?.avatarUrl, imageBytes: _avatar?.bytes, seed: profile?.id, size: 72),
             const SizedBox(width: VitrioSpace.sp16),
             Flexible(
-              child: TextButton(
+              child: VitrioButton(
+                label: profile?.avatarUrl == null && _avatar == null ? l10n.providerAvatarAdd : l10n.providerAvatarChange,
+                variant: VitrioButtonVariant.secondary,
+                size: VitrioButtonSize.md,
+                leadingIcon: VitrioIconName.camera,
                 onPressed: _busy ? null : _pickAvatar,
-                child: Text(profile?.avatarUrl == null && _avatar == null ? l10n.providerAvatarAdd : l10n.providerAvatarChange),
               ),
             ),
           ],
         ),
-        const SizedBox(height: VitrioSpace.sp20),
-        TextField(
+        const SizedBox(height: VitrioSpace.sp24),
+        VitrioTextField(
+          label: l10n.providerDisplayName,
           controller: _name,
           textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(labelText: l10n.providerDisplayName, errorText: fieldError(_problem, 'displayName')),
+          error: fieldError(_problem, 'displayName'),
         ),
         const SizedBox(height: VitrioSpace.sp16),
-        TextField(
+        VitrioTextField(
+          label: l10n.providerHeadline,
           controller: _headline,
           textCapitalization: TextCapitalization.sentences,
           maxLength: 60,
-          decoration: InputDecoration(
-            labelText: l10n.providerHeadline,
-            hintText: l10n.providerHeadlineHint,
-            errorText: fieldError(_problem, 'headline'),
-          ),
+          placeholder: l10n.providerHeadlineHint,
+          error: fieldError(_problem, 'headline'),
         ),
-        const SizedBox(height: VitrioSpace.sp8),
-        TextField(
+        const SizedBox(height: VitrioSpace.sp16),
+        VitrioTextField(
+          label: l10n.providerAbout,
           controller: _about,
           minLines: 4,
           maxLines: 8,
           maxLength: 600,
           textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(
-            labelText: l10n.providerAbout,
-            hintText: l10n.providerAboutHint,
-            alignLabelWithHint: true,
-            errorText: fieldError(_problem, 'about'),
-          ),
+          placeholder: l10n.providerAboutHint,
+          error: fieldError(_problem, 'about'),
         ),
-        const SizedBox(height: VitrioSpace.sp8),
-        TextField(
+        const SizedBox(height: VitrioSpace.sp16),
+        VitrioTextField(
+          label: l10n.providerYears,
           controller: _years,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: l10n.providerYears, errorText: fieldError(_problem, 'yearsOfExperience')),
+          error: fieldError(_problem, 'yearsOfExperience'),
         ),
       ],
     );

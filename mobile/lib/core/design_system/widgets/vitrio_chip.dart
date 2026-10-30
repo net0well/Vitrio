@@ -29,7 +29,7 @@ class VitrioChip extends StatelessWidget {
     final (background, foreground, border) = switch ((style, selected)) {
       (VitrioChipStyle.solid, true) => (c.plum, c.onPlum, c.plum),
       (VitrioChipStyle.soft, true) => (c.plumSoft, c.plum, c.plum),
-      _ => (c.surfaceRaised, c.ink2, c.line),
+      _ => (c.surfaceRaised, c.ink, c.line),
     };
     return Semantics(
       selected: selected,
@@ -46,16 +46,16 @@ class VitrioChip extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp14),
             decoration: ShapeDecoration(
               color: background,
-              shape: StadiumBorder(side: BorderSide(color: border)),
+              shape: StadiumBorder(side: BorderSide(color: border, width: selected && style == VitrioChipStyle.soft ? 1.5 : 1)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (selected && style == VitrioChipStyle.solid) ...[
-                  VitrioIcon(VitrioIconName.check, size: 16, color: c.plumAccent),
+                  VitrioIcon(VitrioIconName.check, size: 14, color: c.plumAccent, strokeWidth: 3),
                   const SizedBox(width: VitrioSpace.sp6),
                 ],
-                Text(label, style: VitrioText.label.copyWith(color: foreground)),
+                Text(label, style: VitrioText.weighted(VitrioText.meta, selected ? 800 : 700).copyWith(color: foreground)),
                 if (trailing != null) ...[const SizedBox(width: VitrioSpace.sp6), trailing!],
               ],
             ),

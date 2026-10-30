@@ -3,10 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/design_system/tokens/vitrio_colors.dart';
+import '../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/tokens/vitrio_text.dart';
 import '../../../core/design_system/widgets/vitrio_icon.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../core/design_system/widgets/vitrio_list_row.dart';
+import '../../../core/design_system/widgets/vitrio_notice.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
 import '../../../core/presentation/problem_message.dart';
@@ -111,6 +115,7 @@ class _CityPickerSheetState extends ConsumerState<CityPickerSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final c = context.vitrio;
     final recent = ref.read(locationPreferencesProvider).recent;
     final results = _results;
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
@@ -123,24 +128,33 @@ class _CityPickerSheetState extends ConsumerState<CityPickerSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp16),
-              child: Text(
-                l10n.locationChooseCity,
-                style: Theme.of(context).textTheme.titleLarge,
-                textAlign: TextAlign.center,
+              padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp20),
+              child: Semantics(
+                header: true,
+                child: Text(l10n.locationChooseCity, style: VitrioText.section.copyWith(color: c.ink), textAlign: TextAlign.center),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(VitrioSpace.sp16),
+              padding: const EdgeInsets.fromLTRB(VitrioSpace.sp20, VitrioSpace.sp16, VitrioSpace.sp20, VitrioSpace.sp12),
               child: TextField(
                 autofocus: true,
                 onChanged: _onChanged,
                 textInputAction: TextInputAction.search,
+                style: VitrioText.weighted(VitrioText.bodyStrong, 600).copyWith(color: c.ink),
                 decoration: InputDecoration(
                   hintText: l10n.locationSearchHint,
-                  prefixIcon: const Padding(
-                    padding: EdgeInsets.all(VitrioSpace.sp12),
-                    child: VitrioIcon(VitrioIconName.search),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsetsDirectional.only(start: VitrioSpace.sp16, end: VitrioSpace.sp10),
+                    child: VitrioIcon(VitrioIconName.search, color: c.inkMuted),
+                  ),
+                  prefixIconConstraints: const BoxConstraints(minHeight: VitrioSpace.tap),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(VitrioRadius.xl),
+                    borderSide: BorderSide(color: c.lineStrong),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(VitrioRadius.xl),
+                    borderSide: BorderSide(color: c.plum, width: 1.5),
                   ),
                 ),
               ),
@@ -148,33 +162,27 @@ class _CityPickerSheetState extends ConsumerState<CityPickerSheet> {
             if (_searching) const LinearProgressIndicator(minHeight: 2),
             if (message != null)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp16),
-                child: Text(message, style: VitrioText.meta.copyWith(color: Theme.of(context).colorScheme.error)),
+                padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp20),
+                child: VitrioNotice(message: message),
               ),
             Expanded(
               child: ListView(
                 children: [
                   if (results == null && _failure == null) ...[
-                    ListTile(
-                      leading: const VitrioIcon(VitrioIconName.pin),
-                      title: Text(l10n.locationUseMine),
-                      onTap: _useNearMe,
-                    ),
+                    VitrioListRow(icon: VitrioIconName.pin, title: l10n.locationUseMine, onTap: _useNearMe),
                     if (recent.isNotEmpty)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          VitrioSpace.sp16,
-                          VitrioSpace.sp16,
-                          VitrioSpace.sp16,
-                          VitrioSpace.sp4,
-                        ),
-                        child: Text(l10n.locationRecent, style: VitrioText.label),
+                        padding: const EdgeInsets.fromLTRB(VitrioSpace.sp16, VitrioSpace.sp16, VitrioSpace.sp16, VitrioSpace.sp4),
+                        child: Text(l10n.locationRecent, style: VitrioText.label.copyWith(color: c.inkMuted)),
                       ),
                     for (final city in recent) _CityTile(city: city, onTap: () => _choose(city)),
                   ] else if (results == null)
                     const SizedBox.shrink()
                   else if (results.isEmpty)
-                    Padding(padding: const EdgeInsets.all(VitrioSpace.sp16), child: Text(l10n.locationNoResults))
+                    Padding(
+                      padding: const EdgeInsets.all(VitrioSpace.sp20),
+                      child: Text(l10n.locationNoResults, style: VitrioText.body.copyWith(color: c.inkMuted)),
+                    )
                   else
                     for (final city in results) _CityTile(city: city, onTap: () => _choose(city)),
                 ],
@@ -194,5 +202,5 @@ class _CityTile extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => ListTile(title: Text('${city.name} · ${city.state}'), onTap: onTap);
+  Widget build(BuildContext context) => VitrioListRow(title: '${city.name} · ${city.state}', onTap: onTap);
 }

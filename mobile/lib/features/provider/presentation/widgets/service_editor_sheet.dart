@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/design_system/tokens/vitrio_colors.dart';
 import '../../../../core/design_system/tokens/vitrio_space.dart';
+import '../../../../core/design_system/tokens/vitrio_text.dart';
+import '../../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../../core/design_system/widgets/vitrio_button_variant.dart';
+import '../../../../core/design_system/widgets/vitrio_chip.dart';
+import '../../../../core/design_system/widgets/vitrio_chip_style.dart';
+import '../../../../core/design_system/widgets/vitrio_switch_row.dart';
+import '../../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/price_unit.dart';
 import '../../domain/provider_service.dart';
@@ -11,7 +19,8 @@ class ServiceEditorSheet extends StatefulWidget {
 
   final ProviderService? service;
 
-  static Future<ProviderService?> show(BuildContext context, {ProviderService? service}) => showModalBottomSheet<ProviderService>(
+  static Future<({ProviderService? service})?> show(BuildContext context, {ProviderService? service}) =>
+      showModalBottomSheet<({ProviderService? service})>(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
@@ -49,61 +58,89 @@ class _ServiceEditorSheetState extends State<ServiceEditorSheet> {
     }
 
     final description = _description.text.trim();
-    Navigator.of(context).pop(ProviderService(
-      title: title,
-      description: description.isEmpty ? null : description,
-      priceFrom: _onQuote ? null : price,
-      unit: _unit,
-      onQuote: _onQuote,
+    Navigator.of(context).pop((
+      service: ProviderService(
+        title: title,
+        description: description.isEmpty ? null : description,
+        priceFrom: _onQuote ? null : price,
+        unit: _unit,
+        onQuote: _onQuote,
+      ),
     ));
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
+    final c = context.vitrio;
+    return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(VitrioSpace.sp20, 0, VitrioSpace.sp20, MediaQuery.viewInsetsOf(context).bottom + VitrioSpace.sp20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextField(
+          Text(
+            widget.service == null ? l10n.providerServiceAdd : l10n.providerServiceEdit,
+            textAlign: TextAlign.center,
+            style: VitrioText.section.copyWith(color: c.ink),
+          ),
+          const SizedBox(height: VitrioSpace.sp20),
+          VitrioTextField(
+            label: l10n.providerServiceTitle,
             controller: _title,
             autofocus: true,
             maxLength: 60,
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(labelText: l10n.providerServiceTitle),
           ),
-          TextField(
+          const SizedBox(height: VitrioSpace.sp16),
+          VitrioTextField(
+            label: l10n.providerServiceDescription,
             controller: _description,
             maxLength: 140,
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(labelText: l10n.providerServiceDescription),
           ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l10n.providerServiceOnQuote),
+          const SizedBox(height: VitrioSpace.sp16),
+          VitrioSwitchRow(
+            label: l10n.providerServiceOnQuote,
+            description: l10n.providerServiceOnQuoteHint,
             value: _onQuote,
             onChanged: (value) => setState(() => _onQuote = value),
           ),
           if (!_onQuote) ...[
-            TextField(
+            const SizedBox(height: VitrioSpace.sp16),
+            VitrioTextField(
+              label: l10n.providerServicePrice,
               controller: _price,
+              prefix: r'R$',
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(labelText: l10n.providerServicePrice),
             ),
-            const SizedBox(height: VitrioSpace.sp12),
-            DropdownButtonFormField<PriceUnit>(
-              initialValue: _unit,
-              decoration: InputDecoration(labelText: l10n.providerServiceUnit),
-              items: [
-                for (final unit in PriceUnit.values) DropdownMenuItem(value: unit, child: Text(unitLabel(l10n, unit))),
+            const SizedBox(height: VitrioSpace.sp16),
+            Text(l10n.providerServiceUnit, style: VitrioText.label.copyWith(color: c.ink)),
+            const SizedBox(height: VitrioSpace.sp8),
+            Wrap(
+              spacing: VitrioSpace.sp8,
+              runSpacing: VitrioSpace.sp8,
+              children: [
+                for (final unit in PriceUnit.values)
+                  VitrioChip(
+                    label: unitLabel(l10n, unit),
+                    selected: _unit == unit,
+                    style: VitrioChipStyle.soft,
+                    onSelected: (_) => setState(() => _unit = unit),
+                  ),
               ],
-              onChanged: (value) => setState(() => _unit = value ?? _unit),
             ),
           ],
-          const SizedBox(height: VitrioSpace.sp20),
-          SizedBox(height: VitrioSpace.cta, child: FilledButton(onPressed: _done, child: Text(l10n.commonSave))),
+          const SizedBox(height: VitrioSpace.sp24),
+          VitrioButton(label: l10n.commonSave, onPressed: _done),
+          if (widget.service != null) ...[
+            const SizedBox(height: VitrioSpace.sp8),
+            VitrioButton(
+              label: l10n.providerServiceRemove,
+              variant: VitrioButtonVariant.danger,
+              onPressed: () => Navigator.of(context).pop((service: null)),
+            ),
+          ],
         ],
       ),
     );

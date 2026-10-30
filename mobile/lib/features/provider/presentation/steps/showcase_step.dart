@@ -2,16 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/design_system/tokens/vitrio_colors.dart';
+import '../../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../../core/design_system/tokens/vitrio_space.dart';
-import '../../../../core/design_system/widgets/vitrio_badge.dart';
+import '../../../../core/design_system/tokens/vitrio_text.dart';
 import '../../../../core/design_system/widgets/vitrio_badge_tone.dart';
+import '../../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../../core/design_system/widgets/vitrio_button_size.dart';
+import '../../../../core/design_system/widgets/vitrio_button_variant.dart';
 import '../../../../core/design_system/widgets/vitrio_chip.dart';
 import '../../../../core/design_system/widgets/vitrio_chip_style.dart';
 import '../../../../core/design_system/widgets/vitrio_icon.dart';
+import '../../../../core/design_system/widgets/vitrio_icon_button.dart';
+import '../../../../core/design_system/widgets/vitrio_icon_button_variant.dart';
 import '../../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../../core/design_system/widgets/vitrio_notice.dart';
+import '../../../../core/design_system/widgets/vitrio_section_header.dart';
+import '../../../../core/design_system/widgets/vitrio_switch_row.dart';
+import '../../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../../core/network/api_result.dart';
 import '../../../../core/network/problem_details.dart';
-import '../../../../core/presentation/form_page.dart';
 import '../../../../core/presentation/problem_message.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/mei_check.dart';
@@ -21,8 +30,8 @@ import '../../domain/service_area_draft.dart';
 import '../provider_controller.dart';
 import '../provider_labels.dart';
 import '../provider_queries.dart';
-import '../widgets/section_title.dart';
-import '../widgets/step_progress.dart';
+import '../provider_step.dart';
+import '../widgets/provider_step_page.dart';
 
 class ShowcaseStep extends ConsumerStatefulWidget {
   const ShowcaseStep({super.key, required this.editing, required this.onDone});
@@ -195,15 +204,15 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
     final c = context.vitrio;
     final categories = ref.watch(serviceCategoriesProvider);
     final mei = _mei;
-    return FormPage(
-      title: l10n.providerStepShowcase,
-      actionLabel: widget.editing ? l10n.commonSave : l10n.providerContinue,
+    return ProviderStepPage(
+      step: ProviderStep.showcase,
+      editing: widget.editing,
       busy: _busy,
       onAction: _save,
       message: _message ?? (_problem == null || _problem!.isValidation ? null : problemMessage(l10n, _problem!)),
       children: [
-        if (!widget.editing) const StepProgress(step: 2, total: 4),
-        SectionTitle(l10n.providerCategories, hint: l10n.providerCategoriesHint),
+        VitrioSectionHeader(l10n.providerCategories, hint: l10n.providerCategoriesHint),
+        const SizedBox(height: VitrioSpace.sp10),
         switch (categories) {
           AsyncData(:final value) => Wrap(
               spacing: VitrioSpace.sp8,
@@ -219,119 +228,211 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
                   ),
               ],
             ),
-          AsyncError() => TextButton(onPressed: () => ref.invalidate(serviceCategoriesProvider), child: Text(l10n.commonRetry)),
+          AsyncError() => Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: VitrioButton(
+                label: l10n.commonRetry,
+                variant: VitrioButtonVariant.ghost,
+                size: VitrioButtonSize.sm,
+                onPressed: () => ref.invalidate(serviceCategoriesProvider),
+              ),
+            ),
           _ => const Center(child: CircularProgressIndicator()),
         },
-        SectionTitle(l10n.providerServiceArea, hint: l10n.providerBasePrivate),
-        TextField(
+        const SizedBox(height: VitrioSpace.sp24),
+        VitrioSectionHeader(l10n.providerServiceArea),
+        const SizedBox(height: VitrioSpace.sp10),
+        VitrioTextField(
+          label: l10n.providerCep,
           controller: _cep,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: l10n.providerCep, errorText: fieldError(_problem, 'cep')),
+          placeholder: l10n.providerCepPlaceholder,
+          error: fieldError(_problem, 'cep'),
         ),
         const SizedBox(height: VitrioSpace.sp12),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: TextField(
-                controller: _number,
-                decoration: InputDecoration(labelText: l10n.providerNumber, errorText: fieldError(_problem, 'number')),
-              ),
+              child: VitrioTextField(label: l10n.providerNumber, controller: _number, error: fieldError(_problem, 'number')),
             ),
             const SizedBox(width: VitrioSpace.sp12),
             Expanded(
               flex: 2,
-              child: TextField(controller: _complement, decoration: InputDecoration(labelText: l10n.providerComplement)),
+              child: VitrioTextField(label: l10n.providerComplement, controller: _complement),
+            ),
+          ],
+        ),
+        const SizedBox(height: VitrioSpace.sp10),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 1),
+              child: VitrioIcon(VitrioIconName.lock, size: 16, color: c.inkMuted),
+            ),
+            const SizedBox(width: VitrioSpace.sp8),
+            Expanded(
+              child: Text(l10n.providerBasePrivate, style: VitrioText.weighted(VitrioText.caption, 600).copyWith(color: c.inkMuted)),
             ),
           ],
         ),
         const SizedBox(height: VitrioSpace.sp16),
-        Text(l10n.providerRadius(_radius.round())),
+        if (_neighborhoods.isNotEmpty) ...[
+          Wrap(
+            spacing: VitrioSpace.sp8,
+            runSpacing: VitrioSpace.sp8,
+            children: [
+              for (final name in _neighborhoods)
+                VitrioChip(
+                  label: name,
+                  selected: true,
+                  style: VitrioChipStyle.soft,
+                  onSelected: (_) => setState(() => _neighborhoods.remove(name)),
+                  trailing: VitrioIcon(VitrioIconName.x, size: 14, color: c.plum),
+                ),
+            ],
+          ),
+          const SizedBox(height: VitrioSpace.sp10),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: VitrioTextField(
+                label: l10n.providerNeighborhoods,
+                showLabel: false,
+                controller: _neighborhood,
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.done,
+                placeholder: l10n.providerNeighborhoodHint,
+                onSubmitted: (_) => _addNeighborhood(),
+              ),
+            ),
+            const SizedBox(width: VitrioSpace.sp8),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: VitrioIconButton(
+                icon: VitrioIconName.plus,
+                label: l10n.providerNeighborhoodAdd,
+                variant: VitrioIconButtonVariant.soft,
+                onPressed: _addNeighborhood,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: VitrioSpace.sp14),
+        Row(
+          children: [
+            Expanded(child: Text(l10n.providerRadiusLabel, style: VitrioText.label.copyWith(color: c.ink))),
+            Text(l10n.providerRadius(_radius.round()), style: VitrioText.label.copyWith(color: c.plum)),
+          ],
+        ),
         Slider(
           value: _radius,
           min: 1,
           max: 50,
           divisions: 49,
           label: l10n.providerRadius(_radius.round()),
+          semanticFormatterCallback: (value) => l10n.providerRadius(value.round()),
           onChanged: (value) => setState(() => _radius = value),
         ),
-        Text(l10n.providerNeighborhoods, style: Theme.of(context).textTheme.titleSmall),
+        const SizedBox(height: VitrioSpace.sp16),
+        VitrioSectionHeader(l10n.providerContactPhone),
         const SizedBox(height: VitrioSpace.sp8),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _neighborhood,
-                textCapitalization: TextCapitalization.words,
-                onSubmitted: (_) => _addNeighborhood(),
-                decoration: InputDecoration(hintText: l10n.providerNeighborhoodHint),
-              ),
-            ),
-            IconButton(tooltip: l10n.providerNeighborhoodAdd, onPressed: _addNeighborhood, icon: const VitrioIcon(VitrioIconName.plus)),
-          ],
-        ),
-        const SizedBox(height: VitrioSpace.sp8),
-        Wrap(
-          spacing: VitrioSpace.sp8,
-          runSpacing: VitrioSpace.sp8,
-          children: [
-            for (final name in _neighborhoods)
-              VitrioChip(
-                label: name,
-                selected: true,
-                style: VitrioChipStyle.soft,
-                onSelected: (_) => setState(() => _neighborhoods.remove(name)),
-                trailing: VitrioIcon(VitrioIconName.x, size: 14, color: c.plum),
-              ),
-          ],
-        ),
-        SectionTitle(l10n.providerContact),
-        TextField(
+        VitrioTextField(
+          label: l10n.providerContactPhone,
+          showLabel: false,
           controller: _phone,
+          icon: VitrioIconName.message,
           keyboardType: TextInputType.phone,
-          decoration: InputDecoration(labelText: l10n.providerContactPhone, errorText: fieldError(_problem, 'contactPhone')),
+          placeholder: l10n.providerPhonePlaceholder,
+          hint: l10n.providerContactPhoneHint,
+          error: fieldError(_problem, 'contactPhone'),
         ),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.providerWhatsApp),
-          subtitle: Text(l10n.providerWhatsAppHint),
+        const SizedBox(height: VitrioSpace.sp12),
+        VitrioSwitchRow(
+          label: l10n.providerWhatsApp,
+          description: l10n.providerWhatsAppHint,
           value: _whatsApp,
           onChanged: (value) => setState(() => _whatsApp = value),
         ),
-        SectionTitle(l10n.providerMei, hint: l10n.providerMeiHint),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _cnpj,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: l10n.providerCnpj, errorText: fieldError(_problem, 'cnpj')),
-              ),
-            ),
-            const SizedBox(width: VitrioSpace.sp12),
-            OutlinedButton(
-              onPressed: _checkingMei ? null : _verifyMei,
-              child: _checkingMei
-                  ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(l10n.providerVerify),
-            ),
-          ],
-        ),
-        if (mei != null) ...[
-          const SizedBox(height: VitrioSpace.sp12),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: switch (mei.status) {
-              MeiStatus.verified => VitrioBadge(
-                  label: l10n.providerMeiVerified,
-                  tone: VitrioBadgeTone.verified,
-                  icon: const VitrioIcon(VitrioIconName.shieldCheck),
-                ),
-              MeiStatus.pending => VitrioBadge(label: l10n.providerMeiPending, tone: VitrioBadgeTone.warning),
-              MeiStatus.lost => VitrioBadge(label: l10n.providerMeiLost, tone: VitrioBadgeTone.danger),
-              MeiStatus.failed => VitrioBadge(label: mei.reason ?? l10n.errorGeneric, tone: VitrioBadgeTone.danger),
-            },
+        const SizedBox(height: VitrioSpace.sp24),
+        Container(
+          padding: const EdgeInsets.all(VitrioSpace.sp16),
+          decoration: BoxDecoration(
+            color: c.surfaceRaised,
+            borderRadius: const BorderRadius.all(VitrioRadius.card),
+            border: Border.all(color: c.lineSoft),
           ),
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: VitrioSpace.tap,
+                    height: VitrioSpace.tap,
+                    decoration: BoxDecoration(color: c.greenSoft, borderRadius: const BorderRadius.all(VitrioRadius.lg)),
+                    alignment: Alignment.center,
+                    child: VitrioIcon(VitrioIconName.shieldCheck, color: c.green),
+                  ),
+                  const SizedBox(width: VitrioSpace.sp12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l10n.providerMei, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
+                        const SizedBox(height: 2),
+                        Text(l10n.providerMeiHint, style: VitrioText.weighted(VitrioText.caption, 600).copyWith(color: c.inkMuted)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: VitrioSpace.sp12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: VitrioTextField(
+                      label: l10n.providerCnpj,
+                      showLabel: false,
+                      controller: _cnpj,
+                      filledInset: true,
+                      keyboardType: TextInputType.number,
+                      placeholder: l10n.providerCnpjPlaceholder,
+                      error: fieldError(_problem, 'cnpj'),
+                    ),
+                  ),
+                  const SizedBox(width: VitrioSpace.sp8),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: VitrioButton(
+                      label: l10n.providerVerify,
+                      size: VitrioButtonSize.md,
+                      busy: _checkingMei,
+                      onPressed: _verifyMei,
+                    ),
+                  ),
+                ],
+              ),
+              if (mei != null) ...[
+                const SizedBox(height: VitrioSpace.sp10),
+                switch (mei.status) {
+                  MeiStatus.verified => VitrioNotice(
+                      message: l10n.providerMeiVerified,
+                      tone: VitrioBadgeTone.verified,
+                      icon: VitrioIconName.shieldCheck,
+                    ),
+                  MeiStatus.pending => VitrioNotice(message: l10n.providerMeiPending, tone: VitrioBadgeTone.warning),
+                  MeiStatus.lost => VitrioNotice(message: l10n.providerMeiLost),
+                  MeiStatus.failed => VitrioNotice(message: mei.reason ?? l10n.errorGeneric),
+                },
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }

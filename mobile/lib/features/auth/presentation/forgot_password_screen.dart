@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/tokens/vitrio_text.dart';
+import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
 import '../../../core/presentation/form_page.dart';
 import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_providers.dart';
+import 'go_after_sign_in.dart';
 import 'session_controller.dart';
 import 'widgets/password_field.dart';
 
@@ -78,7 +79,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       case ApiSuccess(:final data):
         await ref.read(sessionControllerProvider.notifier).start(data);
         if (mounted) {
-          const AccountRoute().go(context);
+          goAfterSignIn(context, ref);
         }
       case ApiFailure(:final problem):
         setState(() {
@@ -100,23 +101,25 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       children: [
         Text(_codeSent ? l10n.authCodeSentIfExists : l10n.authForgotMessage, style: VitrioText.body),
         const SizedBox(height: VitrioSpace.sp20),
-        TextField(
+        VitrioTextField(
+          label: l10n.authEmail,
           controller: _email,
           enabled: !_codeSent,
           keyboardType: TextInputType.emailAddress,
           autocorrect: false,
           autofillHints: const [AutofillHints.email],
-          decoration: InputDecoration(labelText: l10n.authEmail, errorText: fieldError(_problem, 'email')),
+          error: fieldError(_problem, 'email'),
         ),
         if (_codeSent) ...[
           const SizedBox(height: VitrioSpace.sp16),
-          TextField(
+          VitrioTextField(
+            label: l10n.authCode,
             controller: _code,
             keyboardType: TextInputType.number,
             maxLength: 6,
             autofillHints: const [AutofillHints.oneTimeCode],
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: InputDecoration(labelText: l10n.authCode, errorText: fieldError(_problem, 'code')),
+            error: fieldError(_problem, 'code'),
           ),
           const SizedBox(height: VitrioSpace.sp8),
           PasswordField(

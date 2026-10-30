@@ -17,7 +17,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get welcomeMessage =>
-      'Encontre quem atende perto de você, peça orçamento sem compromisso e veja o que os vizinhos acharam.';
+      'Encontre, contrate e avalie eletricistas, diaristas, pedreiros e muito mais, com a nota de quem já contratou.';
 
   @override
   String get welcomeFindProfessional => 'Encontrar um profissional';
@@ -253,7 +253,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String locationShowingCity(String city) {
-    return 'Mostrando profissionais de $city';
+    return 'Mostrando profissionais de $city.';
   }
 
   @override
@@ -330,11 +330,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerAvatarChange => 'Trocar foto de perfil';
 
   @override
-  String get providerCategories => 'Categorias';
+  String get providerCategories => 'O que você faz?';
 
   @override
   String get providerCategoriesHint =>
-      'Escolha até 3. A primeira é a principal.';
+      'Escolha até 3 categorias. A primeira é a principal.';
 
   @override
   String get providerCategoriesRequired => 'Escolha ao menos uma categoria.';
@@ -343,7 +343,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerPrimary => 'Principal';
 
   @override
-  String get providerServiceArea => 'Onde você atende';
+  String get providerServiceArea => 'Onde você atende?';
 
   @override
   String get providerCep => 'CEP do endereço base';
@@ -360,7 +360,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String providerRadius(int km) {
-    return 'Atende até $km km';
+    return 'até $km km';
   }
 
   @override
@@ -380,7 +380,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerContact => 'Contato';
 
   @override
-  String get providerContactPhone => 'Telefone de contato';
+  String get providerContactPhone => 'WhatsApp para contato';
 
   @override
   String get providerWhatsApp => 'Mostrar o botão de WhatsApp no perfil';
@@ -390,11 +390,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Sem ele, o contato é só pelo pedido no app.';
 
   @override
-  String get providerMei => 'Selo MEI verificado';
+  String get providerMei => 'Tem MEI? Ganhe o selo verificado';
 
   @override
-  String get providerMeiHint =>
-      'Opcional. Confirma na Receita que o seu CNPJ está ativo e é MEI.';
+  String get providerMeiHint => 'Consultamos seu CNPJ na Receita Federal.';
 
   @override
   String get providerCnpj => 'CNPJ';
@@ -403,7 +402,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerVerify => 'Verificar';
 
   @override
-  String get providerMeiVerified => 'MEI verificado (CNPJ ativo)';
+  String get providerMeiVerified =>
+      'CNPJ ativo e optante pelo MEI. O selo já aparece no seu perfil.';
 
   @override
   String get providerMeiPending =>
@@ -451,7 +451,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerServiceDescription => 'Descrição (opcional)';
 
   @override
-  String get providerServicePrice => 'A partir de (R\$)';
+  String get providerServicePrice => 'A partir de';
 
   @override
   String get providerServiceOnQuote => 'Sob orçamento';
@@ -501,7 +501,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerMissingServices => 'um serviço';
 
   @override
-  String get providerMissingContactPhone => 'o telefone de contato';
+  String get providerMissingContactPhone => 'o WhatsApp para contato';
 
   @override
   String get providerPublished => 'Vitrine publicada!';
@@ -597,10 +597,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerTo => 'às';
 
   @override
-  String get providerBadgeMei => 'MEI verificado (CNPJ ativo)';
+  String get providerBadgeMei => 'MEI verificado';
 
   @override
-  String get providerBadgeToday => 'Disponível hoje';
+  String get providerBadgeToday => 'Atende hoje';
 
   @override
   String get providerNew => 'Novo no Vitrio';
@@ -621,7 +621,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get providerWhatsAppAction => 'Chamar no WhatsApp';
+  String get providerWhatsAppAction => 'WhatsApp';
 
   @override
   String get providerNotFound => 'Este perfil não está disponível.';
@@ -634,4 +634,332 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get providerHours => 'Horários';
+
+  @override
+  String get authShow => 'Mostrar';
+
+  @override
+  String get authHide => 'Esconder';
+
+  @override
+  String get providerOfferServicesHint =>
+      'Monte sua vitrine e receba pedidos de clientes da sua cidade.';
+
+  @override
+  String get welcomeHaveAccount => 'Já tem conta?';
+
+  @override
+  String get welcomeNearYou => 'Perto\nde você';
+
+  @override
+  String get welcomeSampleAnaName => 'Ana Paula';
+
+  @override
+  String get welcomeSampleAnaRole => 'Diarista';
+
+  @override
+  String get welcomeSampleAnaRating => '5,0';
+
+  @override
+  String get welcomeSampleJoseName => 'José Lima';
+
+  @override
+  String get welcomeSampleJoseRole => 'Pedreiro';
+
+  @override
+  String get welcomeSampleJoseRating => '4,8';
+
+  @override
+  String get welcomeSampleCarlosName => 'Carlos Menezes';
+
+  @override
+  String get welcomeSampleCarlosRole => 'Eletricista · Vila Serra';
+
+  @override
+  String get welcomeSampleCarlosRating => '4,9';
+
+  @override
+  String get welcomeSampleCarlosMeta => '(127 avaliações) · 1,2 km';
+
+  @override
+  String get notificationsTitle => 'Notificações';
+
+  @override
+  String get notificationsEmpty => 'Você ainda não tem notificações.';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Olá, $name';
+  }
+
+  @override
+  String get homeQuestion => 'Do que você precisa hoje?';
+
+  @override
+  String get searchFieldLabel => 'Buscar serviço';
+
+  @override
+  String get searchPlaceholder => 'Eletricista, diarista, pintor…';
+
+  @override
+  String get homeHeroTag => 'Disponíveis agora';
+
+  @override
+  String get homeHeroTitle => 'Imprevisto em casa?';
+
+  @override
+  String get homeHeroText =>
+      'Veja quem atende hoje perto de você, com nota e preço.';
+
+  @override
+  String get homeHeroAction => 'Ver disponíveis';
+
+  @override
+  String get homeCategories => 'Categorias';
+
+  @override
+  String get homeSeeAll => 'Ver todas';
+
+  @override
+  String get homeMore => 'Mais';
+
+  @override
+  String get tabAgenda => 'Agenda';
+
+  @override
+  String get providerOrdersEmpty =>
+      'Você ainda não recebeu pedidos. Quando um cliente pedir orçamento, ele aparece aqui.';
+
+  @override
+  String get providerAgendaEmpty =>
+      'Nenhum serviço agendado. Quando um cliente aceitar seu orçamento, o serviço aparece aqui.';
+
+  @override
+  String get providerNewOrders => 'Novos pedidos';
+
+  @override
+  String get providerNoOrders => 'Nenhum pedido novo por enquanto.';
+
+  @override
+  String get providerNoOrdersShare =>
+      'Compartilhe seu perfil para chegar aos primeiros clientes.';
+
+  @override
+  String get providerNoOrdersPublish =>
+      'Publique sua vitrine para começar a receber pedidos.';
+
+  @override
+  String get providerAvailableTitle => 'Disponível para novos pedidos';
+
+  @override
+  String get providerAvailableSubtitle => 'Você aparece em “Atende hoje”';
+
+  @override
+  String get providerUnavailableTitle => 'Pausado para novos pedidos';
+
+  @override
+  String get providerUnavailableSubtitle => 'Clientes ainda veem seu perfil';
+
+  @override
+  String get providerAvailableNeedsPublish =>
+      'Fica disponível depois que a vitrine for publicada.';
+
+  @override
+  String get providerMetricNewOrders => 'pedidos novos';
+
+  @override
+  String get providerMetricRating => 'sua nota';
+
+  @override
+  String get providerMetricServicesMonth => 'serviços no mês';
+
+  @override
+  String get providerProfileAlmostReady => 'Seu perfil está quase pronto';
+
+  @override
+  String get providerProfileComplete => 'Seu perfil está completo';
+
+  @override
+  String providerPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get providerCompleteProfile => 'Completar perfil';
+
+  @override
+  String get providerHintAbout =>
+      'Conte sobre você e o seu trabalho para os clientes te conhecerem.';
+
+  @override
+  String get providerHintCategories => 'Escolha as categorias do que você faz.';
+
+  @override
+  String get providerHintServiceArea => 'Informe onde você atende.';
+
+  @override
+  String get providerHintContactPhone => 'Informe o WhatsApp para contato.';
+
+  @override
+  String get providerHintServices => 'Cadastre seus serviços e preços.';
+
+  @override
+  String get providerHintPublish =>
+      'Falta publicar a vitrine para aparecer nas buscas.';
+
+  @override
+  String get providerHintAvailability =>
+      'Informe seus dias e horários para os clientes saberem quando você atende.';
+
+  @override
+  String get providerHintShare =>
+      'Compartilhe seu perfil para receber os primeiros pedidos.';
+
+  @override
+  String get providerShareShort => 'Compartilhar';
+
+  @override
+  String get providerYourShowcase => 'Sua vitrine';
+
+  @override
+  String get providerSkip => 'Pular';
+
+  @override
+  String get providerAboutSubtitle =>
+      'Seu nome, sua profissão e um pouco da sua história.';
+
+  @override
+  String get providerShowcaseSubtitle =>
+      'Escolha o que você faz e onde atende. Dá para mudar quando quiser.';
+
+  @override
+  String get providerPhotosSubtitle =>
+      'Mostre trabalhos que você já fez e quanto cobra pelos serviços.';
+
+  @override
+  String get providerReviewSubtitle =>
+      'Confira como os clientes vão ver sua vitrine antes de publicar.';
+
+  @override
+  String get providerNextAfterAbout => 'Próximo: o que você faz e onde atende';
+
+  @override
+  String get providerNextAfterShowcase =>
+      'Próximo: fotos dos seus trabalhos e preços';
+
+  @override
+  String get providerNextAfterPhotos => 'Próximo: revisar e publicar';
+
+  @override
+  String get providerCepPlaceholder => '00000-000';
+
+  @override
+  String get providerRadiusLabel => 'Raio de atendimento';
+
+  @override
+  String get providerContactPhoneHint =>
+      'Usado no botão de WhatsApp do seu perfil.';
+
+  @override
+  String get providerPhonePlaceholder => '(16) 9 0000-0000';
+
+  @override
+  String get providerCnpjPlaceholder => '00.000.000/0001-00';
+
+  @override
+  String get providerServiceEdit => 'Editar serviço';
+
+  @override
+  String get providerServiceOnQuoteHint =>
+      'O preço é combinado depois de ver o serviço.';
+
+  @override
+  String get providerFromLabel => 'a partir de';
+
+  @override
+  String get providerFromCapital => 'A partir de';
+
+  @override
+  String get providerPriceLabel => 'Preço';
+
+  @override
+  String get providerSeeProfile => 'Ver perfil';
+
+  @override
+  String get providerPreviewTitle => 'Como você aparece na busca';
+
+  @override
+  String providerMetricReviews(int count) {
+    return '$count avaliações';
+  }
+
+  @override
+  String providerDistance(String km) {
+    return '$km km';
+  }
+
+  @override
+  String get providerMetricDistance => 'de você';
+
+  @override
+  String get providerWhereWhen => 'Onde e quando atende';
+
+  @override
+  String providerRadiusFrom(int km, String place) {
+    return 'Até $km km de $place';
+  }
+
+  @override
+  String providerMoreNeighborhoods(int count) {
+    return '+ $count bairros';
+  }
+
+  @override
+  String get providerNoPhotos => 'Ainda não há fotos de trabalhos.';
+
+  @override
+  String get providerReviews => 'Avaliações';
+
+  @override
+  String get providerNoReviews =>
+      'Ainda não há avaliações. Elas aparecem aqui depois dos primeiros serviços contratados pelo app.';
+
+  @override
+  String providerRatingOf(String score) {
+    return 'Nota $score de 5';
+  }
+
+  @override
+  String get providerDayShortMonday => 'seg';
+
+  @override
+  String get providerDayShortTuesday => 'ter';
+
+  @override
+  String get providerDayShortWednesday => 'qua';
+
+  @override
+  String get providerDayShortThursday => 'qui';
+
+  @override
+  String get providerDayShortFriday => 'sex';
+
+  @override
+  String get providerDayShortSaturday => 'sáb';
+
+  @override
+  String get providerDayShortSunday => 'dom';
+
+  @override
+  String providerDaysRange(String first, String last) {
+    return '$first a $last';
+  }
+
+  @override
+  String providerHoursRange(String start, String end) {
+    return '$start às $end';
+  }
+
+  @override
+  String get providerEmergenciesShort => 'atende emergências';
 }

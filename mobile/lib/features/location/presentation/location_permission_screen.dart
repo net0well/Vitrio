@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/routes.dart';
+import '../../../core/design_system/tokens/vitrio_colors.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
-import '../../../core/design_system/widgets/vitrio_empty_state.dart';
-import '../../../core/design_system/widgets/vitrio_icon_name.dart';
+import '../../../core/design_system/tokens/vitrio_text.dart';
+import '../../../core/design_system/widgets/vitrio_button.dart';
+import '../../../core/design_system/widgets/vitrio_button_variant.dart';
 import '../../../l10n/app_localizations.dart';
 import 'city_picker_sheet.dart';
 import 'location_controller.dart';
@@ -63,36 +66,42 @@ class _LocationPermissionScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final c = context.vitrio;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(VitrioSpace.sp20),
+            padding: const EdgeInsets.fromLTRB(VitrioSpace.sp20, VitrioSpace.sp24, VitrioSpace.sp20, VitrioSpace.sp32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Spacer(),
-                VitrioEmptyState(
-                  icon: VitrioIconName.pin,
-                  title: l10n.locationPermissionTitle,
-                  message: l10n.locationPermissionMessage,
+                Center(
+                  child: SvgPicture.asset('assets/brand/vitrio-mark.svg', height: 72, excludeFromSemantics: true),
                 ),
-                const Spacer(),
-                SizedBox(
-                  height: VitrioSpace.cta,
-                  child: FilledButton(
-                    onPressed: _busy ? null : _useNearMe,
-                    child: Text(l10n.locationUseMine),
+                const SizedBox(height: VitrioSpace.sp24),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    l10n.locationPermissionTitle,
+                    textAlign: TextAlign.center,
+                    style: VitrioText.display.copyWith(color: c.ink),
                   ),
                 ),
                 const SizedBox(height: VitrioSpace.sp12),
-                SizedBox(
-                  height: VitrioSpace.cta,
-                  child: OutlinedButton(
-                    onPressed: _busy ? null : _chooseCity,
-                    child: Text(l10n.locationChooseCity),
-                  ),
+                Text(
+                  l10n.locationPermissionMessage,
+                  textAlign: TextAlign.center,
+                  style: VitrioText.body.copyWith(color: c.inkMuted),
+                ),
+                const Spacer(),
+                VitrioButton(label: l10n.locationUseMine, busy: _busy, onPressed: _useNearMe),
+                const SizedBox(height: VitrioSpace.sp12),
+                VitrioButton(
+                  label: l10n.locationChooseCity,
+                  variant: VitrioButtonVariant.secondary,
+                  onPressed: _busy ? null : _chooseCity,
                 ),
               ],
             ),

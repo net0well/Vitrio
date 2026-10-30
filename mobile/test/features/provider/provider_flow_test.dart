@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vitrio/core/design_system/widgets/vitrio_text_field.dart';
 import 'package:vitrio/core/network/api_result.dart';
 import 'package:vitrio/features/auth/domain/me.dart';
 import 'package:vitrio/features/provider/domain/provider_status.dart';
@@ -15,7 +16,7 @@ void main() {
   const signedInClient = {'welcome_seen': true, 'location_mode': 'nearMe'};
 
   Future<void> fill(WidgetTester tester, String label, String text) async {
-    final field = find.widgetWithText(TextField, label);
+    final field = find.widgetWithText(VitrioTextField, label);
     await tester.scrollUntilVisible(field, 200, scrollable: find.byType(Scrollable).first);
     await tester.enterText(field, text);
   }
@@ -72,11 +73,11 @@ void main() {
     expect(provider.area?.number, '120');
     expect(find.text('Passo 3 de 4'), findsOneWidget);
     await tapVisible(tester, find.text('Adicionar serviço'));
-    await tester.enterText(find.widgetWithText(TextField, 'Nome do serviço'), 'Faxina completa');
-    await tester.enterText(find.widgetWithText(TextField, 'A partir de (R\$)'), '150');
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Nome do serviço'), 'Faxina completa');
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'A partir de'), '150');
     await tester.tap(find.widgetWithText(FilledButton, 'Salvar'));
     await tester.pumpAndSettle();
-    expect(find.text('a partir de R\$ 150,00/serviço'), findsOneWidget);
+    expect(find.text('R\$ 150'), findsOneWidget);
     await tester.tap(find.text('Continuar'));
     await tester.pumpAndSettle();
 
@@ -87,7 +88,7 @@ void main() {
 
     expect(provider.calls.last, 'publish');
     expect(find.text('Painel'), findsWidgets);
-    expect(find.text('Publicada'), findsOneWidget);
+    expect(find.text('Novos pedidos'), findsOneWidget);
   });
 
   testWidgets('review lists what is missing and keeps publish disabled', (tester) async {
@@ -128,9 +129,12 @@ void main() {
 
     await tester.tap(find.text('Entrar como prestador'));
     await tester.pumpAndSettle();
-    expect(find.text('Perfil 83% completo'), findsOneWidget);
-    expect(find.text('Meu perfil'), findsOneWidget);
+    expect(find.text('83%'), findsOneWidget);
+    expect(find.text('Agenda'), findsOneWidget);
 
+    await tester.tap(find.text('Meu perfil'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Conta'), 200, scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Conta'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Voltar para cliente'));
@@ -146,12 +150,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Carlos Eletricista'), findsOneWidget);
-    expect(find.text('MEI verificado (CNPJ ativo)'), findsOneWidget);
-    expect(find.text('Disponível hoje'), findsOneWidget);
-    expect(find.text('Novo no Vitrio'), findsOneWidget);
-    expect(find.text('Jaboticabal, SP · atende até 15 km'), findsOneWidget);
-    expect(find.text('a partir de R\$ 80,00/serviço'), findsOneWidget);
-    expect(find.text('Chamar no WhatsApp'), findsOneWidget);
+    expect(find.text('MEI verificado'), findsOneWidget);
+    expect(find.text('Atende hoje'), findsOneWidget);
+    expect(find.text('Novo no Vitrio'), findsWidgets);
+    expect(find.text('Até 15 km de Jaboticabal, SP'), findsOneWidget);
+    expect(find.text('R\$ 80'), findsOneWidget);
+    expect(find.text('WhatsApp'), findsOneWidget);
   });
 
   testWidgets('a shared link opens the public profile', (tester) async {

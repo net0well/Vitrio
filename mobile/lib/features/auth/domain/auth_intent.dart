@@ -1,0 +1,1 @@
+enum AuthIntent { browse, offerServices }
