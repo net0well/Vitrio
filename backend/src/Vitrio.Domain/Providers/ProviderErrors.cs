@@ -25,6 +25,9 @@ public static class ProviderErrors
 
     public static readonly Error UnknownCategory = Error.Validation("provider.unknown_category", "Categoria não encontrada.");
 
+    public static readonly Error BaseCepNotFound =
+        Error.Validation("address.cep_not_found", "Não encontramos este CEP. Confira os 8 números do endereço base.");
+
     public static readonly Error InvalidRadius = Error.Validation("provider.invalid_radius", "O raio de atendimento vai de 1 a 50 km.");
 
     public static readonly Error InvalidNeighborhoods =

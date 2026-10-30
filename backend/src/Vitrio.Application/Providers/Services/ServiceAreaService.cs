@@ -21,7 +21,7 @@ internal sealed class ServiceAreaService(IAddressLookupService addressLookup, IC
 
         if (lookup.Value is not { } found)
         {
-            return AccountErrors.CepNotFound;
+            return ProviderErrors.BaseCepNotFound;
         }
 
         var point = Coordinates.InBrazil(found.Latitude, found.Longitude);
