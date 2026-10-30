@@ -14,7 +14,6 @@ public sealed class SearchProvidersQueryHandler(
     IClock clock) : IQueryHandler<SearchProvidersQuery, Result<ProviderSearchPage>>
 {
     private const int MinTermLength = 2;
-    private const int MetersPerKm = 1000;
     private const int CentsPerReal = 100;
 
     public async ValueTask<Result<ProviderSearchPage>> Handle(SearchProvidersQuery query, CancellationToken cancellationToken)
@@ -36,7 +35,7 @@ public sealed class SearchProvidersQueryHandler(
                 area.Value,
                 term.Length >= MinTermLength ? term : null,
                 query.CategoryId,
-                (query.MaxDistanceKm ?? SearchProvidersQuery.DefaultMaxDistanceKm) * MetersPerKm,
+                (query.MaxDistanceKm ?? SearchDistances.DefaultMaxKm) * SearchDistances.MetersPerKm,
                 query.MinRating,
                 query.MeiVerified,
                 query.AvailableToday,

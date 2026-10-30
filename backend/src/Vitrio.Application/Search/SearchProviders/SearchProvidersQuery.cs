@@ -17,12 +17,11 @@ public sealed record SearchProvidersQuery(
     decimal? MaxPriceFrom,
     SearchSort Sort,
     int Page,
-    int PageSize) : IQuery<Result<ProviderSearchPage>>
+    int PageSize) : IQuery<Result<ProviderSearchPage>>, ISearchLocation
 {
     public const int MaxPage = 10;
     public const int MaxPageSize = 30;
     public const int DefaultPageSize = 20;
-    public const int DefaultMaxDistanceKm = 20;
     public const int MaxTermLength = 60;
 
     public override string ToString() => nameof(SearchProvidersQuery);

@@ -38,9 +38,25 @@ internal sealed class ProviderListingSql
     {
         var sql = new ProviderListingSql();
         sql.Add("now", criteria.Now);
-        sql.Area(criteria.Area, criteria.MaxDistanceMeters);
+        sql.Area(criteria.Area, criteria.MaxDistanceMeters, 0);
         sql.Filters(criteria);
-        return sql.Build(criteria.Sort, weights, criteria.Skip, criteria.Take);
+        return sql.Listing(OrderBy(criteria.Sort), weights, criteria.Skip, criteria.Take);
+    }
+
+    public static ProviderListingStatement TopRated(SearchArea area, double marginMeters, int take, DateTimeOffset now, SearchRelevanceOptions weights)
+    {
+        var sql = new ProviderListingSql();
+        sql.Add("now", now);
+        sql.Area(area, SearchDistances.DefaultMaxMeters, marginMeters);
+        sql._conditions.Add(RatedSql);
+        return sql.Listing("rating_score desc, review_count desc, id", weights, 0, take);
+    }
+
+    public static ProviderListingStatement Exists(SearchArea area)
+    {
+        var sql = new ProviderListingSql();
+        sql.Area(area, SearchDistances.DefaultMaxMeters, 0);
+        return new ProviderListingStatement($"select exists (select 1 {sql.Source()}) as found", sql._parameters);
     }
 
     private static string OrderBy(SearchSort sort) => sort switch
@@ -53,16 +69,17 @@ internal sealed class ProviderListingSql
         _ => "relevance desc, id"
     };
 
-    private void Area(SearchArea area, double maxDistanceMeters)
+    private void Area(SearchArea area, double maxDistanceMeters, double marginMeters)
     {
         if (area is { IsNearMe: true, Point: { } point })
         {
             Add("lat", point.Latitude);
             Add("lng", point.Longitude);
-            Add("max_distance", maxDistanceMeters);
+            Add("max_distance", maxDistanceMeters + marginMeters);
+            Add("margin", marginMeters);
             _joins.Add("cross join (select st_setsrid(st_makepoint(@lng, @lat), 4326)::geography as point) pt");
             _conditions.Add("st_dwithin(p.public_location, pt.point, @max_distance)");
-            _conditions.Add("st_dwithin(p.public_location, pt.point, p.service_radius_meters)");
+            _conditions.Add("st_dwithin(p.public_location, pt.point, p.service_radius_meters + @margin)");
             _distance = "st_distance(p.public_location, pt.point)";
             _proximity = "greatest(0.0, 1 - st_distance(p.public_location, pt.point) / @max_distance)";
             return;
@@ -118,13 +135,31 @@ internal sealed class ProviderListingSql
         }
     }
 
-    private ProviderListingStatement Build(SearchSort sort, SearchRelevanceOptions weights, int skip, int take)
+    private string Source()
     {
-        Add("skip", skip);
-        Add("take", take);
-        var relevance = Relevance(weights);
         var joins = string.Join('\n', _joins);
         var conditions = string.Concat(_conditions.Select(condition => $"\n  and {condition}"));
+        return $"""
+            from providers p
+            join users u on u.id = p.user_id
+            join cities c on c.ibge_code = p.city_ibge_code
+            left join mei_verifications m on m.provider_id = p.id
+            left join lateral (
+              select service.price_from_cents, service.price_unit
+              from provider_services service
+              where service.provider_id = p.id and service.price_from_cents is not null and not service.on_quote
+              order by service.price_unit <> '{PerService}', service.price_from_cents
+              limit 1) price on true
+            {joins}
+            where p.status = '{nameof(ProviderStatus.Published)}' and u.status = '{nameof(UserStatus.Active)}'{conditions}
+            """;
+    }
+
+    private ProviderListingStatement Listing(string orderBy, SearchRelevanceOptions weights, int skip, int take)
+    {
+        var relevance = Relevance(weights);
+        Add("skip", skip);
+        Add("take", take);
         var sql = $"""
             select * from (
               select
@@ -135,27 +170,22 @@ internal sealed class ProviderListingSql
                 p.rating_score,
                 p.review_count,
                 p.response_time_bucket,
+                p.public_latitude,
+                p.public_longitude,
+                p.service_radius_meters,
+                p.available_today as available_today_switch,
+                p.available_today_set_at,
                 c.name as city_name,
+                c.time_zone,
                 {_distance} as distance_meters,
                 coalesce(m.status = '{nameof(MeiStatus.Verified)}', false) as mei_verified,
                 {AvailableTodaySql} as available_today,
                 price.price_from_cents,
                 price.price_unit,
                 ({relevance})::double precision as relevance
-              from providers p
-              join users u on u.id = p.user_id
-              join cities c on c.ibge_code = p.city_ibge_code
-              left join mei_verifications m on m.provider_id = p.id
-              left join lateral (
-                select service.price_from_cents, service.price_unit
-                from provider_services service
-                where service.provider_id = p.id and service.price_from_cents is not null and not service.on_quote
-                order by service.price_unit <> '{PerService}', service.price_from_cents
-                limit 1) price on true
-              {joins}
-              where p.status = '{nameof(ProviderStatus.Published)}' and u.status = '{nameof(UserStatus.Active)}'{conditions}
+              {Source()}
             ) listing
-            order by {OrderBy(sort)}
+            order by {orderBy}
             limit @take offset @skip
             """;
         return new ProviderListingStatement(sql, _parameters);

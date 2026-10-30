@@ -16,7 +16,19 @@ internal sealed class ProviderListingRow
 
     public string? ResponseTimeBucket { get; init; }
 
+    public double? PublicLatitude { get; init; }
+
+    public double? PublicLongitude { get; init; }
+
+    public int ServiceRadiusMeters { get; init; }
+
+    public bool AvailableTodaySwitch { get; init; }
+
+    public DateTimeOffset? AvailableTodaySetAt { get; init; }
+
     public string CityName { get; init; } = string.Empty;
+
+    public string TimeZone { get; init; } = string.Empty;
 
     public double? DistanceMeters { get; init; }
 

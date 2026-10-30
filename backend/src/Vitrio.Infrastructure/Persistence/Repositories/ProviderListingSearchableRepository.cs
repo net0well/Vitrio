@@ -16,17 +16,44 @@ internal sealed class ProviderListingSearchableRepository(
     PublicMedia media,
     IOptions<SearchRelevanceOptions> relevance) : IProviderListingSearchableRepository
 {
-    private const double MetersPerKm = 1000;
     private const decimal CentsPerReal = 100;
 
-    public async Task<IReadOnlyList<ProviderSearchItem>> SearchAsync(ProviderListingCriteria criteria, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ProviderSearchItem>> SearchAsync(ProviderListingCriteria criteria, CancellationToken cancellationToken) =>
+        (await RowsAsync(ProviderListingSql.Search(criteria, relevance.Value), cancellationToken)).Select(ToItem).ToList();
+
+    public async Task<IReadOnlyList<TopRatedCandidate>> ListTopRatedAsync(
+        SearchArea area,
+        double marginMeters,
+        int take,
+        DateTimeOffset now,
+        CancellationToken cancellationToken)
     {
-        var statement = ProviderListingSql.Search(criteria, relevance.Value);
-        var rows = await db.Database
+        var rows = await RowsAsync(ProviderListingSql.TopRated(area, marginMeters, take, now, relevance.Value), cancellationToken);
+        return rows
+            .Select(row => new TopRatedCandidate(
+                ToItem(row) with { DistanceKm = null },
+                row.PublicLatitude!.Value,
+                row.PublicLongitude!.Value,
+                row.ServiceRadiusMeters,
+                row.AvailableTodaySwitch,
+                row.AvailableTodaySetAt,
+                row.TimeZone))
+            .ToList();
+    }
+
+    public async Task<bool> HasAnyServingAsync(SearchArea area, CancellationToken cancellationToken)
+    {
+        var statement = ProviderListingSql.Exists(area);
+        var match = await db.Database
+            .SqlQueryRaw<ProviderMatchRow>(statement.Sql, [.. statement.Parameters])
+            .SingleAsync(cancellationToken);
+        return match.Found;
+    }
+
+    private async Task<List<ProviderListingRow>> RowsAsync(ProviderListingStatement statement, CancellationToken cancellationToken) =>
+        await db.Database
             .SqlQueryRaw<ProviderListingRow>(statement.Sql, [.. statement.Parameters])
             .ToListAsync(cancellationToken);
-        return rows.Select(ToItem).ToList();
-    }
 
     private ProviderSearchItem ToItem(ProviderListingRow row)
     {
@@ -40,7 +67,7 @@ internal sealed class ProviderListingSearchableRepository(
             rated ? new ProviderRatingResponse(row.RatingScore!.Value, row.ReviewCount) : null,
             !rated,
             row.CityName,
-            row.DistanceMeters is { } meters ? GeoDistance.Rounded(meters / MetersPerKm) : null,
+            row.DistanceMeters is { } meters ? GeoDistance.Rounded(meters / SearchDistances.MetersPerKm) : null,
             new ProviderBadgesResponse(row.MeiVerified, row.AvailableToday),
             row.ResponseTimeBucket,
             row.PriceFromCents is { } cents ? new ProviderPriceResponse(cents / CentsPerReal, Enum.Parse<PriceUnit>(row.PriceUnit!)) : null);

@@ -79,6 +79,8 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 
 ## Recorte 2: Início na API
 
+**Situação:** pronto. 11 testes de integração. Os candidatos de "Bem avaliados" ficam no cache por célula de 0,02° (até 50, com folga de 2 km) ou por cidade; raio, distância e "Disponível hoje" são recalculados a cada requisição pelas regras do Domain. A lista de categorias com cache virou o `ICategoryListService`, usado também por `GET /categories`, e a validação do ponto ou da cidade é comum à busca e à Início (`SearchLocationValidator`).
+
 1. `GetHomeQuery`, validador e handler, com o cache por célula ou cidade e a conferência por requisição.
 2. `ListTopRatedAsync` e `HasAnyServingAsync` no repository de listagem.
 3. `HomeController` com a política `search`.

@@ -1,7 +1,6 @@
 using FluentValidation;
 using Vitrio.Application.Search.Common;
 using Vitrio.Domain.Common;
-using Vitrio.Domain.Locations;
 using Vitrio.Domain.Providers;
 
 namespace Vitrio.Application.Search.SearchProviders;
@@ -10,18 +9,7 @@ internal sealed class SearchProvidersQueryValidator : AbstractValidator<SearchPr
 {
     public SearchProvidersQueryValidator()
     {
-        RuleFor(query => query.Latitude)
-            .Must((query, latitude) => latitude is null == query.Longitude is null)
-            .WithMessage("Informe a latitude e a longitude juntas.");
-        RuleFor(query => query.Latitude)
-            .InclusiveBetween(BrazilBounds.MinLatitude, BrazilBounds.MaxLatitude).When(query => query.Latitude is not null)
-            .WithMessage("O ponto precisa estar no Brasil.");
-        RuleFor(query => query.Longitude)
-            .InclusiveBetween(BrazilBounds.MinLongitude, BrazilBounds.MaxLongitude).When(query => query.Longitude is not null)
-            .WithMessage("O ponto precisa estar no Brasil.");
-        RuleFor(query => query.CityIbgeCode)
-            .NotNull().When(query => query.Latitude is null)
-            .WithMessage("Use a sua localização ou escolha uma cidade.");
+        Include(new SearchLocationValidator());
         RuleFor(query => query.Q)
             .Must(term => FreeText.Normalize(term).Length <= SearchProvidersQuery.MaxTermLength)
             .WithMessage($"Busque com até {SearchProvidersQuery.MaxTermLength} caracteres.");
