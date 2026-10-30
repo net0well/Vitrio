@@ -684,6 +684,41 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Favorites.Favorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_favorites");
+
+                    b.HasIndex("ProviderId")
+                        .HasDatabaseName("ix_favorites_provider_id");
+
+                    b.HasIndex("UserId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_favorites_user_id_created_at");
+
+                    b.HasIndex("UserId", "ProviderId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_favorites_user_id_provider_id");
+
+                    b.ToTable("favorites", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1358,6 +1393,23 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_sessions_users_user_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Favorites.Favorite", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_favorites_providers_provider_id");
+
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_favorites_users_user_id");
                 });
 
             modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>

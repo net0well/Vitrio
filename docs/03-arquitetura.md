@@ -118,13 +118,13 @@ Vitrio.Application/
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
   Locations/             LocateCity, SearchCities, GetCity, LookupCep, LoadCities
   Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e das fotos
-  Search/                SearchProviders
+  Search/                SearchProviders, GetHome
   Orders/                CreateOrder, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, CancelOrder, CompleteOrder, ListOrders, GetOrder, ExpireOrders
   Payments/              ConfirmPayment, VoidPaymentConfirmation, DisputePayment, GetEarningsSummary
   Reviews/               CreateReview, UpdateReview, ReplyToReview, ListProviderReviews
   Reports/               CreateReport, Moderation
   Notifications/         RegisterDevice, ListNotifications, MarkAsRead, handlers de eventos
-  Favorites/
+  Favorites/             AddFavorite, RemoveFavorite, ListFavorites
 ```
 
 Cada caso de uso é uma pasta com `Command`/`Query`, `Handler`, `Validator` e `Response`. Exemplo: `Orders/SendQuote/SendQuoteCommand.cs`, `SendQuoteHandler.cs`, `SendQuoteValidator.cs`.

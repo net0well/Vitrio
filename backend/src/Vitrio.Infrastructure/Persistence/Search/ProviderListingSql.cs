@@ -27,6 +27,7 @@ internal sealed class ProviderListingSql
     private readonly List<string> _conditions = [];
     private readonly List<NpgsqlParameter> _parameters = [];
     private string _distance = "null::double precision";
+    private string _savedAt = "null::timestamptz";
     private string? _text;
     private string? _proximity;
 
@@ -50,6 +51,16 @@ internal sealed class ProviderListingSql
         sql.Area(area, SearchDistances.DefaultMaxMeters, marginMeters);
         sql._conditions.Add(RatedSql);
         return sql.Listing("rating_score desc, review_count desc, id", weights, 0, take);
+    }
+
+    public static ProviderListingStatement Favorites(Guid userId, int skip, int take, DateTimeOffset now, SearchRelevanceOptions weights)
+    {
+        var sql = new ProviderListingSql();
+        sql.Add("now", now);
+        sql.Add("user", userId);
+        sql._joins.Add("join favorites favorite on favorite.provider_id = p.id and favorite.user_id = @user");
+        sql._savedAt = "favorite.created_at";
+        return sql.Listing("saved_at desc, id", weights, skip, take);
     }
 
     public static ProviderListingStatement Exists(SearchArea area)
@@ -178,6 +189,7 @@ internal sealed class ProviderListingSql
                 c.name as city_name,
                 c.time_zone,
                 {_distance} as distance_meters,
+                {_savedAt} as saved_at,
                 coalesce(m.status = '{nameof(MeiStatus.Verified)}', false) as mei_verified,
                 {AvailableTodaySql} as available_today,
                 price.price_from_cents,

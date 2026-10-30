@@ -3,6 +3,7 @@ using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Common;
 using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Application.Accounts.Services;
+using Vitrio.Application.Favorites.Repositories;
 using Vitrio.Domain.Accounts;
 using Vitrio.Shared.Results;
 using Vitrio.Shared.Time;
@@ -15,6 +16,7 @@ public sealed class DeleteAccountCommandHandler(
     ISessionWritableRepository sessions,
     IAddressWritableRepository addresses,
     IDeviceWritableRepository devices,
+    IFavoriteWritableRepository favorites,
     IEnumerable<IAccountDeletionBlocker> blockers,
     ISessionService sessionService,
     ISessionStatusCache sessionStatusCache,
@@ -50,6 +52,7 @@ public sealed class DeleteAccountCommandHandler(
             cancellationToken);
         await addresses.RemoveAllForUserAsync(user.Id, cancellationToken);
         await devices.RemoveAllForUserAsync(user.Id, cancellationToken);
+        await favorites.RemoveAllForUserAsync(user.Id, cancellationToken);
         auditLog.Record(AuditActions.AccountDeleted, user.Id, AuditTargets.User, user.Id);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

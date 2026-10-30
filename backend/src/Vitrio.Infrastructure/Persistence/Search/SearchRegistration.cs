@@ -12,6 +12,7 @@ internal static class SearchRegistration
             .ValidateOnStart();
 
         services.AddSingleton<ProviderSearchIndexInterceptor>();
+        services.AddScoped<ProviderListingReader>();
         return services;
     }
 }

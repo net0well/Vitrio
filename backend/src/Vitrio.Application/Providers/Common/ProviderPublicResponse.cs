@@ -24,4 +24,5 @@ public sealed record ProviderPublicResponse(
     string? WhatsAppPhone,
     double? DistanceKm,
     IReadOnlyList<PublicPhotoResponse> FirstPhotos,
-    string ShareUrl);
+    string ShareUrl,
+    bool IsFavorite);

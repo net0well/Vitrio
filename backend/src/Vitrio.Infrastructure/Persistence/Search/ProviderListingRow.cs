@@ -32,6 +32,8 @@ internal sealed class ProviderListingRow
 
     public double? DistanceMeters { get; init; }
 
+    public DateTimeOffset? SavedAt { get; init; }
+
     public bool MeiVerified { get; init; }
 
     public bool AvailableToday { get; init; }

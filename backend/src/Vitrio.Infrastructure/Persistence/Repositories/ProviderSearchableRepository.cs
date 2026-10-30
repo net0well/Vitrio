@@ -324,6 +324,15 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
             .Select(provider => (Guid?)provider.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
+    public Task<Guid?> FindPublishedOwnerAsync(Guid providerId, CancellationToken cancellationToken) =>
+        db.Providers
+            .AsNoTracking()
+            .Where(provider => provider.Id == providerId
+                && provider.Status == ProviderStatus.Published
+                && db.Users.Any(user => user.Id == provider.UserId && user.Status == UserStatus.Active))
+            .Select(provider => (Guid?)provider.UserId)
+            .SingleOrDefaultAsync(cancellationToken);
+
     public async Task<ProviderDashboardResponse?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken)
     {
         var row = await db.Providers

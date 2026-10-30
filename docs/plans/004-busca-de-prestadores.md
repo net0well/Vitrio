@@ -88,6 +88,8 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 
 ## Recorte 3: favoritos na API
 
+**Situação:** pronto. 13 testes de integração, inclusive a corrida de três gravações ao mesmo tempo e o limite de 200 (semeado direto no banco). A leitura e o mapeamento da listagem ficaram num leitor interno (`ProviderListingReader`), usado pela busca, pela Início e pelos favoritos.
+
 1. Shared: `UniqueConstraintException`; `UnitOfWork` traduz `23505`.
 2. Domain: `Favorite` e `FavoriteErrors`.
 3. Application: `AddFavorite`, `RemoveFavorite` e `ListFavorites`, repositories e `isFavorite` no perfil público.
