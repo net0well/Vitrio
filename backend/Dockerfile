@@ -5,9 +5,11 @@ WORKDIR /source
 
 COPY global.json ./
 COPY backend/Directory.Build.props backend/Directory.Packages.props backend/.editorconfig backend/
+COPY backend/src/Vitrio.Shared/Vitrio.Shared.csproj backend/src/Vitrio.Shared/
 COPY backend/src/Vitrio.Domain/Vitrio.Domain.csproj backend/src/Vitrio.Domain/
 COPY backend/src/Vitrio.Application/Vitrio.Application.csproj backend/src/Vitrio.Application/
 COPY backend/src/Vitrio.Infrastructure/Vitrio.Infrastructure.csproj backend/src/Vitrio.Infrastructure/
+COPY backend/src/Vitrio.Jobs/Vitrio.Jobs.csproj backend/src/Vitrio.Jobs/
 COPY backend/src/Vitrio.Api/Vitrio.Api.csproj backend/src/Vitrio.Api/
 RUN dotnet restore backend/src/Vitrio.Api/Vitrio.Api.csproj
 
