@@ -116,4 +116,4 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Branch com fase, spec ou número de tarefa (`fase-2`, `spec-005`, `mvp/pagamento`, `task-12`) | Nome perde sentido e expõe planejamento | `feat/confirmacao-de-pagamento` |
 | Commit citando spec, plano, fase, IA ou processo ("conforme spec 005", "implementa fase 2", "gerado pelo Claude") | Histórico deve dizer o que mudou | "Adiciona confirmação de pagamento pelo prestador" |
 | Rodapés automáticos no commit (`Co-Authored-By`, "Generated with") | Ruído no histórico | Mensagem só com o que foi feito |
-| Commits gigantes misturando assuntos | Revisão impossível, reversão difícil | Um assunto por commit, PRs pequenos |
+| Commits gigantes misturando assuntos | Revisão impossível, reversão difícil | Um assunto por commit; os recortes viram commits pequenos na branch da spec |

@@ -17,7 +17,7 @@ Valem para pessoas e para o Claude. **Precedência:** estas regras e o `CLAUDE.m
 - Tipos: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`, `ci`.
 - Exemplos válidos: `feat/busca-por-cidade`, `feat/confirmacao-de-pagamento`, `fix/expiracao-de-orcamento`, `chore/atualiza-pacotes`.
 - **Proibido** no nome: fase, etapa, sprint, MVP, número de spec, número de plano, número de tarefa ou de critério. Ex. inválidos: `fase-2/pedidos`, `spec-005-pagamento`, `mvp/avaliacoes`, `task-12`, `plan-03`.
-- Branches curtas; integre na `main` assim que o recorte estiver pronto e testado.
+- Uma branch por spec. Os recortes do plano entram como commits na mesma branch, e ela só vai para a `main` pelo PR, quando a spec inteira estiver pronta e testada de ponta a ponta.
 
 ## 3. Commits
 

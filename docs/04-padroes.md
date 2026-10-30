@@ -312,8 +312,8 @@ internal sealed class OrderSearchableRepository(AppDbContext db) : IOrderSearcha
 
 ## 10. Git e revisão
 
-- Trunk-based: `main` sempre publicável; branches curtas a partir da `main`.
+- `main` sempre publicável; uma branch por spec, criada a partir da `main`.
 - Branch: `<tipo>/<descricao-em-kebab-case>` (tipos: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`, `ci`). Ex.: `feat/confirmacao-de-pagamento`.
 - Commit: uma frase no imperativo dizendo o que foi feito, em português. Ex.: `Adiciona confirmação de pagamento pelo prestador`.
-- PR pequeno, com descrição do que mudou e como testar; `/verify` e `/code-review` do kit antes de pedir revisão.
+- Um PR por spec, aberto só quando ela está inteira e testada de ponta a ponta; os recortes do plano viram commits pequenos na mesma branch. Descrição com o que mudou e como testar; `/verify` e `/code-review` do kit antes de pedir revisão.
 - Regras completas (inclusive o que nunca entra em branch, commit e comentário) em [06-regras-de-desenvolvimento.md](06-regras-de-desenvolvimento.md).

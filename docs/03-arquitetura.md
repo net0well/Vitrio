@@ -116,9 +116,8 @@ Vitrio.Application/
   Events/                IDomainEventHandler<T> e os handlers de evento (notificações, dados derivados, cache)
   Common/                PagedResult, behaviors (log, validação, transação)
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
-  Cities/                LocateCity, SearchCities, GetCity
-  Categories/            ListCategories
-  Providers/             CreateProviderProfile, UpdateProviderProfile, SetServiceArea, SetServices, Photos, VerifyMei, Publish, Pause, SetAvailableToday, GetProviderProfile
+  Locations/             LocateCity, SearchCities, GetCity, LookupCep, LoadCities
+  Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e das fotos
   Search/                SearchProviders
   Orders/                CreateOrder, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, CancelOrder, CompleteOrder, ListOrders, GetOrder, ExpireOrders
   Payments/              ConfirmPayment, VoidPaymentConfirmation, DisputePayment, GetEarningsSummary
@@ -169,8 +168,8 @@ public sealed class ProviderOrdersController(ISender sender) : ApiControllerBase
 erDiagram
   USER ||--o| PROVIDER : "pode ter"
   USER ||--o{ ADDRESS : salva
-  USER ||--o{ EXTERNAL_LOGIN : entra-com
-  USER ||--o{ REFRESH_TOKEN : possui
+  USER ||--o{ SESSION : abre
+  SESSION ||--o{ REFRESH_TOKEN : renova
   USER ||--o{ DEVICE : registra
   CITY ||--o{ PROVIDER : "cidade base"
   PROVIDER ||--o{ PROVIDER_CATEGORY : atua-em
@@ -196,7 +195,7 @@ Agregados e invariantes principais:
 
 | Agregado | Raiz | Invariantes |
 | --- | --- | --- |
-| Conta | `User` | e-mail único; vínculo por provedor externo; estado ativo/suspenso/excluído |
+| Conta | `User` | e-mail único; e-mail confirmado antes do primeiro acesso; estado ativo/suspenso/excluído |
 | Vitrine | `Provider` | campos mínimos para publicar; até 3 categorias, 20 serviços, 30 fotos; raio 1–50 km; ponto público derivado do endereço base |
 | Pedido | `Order` | máquina de estados de [02-regras-de-negocio.md](02-regras-de-negocio.md); um orçamento ativo; endereço só liberado em `Scheduled`; confirmações de pagamento imutáveis |
 | Avaliação | `Review` | uma por pedido; só do cliente do pedido; janela de edição de 7 dias; uma resposta |
@@ -309,10 +308,10 @@ where p.status = 'Published'
 
 ## 8. Imagens
 
-1. O app pede `upload-url` informando tipo (`image/jpeg`, `image/png`, `image/webp`, `image/heic`) e tamanho (até 10 MB).
-2. A API devolve URL assinada de `PUT` válida por 5 min, para uma chave aleatória em `incoming/`.
+1. O app pede `upload-url` informando tipo (`image/jpeg`, `image/png` ou `image/webp`) e tamanho (até 10 MB).
+2. A API devolve URL assinada de `PUT` válida por 5 min, para uma chave aleatória no bucket privado de envios (`vitrio-uploads`).
 3. O app envia o arquivo direto para o storage e chama o endpoint de confirmação com a chave.
-4. Um job valida a assinatura binária do arquivo, remove metadados (inclusive GPS do EXIF), reencoda em WebP (2048 px e miniatura de 480 px) e move para `public/` (vitrine e avaliações) ou `private/` (fotos de pedido).
+4. Um job valida a assinatura binária do arquivo, remove metadados (inclusive GPS do EXIF), reencoda em WebP (2048 px e miniatura de 480 px), grava a versão processada no bucket público (`vitrio-public`, vitrine e avaliações) ou num bucket privado (fotos de pedido) e apaga o original.
 5. Fotos públicas saem por CDN com chave não adivinhável; fotos de pedido só por URL assinada de leitura com 10 min, emitida para as partes do pedido.
 
 ## 9. App Flutter

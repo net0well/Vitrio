@@ -1,6 +1,6 @@
 # Plano: Vitrine do prestador
 
-**Status:** Em andamento
+**Status:** Concluído
 **Spec:** [003-vitrine-do-prestador](../specs/003-vitrine-do-prestador.md) (Approved)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:**
