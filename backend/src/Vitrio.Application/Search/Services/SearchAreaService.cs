@@ -7,7 +7,7 @@ using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Search.Services;
 
-internal sealed class SearchAreaService(ICityLocator locator, ICitySearchableRepository cities) : ISearchAreaService
+internal sealed class SearchAreaService(ICityLocationService locator, ICitySearchableRepository cities) : ISearchAreaService
 {
     public async Task<Result<SearchArea>> ResolveAsync(double? latitude, double? longitude, int? cityIbgeCode, CancellationToken cancellationToken)
     {

@@ -6,7 +6,7 @@ using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Locations.LocateCity;
 
-public sealed class LocateCityQueryHandler(ICityLocator locator) : IQueryHandler<LocateCityQuery, Result<LocateResponse>>
+public sealed class LocateCityQueryHandler(ICityLocationService locator) : IQueryHandler<LocateCityQuery, Result<LocateResponse>>
 {
     public async ValueTask<Result<LocateResponse>> Handle(LocateCityQuery query, CancellationToken cancellationToken)
     {

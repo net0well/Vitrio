@@ -21,7 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IServiceAreaService, ServiceAreaService>();
         services.AddScoped<IMeiCheckService, MeiCheckService>();
         services.AddScoped<IPublicProfileService, PublicProfileService>();
-        services.AddScoped<ICityLocator, CityLocator>();
+        services.AddScoped<ICityLocationService, CityLocationService>();
         services.AddScoped<ISearchAreaService, SearchAreaService>();
         return services;
     }

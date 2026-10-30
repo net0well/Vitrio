@@ -5,7 +5,7 @@ using Vitrio.Application.Locations.Repositories;
 
 namespace Vitrio.Application.Locations.Services;
 
-internal sealed class CityLocator(ICitySearchableRepository cities, IReadCache cache) : ICityLocator
+internal sealed class CityLocationService(ICitySearchableRepository cities, IReadCache cache) : ICityLocationService
 {
     private const double NearestWithinMeters = 30_000;
 
