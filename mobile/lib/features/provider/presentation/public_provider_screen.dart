@@ -44,7 +44,18 @@ class PublicProviderScreen extends ConsumerWidget {
       return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Scaffold(
-          body: _Profile(provider: value),
+          body: Stack(
+            children: [
+              _Profile(provider: value),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: MediaQuery.paddingOf(context).top,
+                child: ColoredBox(color: context.vitrio.hero),
+              ),
+            ],
+          ),
           bottomNavigationBar: value.whatsAppPhone == null
               ? null
               : VitrioActionBar(

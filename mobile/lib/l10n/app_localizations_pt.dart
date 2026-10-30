@@ -504,7 +504,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get providerMissingContactPhone => 'o WhatsApp para contato';
 
   @override
-  String get providerPublished => 'Vitrine publicada!';
+  String get providerPublished => 'Vitrine publicada.';
 
   @override
   String get providerStatusDraft => 'Rascunho';

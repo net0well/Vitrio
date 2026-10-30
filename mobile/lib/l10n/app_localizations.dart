@@ -1009,7 +1009,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerPublished.
   ///
   /// In pt, this message translates to:
-  /// **'Vitrine publicada!'**
+  /// **'Vitrine publicada.'**
   String get providerPublished;
 
   /// No description provided for @providerStatusDraft.

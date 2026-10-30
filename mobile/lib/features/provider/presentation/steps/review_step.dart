@@ -87,7 +87,7 @@ class _ReviewStepState extends ConsumerState<ReviewStep> {
             seed: profile.id,
             avatarUrl: profile.avatarUrl,
             verified: profile.mei?.status == MeiStatus.verified,
-            meta: area == null ? null : (area.neighborhood == null ? area.city.name : '${area.neighborhood} · ${area.city.name}'),
+            meta: area?.city.name,
             badges: [
               VitrioBadge(label: l10n.providerNew, tone: VitrioBadgeTone.warning),
               if (profile.mei?.status == MeiStatus.verified) VitrioBadge(label: l10n.providerBadgeMei, tone: VitrioBadgeTone.verified),

@@ -12,6 +12,8 @@ import '../../../core/design_system/widgets/vitrio_badge_tone.dart';
 import '../../../core/design_system/widgets/vitrio_button.dart';
 import '../../../core/design_system/widgets/vitrio_button_size.dart';
 import '../../../core/design_system/widgets/vitrio_button_variant.dart';
+import '../../../core/design_system/widgets/vitrio_icon_button.dart';
+import '../../../core/design_system/widgets/vitrio_icon_button_variant.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../core/design_system/widgets/vitrio_list_card.dart';
 import '../../../core/design_system/widgets/vitrio_list_row.dart';
@@ -90,11 +92,10 @@ class MyProviderProfileScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: VitrioSpace.sp10),
-                      VitrioButton(
-                        label: l10n.providerShareShort,
-                        variant: VitrioButtonVariant.secondary,
-                        size: VitrioButtonSize.md,
-                        leadingIcon: VitrioIconName.share,
+                      VitrioIconButton(
+                        icon: VitrioIconName.share,
+                        label: l10n.providerShare,
+                        variant: VitrioIconButtonVariant.soft,
                         onPressed: () => shareProviderProfile(context, ref, profile.id),
                       ),
                     ],
@@ -141,12 +142,14 @@ class MyProviderProfileScreen extends ConsumerWidget {
                 VitrioListRow(
                   icon: VitrioIconName.x,
                   title: l10n.providerPause,
+                  chevron: false,
                   onTap: () => ref.read(providerControllerProvider.notifier).run((repository) => repository.pause()),
                 )
               else if (profile.status == ProviderStatus.paused)
                 VitrioListRow(
                   icon: VitrioIconName.check,
                   title: l10n.providerResume,
+                  chevron: false,
                   onTap: () => ref.read(providerControllerProvider.notifier).run((repository) => repository.publish()),
                 )
               else
