@@ -23,6 +23,8 @@ import '../../../../core/network/api_result.dart';
 import '../../../../core/network/problem_details.dart';
 import '../../../../core/presentation/problem_message.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../location/data/location_providers.dart';
+import '../../../location/domain/cep_address.dart';
 import '../../domain/mei_check.dart';
 import '../../domain/mei_status.dart';
 import '../../domain/profile_changes.dart';
@@ -58,6 +60,9 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
   late double _radius;
   late bool _whatsApp;
   MeiCheck? _mei;
+  CepAddress? _cepAddress;
+  String? _lookedUpCep;
+  bool _cepNotFound = false;
   bool _busy = false;
   bool _checkingMei = false;
   ProblemDetails? _problem;
@@ -71,7 +76,12 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
     final primary = profile?.categories.where((category) => category.isPrimary).map((category) => category.id) ?? const <int>[];
     final others = profile?.categories.where((category) => !category.isPrimary).map((category) => category.id) ?? const <int>[];
     _categories = [...primary, ...others];
-    _cep = TextEditingController(text: area?.cep);
+    _cep = TextEditingController(text: area?.cep)..addListener(_lookUpCep);
+    _lookedUpCep = _digits(area?.cep ?? '');
+    if (area != null) {
+      _cepAddress = CepAddress(cep: area.cep, street: area.street, neighborhood: area.neighborhood, city: area.city);
+    }
+
     _number = TextEditingController(text: area?.number);
     _complement = TextEditingController(text: area?.complement);
     _neighborhood = TextEditingController();
@@ -92,6 +102,49 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
     }
 
     super.dispose();
+  }
+
+  static String _digits(String text) => text.replaceAll(RegExp(r'\D'), '');
+
+  Future<void> _lookUpCep() async {
+    final cep = _digits(_cep.text);
+    if (cep.length != 8 || cep == _lookedUpCep) {
+      return;
+    }
+
+    _lookedUpCep = cep;
+    final result = await ref.read(citiesRepositoryProvider).lookupCep(cep);
+    if (!mounted || _digits(_cep.text) != cep) {
+      return;
+    }
+
+    setState(() {
+      switch (result) {
+        case ApiSuccess(:final data):
+          _cepAddress = data;
+          _cepNotFound = false;
+          final neighborhood = data.neighborhood;
+          if (neighborhood != null &&
+              _neighborhoods.length < _maxNeighborhoods &&
+              !_neighborhoods.any((existing) => existing.toLowerCase() == neighborhood.toLowerCase())) {
+            _neighborhoods.insert(0, neighborhood);
+          }
+        case ApiFailure(:final problem):
+          _cepAddress = null;
+          _cepNotFound = problem.status == 404;
+      }
+    });
+  }
+
+  String? _cepHint() {
+    final address = _cepAddress;
+    if (address == null || _digits(address.cep) != _digits(_cep.text)) {
+      return null;
+    }
+
+    final place = [?address.street, ?address.neighborhood].join(', ');
+    final city = '${address.city.name}, ${address.city.state}';
+    return place.isEmpty ? city : '$place · $city';
   }
 
   void _toggleCategory(int id) => setState(() {
@@ -247,7 +300,8 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
           controller: _cep,
           keyboardType: TextInputType.number,
           placeholder: l10n.providerCepPlaceholder,
-          error: fieldError(_problem, 'cep'),
+          hint: _cepHint(),
+          error: fieldError(_problem, 'cep') ?? (_cepNotFound ? l10n.providerCepNotFound : null),
         ),
         const SizedBox(height: VitrioSpace.sp12),
         Row(

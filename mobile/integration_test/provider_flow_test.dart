@@ -69,6 +69,7 @@ void main() {
     await pumpUntil(tester, find.text('Elétrica'));
     await tester.tap(find.text('Elétrica'));
     await fill(tester, 'CEP do endereço base', '01001-000');
+    await pumpUntil(tester, find.text('Sé'));
     await fill(tester, 'Número', '100');
     await fill(tester, '(16) 9 0000-0000', '(16) 99123-4567');
     final whatsApp = find.byType(VitrioSwitchRow);

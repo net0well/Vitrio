@@ -65,12 +65,16 @@ void main() {
     await tester.tap(find.text('Elétrica'));
     await tester.pumpAndSettle();
     await fill(tester, 'CEP do endereço base', '14870-000');
+    await tester.pumpAndSettle();
+    expect(find.text('Rua Rui Barbosa, Centro · Jaboticabal, SP'), findsOneWidget);
+    expect(find.text('Centro'), findsOneWidget);
     await fill(tester, 'Número', '120');
     await tester.tap(find.text('Continuar'));
     await tester.pumpAndSettle();
 
     expect(provider.categoryIds, [1]);
     expect(provider.area?.number, '120');
+    expect(provider.area?.neighborhoods, ['Centro']);
     expect(find.text('Passo 3 de 4'), findsOneWidget);
     await tapVisible(tester, find.text('Adicionar serviço'));
     await tester.enterText(find.widgetWithText(VitrioTextField, 'Nome do serviço'), 'Faxina completa');

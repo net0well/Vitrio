@@ -1827,6 +1827,12 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'atende emergências'**
   String get providerEmergenciesShort;
+
+  /// No description provided for @providerCepNotFound.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não encontramos este CEP. Confira os 8 números do endereço base.'**
+  String get providerCepNotFound;
 }
 
 class _AppLocalizationsDelegate

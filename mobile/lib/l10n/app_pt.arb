@@ -456,5 +456,6 @@
       }
     }
   },
-  "providerEmergenciesShort": "atende emergências"
+  "providerEmergenciesShort": "atende emergências",
+  "providerCepNotFound": "Não encontramos este CEP. Confira os 8 números do endereço base."
 }

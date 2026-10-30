@@ -962,4 +962,8 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get providerEmergenciesShort => 'atende emergências';
+
+  @override
+  String get providerCepNotFound =>
+      'Não encontramos este CEP. Confira os 8 números do endereço base.';
 }
