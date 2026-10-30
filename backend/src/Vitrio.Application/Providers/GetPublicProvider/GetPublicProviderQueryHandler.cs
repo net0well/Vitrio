@@ -14,7 +14,6 @@ public sealed class GetPublicProviderQueryHandler(
     IPublicLinks links,
     IClock clock) : IQueryHandler<GetPublicProviderQuery, Result<ProviderPublicResponse>>
 {
-    private const int MinReviewsForRating = 3;
     private const int MinCompletedOrdersShown = 5;
 
     public async ValueTask<Result<ProviderPublicResponse>> Handle(GetPublicProviderQuery query, CancellationToken cancellationToken)
@@ -25,7 +24,7 @@ public sealed class GetPublicProviderQueryHandler(
             return ProviderErrors.NotFound;
         }
 
-        var rated = snapshot.IsRated(MinReviewsForRating);
+        var rated = snapshot.IsRated(RatingRule.MinReviews);
         return new ProviderPublicResponse(
             snapshot.Id,
             snapshot.DisplayName,
