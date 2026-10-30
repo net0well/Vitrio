@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NetTopologySuite.Geometries;
+using NpgsqlTypes;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Providers;
 using Vitrio.Infrastructure.Persistence.Cities;
 using Vitrio.Infrastructure.Persistence.Protection;
+using Vitrio.Infrastructure.Persistence.Search;
 
 namespace Vitrio.Infrastructure.Persistence.Configurations;
 
@@ -35,6 +38,17 @@ internal sealed class ProviderConfiguration : IEntityTypeConfiguration<Provider>
         builder.Property(provider => provider.RatingScore).HasPrecision(3, 2);
         builder.Property(provider => provider.ResponseTimeBucket).HasMaxLength(20);
         builder.Property<uint>("xmin").HasColumnType("xid").IsRowVersion();
+        builder.Property<string?>(ProviderSearchIndex.Primary);
+        builder.Property<string?>(ProviderSearchIndex.Name);
+        builder.Property<string?>(ProviderSearchIndex.Secondary);
+        builder.Property<string?>(ProviderSearchIndex.Terms);
+        builder.Property<NpgsqlTsVector>(ProviderSearchIndex.Vector).HasComputedColumnSql(ProviderSearchIndex.VectorSql, stored: true);
+        builder.Property<Point?>(ProviderSearchIndex.Location)
+            .HasColumnType("geography (point, 4326)")
+            .HasComputedColumnSql(ProviderSearchIndex.LocationSql, stored: true);
+        builder.HasIndex(ProviderSearchIndex.Vector).HasMethod("gin");
+        builder.HasIndex(ProviderSearchIndex.Terms).HasMethod("gin").HasOperators("gin_trgm_ops");
+        builder.HasIndex(ProviderSearchIndex.Location).HasMethod("gist");
         builder.HasMany(provider => provider.Categories).WithOne().HasForeignKey(category => category.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Services).WithOne().HasForeignKey(service => service.ProviderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(provider => provider.Neighborhoods).WithOne().HasForeignKey(neighborhood => neighborhood.ProviderId).OnDelete(DeleteBehavior.Cascade);

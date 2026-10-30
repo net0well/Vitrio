@@ -169,7 +169,7 @@ Erros de validação da busca e da Início (400):
 
 ## Integrations
 
-Nenhuma externa. Usa PostGIS, `unaccent`, `pg_trgm` e uma configuração de texto em português sem acento. Não há evento novo: favorito não gera evento, e a busca lê o estado atual da vitrine.
+Nenhuma externa. Usa PostGIS, `pg_trgm` e a busca de texto em português do PostgreSQL sobre o texto normalizado sem acento. Não há evento novo: favorito não gera evento, e a busca lê o estado atual da vitrine.
 
 ## Acceptance Criteria
 

@@ -7,6 +7,7 @@ using Vitrio.Api.RateLimiting;
 using Vitrio.Application.Providers.Common;
 using Vitrio.Application.Providers.GetPublicProvider;
 using Vitrio.Application.Providers.ListPublicPhotos;
+using Vitrio.Application.Search.Common;
 
 namespace Vitrio.Api.Controllers.Providers;
 
@@ -16,6 +17,15 @@ namespace Vitrio.Api.Controllers.Providers;
 [EnableRateLimiting(RateLimitPolicies.Profile)]
 public sealed class ProvidersController(ISender sender) : ApiControllerBase
 {
+    [HttpGet]
+    [EnableRateLimiting(RateLimitPolicies.Search)]
+    [EndpointSummary("Busca prestadores que atendem o ponto do GPS ou a cidade escolhida, com texto, filtros e ordenação")]
+    [ProducesResponseType<ProviderSearchPage>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> Search([FromQuery] SearchProvidersRequest request, CancellationToken cancellationToken) =>
+        ToActionResult(await sender.Send(request.ToQuery(), cancellationToken));
+
     [HttpGet("{id:guid}")]
     [EndpointSummary("Mostra o perfil público de uma vitrine publicada")]
     [ProducesResponseType<ProviderPublicResponse>(StatusCodes.Status200OK)]

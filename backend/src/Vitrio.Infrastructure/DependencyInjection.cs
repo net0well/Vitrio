@@ -12,6 +12,7 @@ using Vitrio.Infrastructure.Persistence;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Persistence.Protection;
 using Vitrio.Infrastructure.Persistence.Repositories;
+using Vitrio.Infrastructure.Persistence.Search;
 using Vitrio.Infrastructure.Storage;
 using Vitrio.Infrastructure.Time;
 using Vitrio.Shared.Time;
@@ -32,10 +33,13 @@ public static class DependencyInjection
         services.AddSingleton<IClock, SystemClock>();
         services.AddDomainEvents(configuration);
         services.AddSingleton<OutboxInterceptor>();
+        services.AddProviderSearch();
 
         services.AddDbContext<AppDbContext>((serviceProvider, options) => options
             .UseVitrioDatabase(connectionString)
-            .AddInterceptors(serviceProvider.GetRequiredService<OutboxInterceptor>()));
+            .AddInterceptors(
+                serviceProvider.GetRequiredService<OutboxInterceptor>(),
+                serviceProvider.GetRequiredService<ProviderSearchIndexInterceptor>()));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddRepositories();
 

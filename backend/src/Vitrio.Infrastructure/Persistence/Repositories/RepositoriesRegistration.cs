@@ -3,6 +3,7 @@ using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Application.Auditing.Repositories;
 using Vitrio.Application.Locations.Repositories;
 using Vitrio.Application.Providers.Repositories;
+using Vitrio.Application.Search.Repositories;
 
 namespace Vitrio.Infrastructure.Persistence.Repositories;
 
@@ -27,6 +28,7 @@ internal static class RepositoriesRegistration
         services.AddScoped<ICategorySearchableRepository, CategorySearchableRepository>();
         services.AddScoped<IProviderWritableRepository, ProviderWritableRepository>();
         services.AddScoped<IProviderSearchableRepository, ProviderSearchableRepository>();
+        services.AddScoped<IProviderListingSearchableRepository, ProviderListingSearchableRepository>();
         return services;
     }
 }

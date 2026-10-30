@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Application.Locations.Services;
 using Vitrio.Application.Providers.Services;
+using Vitrio.Application.Search.Services;
 
 namespace Vitrio.Application;
 
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IMeiCheckService, MeiCheckService>();
         services.AddScoped<IPublicProfileService, PublicProfileService>();
         services.AddScoped<ICityLocator, CityLocator>();
+        services.AddScoped<ISearchAreaService, SearchAreaService>();
         return services;
     }
 }

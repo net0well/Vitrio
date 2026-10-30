@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using Vitrio.Infrastructure.Persistence;
 
 #nullable disable
@@ -930,6 +931,12 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("public_latitude");
 
+                    b.Property<Point>("PublicLocation")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("geography (point, 4326)")
+                        .HasColumnName("public_location")
+                        .HasComputedColumnSql("st_setsrid(st_makepoint(public_longitude, public_latitude), 4326)::geography", true);
+
                     b.Property<double?>("PublicLongitude")
                         .HasColumnType("double precision")
                         .HasColumnName("public_longitude");
@@ -955,6 +962,28 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.Property<int>("ReviewCount")
                         .HasColumnType("integer")
                         .HasColumnName("review_count");
+
+                    b.Property<string>("SearchName")
+                        .HasColumnType("text")
+                        .HasColumnName("search_name");
+
+                    b.Property<string>("SearchPrimary")
+                        .HasColumnType("text")
+                        .HasColumnName("search_primary");
+
+                    b.Property<string>("SearchSecondary")
+                        .HasColumnType("text")
+                        .HasColumnName("search_secondary");
+
+                    b.Property<string>("SearchTerms")
+                        .HasColumnType("text")
+                        .HasColumnName("search_terms");
+
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_vector")
+                        .HasComputedColumnSql("setweight(to_tsvector('portuguese'::regconfig, coalesce(search_primary, '')), 'A') || setweight(to_tsvector('portuguese'::regconfig, coalesce(search_name, '')), 'B') || setweight(to_tsvector('portuguese'::regconfig, coalesce(search_secondary, '')), 'C')", true);
 
                     b.Property<int>("ServiceRadiusMeters")
                         .HasColumnType("integer")
@@ -993,6 +1022,22 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CityIbgeCode")
                         .HasDatabaseName("ix_providers_city_ibge_code");
+
+                    b.HasIndex("PublicLocation")
+                        .HasDatabaseName("ix_providers_public_location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("PublicLocation"), "gist");
+
+                    b.HasIndex("SearchTerms")
+                        .HasDatabaseName("ix_providers_search_terms");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchTerms"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("SearchTerms"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("SearchVector")
+                        .HasDatabaseName("ix_providers_search_vector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "gin");
 
                     b.HasIndex("UserId")
                         .IsUnique()

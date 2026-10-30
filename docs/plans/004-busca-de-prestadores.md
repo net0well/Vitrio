@@ -11,7 +11,7 @@
   - `Locations`: localizar a cidade com cache, reaproveitado pela busca;
   - `Providers`: `isFavorite` no perfil público;
   - `Accounts`: favoritos apagados na exclusão.
-- Shared: `UniqueConstraintException`, ao lado de `ConcurrencyConflictException`.
+- Shared: `UniqueConstraintException`, ao lado de `ConcurrencyConflictException` (recorte 3).
 - Infrastructure:
   - colunas e índices de busca em `providers`, e o interceptor que mantém o índice;
   - tabela `favorites`;
@@ -40,10 +40,10 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 | Tema | Decisão |
 | --- | --- |
 | Ponto público indexado | Coluna gerada `public_location geography(point, 4326)` a partir de `public_latitude` e `public_longitude`, com índice GiST. É propriedade de sombra (NTS) só na Infrastructure: o Domain continua com latitude e longitude. |
-| Índice de texto | Configuração `portuguese_unaccent` (cópia de `portuguese` com `unaccent` antes do stemmer). Três colunas de texto mantidas pela Infrastructure: `search_primary` (profissão, categorias e títulos dos serviços), `search_name` (nome de exibição) e `search_secondary` (descrições e "Sobre"). Delas saem `search_vector` (coluna gerada com pesos A, B e C, índice GIN) e `search_terms` (primária mais nome, sem acento e minúscula, índice GIN trigram). |
+| Índice de texto | Três colunas de texto mantidas pela Infrastructure, já sem acento e minúsculas (`SearchText.Normalize`): `search_primary` (profissão, categorias e títulos dos serviços), `search_name` (nome de exibição) e `search_secondary` (descrições e "Sobre"). Delas saem `search_vector` (coluna gerada com a configuração `portuguese` nativa e pesos A, B e C, índice GIN) e `search_terms` (primária mais nome, índice GIN trigram). O termo buscado passa pela mesma normalização. Sem configuração de texto própria no banco, o esquema também sai do modelo (`EnsureCreated`) igual ao das migrações. |
 | Manutenção do índice | `ProviderSearchIndexInterceptor` (`SaveChangesInterceptor`, como a outbox) recalcula as colunas de busca de toda vitrine adicionada ou alterada, a partir do agregado carregado inteiro pelo Writable repository e dos nomes das categorias. A migração preenche as vitrines que já existem. Não há evento novo: a busca não tem cache e lê o estado atual. |
 | Modo da busca | `ISearchAreaService` (Search/Services) resolve o modo (GPS ou cidade) e a cidade do contexto. Ele usa um `ICityLocator` novo em Locations, que concentra o "localizar com cache" do `LocateCityQueryHandler`, para os dois não duplicarem a regra nem a chave de cache. Com ponto e código juntos, vale GPS só quando o ponto cai dentro do limite daquela cidade. |
-| Consulta | `IProviderListingSearchableRepository` (Search/Repositories) com `SearchAsync`, `ListTopRatedAsync` e `HasAnyServingAsync`. LINQ com as funções do Npgsql: `IsWithinDistance` e `Distance` no `geography`, `Matches`/`Rank` no vetor, similaridade de palavra do `pg_trgm` e `AtTimeZone` para "Disponível hoje". O SQL gerado é conferido com `EXPLAIN`. Se alguma parte não traduzir bem, usa SQL parametrizado no próprio repository. A projeção (URL da foto, iniciais, arredondamento pela regra do Domain) fica num tipo interno reaproveitado pela listagem dos favoritos. |
+| Consulta | `IProviderListingSearchableRepository` (Search/Repositories) com `SearchAsync`, `ListTopRatedAsync` e `HasAnyServingAsync`. SQL parametrizado montado por `ProviderListingSql` (Infrastructure), porque a relevância e os filtros opcionais ficam legíveis e conferíveis com `EXPLAIN`; nenhum valor do request entra no texto do SQL. Texto: `websearch_to_tsquery` + similaridade de palavra do `pg_trgm` (a partir de 0,5); termo só com stopwords não filtra. A projeção (URL da foto, iniciais, arredondamento pela regra do Domain) é reaproveitada pela listagem dos favoritos. |
 | Filtros de área | Modo GPS: pré-filtro de 50 km pelo índice, depois `ST_DWithin(public_location, ponto, raio)` e `maxDistanceKm`. Modo cidade: `city_ibge_code = cidade` ou `ST_DWithin(public_location, cities.boundary, raio)`. Nunca o endereço base. Sempre vitrine `Published` e conta ativa, como no perfil público. |
 | Relevância | Calculada no SQL com os componentes e pesos da spec. Os pesos ficam em `Search:Relevance` (appsettings), lidos pela Infrastructure com `ValidateOnStart`, e o componente ausente (sem termo ou sem GPS) é redistribuído. Texto: o maior entre o `ts_rank` normalizado e a similaridade trigram de palavra. |
 | Termo | Normalizado com `SearchText.Normalize` (Domain). Vazio, com uma letra ou só com stopwords vira busca sem texto. Nunca vai para log nem para chave de cache. |
@@ -59,19 +59,20 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 
 ## Recorte 1: índice e busca na API
 
-1. Shared: `UniqueConstraintException`; `UnitOfWork` traduz `23505`.
-2. Infrastructure:
-   - migração `AddProviderSearch`: configuração de texto, `public_location`, colunas e vetor de busca, índices e preenchimento das vitrines existentes;
+**Situação:** pronto. 34 testes de integração da busca; a regra de nota mínima (`RatingRule`) e o localizador de cidade com cache (`ICityLocator`) foram extraídos para a busca e o perfil público usarem os mesmos.
+
+1. Infrastructure:
+   - migração `AddProviderSearch`: `public_location`, colunas e vetor de busca, índices e preenchimento das vitrines existentes;
    - `ProviderSearchIndexInterceptor`;
    - opções `Search:Relevance`.
-3. Locations: `ICityLocator` extraído do `LocateCityQueryHandler`.
-4. Search:
+2. Locations: `ICityLocator` extraído do `LocateCityQueryHandler`.
+3. Search:
    - `ISearchAreaService`;
    - `IProviderListingSearchableRepository` e implementação;
    - `SearchProvidersQuery`, validador e handler;
    - DTOs (`ProviderSearchItem`, `ProviderSearchPage`, `SearchContextResponse`, `SearchSort`, `SearchMode`).
-5. Api: `GET /providers` no `ProvidersController` com a política `search`.
-6. Testes:
+4. Api: `GET /providers` no `ProvidersController` com a política `search`.
+5. Testes:
    - integração da busca (critérios do recorte, 429 com `Retry-After`, nada de telefone, endereço ou coordenadas);
    - domínio e aplicação do que for regra pura;
    - arquitetura verde.
@@ -85,12 +86,13 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 
 ## Recorte 3: favoritos na API
 
-1. Domain: `Favorite` e `FavoriteErrors`.
-2. Application: `AddFavorite`, `RemoveFavorite` e `ListFavorites`, repositories e `isFavorite` no perfil público.
-3. Infrastructure: tabela, configuração, repositories e migração `AddFavorites`.
-4. Exclusão da conta apagando os favoritos.
-5. Api: `FavoritesController`.
-6. Testes:
+1. Shared: `UniqueConstraintException`; `UnitOfWork` traduz `23505`.
+2. Domain: `Favorite` e `FavoriteErrors`.
+3. Application: `AddFavorite`, `RemoveFavorite` e `ListFavorites`, repositories e `isFavorite` no perfil público.
+4. Infrastructure: tabela, configuração, repositories e migração `AddFavorites`.
+5. Exclusão da conta apagando os favoritos.
+6. Api: `FavoritesController`.
+7. Testes:
    - 401 nas três rotas;
    - favorito de outra conta nunca aparece;
    - própria vitrine e vitrine pausada com 404;
