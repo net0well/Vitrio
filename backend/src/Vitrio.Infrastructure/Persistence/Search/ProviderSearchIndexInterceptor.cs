@@ -50,6 +50,8 @@ internal sealed class ProviderSearchIndexInterceptor : SaveChangesInterceptor
             entry.Property(ProviderSearchIndex.Name).CurrentValue = document.Name;
             entry.Property(ProviderSearchIndex.Secondary).CurrentValue = document.Secondary;
             entry.Property(ProviderSearchIndex.Terms).CurrentValue = document.Terms;
+            entry.Property(ProviderSearchIndex.Completeness).CurrentValue = document.Completeness;
+            entry.Property(ProviderSearchIndex.ServicePriceCents).CurrentValue = document.ServicePriceCents;
         }
     }
 }

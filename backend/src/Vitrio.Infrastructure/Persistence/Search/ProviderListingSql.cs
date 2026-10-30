@@ -7,7 +7,6 @@ namespace Vitrio.Infrastructure.Persistence.Search;
 
 internal sealed class ProviderListingSql
 {
-    private const string MinWordSimilarity = "0.5";
     private const string CityReachMeters = "50000";
     private const string PerService = nameof(PriceUnit.PerService);
 
@@ -15,11 +14,7 @@ internal sealed class ProviderListingSql
         "(p.available_today and p.available_today_set_at is not null " +
         "and (p.available_today_set_at at time zone c.time_zone)::date = (@now at time zone c.time_zone)::date)";
 
-    private const string CompletenessSql =
-        "((p.avatar_key is not null)::int " +
-        $"+ ((select count(*) from portfolio_photos photo where photo.provider_id = p.id and photo.status = '{nameof(PhotoStatus.Active)}') >= 3)::int " +
-        "+ (exists (select 1 from availability_slots slot where slot.provider_id = p.id))::int " +
-        "+ (p.years_of_experience is not null)::int) / 4.0";
+    private const string CityBoundarySql = "(select city_area.boundary from cities city_area where city_area.ibge_code = @city)";
 
     private static readonly string RatedSql = $"(p.review_count >= {RatingRule.MinReviews} and p.rating_score is not null)";
 
@@ -75,10 +70,12 @@ internal sealed class ProviderListingSql
         SearchSort.Distance => "distance_meters, relevance desc, id",
         SearchSort.Rating =>
             $"case when review_count >= {RatingRule.MinReviews} then rating_score end desc nulls last, review_count desc, relevance desc, id",
-        SearchSort.Price =>
-            $"case when price_unit = '{PerService}' then price_from_cents end nulls last, relevance desc, id",
+        SearchSort.Price => "service_price_cents nulls last, relevance desc, id",
         _ => "relevance desc, id"
     };
+
+    private static string MeiVerified(string providerId) =>
+        $"exists (select 1 from mei_verifications mei where mei.provider_id = {providerId} and mei.status = '{nameof(MeiStatus.Verified)}')";
 
     private void Area(SearchArea area, double maxDistanceMeters, double marginMeters)
     {
@@ -97,10 +94,8 @@ internal sealed class ProviderListingSql
         }
 
         Add("city", area.City!.IbgeCode);
-        _joins.Add("cross join (select boundary from cities where ibge_code = @city) area");
-        _conditions.Add(
-            "(p.city_ibge_code = @city " +
-            $"or (st_dwithin(p.public_location, area.boundary, {CityReachMeters}) and st_dwithin(p.public_location, area.boundary, p.service_radius_meters)))");
+        _conditions.Add($"(p.city_ibge_code = @city or st_dwithin(p.public_location, {CityBoundarySql}, {CityReachMeters}))");
+        _conditions.Add($"(p.city_ibge_code = @city or st_dwithin(p.public_location, {CityBoundarySql}, p.service_radius_meters, false))");
     }
 
     private void Filters(ProviderListingCriteria criteria)
@@ -109,9 +104,7 @@ internal sealed class ProviderListingSql
         {
             Add("term", term);
             _joins.Add($"cross join (select websearch_to_tsquery('{ProviderSearchIndex.TextConfiguration}', @term) as tsq) q");
-            _conditions.Add(
-                "(numnode(q.tsq) = 0 or p.search_vector @@ q.tsq " +
-                $"or word_similarity(@term, coalesce(p.search_terms, '')) >= {MinWordSimilarity})");
+            _conditions.Add("(numnode(q.tsq) = 0 or p.search_vector @@ q.tsq or @term <% p.search_terms)");
             _text =
                 "case when numnode(q.tsq) = 0 then 0 " +
                 "else greatest(ts_rank(p.search_vector, q.tsq, 32), word_similarity(@term, coalesce(p.search_terms, ''))) end";
@@ -131,7 +124,7 @@ internal sealed class ProviderListingSql
 
         if (criteria.MeiVerified)
         {
-            _conditions.Add($"m.status = '{nameof(MeiStatus.Verified)}'");
+            _conditions.Add(MeiVerified("p.id"));
         }
 
         if (criteria.AvailableToday)
@@ -142,7 +135,7 @@ internal sealed class ProviderListingSql
         if (criteria.MaxPriceFromCents is { } maxPrice)
         {
             Add("max_price", maxPrice);
-            _conditions.Add($"price.price_unit = '{PerService}' and price.price_from_cents <= @max_price");
+            _conditions.Add("p.search_service_price_cents <= @max_price");
         }
     }
 
@@ -150,17 +143,13 @@ internal sealed class ProviderListingSql
     {
         var joins = string.Join('\n', _joins);
         var conditions = string.Concat(_conditions.Select(condition => $"\n  and {condition}"));
+
+        // O planejador subestima as vitrines que sobram dos filtros e, num join comum, varre a tabela de cidades
+        // (com os limites dos municípios) uma vez por vitrine; o offset 0 mantém a cidade como busca pela chave primária.
         return $"""
             from providers p
             join users u on u.id = p.user_id
-            join cities c on c.ibge_code = p.city_ibge_code
-            left join mei_verifications m on m.provider_id = p.id
-            left join lateral (
-              select service.price_from_cents, service.price_unit
-              from provider_services service
-              where service.provider_id = p.id and service.price_from_cents is not null and not service.on_quote
-              order by service.price_unit <> '{PerService}', service.price_from_cents
-              limit 1) price on true
+            cross join lateral (select city.name, city.time_zone from cities city where city.ibge_code = p.city_ibge_code offset 0) c
             {joins}
             where p.status = '{nameof(ProviderStatus.Published)}' and u.status = '{nameof(UserStatus.Active)}'{conditions}
             """;
@@ -172,7 +161,8 @@ internal sealed class ProviderListingSql
         Add("skip", skip);
         Add("take", take);
         var sql = $"""
-            select * from (
+            select ranked.*, {MeiVerified("ranked.id")} as mei_verified, price.price_from_cents, price.price_unit
+            from (
               select
                 p.id,
                 p.display_name,
@@ -186,19 +176,24 @@ internal sealed class ProviderListingSql
                 p.service_radius_meters,
                 p.available_today as available_today_switch,
                 p.available_today_set_at,
+                p.search_service_price_cents as service_price_cents,
                 c.name as city_name,
                 c.time_zone,
                 {_distance} as distance_meters,
                 {_savedAt} as saved_at,
-                coalesce(m.status = '{nameof(MeiStatus.Verified)}', false) as mei_verified,
                 {AvailableTodaySql} as available_today,
-                price.price_from_cents,
-                price.price_unit,
                 ({relevance})::double precision as relevance
               {Source()}
-            ) listing
+              order by {orderBy}
+              limit @take offset @skip
+            ) ranked
+            left join lateral (
+              select service.price_from_cents, service.price_unit
+              from provider_services service
+              where service.provider_id = ranked.id and service.price_from_cents is not null and not service.on_quote
+              order by service.price_unit <> '{PerService}', service.price_from_cents
+              limit 1) price on true
             order by {orderBy}
-            limit @take offset @skip
             """;
         return new ProviderListingStatement(sql, _parameters);
     }
@@ -209,7 +204,7 @@ internal sealed class ProviderListingSql
         [
             (weights.Rating, $"case when {RatedSql} then (p.rating_score - 1) / 4.0 else 0.5 end"),
             (weights.Reviews, "least(1.0, ln(1 + p.review_count) / ln(101))"),
-            (weights.Completeness, CompletenessSql),
+            (weights.Completeness, "p.search_completeness"),
             (weights.AvailableToday, $"{AvailableTodaySql}::int")
         ];
         if (_text is not null)

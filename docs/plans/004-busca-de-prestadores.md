@@ -108,6 +108,28 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 
 ## Recorte 4: carga sintética
 
+**Situação:** pronto. 50 mil vitrines publicadas espalhadas pelos 645 municípios de SP, com peso pela população (bem mais denso que o cenário da spec, de 50 mil no Brasil todo). p95 pela API local, 55 requisições por cenário:
+
+| Cenário | p50 | p95 |
+| --- | --- | --- |
+| GPS com texto (São Paulo, "eletricista") | 62 ms | 84 ms |
+| GPS sem texto (São Paulo) | 110 ms | 125 ms |
+| GPS com erro de digitação (Campinas) | 49 ms | 57 ms |
+| GPS, categoria e mais perto (Campinas) | 57 ms | 70 ms |
+| Cidade grande sem GPS (São Paulo, "pintor") | 126 ms | 148 ms |
+| Cidade grande sem GPS e sem filtro (São Paulo) | 478 ms | 532 ms |
+| Cidade sem GPS, menor preço (Ribeirão Preto) | 72 ms | 93 ms |
+| Início com GPS (São Paulo) | 62 ms | 75 ms |
+
+O que a medição mudou na consulta:
+- **JIT desligado na conexão:** o custo estimado alto disparava o JIT do PostgreSQL, que levava de 1,1 a 1,8 s compilando a consulta.
+- **Cidade pela chave primária:** o planejador subestimava as vitrines filtradas e varria `cities` (com os limites) uma vez por vitrine; a cidade virou subconsulta lateral com `offset 0`.
+- **Texto pelo índice:** a similaridade trigram passou ao operador `<%`, que usa o índice; o limiar de 0,5 vai na configuração da sessão (`pg_trgm.word_similarity_threshold`).
+- **Área por cidade indexável:** a cidade base pelo índice de `city_ibge_code` ou as vizinhas pelo GiST, antes da conta exata do raio até o limite.
+- **Ordenar antes de completar:** completude e menor preço por serviço ficam gravados na vitrine (`search_completeness` e `search_service_price_cents`, pelo interceptor); a consulta ordena e corta a página antes de buscar MEI e o preço do card.
+
+A cidade de São Paulo sem nenhum filtro (cerca de 31 mil candidatas nesta carga) fica acima de 400 ms; o critério da spec (GPS com texto) passa com folga. Se a densidade real chegar perto disso, entra a decisão adiada do motor de busca dedicado.
+
 1. Scripts em `infra/search-load/` e instruções no README de `infra/`.
 2. Medição com GPS e texto, com GPS sem texto, por cidade grande e por categoria. O resultado (`EXPLAIN ANALYZE` e p95) vai na descrição do PR.
 3. Ajuste de índices ou da consulta se o p95 passar de 400 ms.

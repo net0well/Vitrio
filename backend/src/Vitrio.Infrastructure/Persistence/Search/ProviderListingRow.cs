@@ -26,6 +26,8 @@ internal sealed class ProviderListingRow
 
     public DateTimeOffset? AvailableTodaySetAt { get; init; }
 
+    public long? ServicePriceCents { get; init; }
+
     public string CityName { get; init; } = string.Empty;
 
     public string TimeZone { get; init; } = string.Empty;

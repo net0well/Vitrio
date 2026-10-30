@@ -42,6 +42,8 @@ internal sealed class ProviderConfiguration : IEntityTypeConfiguration<Provider>
         builder.Property<string?>(ProviderSearchIndex.Name);
         builder.Property<string?>(ProviderSearchIndex.Secondary);
         builder.Property<string?>(ProviderSearchIndex.Terms);
+        builder.Property<double>(ProviderSearchIndex.Completeness);
+        builder.Property<long?>(ProviderSearchIndex.ServicePriceCents);
         builder.Property<NpgsqlTsVector>(ProviderSearchIndex.Vector).HasComputedColumnSql(ProviderSearchIndex.VectorSql, stored: true);
         builder.Property<Point?>(ProviderSearchIndex.Location)
             .HasColumnType("geography (point, 4326)")

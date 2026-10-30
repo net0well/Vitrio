@@ -998,6 +998,10 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("review_count");
 
+                    b.Property<double>("SearchCompleteness")
+                        .HasColumnType("double precision")
+                        .HasColumnName("search_completeness");
+
                     b.Property<string>("SearchName")
                         .HasColumnType("text")
                         .HasColumnName("search_name");
@@ -1009,6 +1013,10 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.Property<string>("SearchSecondary")
                         .HasColumnType("text")
                         .HasColumnName("search_secondary");
+
+                    b.Property<long?>("SearchServicePriceCents")
+                        .HasColumnType("bigint")
+                        .HasColumnName("search_service_price_cents");
 
                     b.Property<string>("SearchTerms")
                         .HasColumnType("text")
