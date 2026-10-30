@@ -2,7 +2,7 @@ namespace Vitrio.Application.Abstractions;
 
 public interface IObjectStorage
 {
-    PresignedUpload CreateUpload(string key, string contentType, long contentLength, DateTimeOffset expiresAt);
+    string CreateUploadUrl(string key, string contentType, long contentLength, TimeSpan validFor);
 
     Task<StoredUpload?> FindUploadAsync(string key, CancellationToken cancellationToken);
 

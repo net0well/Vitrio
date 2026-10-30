@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Web;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -108,6 +110,21 @@ public sealed class PhotoTests(ApiFactory factory)
         var response = await PutAsync(upload.UploadUrl, new byte[5000], "image/jpeg");
 
         Assert.False(response.IsSuccessStatusCode, $"The storage accepted a body bigger than the signed size ({response.StatusCode}).");
+    }
+
+    [Fact]
+    public async Task UploadUrl_WhenTheClockIsWeeksAhead_StillSignsAShortLivedUrl()
+    {
+        factory.Clock.Advance(TimeSpan.FromDays(31));
+        var accessToken = await factory.SignInAsProviderAsync(_client);
+
+        var response = await RequestUploadAsync(accessToken, "image/jpeg", 1000);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var upload = await response.Content.ReadApiAsync<PhotoUploadResponse>();
+        var expires = int.Parse(HttpUtility.ParseQueryString(new Uri(upload.UploadUrl).Query)["X-Amz-Expires"]!, CultureInfo.InvariantCulture);
+        Assert.InRange(expires, 290, 310);
+        Assert.Equal(factory.Clock.GetUtcNow().AddMinutes(5), upload.ExpiresAt, TimeSpan.FromSeconds(5));
     }
 
     [Fact]

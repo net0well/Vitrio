@@ -30,7 +30,7 @@ public sealed class CreatePhotoUploadCommandHandler(
         }
 
         var key = PhotoKeys.NewUpload(provider.Id);
-        var upload = storage.CreateUpload(key, command.ContentType, command.ContentLength, clock.UtcNow.Add(Validity));
-        return new PhotoUploadResponse(upload.Url, key, upload.ExpiresAt);
+        var url = storage.CreateUploadUrl(key, command.ContentType, command.ContentLength, Validity);
+        return new PhotoUploadResponse(url, key, clock.UtcNow.Add(Validity));
     }
 }

@@ -1,6 +1,7 @@
 using System.Net;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.Util;
 using Microsoft.Extensions.Options;
 using Vitrio.Application.Abstractions;
 
@@ -12,19 +13,20 @@ internal sealed class S3ObjectStorage(StorageClients clients, IOptions<StorageOp
 
     private readonly StorageOptions _settings = options.Value;
 
-    public PresignedUpload CreateUpload(string key, string contentType, long contentLength, DateTimeOffset expiresAt)
+    public string CreateUploadUrl(string key, string contentType, long contentLength, TimeSpan validFor)
     {
         var request = new GetPreSignedUrlRequest
         {
             BucketName = _settings.UploadsBucket,
             Key = key,
             Verb = HttpVerb.PUT,
-            Expires = expiresAt.UtcDateTime,
+            // The SDK measures the expiry against its own clock and rejects anything past 7 days, so an absolute time from IClock breaks when the clock is shifted.
+            Expires = AWSSDKUtils.CorrectedUtcNow.Add(validFor),
             ContentType = contentType,
             Protocol = (_settings.UploadServiceUrl ?? _settings.ServiceUrl).StartsWith("http://", StringComparison.OrdinalIgnoreCase) ? Protocol.HTTP : Protocol.HTTPS
         };
         request.Headers.ContentLength = contentLength;
-        return new PresignedUpload(clients.Uploads.GetPreSignedURL(request), expiresAt);
+        return clients.Uploads.GetPreSignedURL(request);
     }
 
     public async Task<StoredUpload?> FindUploadAsync(string key, CancellationToken cancellationToken)
