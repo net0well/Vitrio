@@ -1,7 +1,7 @@
 # Spec 003 — Vitrine do prestador
 
-- **Status:** Approved (2026-10-29)
-- **Data:** 2026-10-28 (revisada em 2026-10-29)
+- **Status:** Approved (2026-10-29; revisada em 2026-10-30 com as diferenças aprovadas do protótipo do app)
+- **Data:** 2026-10-28 (revisada em 2026-10-29 e 2026-10-30)
 - **Responsável:** Wellington
 
 ## Problem
@@ -34,17 +34,38 @@ Autônomos e MEIs precisam de uma vitrine que inspire confiança e traga pedidos
 - Remoção da vitrine quando a conta é excluída (consumidor de `user.deleted` da spec 001).
 - App:
   - modo prestador, com "Quero oferecer meus serviços" nas boas-vindas e "Entrar como prestador" / "Voltar para cliente" em Conta;
-  - abas Painel e Meu perfil (Pedidos e Agenda chegam com a spec 005);
+  - abas Painel, Pedidos, Agenda e Meu perfil, como no protótipo; Pedidos e Agenda mostram o estado vazio até a spec 005, e Conta fica dentro de Meu perfil;
   - onboarding e edição do perfil;
   - tela do perfil público, com o botão de WhatsApp quando ativo;
   - compartilhar o perfil e abrir o app pelo link.
 
 ### Out
 
-- Avaliações na vitrine (spec 007), busca e `SearchVector` (spec 004), pedidos, botão "Pedir orçamento" e abas Pedidos e Agenda (spec 005).
+- Avaliações na vitrine (spec 007), busca e `SearchVector` (spec 004), pedidos, botão "Pedir orçamento" e o conteúdo das abas Pedidos e Agenda (spec 005).
 - Avisos por push do selo MEI: os eventos saem nesta spec e o handler `AccountNotifications` chega com a spec 009. Até lá o Painel mostra o status do selo.
 - Suspensão pela moderação, ocultação de fotos e edição de categorias pelo admin (spec 008).
 - Métricas de desempenho detalhadas, plano Pro e link próprio.
+
+### Diferenças aprovadas do protótipo do app
+
+Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta do [protótipo](https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt).
+
+- **Raio de atendimento:** de 1 a 50 km, como na API; o protótipo vai até 20 km. O controle e o texto "até N km" seguem a prancheta.
+- **"Onde você atende?" (Criar perfil, passo 2):**
+  - o endereço base privado (CEP, número e complemento) entra antes dos bairros, com a linha "Seu endereço não aparece para ninguém…";
+  - ao digitar os 8 números do CEP, o app consulta `GET /api/v1/ceps/{cep}` (spec 002), mostra o endereço encontrado e já marca o bairro do CEP como primeiro chip;
+  - os demais bairros são digitados e viram chips, porque não há catálogo de bairros por cidade (nem na BrasilAPI nem no IBGE); o protótipo mostra uma lista pronta para marcar.
+- **Contato:** o campo "WhatsApp para contato" do protótipo guarda o telefone de contato, e a chave "Mostrar o botão de WhatsApp no perfil" decide se o botão aparece (WhatsApp opcional).
+- **Categorias:** a dica diz "Escolha até 3 categorias. A primeira é a principal.", e o chip da principal leva "· Principal".
+- **Partes que dependem de outras specs** entram com elas; até lá, zeros e estados vazios:
+  - Início: "Bem avaliados perto de você" (004) e "Seu último pedido" (005);
+  - Painel: números de pedidos novos e serviços no mês (005) e a nota (007), que aparecem como 0 e "–"; "Novos pedidos" com o estado vazio; "Última avaliação" (007);
+  - perfil público: favoritos e distância (004), "Pedir orçamento", "Responde em ~X" e serviços feitos (005), lista de avaliações (007, até lá o card "Novo no Vitrio") e a galeria "Ver todos";
+  - sino de notificações abre a tela vazia até a spec 009.
+- **Navegação do prestador:** Painel, Pedidos, Agenda e Meu perfil; Conta (dados, aparelhos, "Voltar para cliente", sair) abre a partir de Meu perfil.
+- **Perfil público:** a linha de área diz "Até N km de Cidade, UF", sem o bairro base, por privacidade.
+- **Boas-vindas:** a pílula da cidade só aparece quando a cidade já é conhecida.
+- **Passos 1, 3 e 4 do onboarding** (sem prancheta) usam a mesma moldura do passo 2: "Passo n de 4", "Pular", progresso em quatro partes, título, subtítulo e "Próximo: …" acima de "Continuar".
 
 ## Domain Model
 

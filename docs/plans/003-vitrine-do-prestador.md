@@ -101,6 +101,8 @@ Todos na branch `feat/vitrine-do-prestador`, em vários commits. O PR só abre q
 
 ## Recorte 6: app
 
+**Situação:** pronto. As telas seguem o protótipo e o design system, com as diferenças aprovadas registradas na spec. O app ganhou os componentes do design system que faltavam (campo com rótulo, switch em linha, barra superior, barra de ação, busca, card de destaque, tile de categoria, card de prestador). Os três testes de ponta a ponta (conta, localização e prestador) passam no emulador contra a API local.
+
 1. Modo prestador (Conta e boas-vindas), shell com Painel e Meu perfil.
 2. Onboarding em 4 passos com o telefone pré-preenchido, edição do perfil e Painel.
 3. Fotos com upload direto e acompanhamento do processamento.
