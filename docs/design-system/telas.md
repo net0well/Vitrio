@@ -60,9 +60,9 @@ Regras que aparecem na interface:
 | Aparelhos conectados (Conta) | a desenhar | Lista de sessões com aparelho e último acesso, "Desconectar", "Sair de todos os aparelhos" | só este aparelho |
 | Permitir localização | a desenhar | ilustração do símbolo, `Button` primary + secondary | — |
 | Escolher cidade (folha) | a desenhar | `SearchField`, lista de cidades, "Usar minha localização" | sem resultado, carregando |
-| Início | prototipada | pílula de localização, `SearchField`, `HeroCard`, `CategoryTile`, cards resumidos, `BottomNav` | sem prestadores na cidade, sem GPS |
+| Início | prototipada | pílula de localização, `SearchField`, `HeroCard`, `CategoryTile`, cards resumidos, `BottomNav` | sem prestadores na cidade, sem GPS, sem login (card "O Vitrio funciona melhor com sua conta" abaixo da busca, com "Entrar" e "Criar conta") |
 | Categorias (folha) | a desenhar | `CategoryTile` em grade de 4 colunas com todas as categorias; abre a Busca filtrada | carregando, erro |
-| Busca e resultados | prototipada | `TopBar` com busca, `Chip`, `ProviderCard`, `BottomNav` | carregando (skeleton), vazio, erro, cidade sem prestadores |
+| Busca e resultados | prototipada | `TopBar` com busca, `Chip`, `ProviderCard`, `BottomNav` | carregando (skeleton), vazio, erro, cidade sem prestadores; a linha acima da lista conta até 200 ("28 eletricistas perto de você", "Mais de 200 profissionais em Jaboticabal, SP") |
 | Filtros (folha) | a desenhar | distância máxima (só com GPS), nota mínima (Qualquer, 3+, 4+, 4,5+), MEI verificado, atende hoje, preço máximo em faixas (Qualquer, Até R$ 50, 100, 200, 500), cidade | — |
 | Favoritos | a desenhar | `TopBar`, `ProviderCard`; aberta pela linha "Favoritos" da Conta | carregando, vazio ("Você ainda não salvou nenhum profissional." + "Buscar profissionais"), erro |
 | Perfil do prestador | prototipada | capa `hero`, `Avatar`, `Badge`, métricas, serviços e preços, fotos, `ReviewCard`, `ActionBar` | perfil sem fotos, sem avaliações ("Novo no Vitrio") |

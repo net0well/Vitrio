@@ -137,6 +137,8 @@ A cidade de São Paulo sem nenhum filtro (cerca de 31 mil candidatas nesta carga
 
 ## Recorte 5: Início no app
 
+**Situação:** pronto. Testes de widget dos estados e conferência no emulador contra a prancheta.
+
 1. `GET /home` no app (repository, domínio e controller).
 2. Início igual à prancheta:
    - card "Disponíveis agora" abrindo a Busca com "Atende hoje";
@@ -147,6 +149,8 @@ A cidade de São Paulo sem nenhum filtro (cerca de 31 mil candidatas nesta carga
 3. Testes de widget dos estados (carregando, com dados, sem nota, cidade vazia, erro).
 
 ## Recorte 6: Busca no app
+
+**Situação:** pronto. Fluxo de busca coberto por testes de widget; os chips, a folha "Filtros" e a distância abaixo de 1 km foram ajustados na conferência com a prancheta.
 
 1. Busca igual à prancheta:
    - campo com voltar, limpar e filtros;
@@ -160,12 +164,16 @@ A cidade de São Paulo sem nenhum filtro (cerca de 31 mil candidatas nesta carga
 
 ## Recorte 7: favoritos no app
 
+**Situação:** pronto. O coração salvo usa a variante `soft` (aprovada); o fluxo de favoritar sem login, entrar e voltar salvo roda no emulador contra a API local.
+
 1. Coração no perfil público, com o estado salvo e a volta depois do login.
 2. Distância no perfil no modo GPS.
 3. Tela "Favoritos", rota e linha na Conta.
 4. Testes de widget e fluxo no emulador (favoritar sem login, entrar, voltar salvo, ver na lista, remover).
 
 ## Recorte 8: contagem, profissão e convite para entrar
+
+**Situação:** pronto. 6 testes de integração novos (contagem até 200 com 201 vitrines semeadas, profissão pela categoria e pelo termo) e 4 testes de widget.
 
 Entrou na revisão de front de 2026-10-31, com aprovação, para a Busca e a Início ficarem como a prancheta.
 
