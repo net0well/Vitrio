@@ -11,6 +11,10 @@ final _whole = NumberFormat('0', 'pt_BR');
 
 String formatMoney(double value) => value == value.roundToDouble() ? _wholeMoney.format(value) : _money.format(value);
 
-String formatDistance(double km) => km < 10 ? _oneDecimal.format(km) : _whole.format(km);
+String formatDistance(double km) => switch (km) {
+      < 1 => '< 1',
+      < 10 => _oneDecimal.format(km),
+      _ => _whole.format(km),
+    };
 
 String formatRating(double score) => _oneDecimal.format(score);
