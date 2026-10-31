@@ -49,7 +49,7 @@ Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta d
   - "Bem avaliados perto de você" mostra só quem tem nota; sem ninguém com nota, a seção não aparece;
   - cidade sem prestadores: o card de convite entra no lugar de "Bem avaliados" (também na Busca, no lugar da lista);
   - "Seu último pedido" entra com a spec 005.
-- **Perfil público:** o coração "Salvar nos favoritos" fica ao lado de "Compartilhar", como na prancheta. Salvo, usa o `VitrioIconButton` `solid` com o rótulo "Remover dos favoritos".
+- **Perfil público:** o coração "Salvar nos favoritos" fica ao lado de "Compartilhar", como na prancheta. Salvo, usa o `VitrioIconButton` `soft` com o rótulo "Remover dos favoritos" (o `solid` foi trocado em 2026-10-31, com aprovação, porque some sobre a capa `hero`).
 - **Telas sem prancheta**, montadas com os componentes do design system:
   - folha "Filtros";
   - folha "Categorias";

@@ -45,7 +45,7 @@ class FavoriteButton extends ConsumerWidget {
     return VitrioIconButton(
       icon: VitrioIconName.heart,
       label: saved ? l10n.favoriteRemove : l10n.favoriteSave,
-      variant: saved ? VitrioIconButtonVariant.solid : VitrioIconButtonVariant.surface,
+      variant: saved ? VitrioIconButtonVariant.soft : VitrioIconButtonVariant.surface,
       onPressed: busy ? null : () => _toggle(context, ref),
     );
   }
