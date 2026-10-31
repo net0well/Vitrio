@@ -257,6 +257,8 @@ public sealed class ProviderProfileTests(ApiFactory factory)
         var categories = await response.Content.ReadFromJsonAsync<List<CategoryResponse>>(TestContext.Current.CancellationToken);
         Assert.Equal(15, categories!.Count);
         Assert.Equal("eletrica", categories[0].Slug);
+        Assert.Equal(("eletricista", "eletricistas"), (categories[0].ProfessionalSingular, categories[0].ProfessionalPlural));
+        Assert.All(categories, category => Assert.False(string.IsNullOrWhiteSpace(category.ProfessionalPlural)));
         Assert.Contains("public", response.Headers.CacheControl!.ToString(), StringComparison.Ordinal);
     }
 

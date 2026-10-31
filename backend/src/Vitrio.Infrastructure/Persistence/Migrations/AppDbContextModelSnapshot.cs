@@ -527,6 +527,18 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("name");
 
+                    b.Property<string>("ProfessionalPlural")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("professional_plural");
+
+                    b.Property<string>("ProfessionalSingular")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("professional_singular");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -553,6 +565,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "bolt",
                             Name = "Elétrica",
+                            ProfessionalPlural = "eletricistas",
+                            ProfessionalSingular = "eletricista",
                             Slug = "eletrica",
                             SortOrder = 1
                         },
@@ -562,6 +576,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "droplet",
                             Name = "Hidráulica",
+                            ProfessionalPlural = "encanadores",
+                            ProfessionalSingular = "encanador",
                             Slug = "hidraulica",
                             SortOrder = 2
                         },
@@ -571,6 +587,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "brick",
                             Name = "Pedreiro",
+                            ProfessionalPlural = "pedreiros",
+                            ProfessionalSingular = "pedreiro",
                             Slug = "pedreiro",
                             SortOrder = 3
                         },
@@ -580,6 +598,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "roller",
                             Name = "Pintura",
+                            ProfessionalPlural = "pintores",
+                            ProfessionalSingular = "pintor",
                             Slug = "pintura",
                             SortOrder = 4
                         },
@@ -589,6 +609,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "broom",
                             Name = "Diarista",
+                            ProfessionalPlural = "diaristas",
+                            ProfessionalSingular = "diarista",
                             Slug = "diarista",
                             SortOrder = 5
                         },
@@ -598,6 +620,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "leaf",
                             Name = "Jardinagem",
+                            ProfessionalPlural = "jardineiros",
+                            ProfessionalSingular = "jardineiro",
                             Slug = "jardinagem",
                             SortOrder = 6
                         },
@@ -607,6 +631,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "wrench",
                             Name = "Montagem de móveis",
+                            ProfessionalPlural = "montadores de móveis",
+                            ProfessionalSingular = "montador de móveis",
                             Slug = "montagem-de-moveis",
                             SortOrder = 7
                         },
@@ -616,6 +642,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "sliders",
                             Name = "Ar-condicionado",
+                            ProfessionalPlural = "técnicos de ar-condicionado",
+                            ProfessionalSingular = "técnico de ar-condicionado",
                             Slug = "ar-condicionado",
                             SortOrder = 8
                         },
@@ -625,6 +653,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "wrench",
                             Name = "Marido de aluguel",
+                            ProfessionalPlural = "maridos de aluguel",
+                            ProfessionalSingular = "marido de aluguel",
                             Slug = "marido-de-aluguel",
                             SortOrder = 9
                         },
@@ -634,6 +664,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "transfer",
                             Name = "Fretes e mudanças",
+                            ProfessionalPlural = "freteiros",
+                            ProfessionalSingular = "freteiro",
                             Slug = "fretes-e-mudancas",
                             SortOrder = 10
                         },
@@ -643,6 +675,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "star",
                             Name = "Beleza a domicílio",
+                            ProfessionalPlural = "profissionais de beleza",
+                            ProfessionalSingular = "profissional de beleza",
                             Slug = "beleza-a-domicilio",
                             SortOrder = 11
                         },
@@ -652,6 +686,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "message",
                             Name = "Aulas particulares",
+                            ProfessionalPlural = "professores particulares",
+                            ProfessionalSingular = "professor particular",
                             Slug = "aulas-particulares",
                             SortOrder = 12
                         },
@@ -661,6 +697,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "grid",
                             Name = "Informática",
+                            ProfessionalPlural = "técnicos de informática",
+                            ProfessionalSingular = "técnico de informática",
                             Slug = "informatica",
                             SortOrder = 13
                         },
@@ -670,6 +708,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "user",
                             Name = "Cuidador(a)",
+                            ProfessionalPlural = "cuidadores",
+                            ProfessionalSingular = "cuidador",
                             Slug = "cuidador",
                             SortOrder = 14
                         },
@@ -679,6 +719,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "heart",
                             Name = "Pet",
+                            ProfessionalPlural = "profissionais para pet",
+                            ProfessionalSingular = "profissional para pet",
                             Slug = "pet",
                             SortOrder = 15
                         });

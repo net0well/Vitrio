@@ -11,7 +11,13 @@ internal sealed class CategorySearchableRepository(AppDbContext db) : ICategoryS
             .AsNoTracking()
             .Where(category => category.Active)
             .OrderBy(category => category.SortOrder)
-            .Select(category => new CategoryResponse(category.Id, category.Slug, category.Name, category.Icon))
+            .Select(category => new CategoryResponse(
+                category.Id,
+                category.Slug,
+                category.Name,
+                category.Icon,
+                category.ProfessionalSingular,
+                category.ProfessionalPlural))
             .ToListAsync(cancellationToken);
 
     public Task<int> CountActiveAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken) =>
