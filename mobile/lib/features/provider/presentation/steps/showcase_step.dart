@@ -399,6 +399,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
           showLabel: false,
           controller: _phone,
           icon: VitrioIconName.message,
+          iconColor: c.green,
           keyboardType: TextInputType.phone,
           placeholder: l10n.providerPhonePlaceholder,
           hint: l10n.providerContactPhoneHint,

@@ -8,3 +8,4 @@ Botão de ação. `primary` (plum) é a ação principal e aparece no máximo um
 - `trailingIcon="arrow-right"` ou `"send"` no botão principal; o ícone ganha `plum-accent`.
 - Passe `href` para navegar (vira link); `onClick` para ações.
 - Não: dois `primary` na mesma tela, botão desabilitado sem explicar por quê, caixa alta.
+- WhatsApp: `secondary` com `leadingIcon="message"` em `green` e a palavra "WhatsApp", como na prancheta do perfil (no Flutter, `leadingIconColor`).

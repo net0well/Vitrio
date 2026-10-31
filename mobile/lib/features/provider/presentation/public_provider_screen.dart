@@ -66,6 +66,7 @@ class PublicProviderScreen extends ConsumerWidget {
                       label: l10n.providerWhatsAppAction,
                       variant: VitrioButtonVariant.secondary,
                       leadingIcon: VitrioIconName.message,
+                      leadingIconColor: context.vitrio.green,
                       onPressed: () => launchUrl(
                         Uri.parse('https://wa.me/${value.whatsAppPhone!.replaceAll(RegExp(r'\D'), '')}'),
                         mode: LaunchMode.externalApplication,

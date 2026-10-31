@@ -17,6 +17,7 @@ class VitrioButton extends StatelessWidget {
     this.variant = VitrioButtonVariant.primary,
     this.size = VitrioButtonSize.lg,
     this.leadingIcon,
+    this.leadingIconColor,
     this.trailingIcon,
     this.busy = false,
   });
@@ -26,6 +27,7 @@ class VitrioButton extends StatelessWidget {
   final VitrioButtonVariant variant;
   final VitrioButtonSize size;
   final VitrioIconName? leadingIcon;
+  final Color? leadingIconColor;
   final VitrioIconName? trailingIcon;
   final bool busy;
 
@@ -67,7 +69,7 @@ class VitrioButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (leadingIcon != null) ...[
-                VitrioIcon(leadingIcon!, size: iconSize, color: foreground),
+                VitrioIcon(leadingIcon!, size: iconSize, color: leadingIconColor ?? foreground),
                 const SizedBox(width: VitrioSpace.sp8),
               ],
               Flexible(child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1)),
