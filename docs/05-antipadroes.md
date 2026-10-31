@@ -36,7 +36,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Responder 403 para recurso de outro usuário | Confirma que o recurso existe | 404 |
 | Mensagens de exceção ou stack trace na resposta | Expõe internals | ProblemDetails padronizado com `traceId` |
 | Endpoint sem `[Authorize]` ou `[AllowAnonymous]` explícito | Ninguém sabe se era para ser público | Política padrão exige login; público é marcado |
-| Paginação sem limite ou com total em busca pública | Raspagem e consultas caras | `pageSize` ≤ 30, até 10 páginas, `hasMore` |
+| Paginação sem limite ou com total em busca pública | Raspagem e consultas caras | `pageSize` ≤ 30, até 10 páginas, `hasMore`; quando a tela mostra número, contagem limitada (até 200, "Mais de 200") |
 | `POST` sensível sem `Idempotency-Key` | Pedido ou confirmação duplicados em reconexão | Chave obrigatória em criar pedido, orçamento e confirmação de pagamento |
 | Rotas com verbo (`/createOrder`) ou singular inconsistente | API imprevisível | Recursos no plural, ações como sub-recurso |
 | Coordenadas exatas do prestador na resposta | Expõe onde a pessoa mora | Ponto público e distância arredondada |

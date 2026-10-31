@@ -1,6 +1,6 @@
 # Plano: Busca de prestadores
 
-**Status:** Em andamento
+**Status:** Concluído
 **Spec:** [004-busca-de-prestadores](../specs/004-busca-de-prestadores.md) (Approved)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:**
@@ -131,6 +131,19 @@ O que a medição mudou na consulta:
 
 A cidade de São Paulo sem nenhum filtro (cerca de 31 mil candidatas nesta carga) fica acima de 400 ms; o critério da spec (GPS com texto) passa com folga. Se a densidade real chegar perto disso, entra a decisão adiada do motor de busca dedicado.
 
+Medição de novo depois da contagem até 200 (recorte 8), que soma uma consulta de contagem à busca:
+
+| Cenário | p50 | p95 |
+| --- | --- | --- |
+| GPS com texto (São Paulo, "eletricista") | 139 ms | 157 ms |
+| GPS sem texto (São Paulo) | 176 ms | 200 ms |
+| GPS com erro de digitação (Campinas) | 75 ms | 91 ms |
+| GPS, categoria e mais perto (Campinas) | 97 ms | 118 ms |
+| Cidade grande sem GPS (São Paulo, "pintor") | 198 ms | 228 ms |
+| Cidade grande sem GPS e sem filtro (São Paulo) | 530 ms | 599 ms |
+| Cidade sem GPS, menor preço (Ribeirão Preto) | 104 ms | 122 ms |
+| Início com GPS (São Paulo) | 60 ms | 73 ms |
+
 1. Scripts em `infra/search-load/` e instruções no README de `infra/`.
 2. Medição com GPS e texto, com GPS sem texto, por cidade grande e por categoria. O resultado (`EXPLAIN ANALYZE` e p95) vai na descrição do PR.
 3. Ajuste de índices ou da consulta se o p95 passar de 400 ms.
@@ -189,6 +202,10 @@ Entrou na revisão de front de 2026-10-31, com aprovação, para a Busca e a In�
 4. Testes: contagem e profissão na API; linha da Busca e convite da Início nos testes de widget.
 
 ## Recorte 9: fechamento
+
+**Situação:** pronto.
+- Revisão de back: arquitetura conforme (referências na direção certa, sem ciclos, sem EF, Npgsql ou ASP.NET em Domain, Application e Shared, um tipo por arquivo); segurança sem achados (pacotes sem vulnerabilidade, SQL só com parâmetros, autorização explícita, `no-store`); 33 casos de endpoint testados na API local com a conta fixa. Corrigidos: remover o mesmo favorito em vários aparelhos ao mesmo tempo dava 409, e a regra "termo e coordenadas nunca vão para log" ganhou teste.
+- Revisão de front, telas de cliente e de prestador contra as pranchetas e o design system, com uma vitrine completa e uma conta nova. Corrigidos: o onboarding de outra conta no mesmo aparelho abria com a vitrine da conta anterior; o modo prestador guardado no aparelho levava uma conta sem vitrine a um Painel que não carregava; a barra de ação ficava atrás do teclado; o selo "Atende emergências" no topo do perfil não está na prancheta; o ícone do WhatsApp é verde na prancheta; CNPJ e CEP sem máscara.
 
 1. Revisão de back:
    - `/code-review`, `/security-scan` e `/arch-check`;
