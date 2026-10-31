@@ -24,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryListService, CategoryListService>();
         services.AddScoped<ICityLocationService, CityLocationService>();
         services.AddScoped<ISearchAreaService, SearchAreaService>();
+        services.AddScoped<ISearchProfessionalService, SearchProfessionalService>();
         services.AddScoped<ITopRatedProvidersService, TopRatedProvidersService>();
         return services;
     }

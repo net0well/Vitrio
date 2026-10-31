@@ -6,6 +6,8 @@ public interface IProviderListingSearchableRepository
 {
     Task<IReadOnlyList<ProviderSearchItem>> SearchAsync(ProviderListingCriteria criteria, CancellationToken cancellationToken);
 
+    Task<int> CountAsync(ProviderListingCriteria criteria, int limit, CancellationToken cancellationToken);
+
     Task<IReadOnlyList<TopRatedCandidate>> ListTopRatedAsync(
         SearchArea area,
         double marginMeters,

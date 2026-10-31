@@ -12,6 +12,9 @@ internal sealed class ProviderListingSearchableRepository(
     public Task<IReadOnlyList<ProviderSearchItem>> SearchAsync(ProviderListingCriteria criteria, CancellationToken cancellationToken) =>
         reader.ItemsAsync(ProviderListingSql.Search(criteria, relevance.Value), cancellationToken);
 
+    public Task<int> CountAsync(ProviderListingCriteria criteria, int limit, CancellationToken cancellationToken) =>
+        reader.CountAsync(ProviderListingSql.Count(criteria, limit), cancellationToken);
+
     public async Task<IReadOnlyList<TopRatedCandidate>> ListTopRatedAsync(
         SearchArea area,
         double marginMeters,

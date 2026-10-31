@@ -220,6 +220,64 @@ public sealed class ProviderSearchTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Search_ByCategory_CountsTheResultsAndNamesTheProfessional()
+    {
+        var spot = SearchApi.NextSpot();
+        foreach (var km in new[] { 1, 2, 3 })
+        {
+            await PublishAsync(new SearchableProvider(spot.Offset(km)));
+        }
+
+        var page = await _client.SearchPageAsync($"{SearchApi.Near(spot)}&categoryId=1");
+
+        Assert.Equal(3, page.Count);
+        Assert.False(page.MoreThanCount);
+        Assert.Equal(new ProfessionalNameResponse("eletricista", "eletricistas"), page.Context.Professional);
+    }
+
+    [Theory]
+    [InlineData("Eletricistas", "eletricista")]
+    [InlineData("encanador", "encanador")]
+    [InlineData("MONTADOR DE MÓVEIS", "montador de móveis")]
+    [InlineData("chuveiro", null)]
+    public async Task Search_ByATermThatIsAProfession_NamesTheProfessional(string term, string? singular)
+    {
+        var page = await _client.SearchPageAsync($"{SearchApi.Near(SearchApi.NextSpot())}&q={Uri.EscapeDataString(term)}");
+
+        Assert.Equal(singular, page.Context.Professional?.Singular);
+        Assert.Equal(0, page.Count);
+    }
+
+    [Fact]
+    public async Task Search_WithMoreThanTwoHundredResults_CountsUpToTwoHundred()
+    {
+        var spot = SearchApi.NextSpot();
+        await factory.QueryAsync(db => db.Database.ExecuteSqlAsync(
+            $"""
+            with owners as (
+              insert into users (id, email, display_name, password_hash, password_changed_at, status, accepted_terms_version,
+                terms_accepted_at, created_at)
+              select gen_random_uuid(), 'contagem-' || gen_random_uuid() || '@exemplo.com.br', 'Vitrine', 'sem-senha', now(), 'Active', '1',
+                now(), now()
+              from generate_series(1, 201)
+              returning id)
+            insert into providers (id, user_id, display_name, headline, whats_app_enabled, status, location_approximate,
+              service_radius_meters, available_today, handles_emergencies, review_count, completed_orders,
+              response_sample_size, late_cancellations90d, created_at, updated_at, public_latitude, public_longitude, city_ibge_code)
+            select gen_random_uuid(), id, 'Vitrine', 'Eletricista', false, 'Published', false,
+              15000, false, false, 0, 0, 0, 0, now(), now(), {spot.Latitude}, {spot.Longitude}, {FakeIbgeCitySource.SaoJoseCode}
+            from owners
+            """,
+            TestContext.Current.CancellationToken));
+
+        var page = await _client.SearchPageAsync(SearchApi.Near(spot));
+
+        Assert.Equal(200, page.Count);
+        Assert.True(page.MoreThanCount);
+        Assert.True(page.HasMore);
+    }
+
+    [Fact]
     public async Task SearchHomeAndProfile_NeverWriteTheTermOrTheCoordinatesToTheLogs()
     {
         var point = SearchApi.NextSpot().Offset(0.37, 0.53);

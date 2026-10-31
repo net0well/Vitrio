@@ -23,6 +23,7 @@ public sealed record SearchProvidersQuery(
     public const int MaxPageSize = 30;
     public const int DefaultPageSize = 20;
     public const int MaxTermLength = 60;
+    public const int MaxCount = 200;
 
     public override string ToString() => nameof(SearchProvidersQuery);
 }

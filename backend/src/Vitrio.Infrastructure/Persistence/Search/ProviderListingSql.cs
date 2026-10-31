@@ -40,6 +40,16 @@ internal sealed class ProviderListingSql
         return sql.Listing(OrderBy(criteria.Sort), weights, criteria.Skip, criteria.Take);
     }
 
+    public static ProviderListingStatement Count(ProviderListingCriteria criteria, int limit)
+    {
+        var sql = new ProviderListingSql();
+        sql.Add("now", criteria.Now);
+        sql.Area(criteria.Area, criteria.MaxDistanceMeters, 0);
+        sql.Filters(criteria);
+        sql.Add("limit", limit);
+        return new ProviderListingStatement($"select count(*)::int as total from (select 1 {sql.Source()} limit @limit) counted", sql._parameters);
+    }
+
     public static ProviderListingStatement TopRated(SearchArea area, double marginMeters, int take, DateTimeOffset now, SearchRelevanceOptions weights)
     {
         var sql = new ProviderListingSql();

@@ -33,7 +33,8 @@ Todos na branch `feat/busca-de-prestadores`, em vários commits. O PR só abre q
 | 5 | App: Início completa e folha "Categorias" | AC-30 |
 | 6 | App: Busca, chips, ordenação, folha "Filtros" e cidade sem prestadores | — |
 | 7 | App: coração no perfil, distância no perfil e tela "Favoritos" | AC-29 |
-| 8 | Fechamento: revisões de back e de front, testes no emulador e PR | Todos |
+| 8 | Contagem de resultados, profissão das categorias e convite para entrar na Início | AC-31 a AC-33 |
+| 9 | Fechamento: revisões de back e de front, testes no emulador e PR | Todos |
 
 ## Decisões técnicas
 
@@ -164,7 +165,22 @@ A cidade de São Paulo sem nenhum filtro (cerca de 31 mil candidatas nesta carga
 3. Tela "Favoritos", rota e linha na Conta.
 4. Testes de widget e fluxo no emulador (favoritar sem login, entrar, voltar salvo, ver na lista, remover).
 
-## Recorte 8: fechamento
+## Recorte 8: contagem, profissão e convite para entrar
+
+Entrou na revisão de front de 2026-10-31, com aprovação, para a Busca e a Início ficarem como a prancheta.
+
+1. Domain e Infrastructure: `Category` com o nome do profissional no singular e no plural; migração `AddCategoryProfessionalNames` preenchendo as 15 categorias.
+2. Application:
+   - `CategoryResponse` com os nomes do profissional; a chave do cache da lista de categorias muda junto, para não ler o formato antigo do Redis;
+   - `ISearchProfessionalService` acha a profissão da busca (categoria escolhida ou termo igual ao nome do profissional, pela `SearchText.Normalize`);
+   - `CountAsync` no repository de listagem, contando no máximo 201 vitrines com os mesmos filtros (sem ordenar);
+   - `ProviderSearchPage` com `count` e `moreThanCount`, e `context.professional`.
+3. App:
+   - linha acima da lista com o número e a profissão ("28 eletricistas perto de você", "Mais de 200 profissionais em Jaboticabal, SP");
+   - card de convite para entrar na Início, abaixo da busca, só sem login, com "Entrar" e "Criar conta".
+4. Testes: contagem e profissão na API; linha da Busca e convite da Início nos testes de widget.
+
+## Recorte 9: fechamento
 
 1. Revisão de back:
    - `/code-review`, `/security-scan` e `/arch-check`;

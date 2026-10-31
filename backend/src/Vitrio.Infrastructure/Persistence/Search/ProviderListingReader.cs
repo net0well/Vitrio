@@ -20,6 +20,11 @@ internal sealed class ProviderListingReader(AppDbContext db, PublicMedia media)
     public async Task<IReadOnlyList<ProviderSearchItem>> ItemsAsync(ProviderListingStatement statement, CancellationToken cancellationToken) =>
         (await RowsAsync(statement, cancellationToken)).Select(ToItem).ToList();
 
+    public async Task<int> CountAsync(ProviderListingStatement statement, CancellationToken cancellationToken) =>
+        (await db.Database
+            .SqlQueryRaw<ProviderCountRow>(statement.Sql, [.. statement.Parameters])
+            .SingleAsync(cancellationToken)).Total;
+
     public async Task<bool> AnyAsync(ProviderListingStatement statement, CancellationToken cancellationToken) =>
         (await db.Database
             .SqlQueryRaw<ProviderMatchRow>(statement.Sql, [.. statement.Parameters])

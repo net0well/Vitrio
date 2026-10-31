@@ -5,4 +5,6 @@ public sealed record ProviderSearchPage(
     int Page,
     int PageSize,
     bool HasMore,
+    int Count,
+    bool MoreThanCount,
     SearchContextResponse Context);

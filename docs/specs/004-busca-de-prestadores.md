@@ -1,6 +1,6 @@
 # Spec 004 — Busca de prestadores
 
-- **Status:** Approved (2026-10-30)
+- **Status:** Approved (2026-10-31)
 - **Data:** 2026-10-28 (revisada em 2026-10-30 e 2026-10-31)
 - **Responsável:** Wellington
 
@@ -15,8 +15,9 @@ O cliente precisa achar rápido quem atende onde ele está (ou na cidade que esc
 - Busca por texto (profissão, categoria, serviço, nome) com tolerância a acento e pequenos erros.
 - Filtro por categoria, distância máxima, nota mínima, MEI verificado, atende hoje, preço máximo "a partir de" e cidade.
 - Ordenação: relevância (padrão), mais perto (só com GPS), melhor avaliado, menor preço.
+- Número de resultados da busca, contado até 200, com o nome da profissão quando a busca é por uma.
 - Contexto de localização da spec 002: ponto do GPS ou cidade escolhida.
-- Início: categorias, card "Disponíveis agora", "Bem avaliados perto de você" e o convite de cidade sem prestadores.
+- Início: categorias, card "Disponíveis agora", "Bem avaliados perto de você", o convite de cidade sem prestadores e o convite para entrar de quem não tem login.
 - Favoritos: salvar, remover e listar (até 200 por conta), e o estado de favorito no perfil público.
 - Índice de busca da vitrine (texto e ponto público), mantido a cada mudança da vitrine.
 - Script de carga sintética para medir a busca com 50 mil prestadores.
@@ -39,7 +40,7 @@ O cliente precisa achar rápido quem atende onde ele está (ou na cidade que esc
 
 Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta do [protótipo](https://claude.ai/artifact/Letmw6AR9zfrFK7gaA79xt).
 
-- **Busca, linha acima da lista:** sem número de resultados, porque a busca pública não devolve total (antirraspagem). Com GPS, "Profissionais perto de você"; com cidade escolhida, "Profissionais em Jaboticabal, SP". Com categoria filtrada, o nome dela entra no lugar de "Profissionais" ("Elétrica perto de você").
+- **Busca, linha acima da lista:** traz o número de resultados, como na prancheta, contado até 200 (as 10 páginas que dá para rolar); acima disso, "Mais de 200", para a busca pública não entregar o tamanho da base. O nome é o da profissão quando há categoria escolhida ou quando o termo é uma profissão; nos outros casos, "profissionais". Com GPS, "28 eletricistas perto de você"; com cidade escolhida, "28 eletricistas em Jaboticabal, SP"; um só, "1 eletricista perto de você"; termo livre, "12 profissionais perto de você". Revisto em 2026-10-31, com aprovação (antes, sem número).
 - **Card de resultado:** a cidade entra no lugar do bairro ("4,9 (127) · 1,2 km · Jaboticabal"; sem GPS, "4,9 (127) · Jaboticabal"), pela mesma privacidade do perfil público. O selo "Orçamento sem custo" da prancheta não tem dado por trás e não aparece.
 - **Chips da Busca:** "Perto de mim" e "Menor preço" mudam a ordenação (um desliga o outro, e o botão de ordem mostra a atual). Sem GPS, o chip "Perto de mim" e a opção "Mais perto" não aparecem.
 - **Categoria escolhida:** aparece como chip ligado no começo da fila de chips; tocar nele tira o filtro. O campo de busca fica para texto.
@@ -48,6 +49,7 @@ Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta d
   - "Ver todas" e o tile "Mais" abrem a folha "Categorias", com as 15 em grade de 4 colunas;
   - "Bem avaliados perto de você" mostra só quem tem nota; sem ninguém com nota, a seção não aparece;
   - cidade sem prestadores: o card de convite entra no lugar de "Bem avaliados" (também na Busca, no lugar da lista);
+  - visitante sem login: logo abaixo da busca, um card "O Vitrio funciona melhor com sua conta", com "Entre para pedir orçamentos, salvar favoritos e acompanhar seus pedidos.", "Entrar" e "Criar conta"; some depois do login (aprovado em 2026-10-31; a prancheta só mostra a Início com login);
   - "Seu último pedido" entra com a spec 005.
 - **Perfil público:** o coração "Salvar nos favoritos" fica ao lado de "Compartilhar", como na prancheta. Salvo, usa o `VitrioIconButton` `soft` com o rótulo "Remover dos favoritos" (o `solid` foi trocado em 2026-10-31, com aprovação, porque some sobre a capa `hero`).
 - **Telas sem prancheta**, montadas com os componentes do design system:
@@ -68,6 +70,8 @@ Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta d
   - peso baixo: descrições dos serviços e "Sobre".
   - Texto em português, sem acento, com `unaccent` e `pg_trgm`.
 - Ponto público indexado (`public_location`, `geography`), derivado do ponto público da spec 003.
+- Cada categoria ganha o nome do profissional no singular e no plural, por migração: Elétrica (eletricista, eletricistas), Hidráulica (encanador, encanadores), Pedreiro (pedreiro, pedreiros), Pintura (pintor, pintores), Diarista (diarista, diaristas), Jardinagem (jardineiro, jardineiros), Montagem de móveis (montador de móveis, montadores de móveis), Ar-condicionado (técnico de ar-condicionado, técnicos de ar-condicionado), Marido de aluguel (marido de aluguel, maridos de aluguel), Fretes e mudanças (freteiro, freteiros), Beleza a domicílio (profissional de beleza, profissionais de beleza), Aulas particulares (professor particular, professores particulares), Informática (técnico de informática, técnicos de informática), Cuidador(a) (cuidador, cuidadores), Pet (profissional para pet, profissionais para pet).
+- **Profissão da busca:** a da categoria escolhida; sem categoria, a da categoria cujo nome de profissional (singular ou plural) é igual ao termo, comparados pela mesma normalização da busca; senão, nenhuma.
 - Projeção de busca (leitura) `ProviderSearchItem`:
   - `id`, `displayName`, `headline`, `initials`, `avatarUrl?`;
   - `rating { score, count }` ou `isNew` (menos de 3 avaliações), como no perfil público;
@@ -109,7 +113,7 @@ Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta d
 
 | Verbo | Rota | Request | Response | Erros |
 | --- | --- | --- | --- | --- |
-| GET | `/api/v1/providers` | `q?` (até 60), `categoryId?`, `lat?`, `lng?`, `cityIbgeCode?`, `maxDistanceKm?` (1–50; só no modo GPS; padrão 20), `minRating?` (3–5), `meiVerified?`, `availableToday?`, `maxPriceFrom?` (1–100.000; só preços por serviço), `sort?` (`relevance`, `distance`, `rating`, `price`), `page?` (1–10), `pageSize?` (1–30, padrão 20) | `{ items: [ProviderSearchItem], page, pageSize, hasMore, context: { mode: "nearMe" \| "city", city } }` | 400, 429 |
+| GET | `/api/v1/providers` | `q?` (até 60), `categoryId?`, `lat?`, `lng?`, `cityIbgeCode?`, `maxDistanceKm?` (1–50; só no modo GPS; padrão 20), `minRating?` (3–5), `meiVerified?`, `availableToday?`, `maxPriceFrom?` (1–100.000; só preços por serviço), `sort?` (`relevance`, `distance`, `rating`, `price`), `page?` (1–10), `pageSize?` (1–30, padrão 20) | `{ items: [ProviderSearchItem], page, pageSize, hasMore, count, moreThanCount, context: { mode: "nearMe" \| "city", city, professional?: { singular, plural } } }`, com `count` até 200 e `moreThanCount` quando passa disso | 400, 429 |
 | GET | `/api/v1/home` | `lat?`, `lng?`, `cityIbgeCode?` (mesmas regras de modo) | `{ city, categories, topRated: [..10], hasProviders }` | 400, 429 |
 | GET | `/api/v1/me/favorites` | `page?` (20 por página) | `{ items: [ProviderSearchItem], page, pageSize, hasMore }`, do mais recente para o mais antigo | 401 |
 | PUT | `/api/v1/me/favorites/{providerId}` | — | 204 (repetir também responde 204) | 401, 404 (inexistente, não publicada ou a própria vitrine), 409 limite de 200 |
@@ -144,6 +148,7 @@ Erros de validação da busca e da Início (400):
 - Termo com mais de 60 caracteres: 400.
 - Cidade sem prestadores: lista vazia + `context.city`; na Início, `hasProviders: false`. O app mostra o convite de cidade sem prestadores.
 - `page` acima de 10 ou `pageSize` acima de 30: 400 (antirraspagem).
+- Mais de 200 resultados: `count` 200 e `moreThanCount` true; a contagem para em 201 vitrines e nunca revela o total.
 - Vitrine pausada, em rascunho ou removida, ou conta suspensa ou excluída: nunca aparece na busca nem na Início; os favoritos dela somem da lista, continuam guardados e voltam se ela for publicada de novo.
 - Nota com menos de 3 avaliações: `rating` nulo e `isNew`; o app mostra "Novo no Vitrio".
 - Mesmo cliente buscando muitas vezes por segundo: 429 com `Retry-After`.
@@ -214,6 +219,9 @@ Nenhuma externa. Usa PostGIS, `pg_trgm` e a busca de texto em português do Post
 
 - **AC-29** Dado um visitante sem login no perfil público, quando toca no coração, então o app abre Entrar e, depois do login, volta ao perfil com o prestador salvo.
 - **AC-30** Dada a Início, quando o cliente toca em "Ver disponíveis", então a Busca abre com o chip "Atende hoje" ligado.
+- **AC-31** Dados 3 prestadores que atendem a busca, quando o cliente busca, então `count` é 3 e `moreThanCount` é false; com mais de 200, `count` é 200 e `moreThanCount` é true.
+- **AC-32** Dada a busca com `categoryId` de Elétrica ou com o termo "Eletricistas", quando busca, então `context.professional` é "eletricista"/"eletricistas"; com o termo "chuveiro", vem nulo, e o app escreve "profissionais".
+- **AC-33** Dado um visitante sem login, quando abre a Início, então vê o convite para entrar abaixo da busca, e "Entrar" abre a tela de entrar; com login, o convite não aparece.
 
 ## Deferred Decisions
 
@@ -221,7 +229,7 @@ Nenhuma externa. Usa PostGIS, `pg_trgm` e a busca de texto em português do Post
 | --- | --- | --- |
 | Motor de busca dedicado | PostgreSQL full-text + trigram | p95 acima de 400 ms ou mais de 200 mil prestadores |
 | Personalização por histórico | Relevância igual para todos | Depois do MVP, com dados de uso |
-| Número de resultados na Busca | Sem total; linha "Profissionais perto de você" | Pesquisa com usuários pedir o número |
+| Número exato acima de 200 na Busca | "Mais de 200" | Pesquisa com usuários pedir o número exato |
 | Reindexar vitrines ao renomear categoria | Categorias fixas por migração; o índice usa o nome vigente quando a vitrine muda | Spec 008 (edição de categorias pelo admin) |
 | Limite de favoritos | 200 por conta | Reclamação de quem chegar ao limite |
 
