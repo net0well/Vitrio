@@ -185,7 +185,7 @@ final class FakeProviderRepository implements ProviderRepository {
   Future<ApiResult<void>> deletePhoto(String photoId) async => _ok('deletePhoto', null);
 
   @override
-  Future<ApiResult<PublicProvider>> publicProfile(String providerId) async => published == null
+  Future<ApiResult<PublicProvider>> publicProfile(String providerId, {double? latitude, double? longitude}) async => published == null
       ? const ApiFailure(ProblemDetails(status: 404, code: 'provider.not_found'))
       : ApiSuccess(published!);
 }

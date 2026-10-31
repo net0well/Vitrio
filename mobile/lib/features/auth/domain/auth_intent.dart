@@ -1,1 +1,1 @@
-enum AuthIntent { browse, offerServices }
+enum AuthIntent { browse, offerServices, favorite }

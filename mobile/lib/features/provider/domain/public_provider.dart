@@ -21,6 +21,7 @@ final class PublicProvider {
     required this.isNew,
     required this.photos,
     required this.shareUrl,
+    this.isFavorite = false,
     this.about,
     this.yearsOfExperience,
     this.avatarUrl,
@@ -56,6 +57,7 @@ final class PublicProvider {
       distanceKm: (json['distanceKm'] as num?)?.toDouble(),
       photos: _list(json['firstPhotos'], PublicPhoto.fromJson),
       shareUrl: json['shareUrl'] as String,
+      isFavorite: json['isFavorite'] == true,
     );
   }
 
@@ -79,6 +81,7 @@ final class PublicProvider {
   final bool isNew;
   final String? whatsAppPhone;
   final double? distanceKm;
+  final bool isFavorite;
   final List<PublicPhoto> photos;
   final String shareUrl;
 

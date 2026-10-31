@@ -114,6 +114,11 @@ class _SignedIn extends ConsumerWidget {
         VitrioListCard(
           children: [
             VitrioListRow(
+              icon: VitrioIconName.heart,
+              title: l10n.favoritesTitle,
+              onTap: () => const FavoritesRoute().push<void>(context),
+            ),
+            VitrioListRow(
               icon: VitrioIconName.user,
               title: l10n.accountEditProfile,
               onTap: () => const EditProfileRoute().push<void>(context),

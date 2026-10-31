@@ -48,5 +48,5 @@ abstract interface class ProviderRepository {
 
   Future<ApiResult<void>> deletePhoto(String photoId);
 
-  Future<ApiResult<PublicProvider>> publicProfile(String providerId);
+  Future<ApiResult<PublicProvider>> publicProfile(String providerId, {double? latitude, double? longitude});
 }

@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
   $changePasswordRoute,
   $connectedDevicesRoute,
   $editProfileRoute,
+  $favoritesRoute,
   $forgotPasswordRoute,
   $clientShellRoute,
   $locationPermissionRoute,
@@ -93,6 +94,33 @@ mixin $EditProfileRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/account-details');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $favoritesRoute => GoRouteData.$route(
+  path: '/favorites',
+  hasOverriddenOnExit: false,
+  factory: $FavoritesRoute._fromState,
+);
+
+mixin $FavoritesRoute on GoRouteData {
+  static FavoritesRoute _fromState(GoRouterState state) =>
+      const FavoritesRoute();
+
+  @override
+  String get location => GoRouteData.$location('/favorites');
 
   @override
   void go(BuildContext context) => context.go(location);

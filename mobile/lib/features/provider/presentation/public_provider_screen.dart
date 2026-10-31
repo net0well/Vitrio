@@ -24,7 +24,9 @@ import '../../../core/design_system/widgets/vitrio_list_card.dart';
 import '../../../core/design_system/widgets/vitrio_section_header.dart';
 import '../../../core/design_system/widgets/vitrio_star.dart';
 import '../../../core/design_system/widgets/vitrio_top_bar.dart';
+import '../../../core/presentation/brazilian_format.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../favorites/presentation/favorite_button.dart';
 import '../domain/public_photo.dart';
 import '../domain/public_provider.dart';
 import 'provider_labels.dart';
@@ -121,7 +123,7 @@ class _Profile extends StatelessWidget {
           star: true,
         ),
       if (provider.distanceKm case final distance?)
-        _Metric(value: l10n.providerDistance(distance.toStringAsFixed(distance < 10 ? 1 : 0).replaceAll('.', ',')), label: l10n.providerMetricDistance),
+        _Metric(value: l10n.providerDistance(formatDistance(distance)), label: l10n.providerMetricDistance),
     ];
     return ListView(
       padding: EdgeInsets.zero,
@@ -284,10 +286,16 @@ class _Cover extends StatelessWidget {
               PositionedDirectional(
                 end: VitrioSpace.sp20,
                 top: top + VitrioSpace.sp16,
-                child: VitrioIconButton(
-                  icon: VitrioIconName.share,
-                  label: l10n.providerShare,
-                  onPressed: () => SharePlus.instance.share(ShareParams(text: l10n.providerShareText(provider.shareUrl))),
+                child: Row(
+                  children: [
+                    FavoriteButton(providerId: provider.id, saved: provider.isFavorite),
+                    const SizedBox(width: VitrioSpace.sp10),
+                    VitrioIconButton(
+                      icon: VitrioIconName.share,
+                      label: l10n.providerShare,
+                      onPressed: () => SharePlus.instance.share(ShareParams(text: l10n.providerShareText(provider.shareUrl))),
+                    ),
+                  ],
                 ),
               ),
             ],

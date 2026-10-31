@@ -457,5 +457,119 @@
     }
   },
   "providerEmergenciesShort": "atende emergências",
-  "providerCepNotFound": "Não encontramos este CEP. Confira os 8 números do endereço base."
+  "providerCepNotFound": "Não encontramos este CEP. Confira os 8 números do endereço base.",
+  "searchActivePlaceholder": "O que você procura?",
+  "searchClear": "Limpar busca",
+  "searchFilters": "Filtros",
+  "searchNearMe": "Perto de mim",
+  "searchTopRated": "Nota 4,5+",
+  "searchLowestPrice": "Menor preço",
+  "searchResultsNearMe": "Profissionais perto de você",
+  "searchResultsInCity": "Profissionais em {city}",
+  "@searchResultsInCity": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "searchCategoryNearMe": "{category} perto de você",
+  "@searchCategoryNearMe": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "searchCategoryInCity": "{category} em {city}",
+  "@searchCategoryInCity": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSortTitle": "Ordenar por",
+  "searchSortRelevance": "Relevância",
+  "searchSortDistance": "Mais perto",
+  "searchSortRating": "Melhor avaliado",
+  "searchSortPrice": "Menor preço",
+  "searchPriceFrom": "A partir de",
+  "searchSeeProfile": "Ver perfil",
+  "searchReviewCount": "({count})",
+  "@searchReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchNoResults": "Nenhum profissional encontrado com esses filtros.",
+  "searchClearFilters": "Limpar filtros",
+  "searchError": "Não conseguimos carregar os profissionais. Verifique a conexão e tente de novo.",
+  "searchChooseCity": "Escolha uma cidade para ver os profissionais.",
+  "searchFilterDistance": "Distância máxima",
+  "searchFilterDistanceValue": "Até {km} km",
+  "@searchFilterDistanceValue": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "searchFilterRating": "Nota mínima",
+  "searchFilterAny": "Qualquer",
+  "searchFilterRatingValue": "{rating}+",
+  "@searchFilterRatingValue": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchFilterMeiHint": "CNPJ ativo e optante pelo MEI",
+  "searchFilterTodayHint": "Quem ligou “Disponível hoje”",
+  "searchFilterPrice": "Preço a partir de",
+  "searchFilterPriceValue": "Até {price}",
+  "@searchFilterPriceValue": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "searchFilterCity": "Cidade",
+  "searchFilterApply": "Ver resultados",
+  "searchFilterReset": "Limpar",
+  "homeTopRated": "Bem avaliados perto de você",
+  "homeSeeMore": "Ver mais",
+  "emptyCityTitle": "Ainda não tem profissionais do Vitrio em {city}.",
+  "@emptyCityTitle": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "emptyCityTitleNearby": "Ainda não tem profissionais do Vitrio perto de você.",
+  "emptyCityText": "Conhece alguém que faz um bom trabalho? Mande o Vitrio para essa pessoa.",
+  "emptyCityInvite": "Indicar o Vitrio",
+  "emptyCityShareText": "Conheça o Vitrio, o app para achar profissionais de confiança perto de você: {url}",
+  "@emptyCityShareText": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "favoritesTitle": "Favoritos",
+  "favoritesEmpty": "Você ainda não salvou nenhum profissional.",
+  "favoritesSearch": "Buscar profissionais",
+  "favoritesError": "Não conseguimos carregar seus favoritos. Verifique a conexão e tente de novo.",
+  "favoriteSave": "Salvar nos favoritos",
+  "favoriteRemove": "Remover dos favoritos",
+  "favoriteFailed": "Não conseguimos atualizar seus favoritos. Tente de novo."
 }

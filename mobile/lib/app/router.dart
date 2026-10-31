@@ -27,6 +27,7 @@ GoRouter router(Ref ref) {
     const EditProfileRoute().location,
     const ChangePasswordRoute().location,
     const ConnectedDevicesRoute().location,
+    const FavoritesRoute().location,
   };
 
   const providerPrefix = '/provider-';

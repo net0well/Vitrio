@@ -112,8 +112,13 @@ final class HttpProviderRepository implements ProviderRepository {
   Future<ApiResult<void>> deletePhoto(String photoId) => _api.delete('$_provider/photos/$photoId', decode: _ignore);
 
   @override
-  Future<ApiResult<PublicProvider>> publicProfile(String providerId) =>
-      _api.get('/api/v1/providers/$providerId', decode: (json) => PublicProvider.fromJson(jsonObject(json)));
+  Future<ApiResult<PublicProvider>> publicProfile(String providerId, {double? latitude, double? longitude}) => _api.get(
+        '/api/v1/providers/$providerId',
+        query: {
+          if (latitude != null && longitude != null) ...{'lat': latitude.toString(), 'lng': longitude.toString()},
+        },
+        decode: (json) => PublicProvider.fromJson(jsonObject(json)),
+      );
 
   static ProviderProfile _profile(Object? json) => ProviderProfile.fromJson(jsonObject(json));
 

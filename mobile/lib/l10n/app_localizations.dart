@@ -1833,6 +1833,294 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Não encontramos este CEP. Confira os 8 números do endereço base.'**
   String get providerCepNotFound;
+
+  /// No description provided for @searchActivePlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'O que você procura?'**
+  String get searchActivePlaceholder;
+
+  /// No description provided for @searchClear.
+  ///
+  /// In pt, this message translates to:
+  /// **'Limpar busca'**
+  String get searchClear;
+
+  /// No description provided for @searchFilters.
+  ///
+  /// In pt, this message translates to:
+  /// **'Filtros'**
+  String get searchFilters;
+
+  /// No description provided for @searchNearMe.
+  ///
+  /// In pt, this message translates to:
+  /// **'Perto de mim'**
+  String get searchNearMe;
+
+  /// No description provided for @searchTopRated.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nota 4,5+'**
+  String get searchTopRated;
+
+  /// No description provided for @searchLowestPrice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Menor preço'**
+  String get searchLowestPrice;
+
+  /// No description provided for @searchResultsNearMe.
+  ///
+  /// In pt, this message translates to:
+  /// **'Profissionais perto de você'**
+  String get searchResultsNearMe;
+
+  /// No description provided for @searchResultsInCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'Profissionais em {city}'**
+  String searchResultsInCity(String city);
+
+  /// No description provided for @searchCategoryNearMe.
+  ///
+  /// In pt, this message translates to:
+  /// **'{category} perto de você'**
+  String searchCategoryNearMe(String category);
+
+  /// No description provided for @searchCategoryInCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'{category} em {city}'**
+  String searchCategoryInCity(String category, String city);
+
+  /// No description provided for @searchSortTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ordenar por'**
+  String get searchSortTitle;
+
+  /// No description provided for @searchSortRelevance.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relevância'**
+  String get searchSortRelevance;
+
+  /// No description provided for @searchSortDistance.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mais perto'**
+  String get searchSortDistance;
+
+  /// No description provided for @searchSortRating.
+  ///
+  /// In pt, this message translates to:
+  /// **'Melhor avaliado'**
+  String get searchSortRating;
+
+  /// No description provided for @searchSortPrice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Menor preço'**
+  String get searchSortPrice;
+
+  /// No description provided for @searchPriceFrom.
+  ///
+  /// In pt, this message translates to:
+  /// **'A partir de'**
+  String get searchPriceFrom;
+
+  /// No description provided for @searchSeeProfile.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver perfil'**
+  String get searchSeeProfile;
+
+  /// No description provided for @searchReviewCount.
+  ///
+  /// In pt, this message translates to:
+  /// **'({count})'**
+  String searchReviewCount(String count);
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum profissional encontrado com esses filtros.'**
+  String get searchNoResults;
+
+  /// No description provided for @searchClearFilters.
+  ///
+  /// In pt, this message translates to:
+  /// **'Limpar filtros'**
+  String get searchClearFilters;
+
+  /// No description provided for @searchError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos carregar os profissionais. Verifique a conexão e tente de novo.'**
+  String get searchError;
+
+  /// No description provided for @searchChooseCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha uma cidade para ver os profissionais.'**
+  String get searchChooseCity;
+
+  /// No description provided for @searchFilterDistance.
+  ///
+  /// In pt, this message translates to:
+  /// **'Distância máxima'**
+  String get searchFilterDistance;
+
+  /// No description provided for @searchFilterDistanceValue.
+  ///
+  /// In pt, this message translates to:
+  /// **'Até {km} km'**
+  String searchFilterDistanceValue(String km);
+
+  /// No description provided for @searchFilterRating.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nota mínima'**
+  String get searchFilterRating;
+
+  /// No description provided for @searchFilterAny.
+  ///
+  /// In pt, this message translates to:
+  /// **'Qualquer'**
+  String get searchFilterAny;
+
+  /// No description provided for @searchFilterRatingValue.
+  ///
+  /// In pt, this message translates to:
+  /// **'{rating}+'**
+  String searchFilterRatingValue(String rating);
+
+  /// No description provided for @searchFilterMeiHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'CNPJ ativo e optante pelo MEI'**
+  String get searchFilterMeiHint;
+
+  /// No description provided for @searchFilterTodayHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quem ligou “Disponível hoje”'**
+  String get searchFilterTodayHint;
+
+  /// No description provided for @searchFilterPrice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preço a partir de'**
+  String get searchFilterPrice;
+
+  /// No description provided for @searchFilterPriceValue.
+  ///
+  /// In pt, this message translates to:
+  /// **'Até {price}'**
+  String searchFilterPriceValue(String price);
+
+  /// No description provided for @searchFilterCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cidade'**
+  String get searchFilterCity;
+
+  /// No description provided for @searchFilterApply.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver resultados'**
+  String get searchFilterApply;
+
+  /// No description provided for @searchFilterReset.
+  ///
+  /// In pt, this message translates to:
+  /// **'Limpar'**
+  String get searchFilterReset;
+
+  /// No description provided for @homeTopRated.
+  ///
+  /// In pt, this message translates to:
+  /// **'Bem avaliados perto de você'**
+  String get homeTopRated;
+
+  /// No description provided for @homeSeeMore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver mais'**
+  String get homeSeeMore;
+
+  /// No description provided for @emptyCityTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ainda não tem profissionais do Vitrio em {city}.'**
+  String emptyCityTitle(String city);
+
+  /// No description provided for @emptyCityTitleNearby.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ainda não tem profissionais do Vitrio perto de você.'**
+  String get emptyCityTitleNearby;
+
+  /// No description provided for @emptyCityText.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conhece alguém que faz um bom trabalho? Mande o Vitrio para essa pessoa.'**
+  String get emptyCityText;
+
+  /// No description provided for @emptyCityInvite.
+  ///
+  /// In pt, this message translates to:
+  /// **'Indicar o Vitrio'**
+  String get emptyCityInvite;
+
+  /// No description provided for @emptyCityShareText.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conheça o Vitrio, o app para achar profissionais de confiança perto de você: {url}'**
+  String emptyCityShareText(String url);
+
+  /// No description provided for @favoritesTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Favoritos'**
+  String get favoritesTitle;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não salvou nenhum profissional.'**
+  String get favoritesEmpty;
+
+  /// No description provided for @favoritesSearch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscar profissionais'**
+  String get favoritesSearch;
+
+  /// No description provided for @favoritesError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos carregar seus favoritos. Verifique a conexão e tente de novo.'**
+  String get favoritesError;
+
+  /// No description provided for @favoriteSave.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar nos favoritos'**
+  String get favoriteSave;
+
+  /// No description provided for @favoriteRemove.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover dos favoritos'**
+  String get favoriteRemove;
+
+  /// No description provided for @favoriteFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos atualizar seus favoritos. Tente de novo.'**
+  String get favoriteFailed;
 }
 
 class _AppLocalizationsDelegate
