@@ -146,6 +146,22 @@ void main() {
     expect(find.text('Início'), findsOneWidget);
   });
 
+  testWidgets('a provider who reopens the app lands on the dashboard once the session loads', (tester) async {
+    final provider = FakeProviderRepository()
+      ..seedComplete()
+      ..status = ProviderStatus.published;
+    await pumpVitrio(
+      tester,
+      preferences: {...signedInClient, 'app_mode': 'provider'},
+      account: FakeAccountRepository()..meResult = const ApiSuccess(sampleProviderMe),
+      provider: provider,
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+
+    expect(find.text('Agenda'), findsOneWidget);
+    expect(find.text('Início'), findsNothing);
+  });
+
   testWidgets('public profile shows the badges and the WhatsApp button without any address', (tester) async {
     final provider = FakeProviderRepository()..published = samplePublicProvider;
     final harness = await pumpVitrio(tester, preferences: signedInClient, provider: provider);

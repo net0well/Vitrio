@@ -23,6 +23,7 @@ GoRouter router(Ref ref) {
   final homeLocation = const HomeRoute().location;
   final locationPermissionLocation = const LocationPermissionRoute().location;
   final signInLocation = const SignInRoute().location;
+  final providerDashboardLocation = const ProviderDashboardRoute().location;
   final protectedLocations = {
     const EditProfileRoute().location,
     const ChangePasswordRoute().location,
@@ -34,13 +35,17 @@ GoRouter router(Ref ref) {
   final startsAsProvider = ref.read(appModeStoreProvider).mode == AppMode.provider && signedIn.value;
 
   final router = GoRouter(
-    initialLocation: startsAsProvider ? const ProviderDashboardRoute().location : const HomeRoute().location,
+    initialLocation: startsAsProvider ? providerDashboardLocation : homeLocation,
     routes: $appRoutes,
     refreshListenable: Listenable.merge([welcomeSeen, signedIn]),
     redirect: (context, state) {
       final location = state.matchedLocation;
       if (!welcomeSeen.value && location != welcomeLocation) {
         return welcomeLocation;
+      }
+
+      if (location == homeLocation && signedIn.value && ref.read(appModeStoreProvider).mode == AppMode.provider) {
+        return providerDashboardLocation;
       }
 
       if (location == homeLocation && ref.read(locationPreferencesProvider).mode == null) {
