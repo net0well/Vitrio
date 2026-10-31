@@ -203,6 +203,51 @@ void main() {
     expect(find.text('Início'), findsNothing);
   });
 
+  testWidgets('an account without a showcase opens in the client mode even where the provider mode was saved', (tester) async {
+    await pumpVitrio(
+      tester,
+      preferences: {...signedInClient, 'app_mode': 'provider'},
+      account: FakeAccountRepository()..meResult = const ApiSuccess(sampleMe),
+      provider: FakeProviderRepository(),
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+
+    expect(find.text('Início'), findsOneWidget);
+    expect(find.text('Agenda'), findsNothing);
+  });
+
+  testWidgets('signing out of the provider mode leaves the next account in the client mode', (tester) async {
+    final account = FakeAccountRepository()..meResult = const ApiSuccess(sampleProviderMe);
+    final provider = FakeProviderRepository()
+      ..seedComplete()
+      ..status = ProviderStatus.published;
+    final harness = await pumpVitrio(
+      tester,
+      preferences: {...signedInClient, 'app_mode': 'provider'},
+      auth: FakeAuthRepository()..loginResult = const ApiSuccess(sampleSession),
+      account: account,
+      provider: provider,
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+    await tester.tap(find.text('Meu perfil'));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Conta'));
+    await tapVisible(tester, find.text('Sair'));
+
+    account.meResult = const ApiSuccess(sampleMe);
+    harness.go('/sign-in');
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'E-mail'), sampleMe.email);
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Senha'), 'vidro azul na janela');
+    await tester.tap(find.widgetWithText(FilledButton, 'Entrar'));
+    await tester.pumpAndSettle();
+    harness.go('/home');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Início'), findsOneWidget);
+    expect(find.text('Agenda'), findsNothing);
+  });
+
   testWidgets('public profile shows the badges and the WhatsApp button without any address', (tester) async {
     final provider = FakeProviderRepository()..published = samplePublicProvider;
     final harness = await pumpVitrio(tester, preferences: signedInClient, provider: provider);
