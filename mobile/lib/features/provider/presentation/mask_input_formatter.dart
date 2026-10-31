@@ -1,13 +1,13 @@
 import 'package:flutter/services.dart';
 
-import 'provider_labels.dart';
+class MaskInputFormatter extends TextInputFormatter {
+  const MaskInputFormatter(this.mask);
 
-class CnpjInputFormatter extends TextInputFormatter {
-  const CnpjInputFormatter();
+  final String Function(String text) mask;
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    final text = cnpjText(newValue.text);
+    final text = mask(newValue.text);
     return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 }
