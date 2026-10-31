@@ -22,6 +22,7 @@ import '../features/provider/presentation/provider_dashboard_screen.dart';
 import '../features/provider/presentation/provider_step.dart';
 import '../features/provider/presentation/provider_step_screen.dart';
 import '../features/provider/presentation/public_provider_screen.dart';
+import '../features/provider/presentation/widgets/provider_profile_ready.dart';
 import '../features/search/presentation/search_screen.dart';
 import '../features/welcome/presentation/welcome_screen.dart';
 import 'client_shell.dart';

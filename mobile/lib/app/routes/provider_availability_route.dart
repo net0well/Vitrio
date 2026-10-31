@@ -5,5 +5,5 @@ class ProviderAvailabilityRoute extends GoRouteData with $ProviderAvailabilityRo
   const ProviderAvailabilityRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const AvailabilityScreen();
+  Widget build(BuildContext context, GoRouterState state) => const ProviderProfileReady(child: AvailabilityScreen());
 }
