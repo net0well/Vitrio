@@ -348,6 +348,19 @@ public sealed class ProviderSearchTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Search_ByFullName_RanksTheExactMatchAboveSimilarNamesWithBetterRatings()
+    {
+        var spot = SearchApi.NextSpot();
+        var exact = await PublishAsync(new SearchableProvider(spot.Offset(1)) { DisplayName = "Carlos Pereira Lima" });
+        var similar = await PublishAsync(new SearchableProvider(spot.Offset(1)) { DisplayName = "Carla Pereira" });
+        await factory.RateAsync(similar.Id, 4.9m, 150);
+
+        var page = await _client.SearchPageAsync($"{SearchApi.Near(spot)}&q=Carlos Pereira Lima");
+
+        Assert.Equal(exact.Id, page.Items[0].Id);
+    }
+
+    [Fact]
     public async Task Search_SortedByRating_ListsRatedFromHighestThenTheNewOnes()
     {
         var spot = SearchApi.NextSpot();

@@ -1,7 +1,7 @@
 # Spec 004 — Busca de prestadores
 
 - **Status:** Approved (2026-10-30)
-- **Data:** 2026-10-28 (revisada em 2026-10-30)
+- **Data:** 2026-10-28 (revisada em 2026-10-30 e 2026-10-31)
 - **Responsável:** Wellington
 
 ## Problem
@@ -97,7 +97,7 @@ Aprovadas pelo usuário em 2026-10-30. Fora delas, as telas seguem a prancheta d
 
   Sem termo de busca ou fora do modo GPS, o peso do componente que falta é redistribuído proporcionalmente entre os outros.
 - **Ordenações:**
-  - `relevance`: maior relevância primeiro;
+  - `relevance`: maior relevância primeiro; com termo, quem casa o termo inteiro (full-text) vem antes de quem casa só por semelhança, e dentro de cada grupo decide a soma ponderada (decidido em 2026-10-31, com aprovação, porque um nome parecido com nota alta passava à frente do nome buscado por inteiro);
   - `distance`: mais perto primeiro, depois relevância; só no modo GPS;
   - `rating`: maior nota primeiro, sem nota no fim, depois número de avaliações e relevância;
   - `price`: primeiro os que têm preço por serviço, do menor para o maior; depois os demais (só m², hora, dia, unidade ou "Sob orçamento"), por relevância.

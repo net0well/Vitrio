@@ -23,6 +23,7 @@ internal sealed class ProviderListingSql
     private readonly List<NpgsqlParameter> _parameters = [];
     private string _distance = "null::double precision";
     private string _savedAt = "null::timestamptz";
+    private string _exactMatch = "true";
     private string? _text;
     private string? _proximity;
 
@@ -71,7 +72,7 @@ internal sealed class ProviderListingSql
         SearchSort.Rating =>
             $"case when review_count >= {RatingRule.MinReviews} then rating_score end desc nulls last, review_count desc, relevance desc, id",
         SearchSort.Price => "service_price_cents nulls last, relevance desc, id",
-        _ => "relevance desc, id"
+        _ => "exact_match desc, relevance desc, id"
     };
 
     private static string MeiVerified(string providerId) =>
@@ -105,6 +106,7 @@ internal sealed class ProviderListingSql
             Add("term", term);
             _joins.Add($"cross join (select websearch_to_tsquery('{ProviderSearchIndex.TextConfiguration}', @term) as tsq) q");
             _conditions.Add("(numnode(q.tsq) = 0 or p.search_vector @@ q.tsq or @term <% p.search_terms)");
+            _exactMatch = "(numnode(q.tsq) = 0 or p.search_vector @@ q.tsq)";
             _text =
                 "case when numnode(q.tsq) = 0 then 0 " +
                 "else greatest(ts_rank(p.search_vector, q.tsq, 32), word_similarity(@term, coalesce(p.search_terms, ''))) end";
@@ -181,6 +183,7 @@ internal sealed class ProviderListingSql
                 c.time_zone,
                 {_distance} as distance_meters,
                 {_savedAt} as saved_at,
+                {_exactMatch} as exact_match,
                 {AvailableTodaySql} as available_today,
                 ({relevance})::double precision as relevance
               {Source()}

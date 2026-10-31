@@ -36,6 +36,8 @@ internal sealed class ProviderListingRow
 
     public DateTimeOffset? SavedAt { get; init; }
 
+    public bool ExactMatch { get; init; }
+
     public bool MeiVerified { get; init; }
 
     public bool AvailableToday { get; init; }
