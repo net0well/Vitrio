@@ -5,6 +5,7 @@ import 'package:vitrio/core/network/api_result.dart';
 import 'package:vitrio/core/network/problem_details.dart';
 import 'package:vitrio/core/presentation/brazilian_format.dart';
 import 'package:vitrio/features/location/domain/device_permission.dart';
+import 'package:vitrio/features/search/domain/professional_name.dart';
 import 'package:vitrio/features/search/domain/search_sort.dart';
 
 import '../../support/fake_account_repository.dart';
@@ -20,6 +21,7 @@ import '../../support/sample_provider.dart';
 
 void main() {
   const nearMe = {'welcome_seen': true, 'location_mode': 'nearMe'};
+  const electricians = ProfessionalName(singular: 'eletricista', plural: 'eletricistas');
 
   FakeDeviceLocation gps() => FakeDeviceLocation()..current = DevicePermission.granted;
 
@@ -107,29 +109,47 @@ void main() {
     expect(find.text('Carlos Menezes'), findsOneWidget);
   });
 
-  testWidgets('a category from the home filters the search and shows as a chip', (tester) async {
+  testWidgets('a category from the home filters the search and counts its professionals', (tester) async {
     phone(tester);
-    final search = FakeSearchRepository()..listings = [sampleListing()];
+    final search = FakeSearchRepository()
+      ..listings = [sampleListing()]
+      ..count = 28
+      ..professional = electricians;
     final harness = await pumpVitrio(tester, preferences: nearMe, device: gps(), search: search);
     harness.go('/home');
     await tester.pumpAndSettle();
+    await reveal(tester, find.text('Elétrica'));
 
     await tester.tap(find.text('Elétrica'));
     await tester.pumpAndSettle();
 
     expect(await chipSelected(tester, 'Elétrica'), isTrue);
     expect(search.searches.last.$2.category?.id, 1);
-    expect(find.text('Elétrica perto de você'), findsOneWidget);
+    expect(find.text('28 eletricistas perto de você'), findsOneWidget);
   });
 
-  testWidgets('search shows the card with price, badges and the nearby headline', (tester) async {
+  testWidgets('search beyond two hundred results says more than two hundred', (tester) async {
+    phone(tester);
+    final search = FakeSearchRepository()
+      ..listings = [sampleListing()]
+      ..count = 200
+      ..moreThanCount = true
+      ..professional = electricians;
+    final harness = await pumpVitrio(tester, preferences: nearMe, device: gps(), search: search);
+    harness.go('/search');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mais de 200 eletricistas perto de você'), findsOneWidget);
+  });
+
+  testWidgets('search shows the card with price, badges and the nearby count', (tester) async {
     phone(tester);
     final search = FakeSearchRepository()..listings = [sampleListing()];
     final harness = await pumpVitrio(tester, preferences: nearMe, device: gps(), search: search);
     harness.go('/search');
     await tester.pumpAndSettle();
 
-    expect(find.text('Profissionais perto de você'), findsOneWidget);
+    expect(find.text('1 profissional perto de você'), findsOneWidget);
     expect(find.text('Relevância'), findsOneWidget);
     expect(find.text('A partir de'), findsOneWidget);
     expect(find.text(formatMoney(80)), findsOneWidget);
@@ -169,7 +189,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Perto de mim'), findsNothing);
-    expect(find.text('Profissionais em Jaboticabal, SP'), findsOneWidget);
+    expect(find.text('1 profissional em Jaboticabal, SP'), findsOneWidget);
     expect(search.searches.last.$1.cityIbgeCode, 3524303);
   });
 

@@ -464,27 +464,51 @@
   "searchNearMe": "Perto de mim",
   "searchTopRated": "Nota 4,5+",
   "searchLowestPrice": "Menor preço",
-  "searchResultsNearMe": "Profissionais perto de você",
-  "searchResultsInCity": "Profissionais em {city}",
-  "@searchResultsInCity": {
+  "searchProfessionalOne": "profissional",
+  "searchProfessionalMany": "profissionais",
+  "searchCountNearMe": "{count} {professionals} perto de você",
+  "@searchCountNearMe": {
     "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "professionals": {
+        "type": "String"
+      }
+    }
+  },
+  "searchCountInCity": "{count} {professionals} em {city}",
+  "@searchCountInCity": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "professionals": {
+        "type": "String"
+      },
       "city": {
         "type": "String"
       }
     }
   },
-  "searchCategoryNearMe": "{category} perto de você",
-  "@searchCategoryNearMe": {
+  "searchMoreThanNearMe": "Mais de {count} {professionals} perto de você",
+  "@searchMoreThanNearMe": {
     "placeholders": {
-      "category": {
+      "count": {
+        "type": "String"
+      },
+      "professionals": {
         "type": "String"
       }
     }
   },
-  "searchCategoryInCity": "{category} em {city}",
-  "@searchCategoryInCity": {
+  "searchMoreThanInCity": "Mais de {count} {professionals} em {city}",
+  "@searchMoreThanInCity": {
     "placeholders": {
-      "category": {
+      "count": {
+        "type": "String"
+      },
+      "professionals": {
         "type": "String"
       },
       "city": {

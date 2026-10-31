@@ -5,10 +5,11 @@ import '../../../l10n/app_localizations.dart';
 import '../../location/domain/city_summary.dart';
 import '../../provider/domain/price_unit.dart';
 import '../../provider/presentation/provider_labels.dart';
+import '../domain/professional_name.dart';
 import '../domain/provider_listing.dart';
-import '../domain/search_filters.dart';
 import '../domain/search_mode.dart';
 import '../domain/search_sort.dart';
+import 'search_results.dart';
 
 const _maxBadges = 3;
 
@@ -21,22 +22,21 @@ String sortLabel(AppLocalizations l10n, SearchSort sort) => switch (sort) {
       SearchSort.price => l10n.searchSortPrice,
     };
 
-String resultsHeadline(
-  AppLocalizations l10n,
-  SearchFilters filters,
-  SearchMode mode,
-  CitySummary? city,
-) {
-  final category = filters.category?.name;
-  final inCity = mode == SearchMode.city && city != null;
-  return switch ((category, inCity)) {
-    (final String name, true) => l10n.searchCategoryInCity(
-        name,
-        cityLabel(city!),
-      ),
-    (final String name, false) => l10n.searchCategoryNearMe(name),
-    (null, true) => l10n.searchResultsInCity(cityLabel(city!)),
-    (null, false) => l10n.searchResultsNearMe,
+String resultsHeadline(AppLocalizations l10n, SearchResults results) {
+  final one = results.count == 1 && !results.moreThanCount;
+  final professionals = switch ((results.professional, one)) {
+    (final ProfessionalName name, true) => name.singular,
+    (final ProfessionalName name, false) => name.plural,
+    (null, true) => l10n.searchProfessionalOne,
+    (null, false) => l10n.searchProfessionalMany,
+  };
+  final count = results.count.toString();
+  final city = results.mode == SearchMode.city ? results.city : null;
+  return switch ((results.moreThanCount, city)) {
+    (false, null) => l10n.searchCountNearMe(count, professionals),
+    (false, final CitySummary city) => l10n.searchCountInCity(count, professionals, cityLabel(city)),
+    (true, null) => l10n.searchMoreThanNearMe(count, professionals),
+    (true, final CitySummary city) => l10n.searchMoreThanInCity(count, professionals, cityLabel(city)),
   };
 }
 

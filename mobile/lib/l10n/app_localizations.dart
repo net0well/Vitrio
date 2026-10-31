@@ -1870,29 +1870,41 @@ abstract class AppLocalizations {
   /// **'Menor preço'**
   String get searchLowestPrice;
 
-  /// No description provided for @searchResultsNearMe.
+  /// No description provided for @searchProfessionalOne.
   ///
   /// In pt, this message translates to:
-  /// **'Profissionais perto de você'**
-  String get searchResultsNearMe;
+  /// **'profissional'**
+  String get searchProfessionalOne;
 
-  /// No description provided for @searchResultsInCity.
+  /// No description provided for @searchProfessionalMany.
   ///
   /// In pt, this message translates to:
-  /// **'Profissionais em {city}'**
-  String searchResultsInCity(String city);
+  /// **'profissionais'**
+  String get searchProfessionalMany;
 
-  /// No description provided for @searchCategoryNearMe.
+  /// No description provided for @searchCountNearMe.
   ///
   /// In pt, this message translates to:
-  /// **'{category} perto de você'**
-  String searchCategoryNearMe(String category);
+  /// **'{count} {professionals} perto de você'**
+  String searchCountNearMe(String count, String professionals);
 
-  /// No description provided for @searchCategoryInCity.
+  /// No description provided for @searchCountInCity.
   ///
   /// In pt, this message translates to:
-  /// **'{category} em {city}'**
-  String searchCategoryInCity(String category, String city);
+  /// **'{count} {professionals} em {city}'**
+  String searchCountInCity(String count, String professionals, String city);
+
+  /// No description provided for @searchMoreThanNearMe.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mais de {count} {professionals} perto de você'**
+  String searchMoreThanNearMe(String count, String professionals);
+
+  /// No description provided for @searchMoreThanInCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mais de {count} {professionals} em {city}'**
+  String searchMoreThanInCity(String count, String professionals, String city);
 
   /// No description provided for @searchSortTitle.
   ///

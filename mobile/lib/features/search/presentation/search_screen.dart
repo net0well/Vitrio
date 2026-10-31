@@ -192,12 +192,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            resultsHeadline(
-                              l10n,
-                              filters,
-                              loaded.mode,
-                              loaded.city,
-                            ),
+                            resultsHeadline(l10n, loaded),
                             overflow: TextOverflow.ellipsis,
                             style: VitrioText.label.copyWith(color: c.ink),
                           ),

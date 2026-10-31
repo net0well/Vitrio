@@ -3,6 +3,7 @@ import 'package:vitrio/core/network/problem_details.dart';
 import 'package:vitrio/features/provider/domain/service_category.dart';
 import 'package:vitrio/features/search/data/search_repository.dart';
 import 'package:vitrio/features/search/domain/home_feed.dart';
+import 'package:vitrio/features/search/domain/professional_name.dart';
 import 'package:vitrio/features/search/domain/provider_listing.dart';
 import 'package:vitrio/features/search/domain/search_area.dart';
 import 'package:vitrio/features/search/domain/search_filters.dart';
@@ -17,6 +18,9 @@ final class FakeSearchRepository implements SearchRepository {
   List<ServiceCategory> categories = [];
   bool hasProviders = true;
   bool hasMore = false;
+  int? count;
+  bool moreThanCount = false;
+  ProfessionalName? professional;
   ProblemDetails? failure;
   final List<(SearchArea, SearchFilters, int)> searches = [];
 
@@ -32,7 +36,10 @@ final class FakeSearchRepository implements SearchRepository {
       page: page,
       hasMore: page == 1 && hasMore,
       mode: area.hasPoint ? SearchMode.nearMe : SearchMode.city,
+      count: count ?? listings.length,
+      moreThanCount: moreThanCount,
       city: jaboticabal,
+      professional: professional,
     ));
   }
 

@@ -986,21 +986,29 @@ class AppLocalizationsPt extends AppLocalizations {
   String get searchLowestPrice => 'Menor preço';
 
   @override
-  String get searchResultsNearMe => 'Profissionais perto de você';
+  String get searchProfessionalOne => 'profissional';
 
   @override
-  String searchResultsInCity(String city) {
-    return 'Profissionais em $city';
+  String get searchProfessionalMany => 'profissionais';
+
+  @override
+  String searchCountNearMe(String count, String professionals) {
+    return '$count $professionals perto de você';
   }
 
   @override
-  String searchCategoryNearMe(String category) {
-    return '$category perto de você';
+  String searchCountInCity(String count, String professionals, String city) {
+    return '$count $professionals em $city';
   }
 
   @override
-  String searchCategoryInCity(String category, String city) {
-    return '$category em $city';
+  String searchMoreThanNearMe(String count, String professionals) {
+    return 'Mais de $count $professionals perto de você';
+  }
+
+  @override
+  String searchMoreThanInCity(String count, String professionals, String city) {
+    return 'Mais de $count $professionals em $city';
   }
 
   @override
