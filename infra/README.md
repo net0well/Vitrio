@@ -31,4 +31,20 @@ Para rodar a API em contêiner, com a mesma imagem de produção (aplique as mig
 docker compose -f infra/docker-compose.yml --profile api up -d --build
 ```
 
+## Carga para medir a busca
+
+Os scripts de `search-load/` medem a busca de prestadores com 50 mil vitrines publicadas espalhadas pelos municípios de SP, com peso pela população. Rode só no banco local, com as migrações aplicadas e as cidades carregadas:
+
+```bash
+docker cp infra/search-load/seed.sql vitrio-postgres-1:/tmp/seed.sql
+docker exec vitrio-postgres-1 psql -U vitrio -d vitrio -q -f /tmp/seed.sql
+pwsh infra/search-load/measure.ps1        # com a API rodando em http://localhost:5080
+docker cp infra/search-load/cleanup.sql vitrio-postgres-1:/tmp/cleanup.sql
+docker exec vitrio-postgres-1 psql -U vitrio -d vitrio -q -f /tmp/cleanup.sql
+```
+
+- As contas da carga usam e-mails `@carga.vitrio.local`, e a limpeza apaga só elas (a conta fixa de teste fica).
+- O `measure.ps1` faz 55 requisições por cenário e espera a janela do rate limit (60 por minuto) entre um cenário e outro; a medição completa leva cerca de 7 minutos.
+- Ele chama `127.0.0.1`, não `localhost`: no Windows, `localhost` tenta IPv6 antes e soma uns 200 ms a cada requisição.
+
 O deploy de produção está em [production/README.md](production/README.md).

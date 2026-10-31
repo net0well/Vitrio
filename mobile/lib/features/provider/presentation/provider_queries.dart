@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/network/api_result.dart';
+import '../../search/presentation/search_queries.dart';
 import '../data/provider_providers.dart';
 import '../domain/provider_dashboard.dart';
 import '../domain/provider_photo.dart';
@@ -32,9 +33,12 @@ Future<List<ProviderPhoto>> providerPhotos(Ref ref) async => switch (await ref.r
     };
 
 @riverpod
-Future<PublicProvider?> publicProvider(Ref ref, String providerId) async =>
-    switch (await ref.read(providerRepositoryProvider).publicProfile(providerId)) {
-      ApiSuccess(:final data) => data,
-      ApiFailure(:final problem) when problem.status == 404 => null,
-      ApiFailure(:final problem) => throw problem,
-    };
+Future<PublicProvider?> publicProvider(Ref ref, String providerId) async {
+  final area = await ref.watch(searchAreaProvider.future);
+  final result = await ref.read(providerRepositoryProvider).publicProfile(providerId, latitude: area?.latitude, longitude: area?.longitude);
+  return switch (result) {
+    ApiSuccess(:final data) => data,
+    ApiFailure(:final problem) when problem.status == 404 => null,
+    ApiFailure(:final problem) => throw problem,
+  };
+}

@@ -6,6 +6,7 @@ import 'steps/about_step.dart';
 import 'steps/photos_step.dart';
 import 'steps/review_step.dart';
 import 'steps/showcase_step.dart';
+import 'widgets/provider_profile_ready.dart';
 
 class ProviderStepScreen extends StatelessWidget {
   const ProviderStepScreen({super.key, required this.step, required this.editing});
@@ -26,11 +27,13 @@ class ProviderStepScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void onDone() => _done(context);
-    return switch (step) {
-      ProviderStep.about => AboutStep(editing: editing, onDone: onDone),
-      ProviderStep.showcase => ShowcaseStep(editing: editing, onDone: onDone),
-      ProviderStep.photos => PhotosStep(editing: editing, onDone: onDone),
-      ProviderStep.review => ReviewStep(editing: editing, onDone: onDone),
-    };
+    return ProviderProfileReady(
+      child: switch (step) {
+        ProviderStep.about => AboutStep(editing: editing, onDone: onDone),
+        ProviderStep.showcase => ShowcaseStep(editing: editing, onDone: onDone),
+        ProviderStep.photos => PhotosStep(editing: editing, onDone: onDone),
+        ProviderStep.review => ReviewStep(editing: editing, onDone: onDone),
+      },
+    );
   }
 }

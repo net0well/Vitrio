@@ -42,6 +42,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public FakeCnpjLookup Cnpj { get; } = new();
 
+    public FakeCepLookup Ceps { get; } = new();
+
     public string PublicStorageUrl => $"{_storage.ServiceUrl}/{SeaweedFsContainer.PublicBucket}";
 
     public async ValueTask InitializeAsync()
@@ -79,7 +81,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.AddSingleton<IStartupFilter, TestClientAddressStartupFilter>();
             services.Replace(ServiceDescriptor.Singleton<TimeProvider>(Clock));
             services.Replace(ServiceDescriptor.Singleton<IEmailSender>(Emails));
-            services.Replace(ServiceDescriptor.Singleton<ICepLookup, FakeCepLookup>());
+            services.Replace(ServiceDescriptor.Singleton<ICepLookup>(Ceps));
             services.Replace(ServiceDescriptor.Singleton<IIbgeCitySource>(Ibge));
             services.Replace(ServiceDescriptor.Singleton<IPhotoProcessingQueue>(Photos));
             services.Replace(ServiceDescriptor.Singleton<ICnpjLookup>(Cnpj));

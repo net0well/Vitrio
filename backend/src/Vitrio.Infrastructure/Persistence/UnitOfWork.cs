@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Vitrio.Application.Abstractions;
 using Vitrio.Shared.Exceptions;
 
@@ -15,6 +16,10 @@ internal sealed class UnitOfWork(AppDbContext db) : IUnitOfWork
         catch (DbUpdateConcurrencyException exception)
         {
             throw new ConcurrencyConflictException("The data was changed by another request.", exception);
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+        {
+            throw new UniqueConstraintException("The data already exists.", exception);
         }
     }
 }

@@ -73,8 +73,8 @@ class _AboutStepState extends ConsumerState<AboutStep> {
     });
 
     final controller = ref.read(providerControllerProvider.notifier);
-    if (ref.read(providerControllerProvider).value == null &&
-        !_accept(await controller.create(displayName: _name.text.trim(), headline: _headline.text.trim()))) {
+    final hasShowcase = ref.read(sessionControllerProvider).value?.hasProviderProfile ?? false;
+    if (!hasShowcase && !_accept(await controller.create(displayName: _name.text.trim(), headline: _headline.text.trim()))) {
       return;
     }
 

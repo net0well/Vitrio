@@ -24,8 +24,8 @@ Regra de ouro: **cache nunca é fonte da verdade**. Tudo que precisa sobreviver 
 | Perfil público (`GET /providers/{id}`) | `provider:{id}` | 5 min | 30 s | Eventos do prestador, da moderação e da conta (§3); tag `provider:{id}` |
 | Fotos do perfil (`GET /providers/{id}/photos`) | `provider:{id}:photos:{page}` | 5 min | 30 s | Tag `provider:{id}` |
 | Primeira página de avaliações sem filtro | `provider:{id}:reviews:1` | 5 min | 30 s | Tag `provider:{id}` |
-| Início (`GET /home`) | `home:cell:{celula2km}` ou `home:city:{ibge}` | 60 s | 30 s | Só por tempo |
-| Categorias (`GET /categories`) | `categories` | 1 h | 5 min | Evento `category.updated` remove a tag `categories` (§3) |
+| Início (`GET /home`) | `home:cell:{celula2km}` ou `home:city:{ibge}` | 60 s | 30 s | Só por tempo; o cache guarda os candidatos, e raio, distância e "Disponível hoje" são conferidos por requisição a partir do ponto do cliente |
+| Categorias (`GET /categories`) | `categories:active` | 1 h | 5 min | Evento `category.updated` remove a tag `categories` (§3) |
 | Busca de cidades (`GET /cities?search=`) | `cities:search:{uf}:{limite}:{termo}` | 24 h | 1 h | Carga anual do IBGE remove a tag `cities` |
 | Cidade por código (`GET /cities/{ibge}`) | `cities:get:{ibge}` | 24 h | 1 h | Tag `cities` |
 | Localizar cidade (`GET /cities/locate`) | `cities:locate:{celula1km}`, calculada pelo ponto da célula | 10 min | 1 min | Tag `cities` |

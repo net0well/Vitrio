@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using Vitrio.Infrastructure.Persistence;
 
 #nullable disable
@@ -526,6 +527,18 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("name");
 
+                    b.Property<string>("ProfessionalPlural")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("professional_plural");
+
+                    b.Property<string>("ProfessionalSingular")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("professional_singular");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -552,6 +565,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "bolt",
                             Name = "Elétrica",
+                            ProfessionalPlural = "eletricistas",
+                            ProfessionalSingular = "eletricista",
                             Slug = "eletrica",
                             SortOrder = 1
                         },
@@ -561,6 +576,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "droplet",
                             Name = "Hidráulica",
+                            ProfessionalPlural = "encanadores",
+                            ProfessionalSingular = "encanador",
                             Slug = "hidraulica",
                             SortOrder = 2
                         },
@@ -570,6 +587,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "brick",
                             Name = "Pedreiro",
+                            ProfessionalPlural = "pedreiros",
+                            ProfessionalSingular = "pedreiro",
                             Slug = "pedreiro",
                             SortOrder = 3
                         },
@@ -579,6 +598,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "roller",
                             Name = "Pintura",
+                            ProfessionalPlural = "pintores",
+                            ProfessionalSingular = "pintor",
                             Slug = "pintura",
                             SortOrder = 4
                         },
@@ -588,6 +609,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "broom",
                             Name = "Diarista",
+                            ProfessionalPlural = "diaristas",
+                            ProfessionalSingular = "diarista",
                             Slug = "diarista",
                             SortOrder = 5
                         },
@@ -597,6 +620,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "leaf",
                             Name = "Jardinagem",
+                            ProfessionalPlural = "jardineiros",
+                            ProfessionalSingular = "jardineiro",
                             Slug = "jardinagem",
                             SortOrder = 6
                         },
@@ -606,6 +631,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "wrench",
                             Name = "Montagem de móveis",
+                            ProfessionalPlural = "montadores de móveis",
+                            ProfessionalSingular = "montador de móveis",
                             Slug = "montagem-de-moveis",
                             SortOrder = 7
                         },
@@ -615,6 +642,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "sliders",
                             Name = "Ar-condicionado",
+                            ProfessionalPlural = "técnicos de ar-condicionado",
+                            ProfessionalSingular = "técnico de ar-condicionado",
                             Slug = "ar-condicionado",
                             SortOrder = 8
                         },
@@ -624,6 +653,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "wrench",
                             Name = "Marido de aluguel",
+                            ProfessionalPlural = "maridos de aluguel",
+                            ProfessionalSingular = "marido de aluguel",
                             Slug = "marido-de-aluguel",
                             SortOrder = 9
                         },
@@ -633,6 +664,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "transfer",
                             Name = "Fretes e mudanças",
+                            ProfessionalPlural = "freteiros",
+                            ProfessionalSingular = "freteiro",
                             Slug = "fretes-e-mudancas",
                             SortOrder = 10
                         },
@@ -642,6 +675,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "star",
                             Name = "Beleza a domicílio",
+                            ProfessionalPlural = "profissionais de beleza",
+                            ProfessionalSingular = "profissional de beleza",
                             Slug = "beleza-a-domicilio",
                             SortOrder = 11
                         },
@@ -651,6 +686,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "message",
                             Name = "Aulas particulares",
+                            ProfessionalPlural = "professores particulares",
+                            ProfessionalSingular = "professor particular",
                             Slug = "aulas-particulares",
                             SortOrder = 12
                         },
@@ -660,6 +697,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "grid",
                             Name = "Informática",
+                            ProfessionalPlural = "técnicos de informática",
+                            ProfessionalSingular = "técnico de informática",
                             Slug = "informatica",
                             SortOrder = 13
                         },
@@ -669,6 +708,8 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "user",
                             Name = "Cuidador(a)",
+                            ProfessionalPlural = "cuidadores",
+                            ProfessionalSingular = "cuidador",
                             Slug = "cuidador",
                             SortOrder = 14
                         },
@@ -678,9 +719,46 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                             Active = true,
                             Icon = "heart",
                             Name = "Pet",
+                            ProfessionalPlural = "profissionais para pet",
+                            ProfessionalSingular = "profissional para pet",
                             Slug = "pet",
                             SortOrder = 15
                         });
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Favorites.Favorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_favorites");
+
+                    b.HasIndex("ProviderId")
+                        .HasDatabaseName("ix_favorites_provider_id");
+
+                    b.HasIndex("UserId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_favorites_user_id_created_at");
+
+                    b.HasIndex("UserId", "ProviderId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_favorites_user_id_provider_id");
+
+                    b.ToTable("favorites", (string)null);
                 });
 
             modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>
@@ -930,6 +1008,12 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("public_latitude");
 
+                    b.Property<Point>("PublicLocation")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("geography (point, 4326)")
+                        .HasColumnName("public_location")
+                        .HasComputedColumnSql("st_setsrid(st_makepoint(public_longitude, public_latitude), 4326)::geography", true);
+
                     b.Property<double?>("PublicLongitude")
                         .HasColumnType("double precision")
                         .HasColumnName("public_longitude");
@@ -955,6 +1039,36 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.Property<int>("ReviewCount")
                         .HasColumnType("integer")
                         .HasColumnName("review_count");
+
+                    b.Property<double>("SearchCompleteness")
+                        .HasColumnType("double precision")
+                        .HasColumnName("search_completeness");
+
+                    b.Property<string>("SearchName")
+                        .HasColumnType("text")
+                        .HasColumnName("search_name");
+
+                    b.Property<string>("SearchPrimary")
+                        .HasColumnType("text")
+                        .HasColumnName("search_primary");
+
+                    b.Property<string>("SearchSecondary")
+                        .HasColumnType("text")
+                        .HasColumnName("search_secondary");
+
+                    b.Property<long?>("SearchServicePriceCents")
+                        .HasColumnType("bigint")
+                        .HasColumnName("search_service_price_cents");
+
+                    b.Property<string>("SearchTerms")
+                        .HasColumnType("text")
+                        .HasColumnName("search_terms");
+
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_vector")
+                        .HasComputedColumnSql("setweight(to_tsvector('portuguese'::regconfig, coalesce(search_primary, '')), 'A') || setweight(to_tsvector('portuguese'::regconfig, coalesce(search_name, '')), 'B') || setweight(to_tsvector('portuguese'::regconfig, coalesce(search_secondary, '')), 'C')", true);
 
                     b.Property<int>("ServiceRadiusMeters")
                         .HasColumnType("integer")
@@ -993,6 +1107,22 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CityIbgeCode")
                         .HasDatabaseName("ix_providers_city_ibge_code");
+
+                    b.HasIndex("PublicLocation")
+                        .HasDatabaseName("ix_providers_public_location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("PublicLocation"), "gist");
+
+                    b.HasIndex("SearchTerms")
+                        .HasDatabaseName("ix_providers_search_terms");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchTerms"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("SearchTerms"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("SearchVector")
+                        .HasDatabaseName("ix_providers_search_vector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "gin");
 
                     b.HasIndex("UserId")
                         .IsUnique()
@@ -1313,6 +1443,23 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_sessions_users_user_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Favorites.Favorite", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_favorites_providers_provider_id");
+
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_favorites_users_user_id");
                 });
 
             modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>

@@ -65,6 +65,22 @@ String phoneText(String? phone) {
   return '(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7)}';
 }
 
+String cnpjText(String? cnpj) => _masked(cnpj, 14, (index) => switch (index) { 2 || 5 => '.', 8 => '/', 12 => '-', _ => '' });
+
+String cepText(String? cep) => _masked(cep, 8, (index) => index == 5 ? '-' : '');
+
+String _masked(String? input, int length, String Function(int index) separatorBefore) {
+  final digits = (input ?? '').replaceAll(RegExp(r'\D'), '');
+  final text = StringBuffer();
+  for (var index = 0; index < digits.length && index < length; index++) {
+    text
+      ..write(separatorBefore(index))
+      ..write(digits[index]);
+  }
+
+  return text.toString();
+}
+
 String _dayShort(AppLocalizations l10n, String day) => switch (day) {
       'monday' => l10n.providerDayShortMonday,
       'tuesday' => l10n.providerDayShortTuesday,

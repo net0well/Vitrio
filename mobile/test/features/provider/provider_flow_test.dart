@@ -6,6 +6,7 @@ import 'package:vitrio/features/auth/domain/me.dart';
 import 'package:vitrio/features/provider/domain/provider_status.dart';
 
 import '../../support/fake_account_repository.dart';
+import '../../support/fake_auth_repository.dart';
 import '../../support/fake_provider_repository.dart';
 import '../../support/memory_token_store.dart';
 import '../../support/pump_vitrio.dart';
@@ -95,6 +96,46 @@ void main() {
     expect(find.text('Novos pedidos'), findsOneWidget);
   });
 
+  testWidgets('another account on the same device starts the showcase empty instead of with the previous one', (tester) async {
+    final account = FakeAccountRepository()..meResult = const ApiSuccess(sampleProviderMe);
+    final provider = FakeProviderRepository()..seedComplete();
+    final harness = await pumpVitrio(
+      tester,
+      preferences: signedInClient,
+      auth: FakeAuthRepository()..loginResult = const ApiSuccess(sampleSession),
+      account: account,
+      provider: provider,
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+    harness.go('/provider-edit/about');
+    await tester.pumpAndSettle();
+    expect(find.text('Carlos Eletricista'), findsOneWidget);
+
+    harness.go('/account');
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Sair'));
+    account.meResult = const ApiSuccess(sampleMe);
+    provider.exists = false;
+    harness.go('/sign-in');
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'E-mail'), sampleMe.email);
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Senha'), 'vidro azul na janela');
+    await tester.tap(find.widgetWithText(FilledButton, 'Entrar'));
+    await tester.pumpAndSettle();
+    harness.go('/account');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Quero oferecer meus serviços'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Carlos Eletricista'), findsNothing);
+    expect(find.text('Mariana Souza'), findsOneWidget);
+    await fill(tester, 'Profissão', 'Diarista');
+    await fill(tester, 'Sobre você e o seu trabalho', 'Faço faxina residencial há oito anos, com produtos próprios e muito capricho.');
+    await tester.tap(find.text('Continuar'));
+    await tester.pumpAndSettle();
+    expect(provider.calls, contains('create'));
+  });
+
   testWidgets('review lists what is missing and keeps publish disabled', (tester) async {
     final provider = FakeProviderRepository()
       ..seedComplete()
@@ -144,6 +185,67 @@ void main() {
     await tester.tap(find.text('Voltar para cliente'));
     await tester.pumpAndSettle();
     expect(find.text('Início'), findsOneWidget);
+  });
+
+  testWidgets('a provider who reopens the app lands on the dashboard once the session loads', (tester) async {
+    final provider = FakeProviderRepository()
+      ..seedComplete()
+      ..status = ProviderStatus.published;
+    await pumpVitrio(
+      tester,
+      preferences: {...signedInClient, 'app_mode': 'provider'},
+      account: FakeAccountRepository()..meResult = const ApiSuccess(sampleProviderMe),
+      provider: provider,
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+
+    expect(find.text('Agenda'), findsOneWidget);
+    expect(find.text('Início'), findsNothing);
+  });
+
+  testWidgets('an account without a showcase opens in the client mode even where the provider mode was saved', (tester) async {
+    await pumpVitrio(
+      tester,
+      preferences: {...signedInClient, 'app_mode': 'provider'},
+      account: FakeAccountRepository()..meResult = const ApiSuccess(sampleMe),
+      provider: FakeProviderRepository(),
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+
+    expect(find.text('Início'), findsOneWidget);
+    expect(find.text('Agenda'), findsNothing);
+  });
+
+  testWidgets('signing out of the provider mode leaves the next account in the client mode', (tester) async {
+    final account = FakeAccountRepository()..meResult = const ApiSuccess(sampleProviderMe);
+    final provider = FakeProviderRepository()
+      ..seedComplete()
+      ..status = ProviderStatus.published;
+    final harness = await pumpVitrio(
+      tester,
+      preferences: {...signedInClient, 'app_mode': 'provider'},
+      auth: FakeAuthRepository()..loginResult = const ApiSuccess(sampleSession),
+      account: account,
+      provider: provider,
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+    await tester.tap(find.text('Meu perfil'));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Conta'));
+    await tapVisible(tester, find.text('Sair'));
+
+    account.meResult = const ApiSuccess(sampleMe);
+    harness.go('/sign-in');
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'E-mail'), sampleMe.email);
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Senha'), 'vidro azul na janela');
+    await tester.tap(find.widgetWithText(FilledButton, 'Entrar'));
+    await tester.pumpAndSettle();
+    harness.go('/home');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Início'), findsOneWidget);
+    expect(find.text('Agenda'), findsNothing);
   });
 
   testWidgets('public profile shows the badges and the WhatsApp button without any address', (tester) async {

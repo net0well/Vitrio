@@ -85,6 +85,6 @@ void main() {
 
     await tester.tap(find.text('Buscar profissionais'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('buscar por serviço'), findsOneWidget);
+    expect(find.text('O que você procura?'), findsOneWidget);
   });
 }

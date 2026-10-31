@@ -715,6 +715,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeHeroAction => 'Ver disponíveis';
 
   @override
+  String get homeSignInTitle => 'O Vitrio funciona melhor com sua conta';
+
+  @override
+  String get homeSignInText =>
+      'Entre para pedir orçamentos, salvar favoritos e acompanhar seus pedidos.';
+
+  @override
   String get homeCategories => 'Categorias';
 
   @override
@@ -966,4 +973,181 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get providerCepNotFound =>
       'Não encontramos este CEP. Confira os 8 números do endereço base.';
+
+  @override
+  String get searchActivePlaceholder => 'O que você procura?';
+
+  @override
+  String get searchClear => 'Limpar busca';
+
+  @override
+  String get searchFilters => 'Filtros';
+
+  @override
+  String get searchNearMe => 'Perto de mim';
+
+  @override
+  String get searchTopRated => 'Nota 4,5+';
+
+  @override
+  String get searchLowestPrice => 'Menor preço';
+
+  @override
+  String get searchProfessionalOne => 'profissional';
+
+  @override
+  String get searchProfessionalMany => 'profissionais';
+
+  @override
+  String searchCountNearMe(String count, String professionals) {
+    return '$count $professionals perto de você';
+  }
+
+  @override
+  String searchCountInCity(String count, String professionals, String city) {
+    return '$count $professionals em $city';
+  }
+
+  @override
+  String searchMoreThanNearMe(String count, String professionals) {
+    return 'Mais de $count $professionals perto de você';
+  }
+
+  @override
+  String searchMoreThanInCity(String count, String professionals, String city) {
+    return 'Mais de $count $professionals em $city';
+  }
+
+  @override
+  String get searchSortTitle => 'Ordenar por';
+
+  @override
+  String get searchSortRelevance => 'Relevância';
+
+  @override
+  String get searchSortDistance => 'Mais perto';
+
+  @override
+  String get searchSortRating => 'Melhor avaliado';
+
+  @override
+  String get searchSortPrice => 'Menor preço';
+
+  @override
+  String get searchPriceFrom => 'A partir de';
+
+  @override
+  String get searchSeeProfile => 'Ver perfil';
+
+  @override
+  String searchReviewCount(String count) {
+    return '($count)';
+  }
+
+  @override
+  String get searchNoResults =>
+      'Nenhum profissional encontrado com esses filtros.';
+
+  @override
+  String get searchClearFilters => 'Limpar filtros';
+
+  @override
+  String get searchError =>
+      'Não conseguimos carregar os profissionais. Verifique a conexão e tente de novo.';
+
+  @override
+  String get searchChooseCity =>
+      'Escolha uma cidade para ver os profissionais.';
+
+  @override
+  String get searchFilterDistance => 'Distância máxima';
+
+  @override
+  String searchFilterDistanceValue(String km) {
+    return 'Até $km km';
+  }
+
+  @override
+  String get searchFilterRating => 'Nota mínima';
+
+  @override
+  String get searchFilterAny => 'Qualquer';
+
+  @override
+  String searchFilterRatingValue(String rating) {
+    return '$rating+';
+  }
+
+  @override
+  String get searchFilterMeiHint => 'CNPJ ativo e optante pelo MEI';
+
+  @override
+  String get searchFilterTodayHint => 'Quem ligou “Disponível hoje”';
+
+  @override
+  String get searchFilterPrice => 'Preço a partir de';
+
+  @override
+  String searchFilterPriceValue(String price) {
+    return 'Até $price';
+  }
+
+  @override
+  String get searchFilterCity => 'Cidade';
+
+  @override
+  String get searchFilterApply => 'Ver resultados';
+
+  @override
+  String get searchFilterReset => 'Limpar';
+
+  @override
+  String get homeTopRated => 'Bem avaliados perto de você';
+
+  @override
+  String get homeSeeMore => 'Ver mais';
+
+  @override
+  String emptyCityTitle(String city) {
+    return 'Ainda não tem profissionais do Vitrio em $city.';
+  }
+
+  @override
+  String get emptyCityTitleNearby =>
+      'Ainda não tem profissionais do Vitrio perto de você.';
+
+  @override
+  String get emptyCityText =>
+      'Conhece alguém que faz um bom trabalho? Mande o Vitrio para essa pessoa.';
+
+  @override
+  String get emptyCityInvite => 'Indicar o Vitrio';
+
+  @override
+  String emptyCityShareText(String url) {
+    return 'Conheça o Vitrio, o app para achar profissionais de confiança perto de você: $url';
+  }
+
+  @override
+  String get favoritesTitle => 'Favoritos';
+
+  @override
+  String get favoritesEmpty => 'Você ainda não salvou nenhum profissional.';
+
+  @override
+  String get favoritesSearch => 'Buscar profissionais';
+
+  @override
+  String get favoritesError =>
+      'Não conseguimos carregar seus favoritos. Verifique a conexão e tente de novo.';
+
+  @override
+  String get favoriteSave => 'Salvar nos favoritos';
+
+  @override
+  String get favoriteRemove => 'Remover dos favoritos';
+
+  @override
+  String get favoriteFailed =>
+      'Não conseguimos atualizar seus favoritos. Tente de novo.';
 }

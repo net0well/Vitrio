@@ -1,5 +1,6 @@
 using Mediator;
 using Vitrio.Application.Abstractions;
+using Vitrio.Application.Favorites.Repositories;
 using Vitrio.Application.Providers.Common;
 using Vitrio.Application.Providers.Services;
 using Vitrio.Domain.Locations;
@@ -12,9 +13,10 @@ namespace Vitrio.Application.Providers.GetPublicProvider;
 public sealed class GetPublicProviderQueryHandler(
     IPublicProfileService profiles,
     IPublicLinks links,
+    ICurrentUser currentUser,
+    IFavoriteSearchableRepository favorites,
     IClock clock) : IQueryHandler<GetPublicProviderQuery, Result<ProviderPublicResponse>>
 {
-    private const int MinReviewsForRating = 3;
     private const int MinCompletedOrdersShown = 5;
 
     public async ValueTask<Result<ProviderPublicResponse>> Handle(GetPublicProviderQuery query, CancellationToken cancellationToken)
@@ -25,7 +27,7 @@ public sealed class GetPublicProviderQueryHandler(
             return ProviderErrors.NotFound;
         }
 
-        var rated = snapshot.IsRated(MinReviewsForRating);
+        var rated = snapshot.IsRated(RatingRule.MinReviews);
         return new ProviderPublicResponse(
             snapshot.Id,
             snapshot.DisplayName,
@@ -50,7 +52,8 @@ public sealed class GetPublicProviderQueryHandler(
             snapshot.WhatsAppPhone,
             DistanceFrom(snapshot, query.Latitude, query.Longitude),
             snapshot.FirstPhotos,
-            links.ProviderProfile(snapshot.Id));
+            links.ProviderProfile(snapshot.Id),
+            currentUser.IsAuthenticated && await favorites.IsFavoriteAsync(currentUser.Id, snapshot.Id, cancellationToken));
     }
 
     private static double? DistanceFrom(ProviderPublicSnapshot snapshot, double? latitude, double? longitude) =>

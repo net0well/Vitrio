@@ -187,7 +187,7 @@ final class PublicProviderProvider
   }
 }
 
-String _$publicProviderHash() => r'7afd8d64af6e8164d2869106dc691ed88f142fb4';
+String _$publicProviderHash() => r'057a350e9ff3393833fb8cdc12543c15e590d21a';
 
 final class PublicProviderFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<PublicProvider?>, String> {

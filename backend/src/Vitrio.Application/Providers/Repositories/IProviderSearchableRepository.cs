@@ -16,6 +16,8 @@ public interface IProviderSearchableRepository
 
     Task<Guid?> FindIdByUserAsync(Guid userId, CancellationToken cancellationToken);
 
+    Task<Guid?> FindPublishedOwnerAsync(Guid providerId, CancellationToken cancellationToken);
+
     Task<IReadOnlyList<ProviderPhotoResponse>?> ListOwnPhotosAsync(Guid userId, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<PublicPhotoResponse>?> GetPublicPhotosAsync(Guid providerId, int skip, int take, CancellationToken cancellationToken);

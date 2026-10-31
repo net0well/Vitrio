@@ -116,16 +116,15 @@ Vitrio.Application/
   Events/                IDomainEventHandler<T> e os handlers de evento (notificações, dados derivados, cache)
   Common/                PagedResult, behaviors (log, validação, transação)
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
-  Cities/                LocateCity, SearchCities, GetCity
-  Categories/            ListCategories
-  Providers/             CreateProviderProfile, UpdateProviderProfile, SetServiceArea, SetServices, Photos, VerifyMei, Publish, Pause, SetAvailableToday, GetProviderProfile
-  Search/                SearchProviders
+  Locations/             LocateCity, SearchCities, GetCity, LookupCep, LoadCities
+  Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e das fotos
+  Search/                SearchProviders, GetHome
   Orders/                CreateOrder, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, CancelOrder, CompleteOrder, ListOrders, GetOrder, ExpireOrders
   Payments/              ConfirmPayment, VoidPaymentConfirmation, DisputePayment, GetEarningsSummary
   Reviews/               CreateReview, UpdateReview, ReplyToReview, ListProviderReviews
   Reports/               CreateReport, Moderation
   Notifications/         RegisterDevice, ListNotifications, MarkAsRead, handlers de eventos
-  Favorites/
+  Favorites/             AddFavorite, RemoveFavorite, ListFavorites
 ```
 
 Cada caso de uso é uma pasta com `Command`/`Query`, `Handler`, `Validator` e `Response`. Exemplo: `Orders/SendQuote/SendQuoteCommand.cs`, `SendQuoteHandler.cs`, `SendQuoteValidator.cs`.
@@ -169,8 +168,8 @@ public sealed class ProviderOrdersController(ISender sender) : ApiControllerBase
 erDiagram
   USER ||--o| PROVIDER : "pode ter"
   USER ||--o{ ADDRESS : salva
-  USER ||--o{ EXTERNAL_LOGIN : entra-com
-  USER ||--o{ REFRESH_TOKEN : possui
+  USER ||--o{ SESSION : abre
+  SESSION ||--o{ REFRESH_TOKEN : renova
   USER ||--o{ DEVICE : registra
   CITY ||--o{ PROVIDER : "cidade base"
   PROVIDER ||--o{ PROVIDER_CATEGORY : atua-em
@@ -196,7 +195,7 @@ Agregados e invariantes principais:
 
 | Agregado | Raiz | Invariantes |
 | --- | --- | --- |
-| Conta | `User` | e-mail único; vínculo por provedor externo; estado ativo/suspenso/excluído |
+| Conta | `User` | e-mail único; e-mail confirmado antes do primeiro acesso; estado ativo/suspenso/excluído |
 | Vitrine | `Provider` | campos mínimos para publicar; até 3 categorias, 20 serviços, 30 fotos; raio 1–50 km; ponto público derivado do endereço base |
 | Pedido | `Order` | máquina de estados de [02-regras-de-negocio.md](02-regras-de-negocio.md); um orçamento ativo; endereço só liberado em `Scheduled`; confirmações de pagamento imutáveis |
 | Avaliação | `Review` | uma por pedido; só do cliente do pedido; janela de edição de 7 dias; uma resposta |
@@ -211,7 +210,7 @@ Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas 
 
 - PostgreSQL 17 com extensões `postgis`, `unaccent`, `pg_trgm`, `citext`.
 - Pontos como `geography(Point, 4326)`; limites de município como `geography(MultiPolygon, 4326)`.
-- Índices: GiST em `providers.public_location` e `cities.boundary`; GIN em `providers.search_vector` (tsvector com configuração `portuguese` + `unaccent`) e trigram em `providers.display_name` e `cities.name_normalized`.
+- Índices: GiST em `providers.public_location` e `cities.boundary`; GIN em `providers.search_vector` (tsvector com a configuração `portuguese` nativa sobre o texto já sem acento e minúsculo) e trigram em `providers.search_terms` e `cities.name_normalized`.
 - Concorrência otimista com a coluna de sistema `xmin` (`UseXminAsConcurrencyToken`) em `Order`, `Provider` e `Review`.
 - Migrações EF Core versionadas no repositório e aplicadas por um passo de deploy, nunca no startup da API em produção.
 
@@ -222,41 +221,58 @@ Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas 
 
 ### Busca de prestadores
 
-Com GPS:
+**Índice da vitrine.** Colunas mantidas pela Infrastructure (`ProviderSearchIndexInterceptor`, um `SaveChangesInterceptor`) a cada vitrine adicionada ou alterada, a partir do agregado carregado inteiro:
+
+- `search_primary` (profissão, categorias e títulos dos serviços), `search_name` e `search_secondary` (descrições e "Sobre"), já sem acento e minúsculas (`SearchText.Normalize`);
+- `search_vector`, coluna gerada com pesos A, B e C; `search_terms` (primária mais nome) para o trigram;
+- `search_completeness` e `search_service_price_cents` (menor preço por serviço), para ordenar sem ler as tabelas filhas;
+- `public_location`, coluna gerada a partir do ponto público.
+
+**Consulta** (`ProviderListingSql`, SQL parametrizado; nenhum valor do request entra no texto):
 
 ```sql
-select p.id, p.display_name, ...
-from providers p
-where p.status = 'Published'
-  and st_dwithin(p.public_location, @point, 50000)
-  and st_dwithin(p.public_location, @point, p.service_radius_m)
-  and (@category_id is null or exists (select 1 from provider_categories pc where pc.provider_id = p.id and pc.category_id = @category_id))
-  and (@q is null or p.search_vector @@ websearch_to_tsquery('portuguese_unaccent', @q) or p.display_name_normalized % unaccent(lower(@q)))
-order by @relevance desc
-limit @page_size offset @offset;
+select ranked.*, <selo MEI>, <preço do card>
+from (
+  select p.id, ..., <relevância> as relevance
+  from providers p
+  join users u on u.id = p.user_id
+  cross join lateral (select city.name, city.time_zone from cities city where city.ibge_code = p.city_ibge_code offset 0) c
+  cross join (select st_setsrid(st_makepoint(@lng, @lat), 4326)::geography as point) pt
+  cross join (select websearch_to_tsquery('portuguese', @term) as tsq) q
+  where p.status = 'Published' and u.status = 'Active'
+    and st_dwithin(p.public_location, pt.point, @max_distance)
+    and st_dwithin(p.public_location, pt.point, p.service_radius_meters)
+    and (numnode(q.tsq) = 0 or p.search_vector @@ q.tsq or @term <% p.search_terms)
+  order by exact_match desc, relevance desc, id
+  limit @take offset @skip
+) ranked
+left join lateral (<menor preço do card>) price on true
 ```
 
-Sem GPS, com a cidade escolhida `@city`:
+Sem GPS, com a cidade escolhida:
 
 ```sql
-where p.status = 'Published'
-  and (p.city_ibge_code = @city.ibge_code
-       or st_dwithin(p.public_location, @city.boundary, p.service_radius_m))
+  and (p.city_ibge_code = @city or st_dwithin(p.public_location, <limite da cidade>, 50000))
+  and (p.city_ibge_code = @city or st_dwithin(p.public_location, <limite da cidade>, p.service_radius_meters, false))
 ```
 
 - **Todo filtro e toda distância usam `public_location`**, nunca `base_location`. Filtrar pelo endereço exato deixaria descobrir o endereço variando o ponto da busca; com o ponto público, a borda do círculo só revela o centro da célula, que já é público. Isso também mantém o filtro de distância máxima coerente com a distância exibida.
-- O primeiro `st_dwithin` com 50 km (raio máximo) usa o índice; o segundo aplica o raio de cada prestador.
-- Sem GPS, a distância não é devolvida e a relevância não tem o componente de proximidade. `page_size` máximo 30, `offset` máximo 300 (anti-raspagem).
-- "Disponível hoje" entra como condição calculada: `available_today and (available_today_set_at at time zone c.time_zone)::date = (now() at time zone c.time_zone)::date`, com `c` a cidade base.
+- O primeiro `st_dwithin` usa o índice; o segundo aplica o raio de cada prestador. Sem GPS, a cidade base vai pelo índice de `city_ibge_code` e as vizinhas pelo GiST antes da conta exata do raio até o limite.
+- Relevância: soma ponderada de texto, nota, volume de avaliações, proximidade (só com GPS), completude e "Disponível hoje", com os pesos em `Search:Relevance` e o componente ausente redistribuído. Com termo, quem casa pelo full-text vem antes de quem casa só pelo trigram (`exact_match`).
+- A consulta ordena e corta a página antes de buscar o selo MEI e o preço do card. A cidade é subconsulta lateral com `offset 0` porque, num join comum, o planejador varre `cities` (com os limites) uma vez por vitrine.
+- A conexão define `pg_trgm.word_similarity_threshold=0.5` (o operador `<%` só usa o índice com o limiar da sessão) e `jit=off` (o JIT levava mais de um segundo compilando consultas de milissegundos).
+- Contagem: `count(*)` sobre a mesma origem com `limit 201`, sem ordenar; a API devolve até 200 e `moreThanCount`, nunca o total.
+- Sem GPS, a distância não é devolvida e a relevância não tem o componente de proximidade. `pageSize` máximo 30 e até 10 páginas (anti-raspagem).
+- "Disponível hoje" entra como condição calculada: `available_today and (available_today_set_at at time zone c.time_zone)::date = (@now at time zone c.time_zone)::date`, com `c` a cidade base.
 
 ## 6. API
 
 - REST sobre HTTPS, JSON camelCase, versão na URL (`/api/v1`), `Asp.Versioning.Mvc`.
 - Erros sempre ProblemDetails; validação com `errors` por campo.
-- Paginação: `page` e `pageSize` com resposta `{ items, page, pageSize, hasMore }` (sem total em buscas públicas).
+- Paginação: `page` e `pageSize` com resposta `{ items, page, pageSize, hasMore }`. Busca pública nunca devolve o total: a de prestadores conta até 200 (`count` e `moreThanCount`).
 - `Idempotency-Key` obrigatório em `POST /orders`, `POST /provider/orders/{id}/quote` e `POST /provider/orders/{id}/payment-confirmation`; as chaves ficam no banco ([09-cache.md §5](09-cache.md)).
 - `Cache-Control: no-store` por padrão em toda resposta; exceções só para categorias e cidades ([09-cache.md §7](09-cache.md)).
-- Datas ISO 8601 com offset; dinheiro como string decimal (`"180.00"`) e moeda implícita BRL.
+- Datas ISO 8601 com offset; dinheiro como número com até duas casas (`180.5`), lido e gravado como `decimal` na API, com moeda implícita BRL. O app não faz conta com dinheiro: só exibe e envia o valor digitado; somas, diferenças e comparações são da API.
 - Detalhes de segurança da API em [08-seguranca.md](08-seguranca.md).
 
 ### Catálogo de endpoints (v1)
@@ -309,10 +325,10 @@ where p.status = 'Published'
 
 ## 8. Imagens
 
-1. O app pede `upload-url` informando tipo (`image/jpeg`, `image/png`, `image/webp`, `image/heic`) e tamanho (até 10 MB).
-2. A API devolve URL assinada de `PUT` válida por 5 min, para uma chave aleatória em `incoming/`.
+1. O app pede `upload-url` informando tipo (`image/jpeg`, `image/png` ou `image/webp`) e tamanho (até 10 MB).
+2. A API devolve URL assinada de `PUT` válida por 5 min, para uma chave aleatória no bucket privado de envios (`vitrio-uploads`).
 3. O app envia o arquivo direto para o storage e chama o endpoint de confirmação com a chave.
-4. Um job valida a assinatura binária do arquivo, remove metadados (inclusive GPS do EXIF), reencoda em WebP (2048 px e miniatura de 480 px) e move para `public/` (vitrine e avaliações) ou `private/` (fotos de pedido).
+4. Um job valida a assinatura binária do arquivo, remove metadados (inclusive GPS do EXIF), reencoda em WebP (2048 px e miniatura de 480 px), grava a versão processada no bucket público (`vitrio-public`, vitrine e avaliações) ou num bucket privado (fotos de pedido) e apaga o original.
 5. Fotos públicas saem por CDN com chave não adivinhável; fotos de pedido só por URL assinada de leitura com 10 min, emitida para as partes do pedido.
 
 ## 9. App Flutter

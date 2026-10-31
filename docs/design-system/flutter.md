@@ -485,12 +485,12 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 | `Badge` | `VitrioBadge` | Exemplo acima |
 | `Avatar` | `VitrioAvatar(kind: provider/client)` | Prestador: `VitrioRadius.providerAvatar(size)`; cliente: círculo |
 | `Rating` / `RatingInput` | `VitrioRating` / `VitrioRatingInput` | Semântica "Nota 4,9 de 5" |
-| `SearchField` | `VitrioSearchField` | `TextField` + botão de envio de 40px |
+| `SearchField` | `VitrioSearchField` | `TextField` + botão de envio de 40px; variante ativa (Busca) com borda `plum`, texto em negrito e botão "Limpar busca" (`onClear`) no lugar do envio |
 | `TextField` / `TextArea` | `VitrioTextField` | Rótulo visível acima da caixa, dica ou erro abaixo, contador com `maxLength`; `maxLines` diferente de 1 vira TextArea; `prefix: 'R\$'` usa a fonte de números |
 | `SegmentedControl` | `VitrioSegmented` | `SegmentedButton` não tem o visual de trilho |
 | `Switch` | `VitrioSwitchRow` (e `VitrioSwitch`) | Linha inteira tocável com rótulo e descrição; `onHero` para o cabeçalho do Painel |
 | `CategoryTile` | `VitrioCategoryTile` | Grade de 4 colunas; `more` para o último tile |
-| `ProviderCard` | `VitrioProviderCard` | Toda a área é tocável (`InkWell`) |
+| `ProviderCard` | `VitrioProviderCard` | Toda a área é tocável (`InkWell`); `VitrioProviderCard.compact` (Início, "Bem avaliados") sem preço nem botão, com avatar de 48px |
 | `ReviewCard` | `ReviewCard` | Resposta do prestador em `surfaceInset` |
 | `StatusTimeline` | `OrderTimeline` | Recebe a lista de etapas do pedido |
 | `QuoteCard` | `QuoteCard` | Único card com `shadow-md` na tela |
@@ -498,7 +498,7 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 | `PaymentReceipt` | `PaymentReceiptCard` | Borda 1.5 `green` |
 | `BottomNav` | `NavigationBar` | `navigationBarTheme` acima |
 | `TopBar` | `VitrioTopBar` | Voltar redondo de 44px, título em `label` 17px, `trailing` opcional; usado como `appBar` do `Scaffold` |
-| `ActionBar` | `VitrioActionBar` | `bottomNavigationBar` com `note` opcional e erro do formulário acima do botão; nunca junto com `NavigationBar` |
+| `ActionBar` | `VitrioActionBar` | `bottomNavigationBar` com `note` opcional e erro do formulário acima do botão; sobe junto com o teclado; nunca junto com `NavigationBar` |
 | `HeroCard` | `VitrioHeroCard` | Fundo `hero`, selo `lime` com ponto, ícone decorativo a 30% com traço 1.2 |
 
 Padrões do sistema montados com os tokens: `VitrioSectionHeader` (título de seção com link "Ver todas"), `VitrioListCard` e `VitrioListRow` (listas em card, como "Serviços e preços"), `VitrioNotice` (faixa de aviso e erro), `VitrioStar` (estrela de nota preenchida), `VitrioAddPhotoTile` (tracejado de "Adicionar foto") e `VitrioShadow` (sombras `sm`, `md` e `lg` nos dois temas).

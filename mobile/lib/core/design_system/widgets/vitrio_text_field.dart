@@ -17,6 +17,7 @@ class VitrioTextField extends StatelessWidget {
     this.error,
     this.placeholder,
     this.icon,
+    this.iconColor,
     this.prefix,
     this.suffix,
     this.maxLength,
@@ -46,6 +47,7 @@ class VitrioTextField extends StatelessWidget {
   final String? error;
   final String? placeholder;
   final VitrioIconName? icon;
+  final Color? iconColor;
   final String? prefix;
   final Widget? suffix;
   final int? maxLength;
@@ -121,7 +123,7 @@ class VitrioTextField extends StatelessWidget {
             prefixIcon: switch ((icon, prefix)) {
               (final VitrioIconName icon, _) => Padding(
                 padding: const EdgeInsetsDirectional.only(start: VitrioSpace.sp14, end: VitrioSpace.sp10),
-                child: VitrioIcon(icon, size: 20, color: c.inkMuted),
+                child: VitrioIcon(icon, size: 20, color: iconColor ?? c.inkMuted),
               ),
               (_, final String prefix) => Padding(
                 padding: const EdgeInsetsDirectional.only(start: VitrioSpace.sp14, end: VitrioSpace.sp8),

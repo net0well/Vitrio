@@ -75,6 +75,10 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Entrar'));
     await pumpUntil(tester, find.text(_name));
 
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Excluir conta'), 200, scrollable: find.byType(Scrollable).first);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Excluir conta'));
     await pumpUntil(tester, find.text('Excluir sua conta?'));
     await tester.enterText(find.byType(TextField), 'EXCLUIR');

@@ -1,8 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Vitrio.Application.Accounts.Repositories;
 using Vitrio.Application.Auditing.Repositories;
+using Vitrio.Application.Favorites.Repositories;
 using Vitrio.Application.Locations.Repositories;
 using Vitrio.Application.Providers.Repositories;
+using Vitrio.Application.Search.Repositories;
 
 namespace Vitrio.Infrastructure.Persistence.Repositories;
 
@@ -27,6 +29,9 @@ internal static class RepositoriesRegistration
         services.AddScoped<ICategorySearchableRepository, CategorySearchableRepository>();
         services.AddScoped<IProviderWritableRepository, ProviderWritableRepository>();
         services.AddScoped<IProviderSearchableRepository, ProviderSearchableRepository>();
+        services.AddScoped<IProviderListingSearchableRepository, ProviderListingSearchableRepository>();
+        services.AddScoped<IFavoriteWritableRepository, FavoriteWritableRepository>();
+        services.AddScoped<IFavoriteSearchableRepository, FavoriteSearchableRepository>();
         return services;
     }
 }

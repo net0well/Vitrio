@@ -54,8 +54,8 @@ Rate limiting nativo do ASP.NET Core, particionado por usuário autenticado ou, 
 | Política | Rotas | Limite |
 | --- | --- | --- |
 | `auth` | `/auth/*` | 10/min por IP, 30/h por IP; além disso, no handler, 5 códigos de e-mail por endereço por hora e bloqueio da conta após 5 senhas erradas em 15 min |
-| `search` | `GET /providers`, `/cities` | 60/min por usuário ou IP |
-| `profile` | `GET /providers/{id}` e subrotas | 120/min |
+| `search` | `GET /providers`, `/home`, `/cities` | 60/min por usuário ou IP |
+| `profile` | `GET /providers/{id}` e subrotas, `GET /me/favorites` | 120/min |
 | `write` | demais POST/PUT/PATCH/DELETE | 60/min por usuário |
 | `orders` | `POST /orders` | 10/h e 30/dia por cliente |
 | `quotes` | `POST /provider/orders/{id}/quote` | 60/h por prestador |

@@ -20,6 +20,8 @@ final class AppConfig {
     return AppConfig(flavor: flavor, apiBaseUrl: Uri.parse(apiBaseUrl));
   }
 
+  static const playStoreUrl = 'https://play.google.com/store/apps/details?id=app.vitrio';
+
   final Flavor flavor;
   final Uri apiBaseUrl;
 

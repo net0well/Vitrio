@@ -60,9 +60,11 @@ Regras que aparecem na interface:
 | Aparelhos conectados (Conta) | a desenhar | Lista de sessões com aparelho e último acesso, "Desconectar", "Sair de todos os aparelhos" | só este aparelho |
 | Permitir localização | a desenhar | ilustração do símbolo, `Button` primary + secondary | — |
 | Escolher cidade (folha) | a desenhar | `SearchField`, lista de cidades, "Usar minha localização" | sem resultado, carregando |
-| Início | prototipada | pílula de localização, `SearchField`, `HeroCard`, `CategoryTile`, cards resumidos, `BottomNav` | sem prestadores na cidade, sem GPS |
-| Busca e resultados | prototipada | `TopBar` com busca, `Chip`, `ProviderCard`, `BottomNav` | carregando (skeleton), vazio, erro |
-| Filtros (folha) | a desenhar | distância máxima, nota mínima, MEI verificado, atende hoje, faixa de preço, cidade | — |
+| Início | prototipada | pílula de localização, `SearchField`, `HeroCard`, `CategoryTile`, cards resumidos, `BottomNav` | sem prestadores na cidade, sem GPS, sem login (card "O Vitrio funciona melhor com sua conta" abaixo da busca, com "Entrar" e "Criar conta") |
+| Categorias (folha) | a desenhar | `CategoryTile` em grade de 4 colunas com todas as categorias; abre a Busca filtrada | carregando, erro |
+| Busca e resultados | prototipada | `TopBar` com busca, `Chip`, `ProviderCard`, `BottomNav` | carregando (skeleton), vazio, erro, cidade sem prestadores; a linha acima da lista conta até 200 ("28 eletricistas perto de você", "Mais de 200 profissionais em Jaboticabal, SP") |
+| Filtros (folha) | a desenhar | distância máxima (só com GPS), nota mínima (Qualquer, 3+, 4+, 4,5+), MEI verificado, atende hoje, preço máximo em faixas (Qualquer, Até R$ 50, 100, 200, 500), cidade | — |
+| Favoritos | a desenhar | `TopBar`, `ProviderCard`; aberta pela linha "Favoritos" da Conta | carregando, vazio ("Você ainda não salvou nenhum profissional." + "Buscar profissionais"), erro |
 | Perfil do prestador | prototipada | capa `hero`, `Avatar`, `Badge`, métricas, serviços e preços, fotos, `ReviewCard`, `ActionBar` | perfil sem fotos, sem avaliações ("Novo no Vitrio") |
 | Galeria de trabalhos | a desenhar | grade 3×, visualizador em tela cheia | — |
 | Todas as avaliações | a desenhar | resumo de notas, filtros por nota, `ReviewCard` | vazio |
@@ -113,6 +115,7 @@ O push que aparece na tela bloqueada é genérico (sem nome, valor ou endereço)
 | --- | --- |
 | Pré-permissão de localização | Para mostrar quem atende perto de você, o Vitrio usa sua localização só enquanto o app está aberto. |
 | Sem GPS, na Início | Mostrando profissionais de Jaboticabal, SP. Trocar cidade |
+| Cidade sem prestadores (Início e Busca) | Ainda não tem profissionais do Vitrio em Jaboticabal, SP. Conhece alguém que faz um bom trabalho? Mande o Vitrio para essa pessoa. |
 | Endereço no pedido | O endereço completo só é enviado ao profissional depois que você aceitar o orçamento. |
 | Pedido enviado | Pedir orçamento é grátis e sem compromisso. |
 | Pagamento (cliente) | O pagamento é combinado direto com o profissional. O Vitrio não cobra taxa de você. |

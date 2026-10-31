@@ -36,7 +36,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Responder 403 para recurso de outro usuário | Confirma que o recurso existe | 404 |
 | Mensagens de exceção ou stack trace na resposta | Expõe internals | ProblemDetails padronizado com `traceId` |
 | Endpoint sem `[Authorize]` ou `[AllowAnonymous]` explícito | Ninguém sabe se era para ser público | Política padrão exige login; público é marcado |
-| Paginação sem limite ou com total em busca pública | Raspagem e consultas caras | `pageSize` ≤ 30, até 10 páginas, `hasMore` |
+| Paginação sem limite ou com total em busca pública | Raspagem e consultas caras | `pageSize` ≤ 30, até 10 páginas, `hasMore`; quando a tela mostra número, contagem limitada (até 200, "Mais de 200") |
 | `POST` sensível sem `Idempotency-Key` | Pedido ou confirmação duplicados em reconexão | Chave obrigatória em criar pedido, orçamento e confirmação de pagamento |
 | Rotas com verbo (`/createOrder`) ou singular inconsistente | API imprevisível | Recursos no plural, ações como sub-recurso |
 | Coordenadas exatas do prestador na resposta | Expõe onde a pessoa mora | Ponto público e distância arredondada |
@@ -101,6 +101,7 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Componente próprio quando o design system já tem um | Duas versões do mesmo elemento | O widget do design system (`VitrioChip`, `VitrioBadge`, `VitrioAvatar`...) |
 | Chamar HTTP direto da tela | Mistura UI e dados | Repositório + controller Riverpod |
 | Lógica de negócio na UI (ex.: decidir se pode avaliar) | Regras divergem da API | A API diz o que é permitido (`canReview`, `allowedActions`) |
+| Conta com dinheiro no app (soma, diferença, desconto) | `double` perde precisão e a regra diverge da API | A API devolve o valor calculado; o app só formata e envia o que foi digitado |
 | Pedir permissão de localização sem contexto | Usuário nega para sempre | Pré-permissão explicando o uso, com alternativa "Escolher cidade" |
 | `setState` espalhado em telas complexas | Estado imprevisível | Notifiers com estados explícitos |
 | Ignorar estados vazio, carregando e erro | Tela em branco ou travada | Os quatro estados em toda tela de dados |
@@ -116,4 +117,4 @@ O que não entra no código do Vitrio, por que, e o que fazer no lugar. Revisõe
 | Branch com fase, spec ou número de tarefa (`fase-2`, `spec-005`, `mvp/pagamento`, `task-12`) | Nome perde sentido e expõe planejamento | `feat/confirmacao-de-pagamento` |
 | Commit citando spec, plano, fase, IA ou processo ("conforme spec 005", "implementa fase 2", "gerado pelo Claude") | Histórico deve dizer o que mudou | "Adiciona confirmação de pagamento pelo prestador" |
 | Rodapés automáticos no commit (`Co-Authored-By`, "Generated with") | Ruído no histórico | Mensagem só com o que foi feito |
-| Commits gigantes misturando assuntos | Revisão impossível, reversão difícil | Um assunto por commit, PRs pequenos |
+| Commits gigantes misturando assuntos | Revisão impossível, reversão difícil | Um assunto por commit; os recortes viram commits pequenos na branch da spec |

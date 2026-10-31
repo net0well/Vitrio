@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -6,6 +8,7 @@ import '../features/auth/presentation/session_controller.dart';
 import '../features/location/data/location_providers.dart';
 import '../features/provider/data/provider_providers.dart';
 import '../features/provider/domain/app_mode.dart';
+import '../features/provider/presentation/app_mode_controller.dart';
 import '../features/welcome/presentation/welcome_controller.dart';
 import 'routes.dart';
 
@@ -17,29 +20,41 @@ GoRouter router(Ref ref) {
   ref.listen(welcomeControllerProvider, (_, seen) => welcomeSeen.value = seen);
 
   final signedIn = ValueNotifier(ref.read(sessionControllerProvider).value != null);
-  ref.listen(sessionControllerProvider, (_, session) => signedIn.value = session.value != null);
+  ref.listen(sessionControllerProvider, (previous, session) {
+    signedIn.value = session.value != null;
+    if (previous?.value != null && session.value == null) {
+      unawaited(ref.read(appModeControllerProvider.notifier).change(AppMode.client));
+    }
+  });
+  bool hasShowcase() => ref.read(sessionControllerProvider).value?.hasProviderProfile ?? false;
 
   final welcomeLocation = const WelcomeRoute().location;
   final homeLocation = const HomeRoute().location;
   final locationPermissionLocation = const LocationPermissionRoute().location;
   final signInLocation = const SignInRoute().location;
+  final providerDashboardLocation = const ProviderDashboardRoute().location;
   final protectedLocations = {
     const EditProfileRoute().location,
     const ChangePasswordRoute().location,
     const ConnectedDevicesRoute().location,
+    const FavoritesRoute().location,
   };
 
   const providerPrefix = '/provider-';
-  final startsAsProvider = ref.read(appModeStoreProvider).mode == AppMode.provider && signedIn.value;
+  final startsAsProvider = ref.read(appModeStoreProvider).mode == AppMode.provider && hasShowcase();
 
   final router = GoRouter(
-    initialLocation: startsAsProvider ? const ProviderDashboardRoute().location : const HomeRoute().location,
+    initialLocation: startsAsProvider ? providerDashboardLocation : homeLocation,
     routes: $appRoutes,
     refreshListenable: Listenable.merge([welcomeSeen, signedIn]),
     redirect: (context, state) {
       final location = state.matchedLocation;
       if (!welcomeSeen.value && location != welcomeLocation) {
         return welcomeLocation;
+      }
+
+      if (location == homeLocation && hasShowcase() && ref.read(appModeStoreProvider).mode == AppMode.provider) {
+        return providerDashboardLocation;
       }
 
       if (location == homeLocation && ref.read(locationPreferencesProvider).mode == null) {

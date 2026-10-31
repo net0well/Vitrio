@@ -24,7 +24,9 @@ import '../../../core/design_system/widgets/vitrio_list_card.dart';
 import '../../../core/design_system/widgets/vitrio_section_header.dart';
 import '../../../core/design_system/widgets/vitrio_star.dart';
 import '../../../core/design_system/widgets/vitrio_top_bar.dart';
+import '../../../core/presentation/brazilian_format.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../favorites/presentation/favorite_button.dart';
 import '../domain/public_photo.dart';
 import '../domain/public_provider.dart';
 import 'provider_labels.dart';
@@ -64,6 +66,7 @@ class PublicProviderScreen extends ConsumerWidget {
                       label: l10n.providerWhatsAppAction,
                       variant: VitrioButtonVariant.secondary,
                       leadingIcon: VitrioIconName.message,
+                      leadingIconColor: context.vitrio.green,
                       onPressed: () => launchUrl(
                         Uri.parse('https://wa.me/${value.whatsAppPhone!.replaceAll(RegExp(r'\D'), '')}'),
                         mode: LaunchMode.externalApplication,
@@ -121,7 +124,7 @@ class _Profile extends StatelessWidget {
           star: true,
         ),
       if (provider.distanceKm case final distance?)
-        _Metric(value: l10n.providerDistance(distance.toStringAsFixed(distance < 10 ? 1 : 0).replaceAll('.', ',')), label: l10n.providerMetricDistance),
+        _Metric(value: l10n.providerDistance(formatDistance(distance)), label: l10n.providerMetricDistance),
     ];
     return ListView(
       padding: EdgeInsets.zero,
@@ -180,7 +183,6 @@ class _Profile extends StatelessWidget {
                   if (provider.meiVerified)
                     VitrioBadge(label: l10n.providerBadgeMei, tone: VitrioBadgeTone.verified, icon: const VitrioIcon(VitrioIconName.shieldCheck)),
                   if (provider.availableToday) VitrioBadge(label: l10n.providerBadgeToday, dot: true, dotColor: c.green),
-                  if (provider.handlesEmergencies) VitrioBadge(label: l10n.providerEmergencies, icon: const VitrioIcon(VitrioIconName.bolt)),
                   if (provider.isNew) VitrioBadge(label: l10n.providerNew, tone: VitrioBadgeTone.warning),
                 ],
               ),
@@ -284,10 +286,16 @@ class _Cover extends StatelessWidget {
               PositionedDirectional(
                 end: VitrioSpace.sp20,
                 top: top + VitrioSpace.sp16,
-                child: VitrioIconButton(
-                  icon: VitrioIconName.share,
-                  label: l10n.providerShare,
-                  onPressed: () => SharePlus.instance.share(ShareParams(text: l10n.providerShareText(provider.shareUrl))),
+                child: Row(
+                  children: [
+                    FavoriteButton(providerId: provider.id, saved: provider.isFavorite),
+                    const SizedBox(width: VitrioSpace.sp10),
+                    VitrioIconButton(
+                      icon: VitrioIconName.share,
+                      label: l10n.providerShare,
+                      onPressed: () => SharePlus.instance.share(ShareParams(text: l10n.providerShareText(provider.shareUrl))),
+                    ),
+                  ],
                 ),
               ),
             ],

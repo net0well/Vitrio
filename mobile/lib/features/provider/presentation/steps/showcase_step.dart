@@ -29,6 +29,7 @@ import '../../domain/mei_check.dart';
 import '../../domain/mei_status.dart';
 import '../../domain/profile_changes.dart';
 import '../../domain/service_area_draft.dart';
+import '../mask_input_formatter.dart';
 import '../provider_controller.dart';
 import '../provider_labels.dart';
 import '../provider_queries.dart';
@@ -76,7 +77,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
     final primary = profile?.categories.where((category) => category.isPrimary).map((category) => category.id) ?? const <int>[];
     final others = profile?.categories.where((category) => !category.isPrimary).map((category) => category.id) ?? const <int>[];
     _categories = [...primary, ...others];
-    _cep = TextEditingController(text: area?.cep)..addListener(_lookUpCep);
+    _cep = TextEditingController(text: cepText(area?.cep))..addListener(_lookUpCep);
     _lookedUpCep = _digits(area?.cep ?? '');
     if (area != null) {
       _cepAddress = CepAddress(cep: area.cep, street: area.street, neighborhood: area.neighborhood, city: area.city);
@@ -86,7 +87,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
     _complement = TextEditingController(text: area?.complement);
     _neighborhood = TextEditingController();
     _phone = TextEditingController(text: phoneText(profile?.contactPhone));
-    _cnpj = TextEditingController(text: profile?.mei?.cnpj);
+    _cnpj = TextEditingController(text: cnpjText(profile?.mei?.cnpj));
     _neighborhoods = [...?area?.neighborhoods];
     _radius = (area?.radiusKm ?? 10).toDouble();
     _whatsApp = profile?.whatsAppEnabled ?? true;
@@ -299,6 +300,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
           label: l10n.providerCep,
           controller: _cep,
           keyboardType: TextInputType.number,
+          inputFormatters: const [MaskInputFormatter(cepText)],
           placeholder: l10n.providerCepPlaceholder,
           hint: _cepHint(),
           error: fieldError(_problem, 'cep') ?? (_cepNotFound ? l10n.providerCepNotFound : null),
@@ -399,6 +401,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
           showLabel: false,
           controller: _phone,
           icon: VitrioIconName.message,
+          iconColor: c.green,
           keyboardType: TextInputType.phone,
           placeholder: l10n.providerPhonePlaceholder,
           hint: l10n.providerContactPhoneHint,
@@ -455,6 +458,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
                       controller: _cnpj,
                       filledInset: true,
                       keyboardType: TextInputType.number,
+                      inputFormatters: const [MaskInputFormatter(cnpjText)],
                       placeholder: l10n.providerCnpjPlaceholder,
                       error: fieldError(_problem, 'cnpj'),
                     ),
