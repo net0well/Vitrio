@@ -182,7 +182,6 @@ class _Profile extends StatelessWidget {
                   if (provider.meiVerified)
                     VitrioBadge(label: l10n.providerBadgeMei, tone: VitrioBadgeTone.verified, icon: const VitrioIcon(VitrioIconName.shieldCheck)),
                   if (provider.availableToday) VitrioBadge(label: l10n.providerBadgeToday, dot: true, dotColor: c.green),
-                  if (provider.handlesEmergencies) VitrioBadge(label: l10n.providerEmergencies, icon: const VitrioIcon(VitrioIconName.bolt)),
                   if (provider.isNew) VitrioBadge(label: l10n.providerNew, tone: VitrioBadgeTone.warning),
                 ],
               ),
