@@ -147,25 +147,22 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                   ],
                 ),
                 const SizedBox(height: VitrioSpace.sp20),
-                VitrioListCard(
-                  children: [
-                    VitrioSwitchRow(
-                      label: l10n.providerBadgeMei,
-                      description: l10n.searchFilterMeiHint,
-                      value: _draft.meiVerified,
-                      onChanged: (value) => setState(
-                        () => _draft = _draft.copyWith(meiVerified: value),
-                      ),
-                    ),
-                    VitrioSwitchRow(
-                      label: l10n.providerBadgeToday,
-                      description: l10n.searchFilterTodayHint,
-                      value: _draft.availableToday,
-                      onChanged: (value) => setState(
-                        () => _draft = _draft.copyWith(availableToday: value),
-                      ),
-                    ),
-                  ],
+                VitrioSwitchRow(
+                  label: l10n.providerBadgeMei,
+                  description: l10n.searchFilterMeiHint,
+                  value: _draft.meiVerified,
+                  onChanged: (value) => setState(
+                    () => _draft = _draft.copyWith(meiVerified: value),
+                  ),
+                ),
+                const SizedBox(height: VitrioSpace.sp12),
+                VitrioSwitchRow(
+                  label: l10n.providerBadgeToday,
+                  description: l10n.searchFilterTodayHint,
+                  value: _draft.availableToday,
+                  onChanged: (value) => setState(
+                    () => _draft = _draft.copyWith(availableToday: value),
+                  ),
                 ),
                 const SizedBox(height: VitrioSpace.sp20),
                 title(l10n.searchFilterPrice),
