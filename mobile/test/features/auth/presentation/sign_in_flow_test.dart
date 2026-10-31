@@ -29,6 +29,17 @@ void main() {
     expect(harness.tokens.tokens?.refreshToken, 'refresh-1');
   });
 
+  testWidgets('the sign in button stays above the keyboard while typing', (tester) async {
+    await openSignIn(tester, FakeAuthRepository()..loginResult = const ApiSuccess(sampleSession));
+    tester.view.viewInsets = const FakeViewPadding(bottom: 900);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpAndSettle();
+
+    final screenHeight = tester.view.physicalSize.height / tester.view.devicePixelRatio;
+    final keyboardTop = screenHeight - 900 / tester.view.devicePixelRatio;
+    expect(tester.getRect(find.widgetWithText(FilledButton, 'Entrar')).bottom, lessThanOrEqualTo(keyboardTop));
+  });
+
   testWidgets('wrong credentials show the message from the API', (tester) async {
     final auth = FakeAuthRepository()
       ..loginResult = const ApiFailure<AuthSession>(
