@@ -715,6 +715,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeHeroAction => 'Ver disponíveis';
 
   @override
+  String get homeSignInTitle => 'O Vitrio funciona melhor com sua conta';
+
+  @override
+  String get homeSignInText =>
+      'Entre para pedir orçamentos, salvar favoritos e acompanhar seus pedidos.';
+
+  @override
   String get homeCategories => 'Categorias';
 
   @override

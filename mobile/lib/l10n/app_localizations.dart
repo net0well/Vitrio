@@ -1396,6 +1396,18 @@ abstract class AppLocalizations {
   /// **'Ver disponíveis'**
   String get homeHeroAction;
 
+  /// No description provided for @homeSignInTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Vitrio funciona melhor com sua conta'**
+  String get homeSignInTitle;
+
+  /// No description provided for @homeSignInText.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre para pedir orçamentos, salvar favoritos e acompanhar seus pedidos.'**
+  String get homeSignInText;
+
   /// No description provided for @homeCategories.
   ///
   /// In pt, this message translates to:

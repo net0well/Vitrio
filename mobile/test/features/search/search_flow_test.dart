@@ -71,6 +71,36 @@ void main() {
     expect(find.text('(127) · 1,2 km · Jaboticabal'), findsOneWidget);
   });
 
+  testWidgets('home invites a visitor without an account to sign in', (tester) async {
+    phone(tester);
+    final harness = await pumpVitrio(tester, preferences: nearMe, device: gps());
+    harness.go('/home');
+    await tester.pumpAndSettle();
+
+    expect(find.text('O Vitrio funciona melhor com sua conta'), findsOneWidget);
+    expect(find.text('Criar conta'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Entrar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Esqueci a senha'), findsOneWidget);
+  });
+
+  testWidgets('home does not invite to sign in when signed in', (tester) async {
+    phone(tester);
+    final harness = await pumpVitrio(
+      tester,
+      preferences: nearMe,
+      device: gps(),
+      account: FakeAccountRepository()..meResult = const ApiSuccess(sampleMe),
+      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
+    );
+    harness.go('/home');
+    await tester.pumpAndSettle();
+
+    expect(find.text('O Vitrio funciona melhor com sua conta'), findsNothing);
+  });
+
   testWidgets('home without rated providers hides the top rated section', (tester) async {
     phone(tester);
     final harness = await pumpVitrio(tester, preferences: nearMe, device: gps());

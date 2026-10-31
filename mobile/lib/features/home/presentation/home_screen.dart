@@ -31,6 +31,7 @@ import '../../search/presentation/search_queries.dart';
 import '../../search/presentation/widgets/category_grid.dart';
 import '../../search/presentation/widgets/empty_city_invite.dart';
 import '../../search/presentation/widgets/provider_listing_card.dart';
+import 'widgets/sign_in_invite.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -44,7 +45,8 @@ class HomeScreen extends ConsumerWidget {
     final c = context.vitrio;
     final locating = ref.watch(locationControllerProvider);
     final location = locating.value ?? LocationState.unset;
-    final me = ref.watch(sessionControllerProvider).value;
+    final session = ref.watch(sessionControllerProvider);
+    final me = session.value;
     final categories = ref.watch(serviceCategoriesProvider);
     final feed = ref.watch(homeFeedProvider).value;
     final filters = ref.read(searchFiltersControllerProvider.notifier);
@@ -141,6 +143,10 @@ class HomeScreen extends ConsumerWidget {
                     openSearch();
                   },
                 ),
+                if (session case AsyncData(value: null)) ...[
+                  const SizedBox(height: VitrioSpace.sp16),
+                  const SignInInvite(),
+                ],
                 const SizedBox(height: VitrioSpace.sp20),
                 VitrioHeroCard(
                   tag: l10n.homeHeroTag,
