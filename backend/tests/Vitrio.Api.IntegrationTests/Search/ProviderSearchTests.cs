@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Vitrio.Api.IntegrationTests.Accounts;
@@ -216,6 +217,23 @@ public sealed class ProviderSearchTests(ApiFactory factory)
         Assert.DoesNotContain("ongitude", json, StringComparison.Ordinal);
         Assert.DoesNotContain("cnpj", json, StringComparison.OrdinalIgnoreCase);
         Assert.Equal("no-store", response.Headers.CacheControl?.ToString());
+    }
+
+    [Fact]
+    public async Task SearchHomeAndProfile_NeverWriteTheTermOrTheCoordinatesToTheLogs()
+    {
+        var point = SearchApi.NextSpot().Offset(0.37, 0.53);
+        var provider = await PublishAsync(new SearchableProvider(point.Offset(1)));
+        var term = SearchApi.UniqueWord();
+        var near = SearchApi.Near(point);
+
+        var search = await _client.SearchAsync($"{near}&q={term}");
+        var home = await _client.GetAsync($"/api/v1/home?{near}", TestContext.Current.CancellationToken);
+        var profile = await _client.GetAsync($"{SearchApi.Providers}/{provider.Id}?{near}", TestContext.Current.CancellationToken);
+
+        Assert.All([search, home, profile], response => Assert.Equal(HttpStatusCode.OK, response.StatusCode));
+        string[] secrets = [term, Digits(point.Latitude), Digits(point.Longitude)];
+        Assert.DoesNotContain(factory.Logs.Rendered, line => secrets.Any(secret => line.Contains(secret, StringComparison.Ordinal)));
     }
 
     [Fact]
@@ -472,6 +490,8 @@ public sealed class ProviderSearchTests(ApiFactory factory)
         Assert.Null(item.ResponseTime);
         Assert.Null(item.AvatarUrl);
     }
+
+    private static string Digits(double coordinate) => Math.Abs(coordinate).ToString("F6", CultureInfo.InvariantCulture);
 
     private Task<PublishedProvider> PublishAsync(SearchableProvider provider) => factory.PublishAsync(_client, provider);
 }
