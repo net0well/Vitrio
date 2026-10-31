@@ -69,6 +69,20 @@ public sealed class FavoritesTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Favorite_RemovedAtTheSameTimeOnSeveralDevices_RespondsNoContentToAll()
+    {
+        var provider = await PublishAsync();
+        var customer = await factory.SignInNewAccountAsync(_client);
+        await _client.SendAsAsync(HttpMethod.Put, Favorite(provider.Id), customer.AccessToken);
+
+        var responses = await Task.WhenAll(Enumerable.Range(0, 6)
+            .Select(_ => _client.SendAsAsync(HttpMethod.Delete, Favorite(provider.Id), customer.AccessToken)));
+
+        Assert.All(responses, response => Assert.Equal(HttpStatusCode.NoContent, response.StatusCode));
+        Assert.Empty((await ListAsync(customer.AccessToken)).Items);
+    }
+
+    [Fact]
     public async Task Favorite_OfTheOwnShowcase_ReturnsNotFound()
     {
         var provider = await PublishAsync();

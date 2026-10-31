@@ -1,6 +1,7 @@
 using Mediator;
 using Vitrio.Application.Abstractions;
 using Vitrio.Application.Favorites.Repositories;
+using Vitrio.Shared.Exceptions;
 using Vitrio.Shared.Results;
 
 namespace Vitrio.Application.Favorites.RemoveFavorite;
@@ -12,10 +13,19 @@ public sealed class RemoveFavoriteCommandHandler(
 {
     public async ValueTask<Result> Handle(RemoveFavoriteCommand command, CancellationToken cancellationToken)
     {
-        if (await favorites.GetForUserAsync(currentUser.Id, command.ProviderId, cancellationToken) is { } favorite)
+        if (await favorites.GetForUserAsync(currentUser.Id, command.ProviderId, cancellationToken) is not { } favorite)
         {
-            favorites.Remove(favorite);
+            return Result.Success();
+        }
+
+        favorites.Remove(favorite);
+        try
+        {
             await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyConflictException)
+        {
+            return Result.Success();
         }
 
         return Result.Success();
