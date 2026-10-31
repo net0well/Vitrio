@@ -29,6 +29,7 @@ import '../../domain/mei_check.dart';
 import '../../domain/mei_status.dart';
 import '../../domain/profile_changes.dart';
 import '../../domain/service_area_draft.dart';
+import '../cnpj_input_formatter.dart';
 import '../provider_controller.dart';
 import '../provider_labels.dart';
 import '../provider_queries.dart';
@@ -86,7 +87,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
     _complement = TextEditingController(text: area?.complement);
     _neighborhood = TextEditingController();
     _phone = TextEditingController(text: phoneText(profile?.contactPhone));
-    _cnpj = TextEditingController(text: profile?.mei?.cnpj);
+    _cnpj = TextEditingController(text: cnpjText(profile?.mei?.cnpj));
     _neighborhoods = [...?area?.neighborhoods];
     _radius = (area?.radiusKm ?? 10).toDouble();
     _whatsApp = profile?.whatsAppEnabled ?? true;
@@ -456,6 +457,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
                       controller: _cnpj,
                       filledInset: true,
                       keyboardType: TextInputType.number,
+                      inputFormatters: const [CnpjInputFormatter()],
                       placeholder: l10n.providerCnpjPlaceholder,
                       error: fieldError(_problem, 'cnpj'),
                     ),

@@ -65,6 +65,18 @@ String phoneText(String? phone) {
   return '(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7)}';
 }
 
+String cnpjText(String? cnpj) {
+  final digits = (cnpj ?? '').replaceAll(RegExp(r'\D'), '');
+  final text = StringBuffer();
+  for (var index = 0; index < digits.length && index < 14; index++) {
+    text
+      ..write(switch (index) { 2 || 5 => '.', 8 => '/', 12 => '-', _ => '' })
+      ..write(digits[index]);
+  }
+
+  return text.toString();
+}
+
 String _dayShort(AppLocalizations l10n, String day) => switch (day) {
       'monday' => l10n.providerDayShortMonday,
       'tuesday' => l10n.providerDayShortTuesday,
