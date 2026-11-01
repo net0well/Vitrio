@@ -68,6 +68,8 @@ Todos na branch `feat/nova-identidade-visual`, em vários commits. O PR só abre
 
 ## Recorte 4: telas
 
+**Situação:** pronto. As quatro telas conferidas no emulador contra as pranchetas; o título de `FormPage` passou a ser opcional para Entrar e Criar conta abrirem pelo símbolo.
+
 1. Boas-vindas com a linha de gratuidade.
 2. Conta sem login com o card de marca.
 3. Entrar e Criar conta com símbolo, título e linha de apoio.
@@ -75,10 +77,14 @@ Todos na branch `feat/nova-identidade-visual`, em vários commits. O PR só abre
 
 ## Recorte 5: backend
 
+**Situação:** pronto. O PNG do e-mail tem 4x o tamanho exibido (368×128 para 92×32), e o teste confere a proporção e a nitidez. A página de compartilhar recebe o SVG da assinatura e o do símbolo na carga (o script da marca copia os dois para a Api, porque a imagem Docker só leva `backend/src`), e as cores dela passaram para os tokens claros (estavam um tom fora).
+
 1. PNG do e-mail e o tamanho exibido no `layout.html`; teste do anexo da assinatura.
 2. Página de compartilhar com a assinatura embutida, o ícone da aba e a política de conteúdo; testes das duas páginas.
 
 ## Recorte 6: design system
+
+**Situação:** pronto. No artefato "Vitrio", os nove SVGs subiram com os mesmos nomes (mais o monocromático), o README, o `telas.md` (sincronizado com o do repositório) e a capa, que era derivada dos vidros do logo antigo e passou a usar a Janela em V.
 
 1. README dos logos e seção "Logo" do README descrevendo a Janela em V; `telas.md` com as telas prototipadas.
 2. Artefato do design system "Vitrio": logos e README atualizados.
