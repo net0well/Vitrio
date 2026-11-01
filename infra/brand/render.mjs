@@ -28,7 +28,7 @@ const renders = [
   },
   {
     source: `${logos}/vitrio-wordmark-on-dark.svg`,
-    width: 400,
+    width: 368,
     targets: [`${logos}/vitrio-wordmark-on-dark@2x.png`, 'backend/src/Vitrio.Infrastructure/Email/Templates/vitrio-wordmark.png'],
   },
   { source: `${logos}/vitrio-mark.svg`, width: 288, targets: ['mobile/android/app/src/main/res/drawable-xxxhdpi/launch_mark.png'] },

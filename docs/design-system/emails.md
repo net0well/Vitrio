@@ -75,7 +75,7 @@ Nada abaixo de 12 px. O código usa só dígitos e espaçamento entre letras, se
 
 ## Logo
 
-- Arquivo: [`assets/logos/vitrio-wordmark-on-dark@2x.png`](assets/logos/vitrio-wordmark-on-dark@2x.png) (436 × 128), exibido a 109 × 32 px sobre o cabeçalho `hero`. Gerado a partir do `vitrio-wordmark-on-dark.svg`, porque o Gmail não exibe SVG.
+- Arquivo: [`assets/logos/vitrio-wordmark-on-dark@2x.png`](assets/logos/vitrio-wordmark-on-dark@2x.png) (368 × 128), exibido a 92 × 32 px sobre o cabeçalho `hero`. Gerado a partir do `vitrio-wordmark-on-dark.svg`, porque o Gmail não exibe SVG.
 - Vai **embutido no e-mail** como anexo inline (`cid:vitrio-wordmark`), não por URL: aparece mesmo com imagens remotas bloqueadas e não avisa ninguém quando o e-mail é aberto.
 - `alt="Vitrio"`, sem link.
 
