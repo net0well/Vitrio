@@ -44,6 +44,12 @@ const brandFiles = [
   'vitrio-wordmark-mono.svg',
 ];
 
+const copies = [
+  ...brandFiles.map((file) => [`${logos}/${file}`, `mobile/assets/brand/${file}`]),
+  [`${logos}/vitrio-mark.svg`, 'backend/src/Vitrio.Api/Share/Templates/vitrio-mark.svg'],
+  [`${logos}/vitrio-wordmark.svg`, 'backend/src/Vitrio.Api/Share/Templates/vitrio-wordmark.svg'],
+];
+
 // O resvg ignora o peso das fontes variáveis; o texto vira contorno com o peso pedido antes de desenhar.
 function fontFor(family, weight, size) {
   const font = fontkit.openSync(join(root, fontFiles[family]));
@@ -89,7 +95,7 @@ for (const { source, width, targets } of renders) {
   }
 }
 
-for (const file of brandFiles) {
-  await copyFile(join(root, logos, file), join(root, 'mobile/assets/brand', file));
-  console.log(`${logos}/${file} -> mobile/assets/brand/${file}`);
+for (const [source, target] of copies) {
+  await copyFile(join(root, source), join(root, target));
+  console.log(`${source} -> ${target}`);
 }
