@@ -1,4 +1,7 @@
+using System.Buffers.Binary;
+using System.Globalization;
 using System.Net;
+using System.Text.RegularExpressions;
 using Vitrio.Application.Accounts.Emails;
 using Vitrio.Infrastructure.Email;
 
@@ -30,6 +33,23 @@ public sealed class AccountEmailRendererTests
         Assert.Contains($"cid:{AccountEmailRenderer.LogoContentId}", rendered.Html, StringComparison.Ordinal);
         Assert.Contains("Olá, Ana.", rendered.Text, StringComparison.Ordinal);
         Assert.Contains("O Vitrio nunca pede sua senha", rendered.Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_ShowsTheLogoInTheProportionOfItsImageAndSharpOnDenseScreens()
+    {
+        var imageWidth = BinaryPrimitives.ReadInt32BigEndian(_renderer.Logo.AsSpan(16, 4));
+        var imageHeight = BinaryPrimitives.ReadInt32BigEndian(_renderer.Logo.AsSpan(20, 4));
+
+        var rendered = _renderer.Render(new RegistrationAttemptEmail("ana@exemplo.com.br", "Ana"));
+
+        var logo = Regex.Match(rendered.Html, $"<img src=\"cid:{AccountEmailRenderer.LogoContentId}\" width=\"(\\d+)\" height=\"(\\d+)\"");
+        Assert.True(logo.Success);
+        var shownWidth = int.Parse(logo.Groups[1].Value, CultureInfo.InvariantCulture);
+        var shownHeight = int.Parse(logo.Groups[2].Value, CultureInfo.InvariantCulture);
+        Assert.Equal(imageWidth * shownHeight, imageHeight * shownWidth);
+        Assert.True(imageWidth >= shownWidth * 3);
+        Assert.Contains($"width:{shownWidth}px;height:{shownHeight}px;", rendered.Html, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -52,9 +52,10 @@ Regras que aparecem na interface:
 
 | Tela | Situação | Componentes principais | Estados que precisa ter |
 | --- | --- | --- | --- |
-| Boas-vindas | prototipada | `Button` accent + on-hero, logo | — |
-| Entrar | a desenhar | `TextField` de e-mail e de senha (com "Mostrar senha"), `Button` primary "Entrar", links "Esqueci a senha" e "Criar conta" | carregando, e-mail ou senha incorretos, conta bloqueada por 15 min, e-mail não confirmado (leva ao código) |
-| Criar conta | a desenhar | `TextField` de nome, e-mail e senha, aceite de termos e política, `ActionBar` "Criar conta" | carregando, senha fraca (explica a regra), sem conexão |
+| Abertura | prototipada | fundo `hero` com o símbolo no centro (abertura do sistema, Android 12+), nos temas claro e escuro | — |
+| Boas-vindas | prototipada | assinatura escura, linha com check `lime` "O Vitrio é grátis para todo mundo.", `Button` accent + on-hero | — |
+| Entrar | prototipada | símbolo de 56px, "Que bom te ver de novo" e "Entre para pedir orçamentos e acompanhar seus pedidos."; `TextField` de e-mail e de senha (com "Mostrar senha"), `Button` primary "Entrar", links "Esqueci a senha" e "Criar conta" | carregando, e-mail ou senha incorretos, conta bloqueada por 15 min, e-mail não confirmado (leva ao código) |
+| Criar conta | prototipada | símbolo de 56px, "Crie sua conta" e "É grátis e leva menos de um minuto."; `TextField` de nome, e-mail e senha, aceite de termos e política, `ActionBar` "Criar conta" | carregando, senha fraca (explica a regra), sem conexão |
 | Confirmar e-mail | a desenhar | Campo de 6 dígitos com colar automático, "Reenviar código" com contagem de 60 s, "Trocar e-mail" | código errado, código vencido, muitos códigos (espera), e-mail fora do ar |
 | Esqueci a senha | a desenhar | `TextField` de e-mail, `ActionBar` "Enviar código"; depois, código e senha nova na mesma tela | enviado (mesma mensagem exista o e-mail ou não), código errado, senha fraca |
 | Aparelhos conectados (Conta) | a desenhar | Lista de sessões com aparelho e último acesso, "Desconectar", "Sair de todos os aparelhos" | só este aparelho |
@@ -72,6 +73,7 @@ Regras que aparecem na interface:
 | Pedidos | a desenhar | abas Em andamento / Finalizados, cards de pedido com `Badge` de status | vazio |
 | Detalhe do pedido | prototipada (até Agendado) | `StatusTimeline`, `QuoteCard`, `PaymentReceipt` | todos os status da tabela acima |
 | Avaliar serviço | prototipada | `RatingInput`, `Chip` soft, `TextArea`, fotos, `Switch`, `ActionBar` | editar avaliação existente |
+| Conta sem login | prototipada | card `hero` com a assinatura escura, "Peça orçamentos e ofereça seus serviços" e "O Vitrio é grátis para todo mundo."; `Button` primary "Entrar" e secondary "Criar conta" | — |
 | Conta | a desenhar | dados, endereços, notificações, privacidade, excluir conta, trocar de modo | — |
 | Notificações | a desenhar | lista agrupada por dia | vazio |
 | Denunciar (folha) | a desenhar | motivos em lista, `TextArea` opcional | enviado |
@@ -91,6 +93,12 @@ Regras que aparecem na interface:
 | Confirmar pagamento | a desenhar | `TextField` de valor (prefixo R$), `PaymentMethodPicker`, data, motivo da diferença, `ActionBar` "Confirmar recebimento" | valor diferente do orçamento |
 | Minhas avaliações | a desenhar | resumo, `ReviewCard` com "Responder" | vazio |
 | Editar perfil | a desenhar | mesmas seções do onboarding | — |
+
+### Loja
+
+| Peça | Situação | Conteúdo |
+| --- | --- | --- |
+| Destaque da Google Play (1024×500) | prototipada | fundo `hero`, assinatura escura, "Os profissionais da sua cidade, numa vitrine só." e os cards de profissionais da boas-vindas |
 
 ## Notificações
 

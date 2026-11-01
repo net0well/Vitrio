@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Vitrio.Application.Providers.Common;
@@ -8,8 +9,10 @@ namespace Vitrio.Api.Share;
 public static class SharePage
 {
     private static readonly HtmlEncoder Html = HtmlEncoder.Create(UnicodeRanges.All);
-    private static readonly string Found = Load("Vitrio.Share.Profile.html");
-    private static readonly string Missing = Load("Vitrio.Share.ProfileMissing.html");
+    private static readonly string Wordmark = Load("Vitrio.Share.vitrio-wordmark.svg").Trim();
+    private static readonly string Icon = $"data:image/svg+xml;base64,{Convert.ToBase64String(Encoding.UTF8.GetBytes(Load("Vitrio.Share.vitrio-mark.svg").Trim()))}";
+    private static readonly string Found = WithBrand(Load("Vitrio.Share.Profile.html"));
+    private static readonly string Missing = WithBrand(Load("Vitrio.Share.ProfileMissing.html"));
 
     public static string Render(SharePageResponse page)
     {
@@ -38,12 +41,16 @@ public static class SharePage
     public static string ContentSecurityPolicy(SharePageResponse page)
     {
         var images = page.ImageUrl is not null && Uri.TryCreate(page.ImageUrl, UriKind.Absolute, out var image)
-            ? image.GetLeftPart(UriPartial.Authority)
-            : "'none'";
+            ? $"{image.GetLeftPart(UriPartial.Authority)} data:"
+            : "data:";
         return $"default-src 'none'; style-src 'unsafe-inline'; img-src {images}; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
     }
 
     private static string Encode(string value) => Html.Encode(value);
+
+    private static string WithBrand(string template) => template
+        .Replace("{{wordmark}}", Wordmark, StringComparison.Ordinal)
+        .Replace("{{icon}}", Icon, StringComparison.Ordinal);
 
     private static string Load(string name)
     {

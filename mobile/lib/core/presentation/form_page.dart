@@ -12,7 +12,6 @@ import '../design_system/widgets/vitrio_top_bar.dart';
 class FormPage extends StatelessWidget {
   const FormPage({
     super.key,
-    required this.title,
     required this.children,
     required this.actionLabel,
     required this.onAction,
@@ -24,11 +23,12 @@ class FormPage extends StatelessWidget {
     this.actionIcon,
     this.topBarCenter,
     this.topBarTrailing,
+    this.title,
     this.onBack,
     this.header,
   });
 
-  final String title;
+  final String? title;
   final List<Widget> children;
   final String actionLabel;
   final VoidCallback? onAction;

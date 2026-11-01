@@ -57,6 +57,7 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/launcher/vitrio-app-icon-1024.png
-  adaptive_icon_background: "#3E1F57"
+  adaptive_icon_background: "#C8F169"
   adaptive_icon_foreground: assets/launcher/vitrio-app-icon-adaptive-1024.png
+  adaptive_icon_monochrome: assets/launcher/vitrio-app-icon-monochrome-1024.png
   remove_alpha_ios: true

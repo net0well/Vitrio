@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vitrio/core/design_system/widgets/vitrio_mark.dart';
 import 'package:vitrio/core/network/api_result.dart';
 import 'package:vitrio/core/network/problem_details.dart';
 import 'package:vitrio/features/auth/domain/auth_session.dart';
@@ -27,6 +28,34 @@ void main() {
 
     expect(find.text('Mariana Souza'), findsOneWidget);
     expect(harness.tokens.tokens?.refreshToken, 'refresh-1');
+  });
+
+  testWidgets('sign in and sign up greet with the brand symbol', (tester) async {
+    final harness = await pumpVitrio(tester);
+    harness.go('/sign-in');
+    await tester.pumpAndSettle();
+
+    expect(find.byType(VitrioMark), findsOneWidget);
+    expect(find.text('Que bom te ver de novo'), findsOneWidget);
+    expect(find.text('Entre para pedir orçamentos e acompanhar seus pedidos.'), findsOneWidget);
+
+    harness.go('/sign-up');
+    await tester.pumpAndSettle();
+
+    expect(find.byType(VitrioMark), findsOneWidget);
+    expect(find.text('Crie sua conta'), findsOneWidget);
+    expect(find.text('É grátis e leva menos de um minuto.'), findsOneWidget);
+  });
+
+  testWidgets('the account tab invites a visitor with the brand card', (tester) async {
+    final harness = await pumpVitrio(tester, preferences: {'welcome_seen': true, 'location_mode': 'nearMe'});
+    harness.go('/account');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Peça orçamentos e ofereça seus serviços'), findsOneWidget);
+    expect(find.text('O Vitrio é grátis para todo mundo.'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Entrar'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Criar conta'), findsOneWidget);
   });
 
   testWidgets('the sign in button stays above the keyboard while typing', (tester) async {

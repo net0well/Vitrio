@@ -58,3 +58,6 @@ firebase-service-account*.json
 # Infra local
 infra/**/data/
 infra/ibge/cache/
+
+# Node (scripts de infra)
+node_modules/

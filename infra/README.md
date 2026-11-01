@@ -47,4 +47,18 @@ docker exec vitrio-postgres-1 psql -U vitrio -d vitrio -q -f /tmp/cleanup.sql
 - O `measure.ps1` faz 55 requisições por cenário e espera a janela do rate limit (60 por minuto) entre um cenário e outro; a medição completa leva cerca de 7 minutos.
 - Ele chama `127.0.0.1`, não `localhost`: no Windows, `localhost` tenta IPv6 antes e soma uns 200 ms a cada requisição.
 
+## Logo e ícones
+
+Os SVGs de `docs/design-system/assets/logos/` e `docs/design-system/assets/store/` são a fonte da marca. O script de `brand/` gera todos os PNGs a partir deles (design system, ícone do app, abertura antiga do Android, e-mail e Google Play) e copia os SVGs para `mobile/assets/brand/` e o símbolo e a assinatura clara para a página de compartilhar da API (`backend/src/Vitrio.Api/Share/Templates/`):
+
+```bash
+cd infra/brand
+npm ci
+node render.mjs
+cd ../../mobile && dart run flutter_launcher_icons   # recria os ícones do Android a partir de assets/launcher/
+```
+
+- Nenhum PNG é editado à mão: mude o SVG e rode o script.
+- O texto da imagem de destaque da Google Play vira contorno no script, com o peso pedido, a partir das fontes variáveis do app.
+
 O deploy de produção está em [production/README.md](production/README.md).

@@ -10,11 +10,12 @@ import '../../../core/design_system/widgets/vitrio_avatar.dart';
 import '../../../core/design_system/widgets/vitrio_avatar_kind.dart';
 import '../../../core/design_system/widgets/vitrio_button.dart';
 import '../../../core/design_system/widgets/vitrio_button_variant.dart';
-import '../../../core/design_system/widgets/vitrio_empty_state.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../core/design_system/widgets/vitrio_list_card.dart';
 import '../../../core/design_system/widgets/vitrio_list_row.dart';
 import '../../../core/design_system/widgets/vitrio_top_bar.dart';
+import '../../../core/design_system/widgets/vitrio_wordmark.dart';
+import '../../../core/presentation/free_for_everyone_line.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/domain/me.dart';
 import '../../auth/presentation/session_controller.dart';
@@ -54,11 +55,25 @@ class _SignedOut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final c = context.vitrio;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(VitrioSpace.sp20, VitrioSpace.sp32, VitrioSpace.sp20, VitrioSpace.sp24),
+      padding: const EdgeInsets.fromLTRB(VitrioSpace.sp20, VitrioSpace.sp16, VitrioSpace.sp20, VitrioSpace.sp24),
       children: [
-        VitrioEmptyState(icon: VitrioIconName.user, message: l10n.accountEmpty),
-        const SizedBox(height: VitrioSpace.sp24),
+        Container(
+          padding: const EdgeInsets.all(VitrioSpace.sp20),
+          decoration: BoxDecoration(color: c.hero, borderRadius: const BorderRadius.all(VitrioRadius.hero)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const VitrioWordmark(onDark: true, height: 41),
+              const SizedBox(height: VitrioSpace.sp16),
+              Semantics(header: true, child: Text(l10n.accountGuestTitle, style: VitrioText.title.copyWith(color: c.onHero))),
+              const SizedBox(height: VitrioSpace.sp14),
+              const FreeForEveryoneLine(compact: true),
+            ],
+          ),
+        ),
+        const SizedBox(height: VitrioSpace.sp20),
         VitrioButton(label: l10n.authSignIn, onPressed: () => const SignInRoute().push<void>(context)),
         const SizedBox(height: VitrioSpace.sp12),
         VitrioButton(

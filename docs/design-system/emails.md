@@ -53,7 +53,7 @@ Só tokens de [tokens.json](tokens.json). Cada classe do modelo tem o valor clar
 | Código | `plum` | `#3E1F57` | `#B994DD` |
 | Aviso de segurança (faixa) | `amber-soft` / `amber-ink` | `#FCEFD6` / `#8A5300` | `#3A2A0C` / `#F2C36B` |
 
-- `lime` aparece só no logo (moldura dos vidros), nunca como texto.
+- `lime` aparece só no logo (o quadrado do símbolo), nunca como texto.
 - Nada de cor fora dos tokens, e status nunca só por cor: o aviso de segurança tem título escrito.
 
 ## Tipografia
@@ -75,7 +75,7 @@ Nada abaixo de 12 px. O código usa só dígitos e espaçamento entre letras, se
 
 ## Logo
 
-- Arquivo: [`assets/logos/vitrio-wordmark-on-dark@2x.png`](assets/logos/vitrio-wordmark-on-dark@2x.png) (436 × 128), exibido a 109 × 32 px sobre o cabeçalho `hero`. Gerado a partir do `vitrio-wordmark-on-dark.svg`, porque o Gmail não exibe SVG.
+- Arquivo: [`assets/logos/vitrio-wordmark-on-dark@2x.png`](assets/logos/vitrio-wordmark-on-dark@2x.png) (368 × 128), exibido a 92 × 32 px sobre o cabeçalho `hero`. Gerado a partir do `vitrio-wordmark-on-dark.svg`, porque o Gmail não exibe SVG.
 - Vai **embutido no e-mail** como anexo inline (`cid:vitrio-wordmark`), não por URL: aparece mesmo com imagens remotas bloqueadas e não avisa ninguém quando o e-mail é aberto.
 - `alt="Vitrio"`, sem link.
 

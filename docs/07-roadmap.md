@@ -50,11 +50,12 @@ Pronto quando: `GET /health/ready` responde em staging, o app abre em dev aponta
 | 2 | [002-localizacao-e-cidades](specs/002-localizacao-e-cidades.md) | Pré-permissão, cidade detectada pelo GPS, escolher qualquer cidade |
 | 3 | [003-vitrine-do-prestador](specs/003-vitrine-do-prestador.md) | Onboarding do prestador, vitrine pública, fotos, serviços, selo MEI, painel inicial |
 | 4 | [004-busca-de-prestadores](specs/004-busca-de-prestadores.md) | Início, categorias, busca com filtros e ordenação, favoritos |
-| 5 | [005-pedidos-e-orcamentos](specs/005-pedidos-e-orcamentos.md) | Pedir orçamento, responder, aceitar, agenda, concluir, cancelar, expirações |
-| 6 | [006-confirmacao-de-pagamento](specs/006-confirmacao-de-pagamento.md) | Prestador confirma valor e meio; cliente vê e contesta; resumo de recebimentos |
-| 7 | [007-avaliacoes](specs/007-avaliacoes.md) | Avaliar, editar, responder, nota bayesiana, tags no perfil |
-| 8 | [008-denuncias-e-moderacao](specs/008-denuncias-e-moderacao.md) | Denunciar, ocultação automática, ferramentas de moderação |
-| 9 | [009-notificacoes](specs/009-notificacoes.md) | Push, central de notificações, preferências, silêncio noturno |
+| 5 | [010-identidade-visual](specs/010-identidade-visual.md) | Logo novo (Janela em V) no ícone, na abertura, nos e-mails e no design system; boas-vindas dizendo que é grátis; Conta, Entrar e Criar conta com a marca |
+| 6 | [005-pedidos-e-orcamentos](specs/005-pedidos-e-orcamentos.md) | Pedir orçamento, responder, aceitar, agenda, concluir, cancelar, expirações |
+| 7 | [006-confirmacao-de-pagamento](specs/006-confirmacao-de-pagamento.md) | Prestador confirma valor e meio; cliente vê e contesta; resumo de recebimentos |
+| 8 | [007-avaliacoes](specs/007-avaliacoes.md) | Avaliar, editar, responder, nota bayesiana, tags no perfil |
+| 9 | [008-denuncias-e-moderacao](specs/008-denuncias-e-moderacao.md) | Denunciar, ocultação automática, ferramentas de moderação |
+| 10 | [009-notificacoes](specs/009-notificacoes.md) | Push, central de notificações, preferências, silêncio noturno |
 
 ## Lançamento
 

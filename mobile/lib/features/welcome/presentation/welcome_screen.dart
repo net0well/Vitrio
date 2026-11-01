@@ -20,6 +20,7 @@ import '../../../core/design_system/widgets/vitrio_icon.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../core/design_system/widgets/vitrio_star.dart';
 import '../../../core/design_system/widgets/vitrio_wordmark.dart';
+import '../../../core/presentation/free_for_everyone_line.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/domain/auth_intent.dart';
 import '../../auth/presentation/pending_auth_intent.dart';
@@ -89,7 +90,7 @@ class WelcomeScreen extends ConsumerWidget {
                           height: 40,
                           child: Row(
                             children: [
-                              const VitrioWordmark(onDark: true),
+                              const VitrioWordmark(onDark: true, height: 36),
                               const Spacer(),
                               if (city != null) _CityPill(label: '${city.name}, ${city.state}'),
                             ],
@@ -102,6 +103,8 @@ class WelcomeScreen extends ConsumerWidget {
                         Text(l10n.welcomeTitle, style: VitrioText.displayXl.copyWith(color: c.onHero)),
                         const SizedBox(height: VitrioSpace.sp12),
                         Text(l10n.welcomeMessage, style: VitrioText.body.copyWith(color: c.onHeroMuted)),
+                        const SizedBox(height: VitrioSpace.sp14),
+                        const FreeForEveryoneLine(),
                         const SizedBox(height: VitrioSpace.sp28),
                         VitrioButton(
                           label: l10n.welcomeFindProfessional,

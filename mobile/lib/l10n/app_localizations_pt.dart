@@ -23,6 +23,25 @@ class AppLocalizationsPt extends AppLocalizations {
   String get welcomeFindProfessional => 'Encontrar um profissional';
 
   @override
+  String get brandFreeForEveryone => 'O Vitrio é grátis para todo mundo.';
+
+  @override
+  String get accountGuestTitle => 'Peça orçamentos e ofereça seus serviços';
+
+  @override
+  String get authSignInHeading => 'Que bom te ver de novo';
+
+  @override
+  String get authSignInSubtitle =>
+      'Entre para pedir orçamentos e acompanhar seus pedidos.';
+
+  @override
+  String get authSignUpHeading => 'Crie sua conta';
+
+  @override
+  String get authSignUpSubtitle => 'É grátis e leva menos de um minuto.';
+
+  @override
   String get welcomeOfferServices => 'Quero oferecer meus serviços';
 
   @override
@@ -63,10 +82,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get accountTitle => 'Conta';
-
-  @override
-  String get accountEmpty =>
-      'Entre ou crie sua conta para pedir orçamentos e oferecer seus serviços.';
 
   @override
   String get authSignIn => 'Entrar';

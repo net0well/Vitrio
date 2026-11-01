@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Share\Templates\*.html" LogicalName="Vitrio.Share.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Share\Templates\*.html;Share\Templates\*.svg" LogicalName="Vitrio.Share.%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
