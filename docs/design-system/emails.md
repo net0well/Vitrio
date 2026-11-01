@@ -53,7 +53,7 @@ Só tokens de [tokens.json](tokens.json). Cada classe do modelo tem o valor clar
 | Código | `plum` | `#3E1F57` | `#B994DD` |
 | Aviso de segurança (faixa) | `amber-soft` / `amber-ink` | `#FCEFD6` / `#8A5300` | `#3A2A0C` / `#F2C36B` |
 
-- `lime` aparece só no logo (moldura dos vidros), nunca como texto.
+- `lime` aparece só no logo (o quadrado do símbolo), nunca como texto.
 - Nada de cor fora dos tokens, e status nunca só por cor: o aviso de segurança tem título escrito.
 
 ## Tipografia

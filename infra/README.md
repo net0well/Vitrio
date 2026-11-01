@@ -49,7 +49,7 @@ docker exec vitrio-postgres-1 psql -U vitrio -d vitrio -q -f /tmp/cleanup.sql
 
 ## Logo e ícones
 
-Os SVGs de `docs/design-system/assets/logos/` e `docs/design-system/assets/store/` são a fonte da marca. O script de `brand/` gera todos os PNGs a partir deles (design system, ícone do app, abertura antiga do Android, e-mail e Google Play) e copia os SVGs para `mobile/assets/brand/`:
+Os SVGs de `docs/design-system/assets/logos/` e `docs/design-system/assets/store/` são a fonte da marca. O script de `brand/` gera todos os PNGs a partir deles (design system, ícone do app, abertura antiga do Android, e-mail e Google Play) e copia os SVGs para `mobile/assets/brand/` e o símbolo e a assinatura clara para a página de compartilhar da API (`backend/src/Vitrio.Api/Share/Templates/`):
 
 ```bash
 cd infra/brand

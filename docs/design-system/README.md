@@ -101,13 +101,14 @@ Curto e funcional: 150–220ms, `ease-out`, sem quique. Use para troca de estado
 
 ## Logo
 
-A marca é uma vitrine: uma janela com três vidros, um alto à esquerda e dois à direita.
+A marca é a **Janela em V**: um quadrado arredondado `lime` com um V em traço `plum`, a vitrine aberta para a cidade. O símbolo é o mesmo sobre fundo claro e sobre `hero`; só o nome muda de cor.
 
-- `vitrio-wordmark.svg` (vidros `lime`, moldura e nome em `plum`) sobre fundos claros; `vitrio-wordmark-on-dark.svg` (moldura `lime`, nome branco) sobre `hero` e fundos escuros; `vitrio-wordmark-mono.svg` em `ink` para impressão em uma cor.
-- Só o símbolo (`vitrio-mark*.svg`) quando o espaço for menor que 96px de largura; tamanho mínimo do símbolo: 24px.
-- Ícone do app: `vitrio-app-icon.svg` (iOS e lojas) e `vitrio-app-icon-adaptive.svg` (camada de frente do ícone adaptativo do Android, já dentro da zona segura).
-- Área de respiro: a largura de um vidro estreito (¼ da altura do símbolo) em volta de tudo.
-- Não recolora fora das três versões, não aplique sombra, não gire, não coloque sobre fotos sem uma camada de `hero` por trás.
+- `vitrio-wordmark.svg` (nome em `plum`) sobre fundos claros; `vitrio-wordmark-on-dark.svg` (nome branco) sobre `hero` e fundos escuros; `vitrio-wordmark-mono.svg` em `ink`, com o V vazado, para impressão em uma cor.
+- Só o símbolo (`vitrio-mark*.svg`) quando o espaço for menor que 96px de largura; tamanho mínimo do símbolo: 24px. No app, o símbolo de 56px abre Entrar e Criar conta.
+- Ícone do app: `vitrio-app-icon.svg` (iOS e lojas), `vitrio-app-icon-adaptive.svg` (camada de frente do ícone adaptativo do Android, sobre fundo `lime`) e `vitrio-app-icon-monochrome.svg` (ícones com tema do Android 13+). A abertura do Android 12+ é o fundo `hero` com o símbolo no centro.
+- Área de respiro: ¼ da altura do símbolo em volta de tudo.
+- O quadrado fica sempre inteiro: não corte, não recolora fora das três versões, não aplique sombra, não gire, não coloque sobre fotos sem uma camada de `hero` por trás.
+- Arquivos, tamanhos e o script que gera os PNGs: [assets/logos/README.md](assets/logos/README.md).
 
 ## Acessibilidade
 
