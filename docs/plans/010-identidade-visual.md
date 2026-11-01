@@ -1,6 +1,6 @@
 # Plano: Nova identidade visual
 
-**Status:** Em andamento
+**Status:** Concluído
 **Spec:** [010-identidade-visual](../specs/010-identidade-visual.md) (Approved)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md)); sem mudança de domínio, Application ou banco
 **Camadas afetadas:**
@@ -90,6 +90,8 @@ Todos na branch `feat/nova-identidade-visual`, em vários commits. O PR só abre
 2. Artefato do design system "Vitrio": logos e README atualizados.
 
 ## Recorte 7: fechamento
+
+**Situação:** pronto. `/code-review`, `/security-scan` e `/arch-check` sem achados nesta branch; um achado anterior (marcadores da página de compartilhar preenchidos em sequência) foi para o escopo da spec 005 (AC-21). Página de compartilhar aberta no navegador e e-mail de redefinição conferido no Mailpit. 526 testes do backend, 77 de widget e os 4 fluxos no emulador verdes.
 
 1. Revisão de back: `/code-review`, `/security-scan` (atenção à política de conteúdo) e `/arch-check`; e-mails conferidos no Mailpit; a página de compartilhar aberta no navegador.
 2. Revisão de front: cada tela no emulador, por captura, contra as pranchetas e o design system; código do app contra os padrões.
