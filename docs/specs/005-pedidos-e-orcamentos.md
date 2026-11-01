@@ -21,6 +21,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 - Expirações automáticas (48 h sem resposta; orçamento sem decisão até a validade) e conclusão automática de pedido agendado 7 dias após o fim da faixa.
 - Listas de pedidos para cliente e prestador; detalhe do pedido; agenda do prestador.
 - Ações permitidas calculadas pela API (`allowedActions`) para o app não duplicar regras.
+- Correção herdada da página de compartilhar (`/p/{id}`): hoje os campos são preenchidos um depois do outro, então um texto do prestador que contenha o marcador de outro campo (ex.: `{{place}}` no título) é trocado por esse campo. Cada marcador passa a ser preenchido numa passada só, como nos e-mails de conta, e o texto aparece como foi digitado.
 
 ### Out
 
@@ -120,6 +121,7 @@ Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, s
 - **AC-16** Dado um pedido `Scheduled` cuja faixa terminou há 7 dias sem conclusão, quando o job roda, então o pedido vira `Completed` com `CompletedBy = System` e os dois recebem aviso.
 - **AC-17** Dado um pedido `PaymentConfirmed` com faixa terminada há 3 dias, quando o prestador consulta o detalhe, então o endereço completo aparece.
 - **AC-18** Dado um cliente com 3 pedidos `Sent` em Elétrica, quando cria o quarto em Elétrica (com serviço "Outro" ou não), então recebe 409; em Hidráulica, o pedido é criado.
+- **AC-21** Dado um prestador publicado com o título "Eletricista {{place}}", quando alguém abre `/p/{id}`, então a página mostra "Eletricista {{place}}" como foi digitado, sem trocar o marcador pela cidade.
 
 ## Deferred Decisions
 
