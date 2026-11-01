@@ -43,7 +43,9 @@ Todos na branch `feat/nova-identidade-visual`, em vários commits. O PR só abre
 
 ## Recorte 1: SVGs-fonte e script dos PNGs
 
-1. `docs/design-system/assets/logos/`: os seis SVGs de símbolo e assinatura, `vitrio-app-icon.svg`, `vitrio-app-icon-adaptive.svg`, `vitrio-app-icon-monochrome.svg` (novo) e `google-play-feature.svg` (novo, 1024×500).
+**Situação:** pronto. O nome reaproveita as curvas das letras do SVG antigo, 20 px depois do símbolo. O texto da imagem de destaque vira contorno no script com o `fontkit` (o `resvg` ignora o peso das fontes variáveis).
+
+1. `docs/design-system/assets/logos/`: os seis SVGs de símbolo e assinatura, `vitrio-app-icon.svg`, `vitrio-app-icon-adaptive.svg` e `vitrio-app-icon-monochrome.svg` (novo); `docs/design-system/assets/store/google-play-feature.svg` (novo, 1024×500).
 2. `infra/brand/package.json`, `package-lock.json` e `render.mjs`; README de `infra/` com o comando.
 3. PNGs gerados e copiados: design system, `mobile/assets/launcher/`, e-mail e Google Play (`docs/design-system/assets/store/`).
 4. Cópia dos SVGs para `mobile/assets/brand/`.
