@@ -18,6 +18,7 @@ import '../domain/pending_credentials.dart';
 import 'go_after_sign_in.dart';
 import 'pending_verification.dart';
 import 'session_controller.dart';
+import 'widgets/auth_brand_mark.dart';
 import 'widgets/password_field.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
@@ -79,7 +80,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return FormPage(
-      title: l10n.authSignIn,
+      header: const AuthBrandMark(),
+      heading: l10n.authSignInHeading,
+      subtitle: l10n.authSignInSubtitle,
       actionLabel: l10n.authSignIn,
       onBack: Navigator.of(context).canPop() ? null : () => const HomeRoute().go(context),
       busy: _busy,

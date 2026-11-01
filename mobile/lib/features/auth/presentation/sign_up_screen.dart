@@ -13,6 +13,7 @@ import '../data/auth_providers.dart';
 import '../domain/pending_credentials.dart';
 import '../domain/terms.dart';
 import 'pending_verification.dart';
+import 'widgets/auth_brand_mark.dart';
 import 'widgets/password_field.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
@@ -78,7 +79,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return FormPage(
-      title: l10n.authCreateAccount,
+      header: const AuthBrandMark(),
+      heading: l10n.authSignUpHeading,
+      subtitle: l10n.authSignUpSubtitle,
       actionLabel: l10n.authCreateAccount,
       onBack: Navigator.of(context).canPop() ? null : () => const HomeRoute().go(context),
       busy: _busy,

@@ -118,6 +118,42 @@ abstract class AppLocalizations {
   /// **'Encontrar um profissional'**
   String get welcomeFindProfessional;
 
+  /// No description provided for @brandFreeForEveryone.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Vitrio é grátis para todo mundo.'**
+  String get brandFreeForEveryone;
+
+  /// No description provided for @accountGuestTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Peça orçamentos e ofereça seus serviços'**
+  String get accountGuestTitle;
+
+  /// No description provided for @authSignInHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Que bom te ver de novo'**
+  String get authSignInHeading;
+
+  /// No description provided for @authSignInSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre para pedir orçamentos e acompanhar seus pedidos.'**
+  String get authSignInSubtitle;
+
+  /// No description provided for @authSignUpHeading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Crie sua conta'**
+  String get authSignUpHeading;
+
+  /// No description provided for @authSignUpSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'É grátis e leva menos de um minuto.'**
+  String get authSignUpSubtitle;
+
   /// No description provided for @welcomeOfferServices.
   ///
   /// In pt, this message translates to:
@@ -195,12 +231,6 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Conta'**
   String get accountTitle;
-
-  /// No description provided for @accountEmpty.
-  ///
-  /// In pt, this message translates to:
-  /// **'Entre ou crie sua conta para pedir orçamentos e oferecer seus serviços.'**
-  String get accountEmpty;
 
   /// No description provided for @authSignIn.
   ///

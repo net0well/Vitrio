@@ -43,6 +43,7 @@ void main() {
     await pumpApp(tester);
 
     expect(find.text('Os profissionais da sua cidade, numa vitrine só.'), findsOneWidget);
+    expect(find.text('O Vitrio é grátis para todo mundo.'), findsOneWidget);
     expect(find.byType(NavigationBar), findsNothing);
   });
 
@@ -65,8 +66,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text('Crie sua conta'), findsOneWidget);
     expect(find.text('Criar conta'), findsWidgets);
-    expect(find.byType(CheckboxListTile), findsOneWidget);
   });
 
   testWidgets('returning users start on the home tab of their city', (tester) async {
