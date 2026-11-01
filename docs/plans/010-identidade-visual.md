@@ -52,11 +52,15 @@ Todos na branch `feat/nova-identidade-visual`, em vários commits. O PR só abre
 
 ## Recorte 2: protótipo
 
+**Situação:** pronto. Pranchetas aprovadas pelo usuário em 2026-10-31, na fileira "Entrada e marca" do protótipo; a Destaque mostra o PNG gerado pelo script.
+
 1. Prancheta Main com a assinatura escura nova e a linha "O Vitrio é grátis para todo mundo.".
 2. Pranchetas novas: Abertura, Conta (sem login), Entrar, Criar conta e Destaque da Google Play.
 3. Aprovação do usuário, com a captura de cada prancheta, antes do recorte 4.
 
 ## Recorte 3: ícone e abertura
+
+**Situação:** pronto. Conferido no emulador (Android 17): ícone no lançador, abertura nos temas claro e escuro. No Android 12+, o fundo da janela depois da abertura é só a cor, para não trocar o círculo do sistema pelo quadrado do símbolo antes da primeira tela; o símbolo no fundo fica para as versões anteriores.
 
 1. `pubspec.yaml`: configuração do `flutter_launcher_icons` (fundo, frente e monocromático); recursos gerados.
 2. Estilos da abertura (claro e escuro, Android 12+ e anteriores) e o `launch_background.xml`.
