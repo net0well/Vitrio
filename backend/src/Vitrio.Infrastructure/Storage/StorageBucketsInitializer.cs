@@ -13,7 +13,7 @@ internal sealed class StorageBucketsInitializer(StorageClients clients, IOptions
             return;
         }
 
-        foreach (var bucket in new[] { options.Value.UploadsBucket, options.Value.PublicBucket })
+        foreach (var bucket in new[] { options.Value.UploadsBucket, options.Value.PublicBucket, options.Value.PrivateBucket })
         {
             if (!await AmazonS3Util.DoesS3BucketExistV2Async(clients.Server, bucket))
             {

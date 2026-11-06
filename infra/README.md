@@ -22,7 +22,7 @@ dotnet run --project src/Vitrio.Api
 - API: http://localhost:5080 (Swagger em `/swagger`, saúde em `/health/ready`)
 - Redis: `localhost:6379` (já configurado em `appsettings.Development.json`; sem Redis a API usa só o cache em memória)
 - Mailpit (caixa de e-mail de teste; todo e-mail da API em desenvolvimento cai aqui): http://localhost:8025, SMTP em `localhost:1025`
-- SeaweedFS (S3): http://localhost:8333. A API cria os buckets `vitrio-uploads` (privado, recebe o original) e `vitrio-public` (leitura anônima, só fotos processadas) ao subir. As URLs de envio e das fotos usam `10.0.2.2:8333`, o endereço do computador visto pelo emulador Android.
+- SeaweedFS (S3): http://localhost:8333. A API cria os buckets `vitrio-uploads` (privado, recebe o original), `vitrio-public` (leitura anônima, só fotos processadas da vitrine) e `vitrio-private` (fotos processadas dos pedidos, lidas só por URL assinada de 10 min) ao subir. As URLs de envio e das fotos usam `10.0.2.2:8333`, o endereço do computador visto pelo emulador Android.
 - Hangfire: roda dentro da API (schema `hangfire` no mesmo banco), com a limpeza de envios abandonados a cada hora.
 - Seq: http://localhost:5341
 
