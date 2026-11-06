@@ -1,6 +1,6 @@
 # Spec 005 — Pedidos e orçamentos
 
-- **Status:** In Review
+- **Status:** Approved (2026-11-06)
 - **Data:** 2026-11-06
 - **Responsável:** Wellington
 
@@ -29,14 +29,14 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 - Ao escolher dia e início que cruzam um serviço agendado, a tela avisa "Você já tem um serviço das 14:00 às 15:00 nesse dia". O servidor não bloqueia: o prestador pode ter vários serviços no mesmo dia, inclusive sobrepostos.
 - O prestador pode substituir o orçamento enquanto o pedido estiver `Quoted` (a versão aumenta e a validade recomeça).
 - Recusa: a folha "Recusar o pedido?" exige um motivo — Sem horário disponível, Fora da minha área, Não faço esse serviço ou Outro. "Outro" exige texto de até 200 caracteres, que passa pelo mesmo filtro de telefone, e-mail e link da vitrine. O cliente vê o motivo (e o texto, em "Outro") junto de "Carlos não pode atender agora".
-- Painel do prestador: "pedidos novos" conta os `Sent` aguardando resposta; "serviços no mês" conta os pedidos concluídos (`Completed`, `PaymentConfirmed`, `PaymentDisputed` e `PaymentVoided`) com `CompletedAt` no mês corrente, no fuso da cidade do prestador; a lista "Novos pedidos" mostra os mais recentes com "Recusar" e "Enviar orçamento".
+- Painel do prestador: "pedidos novos" conta os `Sent` aguardando resposta; "serviços no mês" conta os pedidos concluídos (`Completed`, `PaymentConfirmed` e `PaymentDisputed`, como os "serviços feitos" do perfil; pagamento anulado pelo suporte não conta) com `CompletedAt` no mês corrente, no fuso da cidade do prestador; a lista "Novos pedidos" mostra os mais recentes com "Recusar" e "Enviar orçamento".
 - Lista Pedidos do prestador, com as abas Novos (`Sent`), Em andamento (`Quoted`, `Scheduled`) e Finalizados (os demais).
 - Detalhe do pedido do prestador: antes do aceite, o que está em Responder pedido; depois do aceite, endereço completo, nome completo e celular do cliente, com os atalhos "Ligar", "WhatsApp" (para o celular do cliente) e "Abrir no mapa" (app de mapas do celular), além de "Ajustar horário", "Cancelar" e "Serviço concluído". Os dados e os atalhos somem quando o acesso ao endereço expira ou o pedido é cancelado.
 
 **Agenda do prestador em calendário**
 
 - Grade do mês, com setas para trocar de mês, aberta no dia de hoje.
-- Marcas por dia: serviço agendado (`Scheduled`) com marca cheia; orçamento enviado que o cliente ainda não decidiu (`Quoted` dentro da validade) com marca vazada; nos dias passados, serviços concluídos (`Completed` e os de pagamento) em tom neutro.
+- Marcas por dia: serviço agendado (`Scheduled`) com marca cheia; orçamento enviado que o cliente ainda não decidiu (`Quoted` dentro da validade) com marca vazada; nos dias passados, serviços concluídos (`Completed`, `PaymentConfirmed` e `PaymentDisputed`) em tom neutro.
 - Tocar num dia seleciona o dia e mostra logo abaixo os horários dele, com "Agendados" e "Aguardando o cliente" separados; cada item mostra horário, título, cliente e bairro e abre o pedido.
 
 **Ciclo do pedido**
@@ -118,7 +118,7 @@ Aprovadas pelo usuário em 2026-11-06. As pranchetas são atualizadas (ou criada
 - Antes do aceite, o prestador vê primeiro nome + inicial do cliente ("Mariana F."), bairro, cidade e distância arredondada.
 - O telefone do prestador só vai para o cliente (`providerWhatsApp`) quando o botão de WhatsApp está ligado na vitrine.
 - O app do cliente pede o celular antes de enviar o primeiro pedido, se a conta ainda não tiver um.
-- Rate limit em todos os endpoints: `orders` para criar pedido e para as ações do cliente, `quotes` para orçamento, recusa, ajuste e ações do prestador, `uploads` para URL de envio e cópia de fotos, `search` para sugestões e agenda.
+- Rate limit em todos os endpoints, como nos módulos existentes: `orders` em `POST /orders`; `quotes` em `POST /provider/orders/{id}/quote`; `uploads` na URL de envio e na cópia de fotos; `search` nas sugestões; `profile` nas leituras privadas (listas, detalhe, agenda e Painel); as demais escritas (aceitar, recusar, cancelar, concluir e ajustar horário) ficam no limite global de escrita (`write`, 60/min).
 
 ## Edge Cases & Failure Modes
 
