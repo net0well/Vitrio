@@ -18,6 +18,7 @@ dotnet ef database update -p src/Vitrio.Infrastructure -s src/Vitrio.Infrastruct
 dotnet run --project src/Vitrio.Api
 ```
 
+- PostgreSQL 18 com PostGIS: o volume `postgres-data` fica em `/var/lib/postgresql` e o banco em `18/docker` dentro dele, como pede a imagem a partir do 18. Um volume criado por versão anterior não sobe: exporte com `pg_dump -Fc` num contêiner da versão antiga, recrie o volume e importe com `pg_restore` num banco criado a partir do `template0`.
 - API: http://localhost:5080 (Swagger em `/swagger`, saúde em `/health/ready`)
 - Redis: `localhost:6379` (já configurado em `appsettings.Development.json`; sem Redis a API usa só o cache em memória)
 - Mailpit (caixa de e-mail de teste; todo e-mail da API em desenvolvimento cai aqui): http://localhost:8025, SMTP em `localhost:1025`
