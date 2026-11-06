@@ -27,6 +27,8 @@ public sealed record ServiceSchedule
 
     public TimeOnly End => Start.AddMinutes(DurationMinutes);
 
+    internal ServiceSchedule Copy() => this with { };
+
     public static Result<ServiceSchedule> Create(DateOnly date, TimeOnly start, int durationMinutes, string timeZoneId)
     {
         if (start.Minute % StepMinutes != 0 || start.Second != 0 || start.Millisecond != 0

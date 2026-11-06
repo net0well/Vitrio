@@ -4,6 +4,7 @@ using Vitrio.Application.Auditing.Repositories;
 using Vitrio.Application.Common.Repositories;
 using Vitrio.Application.Favorites.Repositories;
 using Vitrio.Application.Locations.Repositories;
+using Vitrio.Application.Orders.Repositories;
 using Vitrio.Application.Providers.Repositories;
 using Vitrio.Application.Search.Repositories;
 
@@ -34,6 +35,7 @@ internal static class RepositoriesRegistration
         services.AddScoped<IFavoriteWritableRepository, FavoriteWritableRepository>();
         services.AddScoped<IFavoriteSearchableRepository, FavoriteSearchableRepository>();
         services.AddScoped<IIdempotencyKeyWritableRepository, IdempotencyKeyWritableRepository>();
+        services.AddScoped<IOrderWritableRepository, OrderWritableRepository>();
         services.AddScoped<IIdempotencyKeySearchableRepository, IdempotencyKeySearchableRepository>();
         return services;
     }

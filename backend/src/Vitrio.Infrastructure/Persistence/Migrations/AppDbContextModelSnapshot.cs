@@ -761,6 +761,207 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.ToTable("favorites", (string)null);
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Orders.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("AddressReleasedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("address_released_at");
+
+                    b.Property<string>("CancellationDetails")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("cancellation_details");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("cancellation_reason");
+
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("cancelled_at");
+
+                    b.Property<string>("CancelledBy")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("cancelled_by");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("category_id");
+
+                    b.Property<DateTimeOffset?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("closed_at");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<string>("CompletedBy")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("completed_by");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CustomerDisplayName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("customer_display_name");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("DeclineDetails")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("decline_details");
+
+                    b.Property<string>("DeclineReason")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("decline_reason");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset?>("FirstResponseAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_response_at");
+
+                    b.Property<DateTimeOffset?>("PersonalDataErasedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("personal_data_erased_at");
+
+                    b.Property<DateOnly>("PreferredDay")
+                        .HasColumnType("date")
+                        .HasColumnName("preferred_day");
+
+                    b.Property<string>("PreferredPeriod")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("preferred_period");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_id");
+
+                    b.Property<DateTimeOffset?>("QuoteValidUntil")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("quote_valid_until");
+
+                    b.Property<int>("RescheduleCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("reschedule_count");
+
+                    b.Property<DateTimeOffset>("RespondBy")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("respond_by");
+
+                    b.Property<Guid?>("ServiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("service_id");
+
+                    b.Property<string>("ServiceTitle")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("service_title");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("title");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_orders");
+
+                    b.HasIndex("CustomerId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_orders_customer_id_created_at");
+
+                    b.HasIndex("ProviderId", "Status")
+                        .HasDatabaseName("ix_orders_provider_id_status");
+
+                    b.HasIndex("Status", "QuoteValidUntil")
+                        .HasDatabaseName("ix_orders_status_quote_valid_until");
+
+                    b.HasIndex("Status", "RespondBy")
+                        .HasDatabaseName("ix_orders_status_respond_by");
+
+                    b.ToTable("orders", (string)null);
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Orders.OrderPhoto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("ObjectKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("object_key");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("UploadKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("upload_key");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order_photos");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_order_photos_processing")
+                        .HasFilter("status = 'Processing'");
+
+                    b.HasIndex("OrderId")
+                        .HasDatabaseName("ix_order_photos_order_id");
+
+                    b.ToTable("order_photos", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1496,6 +1697,287 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_favorites_users_user_id");
                 });
 
+            modelBuilder.Entity("Vitrio.Domain.Orders.Order", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_orders_users_customer_id");
+
+                    b.HasOne("Vitrio.Domain.Providers.Provider", null)
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_orders_providers_provider_id");
+
+                    b.OwnsOne("Vitrio.Domain.Orders.ServiceSchedule", "Schedule", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateOnly>("Date")
+                                .HasColumnType("date")
+                                .HasColumnName("scheduled_date");
+
+                            b1.Property<int>("DurationMinutes")
+                                .HasColumnType("integer")
+                                .HasColumnName("scheduled_duration_minutes");
+
+                            b1.Property<DateTimeOffset>("EndsAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("scheduled_end");
+
+                            b1.Property<TimeOnly>("Start")
+                                .HasColumnType("time without time zone")
+                                .HasColumnName("scheduled_start_time");
+
+                            b1.Property<DateTimeOffset>("StartsAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("scheduled_start");
+
+                            b1.HasKey("OrderId");
+
+                            b1.HasIndex("StartsAt")
+                                .HasDatabaseName("ix_orders_scheduled_start");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
+                        });
+
+                    b.OwnsOne("Vitrio.Domain.Orders.OrderAddress", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Cep")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("address_cep")
+                                .HasAnnotation("Vitrio:PersonalData", true);
+
+                            b1.Property<string>("Complement")
+                                .HasColumnType("text")
+                                .HasColumnName("address_complement")
+                                .HasAnnotation("Vitrio:PersonalData", true);
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("address_number")
+                                .HasAnnotation("Vitrio:PersonalData", true);
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("address_street")
+                                .HasAnnotation("Vitrio:PersonalData", true);
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
+                        });
+
+                    b.OwnsOne("Vitrio.Domain.Orders.OrderContact", "Contact", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("FullName")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("customer_full_name")
+                                .HasAnnotation("Vitrio:PersonalData", true);
+
+                            b1.Property<string>("Phone")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("customer_phone")
+                                .HasAnnotation("Vitrio:PersonalData", true);
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
+                        });
+
+                    b.OwnsOne("Vitrio.Domain.Orders.OrderPlace", "Place", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("CityIbgeCode")
+                                .HasColumnType("integer")
+                                .HasColumnName("city_ibge_code");
+
+                            b1.Property<string>("CityName")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("city_name");
+
+                            b1.Property<bool>("IsApproximate")
+                                .HasColumnType("boolean")
+                                .HasColumnName("customer_point_is_approximate");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision")
+                                .HasColumnName("customer_latitude");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision")
+                                .HasColumnName("customer_longitude");
+
+                            b1.Property<string>("Neighborhood")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("neighborhood");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
+                                .HasColumnName("state");
+
+                            b1.Property<string>("TimeZoneId")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("character varying(64)")
+                                .HasColumnName("time_zone");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
+                        });
+
+                    b.OwnsOne("Vitrio.Domain.Orders.Quote", "Quote", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("quote_amount");
+
+                            b1.Property<string>("MaterialDetails")
+                                .HasMaxLength(80)
+                                .HasColumnType("character varying(80)")
+                                .HasColumnName("quote_material_details");
+
+                            b1.Property<bool>("MaterialIncluded")
+                                .HasColumnType("boolean")
+                                .HasColumnName("quote_material_included");
+
+                            b1.Property<string>("Message")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("quote_message");
+
+                            b1.Property<DateTimeOffset>("SentAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("quote_sent_at");
+
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasMaxLength(30)
+                                .HasColumnType("character varying(30)")
+                                .HasColumnName("quote_type");
+
+                            b1.Property<int>("Version")
+                                .HasColumnType("integer")
+                                .HasColumnName("quote_version");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
+
+                            b1.OwnsOne("Vitrio.Domain.Orders.ServiceSchedule", "Schedule", b2 =>
+                                {
+                                    b2.Property<Guid>("QuoteOrderId")
+                                        .HasColumnType("uuid")
+                                        .HasColumnName("id");
+
+                                    b2.Property<DateOnly>("Date")
+                                        .HasColumnType("date")
+                                        .HasColumnName("quote_date");
+
+                                    b2.Property<int>("DurationMinutes")
+                                        .HasColumnType("integer")
+                                        .HasColumnName("quote_duration_minutes");
+
+                                    b2.Property<DateTimeOffset>("EndsAt")
+                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnName("quote_end");
+
+                                    b2.Property<TimeOnly>("Start")
+                                        .HasColumnType("time without time zone")
+                                        .HasColumnName("quote_start_time");
+
+                                    b2.Property<DateTimeOffset>("StartsAt")
+                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnName("quote_start");
+
+                                    b2.HasKey("QuoteOrderId");
+
+                                    b2.ToTable("orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("QuoteOrderId")
+                                        .HasConstraintName("fk_orders_orders_id");
+                                });
+
+                            b1.Navigation("Schedule")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("Place")
+                        .IsRequired();
+
+                    b.Navigation("Quote");
+
+                    b.Navigation("Schedule");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Orders.OrderPhoto", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Orders.Order", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_photos_orders_order_id");
+                });
+
             modelBuilder.Entity("Vitrio.Domain.Providers.AvailabilitySlot", b =>
                 {
                     b.HasOne("Vitrio.Domain.Providers.Provider", null)
@@ -1597,6 +2079,11 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_outbox_deliveries_outbox_messages_message_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Domain.Orders.Order", b =>
+                {
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("Vitrio.Domain.Providers.Provider", b =>

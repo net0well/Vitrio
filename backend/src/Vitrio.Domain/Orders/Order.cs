@@ -262,7 +262,7 @@ public sealed class Order : AggregateRoot
         }
 
         Status = OrderStatus.Scheduled;
-        Schedule = Quote.Schedule;
+        Schedule = Quote.Schedule.Copy();
         AddressReleasedAt = now;
         Raise(new QuoteAccepted(Id, CustomerId, ProviderId, Quote.Version));
         Raise(new AddressReleased(Id, ProviderId));

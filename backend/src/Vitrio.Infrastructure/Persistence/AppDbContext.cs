@@ -5,6 +5,7 @@ using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Auditing;
 using Vitrio.Domain.Categories;
 using Vitrio.Domain.Favorites;
+using Vitrio.Domain.Orders;
 using Vitrio.Domain.Providers;
 using Vitrio.Infrastructure.Persistence.Cities;
 using Vitrio.Infrastructure.Persistence.Idempotency;
@@ -38,6 +39,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
     public DbSet<PortfolioPhoto> PortfolioPhotos => Set<PortfolioPhoto>();
 
     public DbSet<Favorite> Favorites => Set<Favorite>();
+
+    public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<OrderPhoto> OrderPhotos => Set<OrderPhoto>();
 
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
