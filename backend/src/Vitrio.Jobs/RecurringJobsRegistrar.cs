@@ -1,5 +1,6 @@
 using Hangfire;
 using Microsoft.Extensions.Hosting;
+using Vitrio.Jobs.Maintenance;
 using Vitrio.Jobs.Photos;
 using Vitrio.Jobs.Providers;
 
@@ -9,11 +10,13 @@ internal sealed class RecurringJobsRegistrar(IRecurringJobManager recurringJobs)
 {
     public const string PhotoUploadsCleanup = "photo-uploads-cleanup";
     public const string MeiVerifications = "mei-verifications";
+    public const string IdempotencyKeysCleanup = "idempotency-keys-cleanup";
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         recurringJobs.AddOrUpdate<PhotoJobs>(PhotoUploadsCleanup, photos => photos.CleanUpUploadsAsync(CancellationToken.None), Cron.Hourly());
         recurringJobs.AddOrUpdate<MeiJobs>(MeiVerifications, mei => mei.RecheckAsync(CancellationToken.None), Cron.Hourly());
+        recurringJobs.AddOrUpdate<MaintenanceJobs>(IdempotencyKeysCleanup, maintenance => maintenance.DeleteExpiredIdempotencyKeysAsync(CancellationToken.None), Cron.Daily());
         return Task.CompletedTask;
     }
 

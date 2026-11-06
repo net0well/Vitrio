@@ -1313,6 +1313,40 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                     b.ToTable("cities", (string)null);
                 });
 
+            modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Idempotency.IdempotencyKeyRecord", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("Key")
+                        .HasColumnType("uuid")
+                        .HasColumnName("key");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("request_hash");
+
+                    b.Property<string>("ResponseBody")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("response_body");
+
+                    b.HasKey("UserId", "Key")
+                        .HasName("pk_idempotency_keys");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_idempotency_keys_created_at");
+
+                    b.ToTable("idempotency_keys", (string)null);
+                });
+
             modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Outbox.OutboxDelivery", b =>
                 {
                     b.Property<Guid>("MessageId")
@@ -1543,6 +1577,16 @@ namespace Vitrio.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_served_neighborhoods_providers_provider_id");
+                });
+
+            modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Idempotency.IdempotencyKeyRecord", b =>
+                {
+                    b.HasOne("Vitrio.Domain.Accounts.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_idempotency_keys_users_user_id");
                 });
 
             modelBuilder.Entity("Vitrio.Infrastructure.Persistence.Outbox.OutboxDelivery", b =>

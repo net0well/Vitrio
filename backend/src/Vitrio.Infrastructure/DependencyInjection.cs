@@ -41,6 +41,7 @@ public static class DependencyInjection
                 serviceProvider.GetRequiredService<OutboxInterceptor>(),
                 serviceProvider.GetRequiredService<ProviderSearchIndexInterceptor>()));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IDatabaseTransactionFactory, DatabaseTransactionFactory>();
         services.AddRepositories();
 
         services.AddPersonalDataProtection(configuration);

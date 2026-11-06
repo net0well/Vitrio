@@ -7,6 +7,7 @@ using Vitrio.Domain.Categories;
 using Vitrio.Domain.Favorites;
 using Vitrio.Domain.Providers;
 using Vitrio.Infrastructure.Persistence.Cities;
+using Vitrio.Infrastructure.Persistence.Idempotency;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Persistence.Protection;
 
@@ -45,6 +46,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     public DbSet<OutboxDelivery> OutboxDeliveries => Set<OutboxDelivery>();
+
+    public DbSet<IdempotencyKeyRecord> IdempotencyKeys => Set<IdempotencyKeyRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
