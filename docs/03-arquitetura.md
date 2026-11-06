@@ -12,7 +12,7 @@ flowchart LR
   App[App Vitrio<br/>Flutter · Android e iOS]
   Admin[Ferramenta de moderação<br/>web · depois do MVP]
   API[Vitrio API<br/>.NET 10 · ASP.NET Core Controllers]
-  DB[(PostgreSQL 17<br/>+ PostGIS)]
+  DB[(PostgreSQL 18<br/>+ PostGIS)]
   OBJ[(Armazenamento de objetos<br/>S3 compatível)]
   JOBS[Jobs agendados<br/>Hangfire]
   FCM[Firebase Cloud Messaging]
@@ -63,7 +63,7 @@ vitrio/
 | Validação | FluentValidation via pipeline behavior | |
 | Erros | Result pattern + ProblemDetails (RFC 9457) | Exceções só para o excepcional (ADR-004) |
 | Persistência | EF Core 10 + Npgsql + NetTopologySuite | Repository por agregado (Writable para comandos, Searchable para leituras) e Unit of Work; sem repositório genérico (ADR-016) |
-| Banco | PostgreSQL 17 + PostGIS, `unaccent`, `pg_trgm` | ADR-005 |
+| Banco | PostgreSQL 18 + PostGIS, `unaccent`, `pg_trgm` | ADR-005 |
 | Autenticação | Cadastro e login próprios (e-mail e senha, e-mail confirmado por código) + JWT próprio + refresh token rotativo; senha com o `PasswordHasher` do ASP.NET Core Identity (sem o resto do Identity) | Sem login social nem Keycloak (ADR-006) |
 | E-mail | SMTP com MailKit; Mailpit em desenvolvimento, provedor transacional em produção | Layout em [design-system/emails.md](design-system/emails.md) |
 | Jobs | Hangfire + Hangfire.PostgreSql | Lista na §7 |
@@ -208,7 +208,7 @@ Ids são `Guid` versão 7 (`Guid.CreateVersion7()`), gerados no domínio. Datas 
 
 ## 5. Banco de dados e geolocalização
 
-- PostgreSQL 17 com extensões `postgis`, `unaccent`, `pg_trgm`, `citext`.
+- PostgreSQL 18 com extensões `postgis`, `unaccent`, `pg_trgm`, `citext`.
 - Pontos como `geography(Point, 4326)`; limites de município como `geography(MultiPolygon, 4326)`.
 - Índices: GiST em `providers.public_location` e `cities.boundary`; GIN em `providers.search_vector` (tsvector com a configuração `portuguese` nativa sobre o texto já sem acento e minúsculo) e trigram em `providers.search_terms` e `cities.name_normalized`.
 - Concorrência otimista com a coluna de sistema `xmin` (`UseXminAsConcurrencyToken`) em `Order`, `Provider` e `Review`.
