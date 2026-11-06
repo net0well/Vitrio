@@ -71,6 +71,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 2: domínio do pedido
 
+**Situação:** pronto. O pedido guarda o fuso da cidade (`OrderPlace.TimeZoneId`), e o horário do serviço é o value object `ServiceSchedule` (data, início e duração no fuso da cidade, mais início e fim em UTC), usado pelo orçamento e pelo agendamento; o ajuste troca só o agendamento. Bairro, cidade e o nome curto ficam fora dos dados apagados pela retenção. `CityTime` e `ShortPersonName` ficaram em `Domain/Common`. 43 testes de domínio e os contratos dos 11 eventos.
+
 1. `Order`, `Quote`, `OrderPhoto`, enums e value objects (`PreferredPeriod`, motivos de recusa e de cancelamento, `OrderParty`), `OrderErrors` e os eventos do catálogo.
 2. Regras de prazo, validade, janela do endereço, ajuste (até 2, início com 1 h), conclusão, retenção e `allowedActions`.
 3. Testes de domínio e de contrato dos eventos.
