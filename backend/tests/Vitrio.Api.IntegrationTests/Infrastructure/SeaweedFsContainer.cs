@@ -12,7 +12,7 @@ public sealed class SeaweedFsContainer : IAsyncDisposable
 
     private const int S3Port = 8333;
 
-    private readonly IContainer _container = new ContainerBuilder("chrislusf/seaweedfs:4.48")
+    private readonly IContainer _container = new ContainerBuilder("chrislusf/seaweedfs:4.50")
         .WithEntrypoint("/bin/sh", "-c")
         .WithCommand(
             "printf '{\"identities\":[{\"name\":\"vitrio\",\"credentials\":[{\"accessKey\":\"" + AccessKey + "\",\"secretKey\":\"" + SecretKey
