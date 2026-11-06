@@ -45,13 +45,13 @@ Todos são calculados pela API a partir dos dados atuais. Nenhum é gravado à m
 | --- | --- | --- | --- |
 | MEI verificado | Verificação do CNPJ com status `Verified` | Na verificação e na revalidação a cada 30 dias (job diário em lotes) | Revalidação falha (`Lost`) ou consulta pendente por mais de 3 dias (`Failed`) |
 | Disponível hoje (e a lista "Disponíveis agora") | `AvailableToday` ligado **e** ligado hoje no fuso da cidade base | Na leitura, a cada requisição | Na virada do dia no fuso da cidade, sem depender de job |
-| Responde em ~X | Mediana do tempo até a primeira resposta (§4) nos **últimos 20 pedidos recebidos nos últimos 90 dias**. Pedido ignorado até expirar conta como 48 h; pedido cancelado pelo cliente antes da resposta fica fora. Faixas: até 15 min, 30 min, 1 h, 3 h e 1 dia | Handler de `QuoteSent`, `OrderDeclined` e `OrderExpired`; job diário para a janela de 90 dias andar | Mediana acima de 1 dia ou menos de 5 pedidos na amostra |
+| Responde em ~X | Mediana do tempo até a primeira resposta (§4) nos **últimos 20 pedidos recebidos nos últimos 90 dias**. Pedido ignorado até expirar conta como o prazo inteiro que tinha (do envio até `RespondBy`); pedido cancelado pelo cliente antes da resposta fica fora. Faixas: até 15 min, 30 min, 1 h, 3 h e 1 dia | Handler de `QuoteSent`, `OrderDeclined` e `OrderExpired`; job diário para a janela de 90 dias andar | Mediana acima de 1 dia ou menos de 5 pedidos na amostra |
 | Nota ou "Novo no Vitrio" | Média bayesiana (§6) com 3 ou mais avaliações visíveis; abaixo disso, "Novo no Vitrio" no lugar da nota | Handler dos eventos `review.published`, `review.updated`, `content.hidden` e `content.restored`; job diário que recalcula a média da categoria e todas as notas | — |
 | Serviços feitos pelo app | Pedidos em `Completed`, `PaymentConfirmed` ou `PaymentDisputed` (pagamento anulado pelo suporte não conta). Exibido a partir de 5 | Handler dos eventos `order.completed` e `payment.dispute_resolved` (anulado) | Anulação pelo suporte reduz a contagem |
 | Tags mais citadas | Contagem das tags nas avaliações visíveis | Junto com a nota | — |
 | Distância ("perto de você") | Do ponto público do prestador ao ponto do cliente, arredondada (§2); só com GPS | Em cada requisição | Sem GPS não aparece |
 
-Pedidos ignorados derrubam o "Responde em ~X": cada pedido que expira entra na amostra como 48 h e empurra a mediana para cima. Quem para de receber pedidos perde o selo quando a janela de 90 dias passa.
+Pedidos ignorados derrubam o "Responde em ~X": cada pedido que expira entra na amostra com o prazo inteiro que tinha e empurra a mediana para cima. Quem para de receber pedidos perde o selo quando a janela de 90 dias passa.
 
 ## 4. Pedidos e orçamentos
 
@@ -61,16 +61,17 @@ Pedidos ignorados derrubam o "Responde em ~X": cada pedido que expira entra na a
 stateDiagram-v2
   [*] --> Sent: cliente envia
   Sent --> Declined: prestador recusa
-  Sent --> Expired: 48 h sem resposta
+  Sent --> Expired: sem resposta no prazo
   Sent --> Quoted: prestador envia orçamento
   Sent --> Cancelled: cliente cancela
   Quoted --> QuoteDeclined: cliente recusa
-  Quoted --> QuoteExpired: 48 h sem decisão
+  Quoted --> QuoteExpired: sem decisão até a validade
   Quoted --> Scheduled: cliente aceita
   Quoted --> Cancelled: cliente cancela
+  Scheduled --> Scheduled: prestador ajusta o horário (até 2 vezes)
   Scheduled --> Cancelled: qualquer lado, com motivo
   Scheduled --> Completed: qualquer lado marca concluído
-  Scheduled --> Completed: sistema, 7 dias após o fim da faixa
+  Scheduled --> Completed: sistema, 7 dias após o fim do horário
   Completed --> PaymentConfirmed: prestador confirma
   PaymentConfirmed --> Completed: prestador anula em até 24 h
   PaymentConfirmed --> PaymentDisputed: cliente contesta em até 7 dias
@@ -83,16 +84,22 @@ stateDiagram-v2
 - `PaymentVoided` é final: depois de o suporte anular o registro, uma nova confirmação só pelo suporte.
 - Um cliente pode ter no máximo **3 pedidos em `Sent`** ao mesmo tempo na mesma categoria (evita disparo em massa) e **10 pedidos abertos** (`Sent`, `Quoted` ou `Scheduled`) no total. A categoria do pedido é a do serviço escolhido ou, em "Outro", a categoria principal do prestador.
 - O cliente não pode pedir orçamento para a própria vitrine.
+- Pedido: serviço (da lista do prestador ou "Outro"), título de 5 a 80 caracteres, descrição de 20 a 500, até 5 fotos, dia (hoje, amanhã ou uma data até 30 dias à frente) e período (manhã 7h–12h, tarde 12h–18h, noite 18h–22h). Um período de hoje que já acabou não pode ser escolhido.
+- **Prazo de resposta (`RespondBy`):** o fim do período pedido, no fuso da cidade do pedido, limitado a 48 h depois do envio. Sem orçamento nem recusa até lá, o pedido expira.
+- **Recusa:** exige motivo (Sem horário disponível, Fora da minha área, Não faço esse serviço ou Outro); "Outro" exige texto de até 200 caracteres, sem telefone, e-mail ou link. O cliente vê o motivo e, em "Outro", o texto. Pedido recusado ou vencido sem resposta mostra ao cliente até 3 prestadores da mesma categoria perto do endereço, sem o que recusou ou deixou vencer.
 - O pedido guarda uma **cópia** do endereço escolhido (não uma referência), para que editar o endereço depois não mude pedidos antigos.
 - Para pedir orçamento, a conta precisa ter celular; o pedido guarda uma cópia do nome completo e do celular, como faz com o endereço.
-- Antes do aceite, o prestador vê só **primeiro nome + inicial do cliente, bairro, cidade e distância**. O endereço completo, o nome completo e o celular são liberados na transição para `Scheduled` (`AddressReleasedAt`) e fica visível ao prestador até 7 dias depois do fim da faixa agendada, qualquer que seja o status depois disso. Cancelamento fecha o acesso na hora.
+- Antes do aceite, o prestador vê só **primeiro nome + inicial do cliente, bairro, cidade e distância**. O endereço completo, o nome completo e o celular são liberados na transição para `Scheduled` (`AddressReleasedAt`) e ficam visíveis ao prestador até 7 dias depois do fim do horário agendado, qualquer que seja o status depois disso. Cancelamento fecha o acesso na hora.
+- **Retenção:** 90 dias depois do fim do serviço (o fim do horário agendado ou, sem agendamento, o encerramento do pedido), o endereço completo, o nome completo, o celular e as fotos do pedido são apagados; ficam bairro, cidade e primeiro nome com a inicial.
 - Pedido sem coordenadas do endereço (CEP sem ponto, endereço preenchido à mão) usa o centroide da cidade: a distância aparece como aproximada e o aviso de "fora da área" não é mostrado.
 - Tempo de resposta do prestador: da criação do pedido até a primeira resposta (`FirstResponseAt`), que é o primeiro orçamento enviado ou a recusa.
-- Orçamento: tipo `FixedPrice` (valor do serviço) ou `TechnicalVisit` (valor da visita), valor entre R$ 1,00 e R$ 100.000,00, data e faixa de horário, material incluso (sim/não), mensagem até 500 caracteres. Um orçamento por pedido; o prestador pode **substituir** o orçamento enquanto o pedido estiver em `Quoted` (a versão aumenta e a validade recomeça).
-- Validade do orçamento: o que vier primeiro entre 48 h depois do envio e 1 h antes do início da faixa proposta. Orçamento para um horário que já passou não pode ser aceito.
-- Cancelamento em `Scheduled` exige motivo (lista + texto opcional). Cancelamentos do prestador com menos de 2 h do horário ficam registrados no prestador (`LateCancellations`, janela de 90 dias, recalculada no `OrderCancelled`). Três ou mais na janela colocam o prestador na fila de moderação para revisão; não há efeito automático nem exibição pública.
-- `Completed` pode ser marcado por qualquer lado a partir do início da faixa agendada. O outro lado recebe aviso e pode discordar pelo suporte em até 48 h.
-- Se ninguém marcar, o sistema conclui o pedido 7 dias depois do fim da faixa agendada (`CompletedBy = System`); os dois são avisados e quem discordar fala com o suporte.
+- Orçamento: tipo `FixedPrice` (valor do serviço) ou `TechnicalVisit` (valor da visita), valor entre R$ 1,00 e R$ 100.000,00, dia, início (de 30 em 30 min) e duração prevista (30 min a 8 h, de 30 em 30 min, sem passar da meia-noite), material incluso (sim/não, com descrição opcional de até 80 caracteres quando sim), mensagem até 500 caracteres. Um orçamento por pedido; o prestador pode **substituir** o orçamento enquanto o pedido estiver em `Quoted` (a versão aumenta e a validade recomeça).
+- O prestador pode ter vários serviços no mesmo dia, inclusive com horários que se cruzam: o app avisa ao montar o orçamento, e a API não bloqueia.
+- Validade do orçamento: o que vier primeiro entre 48 h depois do envio e 1 h antes do início proposto. Orçamento para um horário que já passou não pode ser aceito.
+- **Ajuste de horário:** num pedido `Scheduled`, antes do início, o prestador muda dia, início e duração (início no mínimo 1 h à frente), no máximo 2 vezes por pedido. O cliente é avisado e, se não concordar, cancela com o motivo "O novo horário não serve". A janela do endereço e a conclusão automática passam a contar do horário novo.
+- Cancelamento em `Scheduled` exige motivo. Motivos do cliente: Resolvi de outro jeito, O horário não serve mais, O novo horário não serve, Achei outro profissional, Outro. Motivos do prestador: Imprevisto, Não consigo chegar no horário, O cliente pediu para cancelar, Outro. Texto opcional, obrigatório em "Outro"; o outro lado vê o motivo, nunca o texto. Cancelamentos do prestador com menos de 2 h do horário ficam registrados no prestador (`LateCancellations`, janela de 90 dias, recalculada no `OrderCancelled`). Três ou mais na janela colocam o prestador na fila de moderação para revisão; não há efeito automático nem exibição pública.
+- `Completed` pode ser marcado por qualquer lado a partir do início do horário agendado. O outro lado recebe aviso e pode discordar pelo suporte em até 48 h.
+- Se ninguém marcar, o sistema conclui o pedido 7 dias depois do fim do horário agendado (`CompletedBy = System`); os dois são avisados e quem discordar fala com o suporte.
 - Pedidos em `Sent` e `Quoted` expiram por job agendado; a expiração e a conclusão automática são idempotentes.
 
 ## 5. Pagamento confirmado pelo prestador
@@ -129,7 +136,7 @@ stateDiagram-v2
 
 ## 8. Notificações
 
-- Eventos: novo pedido, orçamento recebido, orçamento aceito, orçamento recusado, pedido recusado ou expirado, pedido cancelado, lembrete 1 h antes, serviço concluído, pagamento confirmado, confirmação anulada, contestação aberta e resolvida, convite para avaliar (2 h após concluído), nova avaliação, resposta à avaliação, selo MEI perdido, conteúdo ocultado e restaurado, conta suspensa e reativada.
+- Eventos: novo pedido, orçamento recebido, orçamento aceito, orçamento recusado, pedido recusado ou expirado, pedido cancelado, horário ajustado pelo prestador, lembrete 1 h antes, serviço concluído, pagamento confirmado, confirmação anulada, contestação aberta e resolvida, convite para avaliar (2 h após concluído), nova avaliação, resposta à avaliação, selo MEI perdido, conteúdo ocultado e restaurado, conta suspensa e reativada.
 - Push respeita preferências por tipo, exceto avisos de conta e segurança.
 - Silêncio noturno: lembretes e convites não são enviados entre 22h e 7h no fuso do destinatário; ficam para as 7h.
 - Lembrete de serviço cujo horário (1 h antes) cai no silêncio noturno vai na noite anterior, às 21h, para não chegar na hora do serviço.
@@ -138,10 +145,16 @@ stateDiagram-v2
 
 | Regra | Valor |
 | --- | --- |
-| Prazo de resposta a pedido | 48 h |
+| Prazo de resposta a pedido | Fim do período pedido, no máximo 48 h |
+| Data do pedido | Hoje até 30 dias à frente |
+| Título e descrição do pedido | 5–80 e 20–500 caracteres |
 | Validade do orçamento | 48 h ou até 1 h antes do horário, o que vier primeiro |
-| Conclusão automática de pedido agendado | 7 dias após o fim da faixa |
-| Endereço visível ao prestador | Do aceite até 7 dias após o fim da faixa |
+| Duração prevista do orçamento | 30 min a 8 h, de 30 em 30 min |
+| Ajustes de horário por pedido | 2 |
+| Texto da recusa ("Outro") | 200 caracteres |
+| Conclusão automática de pedido agendado | 7 dias após o fim do horário |
+| Endereço visível ao prestador | Do aceite até 7 dias após o fim do horário |
+| Dados pessoais e fotos do pedido | Apagados 90 dias após o fim do serviço |
 | Pedidos em aberto por cliente | 10 |
 | Pedidos `Sent` por cliente e categoria | 3 |
 | Fotos por pedido | 5 |

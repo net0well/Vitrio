@@ -17,7 +17,7 @@ Não use evento para:
 | --- | --- | --- |
 | Auditoria (`audit_events`) | Gravação na **mesma transação** do comando, pelo `IAuditLog` | Registro legal não pode atrasar nem se perder |
 | Validar ou decidir uma regra do próprio agregado | Método do domínio | Regra fica no agregado, com teste de unidade |
-| Algo que depende de horário (lembrete 1 h antes, expiração em 48 h, conclusão automática de pedido agendado) | Job recorrente do Hangfire que varre o banco | Horário não é consequência de uma mudança; o job é idempotente e se recupera sozinho de atrasos |
+| Algo que depende de horário (lembrete 1 h antes, expiração no prazo de resposta, conclusão automática de pedido agendado, apagamento por retenção) | Job recorrente do Hangfire que varre o banco | Horário não é consequência de uma mudança; o job é idempotente e se recupera sozinho de atrasos |
 | Selo que vale só por um período ("Disponível hoje") | Cálculo na leitura ([02-regras-de-negocio.md](02-regras-de-negocio.md) §3) | Não precisa de job nem de evento para "desligar" na virada do dia |
 | Chamar serviço externo (FCM, BrasilAPI, storage) direto no handler | Tabela de trabalho própria (ex.: `PushDelivery`) processada pelo seu worker | Efeito externo não participa da transação do banco |
 
@@ -271,14 +271,15 @@ Fonte única dos eventos do Vitrio. Specs, arquitetura e código apontam para es
 | `mei.verification_failed` (`MeiVerificationFailed`) | `Provider` | Consulta recusa o CNPJ, ou a verificação ficou `Pending` por 3 dias | `ProviderId`, `ReasonCode`, `FromPending` | 1 | `AccountNotifications` | Avisa o prestador com o motivo, só quando `FromPending` |
 | `mei.verification_lost` (`MeiVerificationLost`) | `Provider` | Revalidação perde o selo | `ProviderId` | 1 | `AccountNotifications`<br>`InvalidateProviderProfileCache` | Avisa o prestador que o selo saiu<br>Remove o perfil público do cache |
 | `order.created` (`OrderCreated`) | `Order` | Cliente envia o pedido | `OrderId`, `CustomerId`, `ProviderId` | 1 | `OrderNotifications` | Avisa o prestador: novo pedido |
-| `order.declined` (`OrderDeclined`) | `Order` | Prestador recusa | `OrderId`, `CustomerId`, `ProviderId` | 1 | `OrderNotifications`<br>`RecalculateProviderResponseTime` | Avisa o cliente, com sugestão de outros prestadores<br>Recalcula o tempo de resposta do prestador |
-| `order.expired` (`OrderExpired`) | `Order` | 48 h sem resposta (job) | `OrderId`, `CustomerId`, `ProviderId` | 1 | `OrderNotifications`<br>`RecalculateProviderResponseTime` | Avisa o cliente, com sugestão de outros prestadores<br>Recalcula o tempo de resposta (o pedido entra como 48 h) |
+| `order.declined` (`OrderDeclined`) | `Order` | Prestador recusa | `OrderId`, `CustomerId`, `ProviderId`, `ReasonCode` (`NoAvailability`, `OutsideArea`, `NotMyService`, `Other`) | 1 | `OrderNotifications`<br>`RecalculateProviderResponseTime` | Avisa o cliente, com o motivo e sugestão de outros prestadores<br>Recalcula o tempo de resposta do prestador |
+| `order.expired` (`OrderExpired`) | `Order` | Sem resposta até `RespondBy` (job) | `OrderId`, `CustomerId`, `ProviderId` | 1 | `OrderNotifications`<br>`RecalculateProviderResponseTime` | Avisa o cliente, com sugestão de outros prestadores<br>Recalcula o tempo de resposta (o pedido entra com o prazo inteiro que tinha) |
 | `quote.sent` (`QuoteSent`) | `Order` | Prestador envia ou substitui o orçamento | `OrderId`, `CustomerId`, `ProviderId`, `QuoteVersion` | 1 | `OrderNotifications`<br>`RecalculateProviderResponseTime` | Avisa o cliente: orçamento recebido<br>Recalcula o tempo de resposta, só quando `QuoteVersion = 1` |
 | `quote.accepted` (`QuoteAccepted`) | `Order` | Cliente aceita | `OrderId`, `CustomerId`, `ProviderId`, `QuoteVersion` | 1 | `OrderNotifications` | Avisa o prestador: orçamento aceito |
 | `quote.declined` (`QuoteDeclined`) | `Order` | Cliente recusa o orçamento | `OrderId`, `CustomerId`, `ProviderId` | 1 | `OrderNotifications` | Avisa o prestador: orçamento recusado |
 | `quote.expired` (`QuoteExpired`) | `Order` | Orçamento sem decisão até a validade (job) | `OrderId`, `CustomerId`, `ProviderId` | 1 | `OrderNotifications` | Avisa os dois |
 | `order.cancelled` (`OrderCancelled`) | `Order` | Cliente, prestador ou sistema cancela | `OrderId`, `CustomerId`, `ProviderId`, `CancelledBy` (`Customer`, `Provider`, `System`), `ReasonCode`, `WithinTwoHours` | 1 | `OrderNotifications`<br>`RecordLateCancellation` | Avisa o outro lado (os dois quando `System`)<br>Recalcula `LateCancellations90d` do prestador, só quando `Provider` e `WithinTwoHours`; com 3 ou mais, abre item na fila de moderação |
-| `order.completed` (`OrderCompleted`) | `Order` | Cliente ou prestador marca concluído, ou o job conclui 7 dias após a faixa | `OrderId`, `CustomerId`, `ProviderId`, `CompletedBy` (`Customer`, `Provider`, `System`) | 1 | `OrderNotifications`<br>`RecalculateCompletedOrders` | Avisa o outro lado (os dois quando `System`)<br>Recalcula os serviços feitos do prestador |
+| `order.rescheduled` (`OrderRescheduled`) | `Order` | Prestador ajusta o horário de um pedido agendado | `OrderId`, `CustomerId`, `ProviderId`, `RescheduleCount` | 1 | `OrderNotifications` | Avisa o cliente: horário ajustado, com o novo dia e hora lidos do pedido |
+| `order.completed` (`OrderCompleted`) | `Order` | Cliente ou prestador marca concluído, ou o job conclui 7 dias após o fim do horário | `OrderId`, `CustomerId`, `ProviderId`, `CompletedBy` (`Customer`, `Provider`, `System`) | 1 | `OrderNotifications`<br>`RecalculateCompletedOrders` | Avisa o outro lado (os dois quando `System`)<br>Recalcula os serviços feitos do prestador |
 | `order.address_released` (`AddressReleased`) | `Order` | Pedido vira `Scheduled` | `OrderId`, `ProviderId` | 1 | — | Nenhum consumidor no MVP; a auditoria da liberação é gravada na transação do aceite |
 | `payment.confirmed` (`PaymentConfirmed`) | `Order` | Prestador confirma o recebimento | `OrderId`, `CustomerId`, `ProviderId`, `ConfirmationId` | 1 | `PaymentNotifications` | Avisa o cliente: pagamento confirmado |
 | `payment.confirmation_voided` (`PaymentConfirmationVoided`) | `Order` | Prestador anula em até 24 h | `OrderId`, `CustomerId`, `ProviderId`, `ConfirmationId` | 1 | `PaymentNotifications` | Avisa o cliente: confirmação anulada |
@@ -300,7 +301,7 @@ Fonte única dos eventos do Vitrio. Specs, arquitetura e código apontam para es
 | Handler | Recalcula | Regra |
 | --- | --- | --- |
 | `RecalculateProviderRating` | `ReviewCount`, `RatingSum`, `RatingScore`, `RatingDistribution`, `TagCounts`, `RecommendCount` | A partir das avaliações `Visible`; média bayesiana de [02-regras-de-negocio.md](02-regras-de-negocio.md) §6 |
-| `RecalculateProviderResponseTime` | `ResponseTimeBucket`, `ResponseSampleSize` | Mediana dos últimos 20 pedidos recebidos em 90 dias que foram respondidos ou expiraram; expirado conta como 48 h; menos de 5 deixa `null` ([02-regras-de-negocio.md](02-regras-de-negocio.md) §3) |
+| `RecalculateProviderResponseTime` | `ResponseTimeBucket`, `ResponseSampleSize` | Mediana dos últimos 20 pedidos recebidos em 90 dias que foram respondidos ou expiraram; expirado conta como o prazo inteiro que tinha (`RespondBy` − criação); menos de 5 deixa `null` ([02-regras-de-negocio.md](02-regras-de-negocio.md) §3) |
 | `RecalculateCompletedOrders` | `CompletedOrders` | Pedidos do prestador em `Completed`, `PaymentConfirmed` ou `PaymentDisputed` |
 | `RecordLateCancellation` | `LateCancellations90d` | Cancelamentos do prestador com menos de 2 h nos últimos 90 dias; com 3 ou mais, abre item na fila de moderação ([02-regras-de-negocio.md](02-regras-de-negocio.md) §4) |
 | `RecordUpheldDispute` | Contestações procedentes do prestador | Registro para a moderação; o limite que abre revisão está pendente (seção 12) |
@@ -318,7 +319,7 @@ Os jobs do Hangfire seguem a seção 4: carregam em páginas, chamam o domínio 
 | Revalidar selo MEI e reprocessar `Pending` | `mei.verified`, `mei.verification_failed`, `mei.verification_lost` |
 | Recalcular tempo de resposta (janela de 90 dias) | `provider.stats_updated`, quando o valor muda |
 | Recalcular média da categoria e notas | `provider.stats_updated`, quando a nota muda |
-| Lembretes, limpezas, anonimização | Nenhum: criam notificações ou apagam dados direto, conferindo o estado atual |
+| Lembretes, limpezas, anonimização e apagamento dos dados pessoais e das fotos de pedidos antigos | Nenhum: criam notificações ou apagam dados direto, conferindo o estado atual |
 
 ## 11. Operação
 

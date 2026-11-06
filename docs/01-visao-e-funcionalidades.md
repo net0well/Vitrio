@@ -110,7 +110,7 @@ Legenda: **MVP** entra na primeira versão publicada; **Depois** fica no backlog
 | Publicar e pausar | Perfil só aparece publicado e com os campos mínimos; pausar esconde da busca | MVP |
 | Completude do perfil | Barra de progresso com a próxima ação sugerida | MVP |
 | Painel | Pedidos novos, nota, serviços no mês, última avaliação | MVP |
-| Agenda | Serviços agendados por dia | MVP |
+| Agenda | Calendário do mês com os serviços agendados, os orçamentos que aguardam o cliente e os serviços feitos; tocar num dia mostra os horários dele | MVP |
 | Resumo de recebimentos | Total confirmado no mês e por meio de pagamento | MVP |
 | Métricas de desempenho | Visualizações, taxa de resposta, conversão | Depois |
 
@@ -118,16 +118,17 @@ Legenda: **MVP** entra na primeira versão publicada; **Depois** fica no backlog
 
 | Funcionalidade | Descrição | Quando |
 | --- | --- | --- |
-| Pedir orçamento | Serviço, descrição, até 5 fotos, dia (hoje, amanhã, data) e período, endereço salvo | MVP |
-| Responder com orçamento | Valor fechado ou visita técnica, data e horário, material incluso, mensagem | MVP |
-| Recusar pedido | Com motivo opcional; o cliente recebe sugestões de outros prestadores | MVP |
-| Validade | Pedido sem resposta expira em 48 h; orçamento vale 48 h | MVP |
+| Pedir orçamento | Serviço, título, descrição, até 5 fotos, dia (hoje, amanhã ou data até 30 dias) e período, endereço salvo | MVP |
+| Responder com orçamento | Valor fechado ou visita técnica, dia, início e duração prevista, material incluso (com o que vai), mensagem; aviso quando o horário cruza outro serviço agendado | MVP |
+| Recusar pedido | Com motivo, que o cliente vê; o cliente recebe sugestões de outros prestadores e pode pedir para um deles reaproveitando o pedido | MVP |
+| Validade | Pedido sem resposta expira no fim do período pedido (no máximo 48 h); orçamento vale 48 h ou até 1 h antes do horário | MVP |
 | Aceitar ou recusar orçamento | Ao aceitar, o pedido fica agendado e o endereço completo é liberado | MVP |
+| Ajustar horário | O prestador muda o horário de um serviço agendado (até 2 vezes), com aviso ao cliente | MVP |
 | Cancelar | Qualquer lado, antes de concluir, com motivo | MVP |
 | Concluir serviço | Quem marcar primeiro; o outro lado é avisado | MVP |
 | Lista de pedidos | Cliente: Em andamento / Finalizados. Prestador: Novos / Em andamento / Finalizados | MVP |
 | Lembretes | 1 h antes do horário agendado, para os dois (na véspera às 21h se esse horário cair no silêncio noturno) | MVP |
-| Remarcar com proposta de novo horário | Um lado propõe, o outro aceita | Depois |
+| Remarcar com proposta de novo horário | Um lado propõe, o outro aceita (no MVP, o prestador ajusta com aviso) | Depois |
 | Chat dentro do app | Mensagens entre cliente e prestador por pedido | Depois |
 
 ### 7. Pagamento confirmado pelo prestador

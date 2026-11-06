@@ -36,7 +36,7 @@ O Vitrio guarda dados pessoais (nome, telefone, endereço, localização, fotos 
 - **Autorização por recurso (contra BOLA):** todo handler que lê ou altera um recurso filtra pelo dono **na própria consulta** (`where o.CustomerId == currentUser.Id`), em vez de buscar e comparar depois. Recurso de outro usuário responde **404**, não 403, para não confirmar que existe.
 - **Autorização por propriedade (contra BOPLA):** requests e responses são DTOs explícitos por caso de uso. Nada de bind direto em entidade. Campos como `status`, `ratingScore`, `meiVerified`, `role`, `customerId` nunca vêm do cliente.
 - **Funções privilegiadas (contra BFLA):** rotas `/admin` em controller separado com `[Authorize(Policy = Admin)]` no nível da classe; ações de moderação exigem motivo e geram auditoria.
-- **Endereço e contato do cliente:** o DTO de pedido para o prestador só inclui endereço completo, nome completo e celular quando `AddressReleasedAt` existe, o pedido não foi cancelado e ainda não passaram 7 dias do fim da faixa agendada, qualquer que seja o status (inclusive `PaymentConfirmed`, `PaymentDisputed` e `PaymentVoided`). Antes disso, o cliente aparece como primeiro nome + inicial. Cada leitura desses dados grava auditoria (quem, quando, pedido).
+- **Endereço e contato do cliente:** o DTO de pedido para o prestador só inclui endereço completo, nome completo e celular quando `AddressReleasedAt` existe, o pedido não foi cancelado, ainda não passaram 7 dias do fim do horário agendado e os dados não foram apagados pela retenção, qualquer que seja o status (inclusive `PaymentConfirmed`, `PaymentDisputed` e `PaymentVoided`). Antes disso, o cliente aparece como primeiro nome + inicial. Cada leitura desses dados grava auditoria (quem, quando, pedido).
 
 ## 4. Validação de entrada e saída
 
@@ -55,7 +55,7 @@ Rate limiting nativo do ASP.NET Core, particionado por usuário autenticado ou, 
 | --- | --- | --- |
 | `auth` | `/auth/*` | 10/min por IP, 30/h por IP; além disso, no handler, 5 códigos de e-mail por endereço por hora e bloqueio da conta após 5 senhas erradas em 15 min |
 | `search` | `GET /providers`, `/home`, `/cities` | 60/min por usuário ou IP |
-| `profile` | `GET /providers/{id}` e subrotas, `GET /me/favorites` | 120/min |
+| `profile` | `GET /providers/{id}` e subrotas; leituras privadas (`/me` e subrotas, `/provider` e subrotas, `/orders` e subrotas) | 120/min |
 | `write` | demais POST/PUT/PATCH/DELETE | 60/min por usuário |
 | `orders` | `POST /orders` | 10/h e 30/dia por cliente |
 | `quotes` | `POST /provider/orders/{id}/quote` | 60/h por prestador |
@@ -105,13 +105,13 @@ Respostas 429 com `Retry-After`. Os contadores ficam na memória de cada instân
 - **Base legal e transparência:** termos e política de privacidade no primeiro acesso e em Conta; consentimento explícito para localização e notificações (permissões do sistema).
 - **Direitos do titular:** ver, corrigir e excluir dados pelo app; exportação por solicitação no MVP.
 - **Proteção em repouso:** banco e storage com criptografia do provedor; endereços completos e telefone com criptografia de coluna via ASP.NET Core Data Protection (chaves no cofre), com hash determinístico para busca de duplicidade de telefone.
-- **Retenção:** pedidos e confirmações de pagamento anonimizados mantidos por 5 anos; logs de aplicação 30 dias; auditoria 1 ano, exceto a de pagamentos (confirmação, anulação, contestação e resolução), guardada 5 anos junto com os registros que ela explica.
+- **Retenção:** endereço completo, nome completo, celular e fotos do pedido apagados 90 dias depois do fim do serviço (ficam bairro, cidade e primeiro nome com a inicial); pedidos e confirmações de pagamento anonimizados mantidos por 5 anos; logs de aplicação 30 dias; auditoria 1 ano, exceto a de pagamentos (confirmação, anulação, contestação e resolução), guardada 5 anos junto com os registros que ela explica.
 - **Logs sem dados pessoais:** sem nome, telefone, endereço, e-mail, tokens ou coordenadas exatas. Ids e `traceId` bastam. Serilog com destructuring policy que mascara propriedades sensíveis.
 - **Incidentes:** procedimento escrito (detectar, conter, avaliar, comunicar a ANPD e titulares quando houver risco relevante, corrigir).
 
 ## 12. Auditoria
 
-Tabela `audit_events` só de inserção (o usuário da API não tem `update`/`delete` nela): leitura de endereço completo, confirmação e anulação de pagamento, contestação, ações de moderação, mudança de papel, cadastro e confirmação de e-mail, login (sucesso e bloqueio), redefinição e troca de senha, revogação de sessões, exclusão de conta. Campos: quando, quem (id), ação, alvo, ip truncado, `traceId`.
+Tabela `audit_events` só de inserção (o usuário da API não tem `update`/`delete` nela): liberação e leitura de endereço completo, ajuste de horário de pedido agendado, cancelamento do prestador com menos de 2 h, apagamento dos dados pessoais de pedido pela retenção, confirmação e anulação de pagamento, contestação, ações de moderação, mudança de papel, cadastro e confirmação de e-mail, login (sucesso e bloqueio), redefinição e troca de senha, revogação de sessões, exclusão de conta. Campos: quando, quem (id), ação, alvo, ip truncado, `traceId`.
 
 ## 13. App mobile
 

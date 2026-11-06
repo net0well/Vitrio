@@ -119,7 +119,7 @@ Vitrio.Application/
   Locations/             LocateCity, SearchCities, GetCity, LookupCep, LoadCities
   Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e das fotos
   Search/                SearchProviders, GetHome
-  Orders/                CreateOrder, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, CancelOrder, CompleteOrder, ListOrders, GetOrder, ExpireOrders
+  Orders/                CreateOrder, CopyOrderPhotos, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, RescheduleOrder, CancelOrder, CompleteOrder, ListOrders, GetOrder, GetOrderSuggestions, GetProviderAgenda, ExpireOrders, CompleteForgottenOrders, EraseOrderPersonalData, handlers dos números derivados do prestador e do cancelamento na exclusão de conta
   Payments/              ConfirmPayment, VoidPaymentConfirmation, DisputePayment, GetEarningsSummary
   Reviews/               CreateReview, UpdateReview, ReplyToReview, ListProviderReviews
   Reports/               CreateReport, Moderation
@@ -290,8 +290,8 @@ Sem GPS, com a cidade escolhida:
 | Providers | `GET /providers` (busca), `GET /providers/{id}`, `GET /providers/{id}/reviews`, `GET /providers/{id}/photos` | público |
 | MyProvider | `POST /provider`, `GET /provider`, `PATCH /provider`, `PUT /provider/categories`, `PUT /provider/service-area`, `PUT /provider/services`, `PUT /provider/availability`, `PUT /provider/available-today`, `POST /provider/mei-verification`, `POST /provider/publish`, `POST /provider/pause`, `GET /provider/dashboard` | prestador |
 | MyProviderPhotos | `POST /provider/photos/upload-url`, `POST /provider/photos`, `PATCH /provider/photos/{id}`, `PUT /provider/photos/order`, `DELETE /provider/photos/{id}` | prestador |
-| Orders | `POST /orders/photos/upload-url`, `POST /orders`, `GET /orders`, `GET /orders/{id}`, `POST /orders/{id}/quote/accept`, `POST /orders/{id}/quote/decline`, `POST /orders/{id}/cancel`, `POST /orders/{id}/complete`, `POST /orders/{id}/payment/dispute` | cliente do pedido |
-| ProviderOrders | `GET /provider/orders`, `GET /provider/orders/{id}`, `POST /provider/orders/{id}/quote`, `POST /provider/orders/{id}/decline`, `POST /provider/orders/{id}/cancel`, `POST /provider/orders/{id}/complete`, `POST /provider/orders/{id}/payment-confirmation`, `POST /provider/orders/{id}/payment-confirmation/void`, `GET /provider/agenda?from=&to=` | prestador do pedido |
+| Orders | `POST /orders/photos/upload-url`, `POST /orders/{id}/photos/copies`, `POST /orders`, `GET /orders`, `GET /orders/{id}`, `GET /orders/{id}/suggestions`, `POST /orders/{id}/quote/accept`, `POST /orders/{id}/quote/decline`, `POST /orders/{id}/cancel`, `POST /orders/{id}/complete`, `POST /orders/{id}/payment/dispute` | cliente do pedido |
+| ProviderOrders | `GET /provider/orders`, `GET /provider/orders/{id}`, `POST /provider/orders/{id}/quote`, `POST /provider/orders/{id}/decline`, `POST /provider/orders/{id}/reschedule`, `POST /provider/orders/{id}/cancel`, `POST /provider/orders/{id}/complete`, `POST /provider/orders/{id}/payment-confirmation`, `POST /provider/orders/{id}/payment-confirmation/void`, `GET /provider/agenda?from=&to=` | prestador do pedido |
 | ProviderEarnings | `GET /provider/earnings?month=` | prestador |
 | Reviews | `POST /reviews/photos/upload-url`, `POST /orders/{id}/review`, `PUT /reviews/{id}`, `POST /reviews/{id}/reply`, `PUT /reviews/{id}/reply` | cliente / prestador |
 | Favorites | `GET /me/favorites`, `PUT /me/favorites/{providerId}`, `DELETE /me/favorites/{providerId}` | autenticado |
@@ -308,8 +308,9 @@ Sem GPS, com a cidade escolhida:
 
 | Job | Frequência | O que faz |
 | --- | --- | --- |
-| Expirar pedidos e orçamentos | 5 min | `Sent` e `Quoted` fora do prazo viram `Expired`/`QuoteExpired` |
-| Concluir agendados esquecidos | 1 h | `Scheduled` 7 dias após o fim da faixa vira `Completed` pelo sistema |
+| Expirar pedidos e orçamentos | 5 min | `Sent` depois de `RespondBy` vira `Expired`; `Quoted` depois de `QuoteValidUntil` vira `QuoteExpired` |
+| Concluir agendados esquecidos | 1 h | `Scheduled` 7 dias após o fim do horário vira `Completed` pelo sistema |
+| Apagar dados de pedidos antigos | Diário | Endereço completo, nome completo, celular e fotos dos pedidos com o serviço terminado há 90 dias |
 | Lembretes | 5 min | Lembrete de serviço, de confirmar pagamento e convite para avaliar, respeitando o silêncio noturno |
 | Revalidar selo MEI | Diário, em lotes | Revalida quem passou de 30 dias; `Pending` com mais de 3 dias vira `Failed` |
 | Nota e média da categoria | Diário | Recalcula `m` de cada categoria e a nota de todos os prestadores |

@@ -167,9 +167,10 @@ public sealed record SendQuoteCommand(
     QuoteType Type,
     decimal Amount,
     DateOnly Date,
-    TimeOnly StartTime,
-    TimeOnly EndTime,
+    TimeOnly Start,
+    int DurationMinutes,
     bool MaterialIncluded,
+    string? MaterialDetails,
     string? Message) : ICommand<Result<QuoteResponse>>;
 
 public sealed class SendQuoteValidator : AbstractValidator<SendQuoteCommand>
@@ -177,7 +178,8 @@ public sealed class SendQuoteValidator : AbstractValidator<SendQuoteCommand>
     public SendQuoteValidator()
     {
         RuleFor(x => x.Amount).InclusiveBetween(1m, 100_000m);
-        RuleFor(x => x.EndTime).GreaterThan(x => x.StartTime);
+        RuleFor(x => x.DurationMinutes).InclusiveBetween(30, 480).Must(minutes => minutes % 30 == 0);
+        RuleFor(x => x.MaterialDetails).MaximumLength(80);
         RuleFor(x => x.Message).MaximumLength(500);
     }
 }
@@ -197,7 +199,7 @@ public sealed class SendQuoteHandler(
             return OrderErrors.NotFound;
         }
 
-        var quote = Quote.Create(command.Type, command.Amount, command.Date, command.StartTime, command.EndTime, command.MaterialIncluded, command.Message);
+        var quote = Quote.Create(command.Type, command.Amount, command.Date, command.Start, command.DurationMinutes, command.MaterialIncluded, command.MaterialDetails, command.Message);
         if (quote.IsFailure)
         {
             return quote.Error!;
