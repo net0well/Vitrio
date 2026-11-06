@@ -43,7 +43,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 
 - Cliente aceita ou recusa o orçamento; ao aceitar, o pedido fica `Scheduled` e o endereço é liberado ao prestador.
 - **Ajuste de horário pelo prestador:** num pedido `Scheduled`, antes do início, o prestador muda dia, início e duração (início no mínimo 1 h à frente), no máximo 2 vezes por pedido. O cliente é avisado ("Carlos mudou o horário para sex 30/10, 09:00") e, se não concordar, cancela com o motivo "O novo horário não serve". A Agenda, o acesso ao endereço e a conclusão automática passam a seguir o horário novo.
-- Cancelar (qualquer lado, com motivo, regras por estado). Motivos do cliente: Resolvi de outro jeito, O horário não serve mais, O novo horário não serve, Achei outro profissional, Outro. Motivos do prestador: Imprevisto, Não consigo chegar no horário, O cliente pediu para cancelar, Outro. Texto opcional em todos e obrigatório em "Outro"; o outro lado vê o motivo escolhido, nunca o texto.
+- Cancelar (qualquer lado, com motivo, regras por estado). Motivos do cliente: Resolvi de outro jeito, O horário não serve mais, O novo horário não serve, Achei outro profissional, Outro. Motivos do prestador: Imprevisto, Não consigo chegar no horário, O cliente pediu para cancelar, Outro. Texto de até 200 caracteres, opcional em todos e obrigatório em "Outro"; o outro lado vê o motivo escolhido, nunca o texto.
 - Concluir serviço (qualquer lado, a partir do início do horário agendado).
 - Expirações automáticas (sem resposta até `RespondBy`; orçamento sem decisão até a validade) e conclusão automática do pedido agendado 7 dias após o fim do horário.
 - Ações permitidas calculadas pela API (`allowedActions`) para o app não duplicar regras.
