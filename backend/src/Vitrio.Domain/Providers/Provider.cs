@@ -332,6 +332,36 @@ public sealed class Provider : AggregateRoot
         return Result.Success();
     }
 
+    public void UpdateResponseTime(string? bucket, int sampleSize)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(sampleSize);
+        var changed = ResponseTimeBucket != bucket;
+        ResponseTimeBucket = bucket;
+        ResponseSampleSize = sampleSize;
+        if (changed)
+        {
+            Raise(new ProviderStatsUpdated(Id));
+        }
+    }
+
+    public void UpdateCompletedOrders(int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        if (CompletedOrders == count)
+        {
+            return;
+        }
+
+        CompletedOrders = count;
+        Raise(new ProviderStatsUpdated(Id));
+    }
+
+    public void UpdateLateCancellations(int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        LateCancellations90d = count;
+    }
+
     public Result<PortfolioPhoto> AddPhoto(string uploadKey, string? caption, IClock clock)
     {
         if (!CanReceivePhoto)
