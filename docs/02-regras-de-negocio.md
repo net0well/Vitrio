@@ -82,7 +82,7 @@ stateDiagram-v2
 ### Regras
 
 - `PaymentVoided` é final: depois de o suporte anular o registro, uma nova confirmação só pelo suporte.
-- Um cliente pode ter no máximo **3 pedidos em `Sent`** ao mesmo tempo na mesma categoria (evita disparo em massa) e **10 pedidos abertos** (`Sent`, `Quoted` ou `Scheduled`) no total. A categoria do pedido é a do serviço escolhido ou, em "Outro", a categoria principal do prestador.
+- Um cliente pode ter no máximo **3 pedidos em `Sent`** ao mesmo tempo na mesma categoria (evita disparo em massa) e **10 pedidos abertos** (`Sent`, `Quoted` ou `Scheduled`) no total. A categoria do pedido é a categoria principal do prestador, com ou sem serviço escolhido (o serviço da vitrine não tem categoria).
 - O cliente não pode pedir orçamento para a própria vitrine.
 - Pedido: serviço (da lista do prestador ou "Outro"), título de 5 a 80 caracteres, descrição de 20 a 500, até 5 fotos, dia (hoje, amanhã ou uma data até 30 dias à frente) e período (manhã 7h–12h, tarde 12h–18h, noite 18h–22h). Um período de hoje que já acabou não pode ser escolhido.
 - **Prazo de resposta (`RespondBy`):** o fim do período pedido, no fuso da cidade do pedido, limitado a 48 h depois do envio. Sem orçamento nem recusa até lá, o pedido expira.
