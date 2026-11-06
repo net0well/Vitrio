@@ -141,7 +141,7 @@ Aprovadas pelo usuário em 2026-11-06. As pranchetas são atualizadas (ou criada
 - Texto da recusa em "Outro" com telefone, e-mail ou link: 400 com a mesma mensagem da vitrine.
 - Job de expiração, de conclusão ou de retenção rodando duas vezes: idempotente (só muda quem ainda está no estado e no prazo).
 - Concluir antes do início do horário agendado: 409.
-- Cancelamento pelo prestador com menos de 2 h: permitido; o handler de `OrderCancelled` recalcula `LateCancellations90d` e, com 3 ou mais, abre um item na fila de moderação. Nada aparece no perfil público.
+- Cancelamento pelo prestador com menos de 2 h: permitido; o handler de `OrderCancelled` recalcula e guarda `LateCancellations90d`; a fila de moderação da spec 008 abre o item a partir de 3 na janela (decisão de 2026-11-06, porque a fila nasce lá). Nada aparece no perfil público.
 - Repetição do POST com a mesma `Idempotency-Key`: mesma resposta, sem pedido ou orçamento duplicado.
 - Fotos ainda processando ao criar o pedido: o pedido é criado; as fotos aparecem quando prontas.
 - "Pedir para este" depois de as fotos do pedido antigo terem sido apagadas pela retenção: 409 na cópia; o app abre o pedido sem fotos.
