@@ -30,9 +30,11 @@ flutter build appbundle --flavor prod -t lib/main_prod.dart --obfuscate --split-
 
 - `account_flow_test.dart`: escolhe a cidade, cria a conta, confirma o e-mail com o código lido no Mailpit, edita o celular, abre os aparelhos conectados, sai, entra de novo e exclui a conta.
 - `location_flow_test.dart`: acha a cidade pelo GPS, troca para uma cidade escolhida e volta para "Perto de mim".
+- `provider_flow_test.dart`: um prestador novo monta a vitrine com foto, publica e vê o perfil público.
+- `search_flow_test.dart`: um visitante busca, entra para salvar um prestador e o encontra em Favoritos.
 
 ```bash
-docker compose -f ../infra/docker-compose.yml up -d postgres redis mailpit
+docker compose -f ../infra/docker-compose.yml up -d postgres redis mailpit seaweedfs
 # na pasta backend, com as migrações aplicadas:
 ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5080 dotnet run --project src/Vitrio.Api --no-launch-profile
 # na pasta mobile, com o emulador aberto:
@@ -45,17 +47,17 @@ O teste de localização precisa da permissão concedida e de uma posição em J
 
 ```bash
 adb shell appops set com.android.shell android:mock_location allow
-for p in gps network; do
+for p in gps network fused; do
   adb shell cmd location providers add-test-provider $p
   adb shell cmd location providers set-test-provider-enabled $p true
 done
 while true; do
-  adb shell "pm grant app.vitrio.dev android.permission.ACCESS_FINE_LOCATION; cmd location providers set-test-provider-location gps --location -21.2546,-48.3225 --accuracy 20; cmd location providers set-test-provider-location network --location -21.2546,-48.3225 --accuracy 20" >/dev/null 2>&1
+  adb shell "pm grant app.vitrio.dev android.permission.ACCESS_FINE_LOCATION; for p in gps network fused; do cmd location providers set-test-provider-location \$p --location -21.2546,-48.3225 --accuracy 20; done" >/dev/null 2>&1
   sleep 0.5
 done
 ```
 
-Depois, `adb shell cmd location providers remove-test-provider gps` (e `network`) devolve a localização normal do emulador.
+Os outros fluxos usam o mesmo laço com um ponto em São Paulo (`-23.5505,-46.6333`). Depois, `adb shell cmd location providers remove-test-provider gps` (e `network` e `fused`) e `adb shell appops set com.android.shell android:mock_location default` devolvem a localização normal do emulador.
 
 Os arquivos gerados (`*.g.dart` e `lib/l10n/app_localizations*.dart`) ficam no repositório; rode o `build_runner` de novo ao mudar providers ou rotas.
 
