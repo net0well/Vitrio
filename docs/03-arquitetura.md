@@ -114,7 +114,7 @@ Regras de dependência (verificadas por teste de arquitetura):
 Vitrio.Application/
   Abstractions/          IUnitOfWork, ICurrentUser, IAuditLog, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
   Events/                IDomainEventHandler<T> e os handlers de evento (notificações, dados derivados, cache)
-  Common/                PagedResult, behaviors (log, validação, transação)
+  Common/                PagedResult, behaviors (log, validação, idempotência), chaves de idempotência
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
   Locations/             LocateCity, SearchCities, GetCity, LookupCep, LoadCities
   Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e das fotos

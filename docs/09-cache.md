@@ -59,7 +59,7 @@ Regras:
 
 ## 5. Idempotência
 
-- Tabela `idempotency_keys` (`user_id`, `key`, `request_hash`, `status_code`, `response_body`, `created_at`), única por (`user_id`, `key`), gravada **na mesma transação** do comando.
+- Tabela `idempotency_keys` (`user_id`, `key`, `request_hash`, `response_body`, `created_at`), única por (`user_id`, `key`), gravada **na mesma transação** do comando pelo `IdempotencyBehavior`. Só respostas de sucesso são guardadas; o código HTTP sai da própria rota, que repete a resposta guardada. Duas requisições com a mesma chave ao mesmo tempo: a segunda esbarra no índice único, desfaz o que fez e devolve a resposta da primeira.
 - Repetição com o mesmo corpo devolve a resposta guardada; corpo diferente devolve 422.
 - Job diário apaga chaves com mais de 24 h. Nunca no cache: um reinício ou uma segunda instância permitiria pedido duplicado.
 

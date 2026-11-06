@@ -63,6 +63,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 1: base técnica
 
+**Situação:** pronto. O `IdempotencyBehavior` roda para todo comando e só age nos que implementam `IIdempotentCommand`; abre a transação por `IDatabaseTransactionFactory` (Application), guarda só o corpo da resposta de sucesso e, na corrida, devolve a resposta de quem gravou primeiro. A documentação citava um comportamento de transação que não existia; `04-padroes.md`, `03-arquitetura.md` e `09-cache.md` foram corrigidos. A limpeza das chaves vencidas entrou aqui (`MaintenanceJobs`, diário), e a checagem de falha dos jobs foi para `JobResults`. Fotos privadas: `IPrivateMediaStorage` com o bucket `vitrio-private`, leitura pela URL assinada do mesmo endereço das URLs de envio.
+
 1. `IIdempotentCommand`, `IdempotencyBehavior` e a tabela `idempotency_keys`, com testes (mesma resposta, 422 com corpo diferente, corrida).
 2. `IPrivateMediaStorage` e o bucket `vitrio-private` (criação no `StorageBucketsInitializer`, configuração e Testcontainers).
 3. `ProviderStatsUpdated` no domínio e no `InvalidateProviderProfileCache`.
