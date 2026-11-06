@@ -23,6 +23,32 @@ public static class OrderErrors
 
     public static readonly Error PhotoNotFound = Error.NotFound("order.photo_not_found", "Foto não encontrada.");
 
+    public static readonly Error PhotoUploadNotFound =
+        Error.Validation("order.photo_upload_not_found", "Uma das fotos não chegou. Envie de novo.");
+
+    public static readonly Error PhotosRemoved =
+        Error.Conflict("order.photos_removed", "As fotos deste pedido já foram removidas.");
+
+    public static readonly Error PhoneRequired =
+        Error.Unprocessable("order.phone_required", "Cadastre seu celular para o profissional conseguir falar com você.");
+
+    public static readonly Error OwnProvider = Error.Conflict("order.own_provider", "Você não pode pedir orçamento para a sua própria vitrine.");
+
+    public static readonly Error ProviderNotReceiving =
+        Error.Conflict("order.provider_not_receiving", "Este profissional não está recebendo pedidos agora.");
+
+    public static readonly Error ServiceNotFound =
+        Error.Validation("order.service_not_found", "Esse serviço não está mais na vitrine. Escolha outro.");
+
+    public static readonly Error TooManyOpenOrders =
+        Error.Conflict("order.too_many_open", "Você já tem 10 pedidos em andamento. Conclua ou cancele algum para pedir outro.");
+
+    public static readonly Error TooManyWaitingInCategory =
+        Error.Conflict("order.too_many_waiting", "Você já tem 3 pedidos aguardando resposta nesta categoria. Espere uma resposta ou cancele algum.");
+
+    public static readonly Error NoSuggestions =
+        Error.Conflict("order.no_suggestions", "Só mostramos outros profissionais quando o pedido foi recusado ou ficou sem resposta.");
+
     public static readonly Error CannotQuote = Error.Conflict("order.cannot_quote", "Este pedido não aceita orçamento agora.");
 
     public static readonly Error ResponseWindowClosed =

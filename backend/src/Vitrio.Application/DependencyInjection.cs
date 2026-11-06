@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Application.Locations.Services;
+using Vitrio.Application.Orders.Services;
 using Vitrio.Application.Providers.Services;
 using Vitrio.Application.Search.Services;
 
@@ -26,6 +27,8 @@ public static class DependencyInjection
         services.AddScoped<ISearchAreaService, SearchAreaService>();
         services.AddScoped<ISearchProfessionalService, SearchProfessionalService>();
         services.AddScoped<ITopRatedProvidersService, TopRatedProvidersService>();
+        services.AddScoped<IOrderRequestService, OrderRequestService>();
+        services.AddScoped<ICustomerOrderViewService, CustomerOrderViewService>();
         return services;
     }
 }

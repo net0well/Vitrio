@@ -10,5 +10,9 @@ public interface IOrderWritableRepository
 
     Task<Order?> GetAsync(Guid orderId, CancellationToken cancellationToken);
 
+    Task<int> CountOpenForCustomerAsync(Guid customerId, CancellationToken cancellationToken);
+
+    Task<int> CountWaitingForCustomerAsync(Guid customerId, int categoryId, CancellationToken cancellationToken);
+
     void Add(Order order);
 }
