@@ -500,5 +500,6 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 | `TopBar` | `VitrioTopBar` | Voltar redondo de 44px, título em `label` 17px, `trailing` opcional; usado como `appBar` do `Scaffold` |
 | `ActionBar` | `VitrioActionBar` | `bottomNavigationBar` com `note` opcional e erro do formulário acima do botão; sobe junto com o teclado; nunca junto com `NavigationBar` |
 | `HeroCard` | `VitrioHeroCard` | Fundo `hero`, selo `lime` com ponto, ícone decorativo a 30% com traço 1.2 |
+| `Calendar` | `VitrioCalendar` | Grade do mês com `marks` por dia (agendado, aguardando o cliente, feito), dia escolhido e hoje; cada dia com `Semantics(selected:, label:)`; setas com `VitrioIconButton` |
 
 Padrões do sistema montados com os tokens: `VitrioSectionHeader` (título de seção com link "Ver todas"), `VitrioListCard` e `VitrioListRow` (listas em card, como "Serviços e preços"), `VitrioNotice` (faixa de aviso e erro), `VitrioStar` (estrela de nota preenchida), `VitrioAddPhotoTile` (tracejado de "Adicionar foto") e `VitrioShadow` (sombras `sm`, `md` e `lg` nos dois temas).
