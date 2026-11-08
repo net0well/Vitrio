@@ -102,7 +102,7 @@ Aprovadas pelo usuário em 2026-11-06. As pranchetas são atualizadas (ou criada
 | POST | `/api/v1/provider/orders/{id}/reschedule` | `{ date, start, durationMinutes }` | `orderProviderView` | 400, 401, 403, 404, 409 estado/limite/início já passou |
 | POST | `/api/v1/provider/orders/{id}/cancel` | `{ reason, details? }` | `orderProviderView` | 400, 401, 403, 404, 409 |
 | POST | `/api/v1/provider/orders/{id}/complete` | — | `orderProviderView` | 401, 403, 404, 409 |
-| GET | `/api/v1/provider/agenda?from=&to=` | intervalo ≤ 42 dias (as 6 semanas da grade) | `[{ orderId, kind: scheduled\|quoted\|done, date, start, end, title, customerName, neighborhood }]` | 400, 401, 403 |
+| GET | `/api/v1/provider/agenda?from=&to=` | intervalo ≤ 42 dias (as 6 semanas da grade) | `[{ orderId, kind: scheduled\|quoted\|done, date, start, end, title, customerName, neighborhood, quoteValidUntil? }]` (`quoteValidUntil` só em `quoted`, para o selo "Válido até") | 400, 401, 403 |
 | GET | `/api/v1/provider/dashboard` | — | o atual, com `newOrders`, `servicesThisMonth` e `latestNewOrders` preenchidos | 401, 403 |
 
 - `customerName` na agenda e nas listas do prestador: "Mariana F." antes do aceite; nome completo enquanto o acesso estiver liberado.

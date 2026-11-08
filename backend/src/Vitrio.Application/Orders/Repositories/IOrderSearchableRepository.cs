@@ -11,4 +11,28 @@ public interface IOrderSearchableRepository
     Task<OrderStoredPhotos?> FindStoredPhotosAsync(Guid orderId, Guid customerId, CancellationToken cancellationToken);
 
     Task<OrderSuggestionContext?> FindSuggestionContextAsync(Guid orderId, Guid customerId, CancellationToken cancellationToken);
+
+    Task<OrderProviderView?> GetProviderViewAsync(Guid orderId, Guid providerId, DateTimeOffset now, CancellationToken cancellationToken);
+
+    Task<OrderProviderPage> ListForProviderAsync(
+        Guid providerId,
+        ProviderOrderTab tab,
+        DateTimeOffset now,
+        int skip,
+        int take,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<AgendaItemResponse>> ListAgendaAsync(
+        Guid providerId,
+        DateOnly from,
+        DateOnly to,
+        DateTimeOffset now,
+        CancellationToken cancellationToken);
+
+    Task<ProviderOrderNumbers> GetProviderNumbersAsync(
+        Guid providerId,
+        DateTimeOffset monthStart,
+        DateTimeOffset nextMonthStart,
+        DateTimeOffset now,
+        CancellationToken cancellationToken);
 }

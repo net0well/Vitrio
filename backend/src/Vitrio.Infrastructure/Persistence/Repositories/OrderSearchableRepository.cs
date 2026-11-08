@@ -6,13 +6,46 @@ using Vitrio.Application.Providers.Common;
 using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Orders;
 using Vitrio.Domain.Providers;
+using Vitrio.Infrastructure.Persistence.Orders;
 using Vitrio.Infrastructure.Storage;
 
 namespace Vitrio.Infrastructure.Persistence.Repositories;
 
-internal sealed class OrderSearchableRepository(AppDbContext db, PublicMedia media, IPrivateMediaStorage privateMedia) : IOrderSearchableRepository
+internal sealed class OrderSearchableRepository(
+    AppDbContext db,
+    PublicMedia media,
+    IPrivateMediaStorage privateMedia,
+    ProviderOrderReader providerOrders) : IOrderSearchableRepository
 {
     private static readonly OrderStatus[] OpenStatuses = [OrderStatus.Sent, OrderStatus.Quoted, OrderStatus.Scheduled];
+
+    public Task<OrderProviderView?> GetProviderViewAsync(Guid orderId, Guid providerId, DateTimeOffset now, CancellationToken cancellationToken) =>
+        providerOrders.GetViewAsync(orderId, providerId, now, cancellationToken);
+
+    public Task<OrderProviderPage> ListForProviderAsync(
+        Guid providerId,
+        ProviderOrderTab tab,
+        DateTimeOffset now,
+        int skip,
+        int take,
+        CancellationToken cancellationToken) =>
+        providerOrders.ListAsync(providerId, tab, now, skip, take, cancellationToken);
+
+    public Task<IReadOnlyList<AgendaItemResponse>> ListAgendaAsync(
+        Guid providerId,
+        DateOnly from,
+        DateOnly to,
+        DateTimeOffset now,
+        CancellationToken cancellationToken) =>
+        providerOrders.ListAgendaAsync(providerId, from, to, now, cancellationToken);
+
+    public Task<ProviderOrderNumbers> GetProviderNumbersAsync(
+        Guid providerId,
+        DateTimeOffset monthStart,
+        DateTimeOffset nextMonthStart,
+        DateTimeOffset now,
+        CancellationToken cancellationToken) =>
+        providerOrders.GetNumbersAsync(providerId, monthStart, nextMonthStart, now, cancellationToken);
 
     public async Task<OrderCustomerView?> GetCustomerViewAsync(Guid orderId, Guid customerId, DateTimeOffset now, CancellationToken cancellationToken)
     {

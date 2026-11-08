@@ -19,6 +19,7 @@ namespace Vitrio.Api.IntegrationTests.Orders;
 public static class OrderApi
 {
     public const string Route = "/api/v1/orders";
+    public const string ProviderRoute = "/api/v1/provider/orders";
     public const string TimeZone = "America/Sao_Paulo";
     public const string Title = "Chuveiro desarmando o disjuntor";
     public const string Description = "O chuveiro desarma o disjuntor quando ligo no modo inverno.";
@@ -113,6 +114,40 @@ public static class OrderApi
         var response = await client.SendAsAsync(HttpMethod.Get, $"{Route}/{orderId}", accessToken);
         Assert.True(response.StatusCode == HttpStatusCode.OK, $"{(int)response.StatusCode} {await response.Content.ReadAsStringAsync()}");
         return await response.Content.ReadApiAsync<OrderCustomerView>();
+    }
+
+    public static object QuoteBody(
+        DateOnly date,
+        string start = "14:00",
+        int durationMinutes = 60,
+        bool materialIncluded = true,
+        string? materialDetails = "disjuntor 40 A",
+        decimal amount = 180m) =>
+        new
+        {
+            type = "fixedPrice",
+            amount,
+            date,
+            start,
+            durationMinutes,
+            materialIncluded,
+            materialDetails,
+            message = "Troco o disjuntor e reviso a fiação."
+        };
+
+    public static Task<HttpResponseMessage> SendQuoteAsync(this HttpClient client, string accessToken, Guid orderId, object body, Guid? idempotencyKey = null)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{ProviderRoute}/{orderId}/quote") { Content = JsonContent.Create(body) };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Add("Idempotency-Key", (idempotencyKey ?? Guid.NewGuid()).ToString());
+        return client.SendAsync(request, TestContext.Current.CancellationToken);
+    }
+
+    public static async Task<OrderProviderView> GetProviderOrderAsync(this HttpClient client, string accessToken, Guid orderId)
+    {
+        var response = await client.SendAsAsync(HttpMethod.Get, $"{ProviderRoute}/{orderId}", accessToken);
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"{(int)response.StatusCode} {await response.Content.ReadAsStringAsync()}");
+        return await response.Content.ReadApiAsync<OrderProviderView>();
     }
 
     public static QuoteTerms Terms(DateOnly date, int startHour = 14, int durationMinutes = 60) =>

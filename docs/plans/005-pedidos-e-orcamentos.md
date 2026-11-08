@@ -95,6 +95,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 5: API do prestador
 
+**Situação:** pronto. `ProviderOrdersController` com listas por aba, detalhe, orçamento (idempotente), recusa, ajuste de horário, cancelamento, conclusão e agenda; o Painel ganhou `newOrders`, `servicesThisMonth` (mês no fuso da cidade do prestador) e `latestNewOrders`. A regra da janela do contato virou `Order.IsContactVisible`, usada pelo agregado e pelas consultas (listas e agenda mostram o nome completo só dentro da janela). Toda resposta que traz o contato grava `order.contact_read`; por isso o detalhe do prestador é o comando `ViewProviderOrderCommand`, e as ações salvam de novo depois de montar a resposta. Ajuste grava `order.rescheduled` e cancelamento do prestador com menos de 2 h grava `order.late_cancellation` (`Order.WasCancelledLate`). As leituras do prestador ficaram em `ProviderOrderReader`, chamado pelo `IOrderSearchableRepository`. O item da agenda ganhou `quoteValidUntil` para o selo "Válido até" da prancheta (spec atualizada). 28 testes de integração (AC-1, AC-4, AC-5, AC-7, AC-12, AC-13, AC-17, AC-20, AC-24 a AC-29, AC-35, 401, 403 e 404 em todas as rotas).
+
 1. Listas por aba e detalhe com a regra da janela e a auditoria de leitura.
 2. Enviar e substituir orçamento (idempotente), recusar com motivo, ajustar horário, cancelar e concluir.
 3. Agenda por intervalo e números do Painel.

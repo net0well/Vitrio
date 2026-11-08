@@ -29,6 +29,8 @@ public static class DependencyInjection
         services.AddScoped<ITopRatedProvidersService, TopRatedProvidersService>();
         services.AddScoped<IOrderRequestService, OrderRequestService>();
         services.AddScoped<ICustomerOrderViewService, CustomerOrderViewService>();
+        services.AddScoped<IProviderOrderService, ProviderOrderService>();
+        services.AddScoped<IProviderOrderViewService, ProviderOrderViewService>();
         return services;
     }
 }

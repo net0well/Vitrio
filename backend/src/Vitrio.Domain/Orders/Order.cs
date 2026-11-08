@@ -336,14 +336,13 @@ public sealed class Order : AggregateRoot
             return OrderErrors.CancellationDetailsRequired;
         }
 
-        var withinTwoHours = by == OrderParty.Provider && Schedule is not null && Schedule.StartsAt - now < LateCancellationWindow;
         Status = OrderStatus.Cancelled;
         CancelledAt = now;
         CancelledBy = by;
         CancellationReason = reason;
         CancellationDetails = normalizedDetails.Length > 0 ? normalizedDetails : null;
         ClosedAt = now;
-        Raise(new OrderCancelled(Id, CustomerId, ProviderId, by, reason, withinTwoHours));
+        Raise(new OrderCancelled(Id, CustomerId, ProviderId, by, reason, WasCancelledLate));
         return Result.Success();
     }
 
@@ -398,12 +397,23 @@ public sealed class Order : AggregateRoot
         return false;
     }
 
+    public bool WasCancelledLate =>
+        CancelledBy == OrderParty.Provider && Schedule is not null && CancelledAt is { } at && Schedule.StartsAt - at < LateCancellationWindow;
+
     public bool IsContactVisibleToProvider(DateTimeOffset now) =>
-        AddressReleasedAt is not null
-        && Status != OrderStatus.Cancelled
-        && PersonalDataErasedAt is null
-        && Schedule is not null
-        && now < Schedule.EndsAt + ContactWindowAfterService;
+        IsContactVisible(AddressReleasedAt, Status, PersonalDataErasedAt, Schedule?.EndsAt, now);
+
+    public static bool IsContactVisible(
+        DateTimeOffset? addressReleasedAt,
+        OrderStatus status,
+        DateTimeOffset? personalDataErasedAt,
+        DateTimeOffset? scheduledEnd,
+        DateTimeOffset now) =>
+        addressReleasedAt is not null
+        && status != OrderStatus.Cancelled
+        && personalDataErasedAt is null
+        && scheduledEnd is { } end
+        && now < end + ContactWindowAfterService;
 
     public DateTimeOffset? ContactVisibleUntil =>
         AddressReleasedAt is not null && Schedule is not null ? Schedule.EndsAt + ContactWindowAfterService : null;

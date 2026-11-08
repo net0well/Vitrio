@@ -360,13 +360,14 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
                 row.Services.ToDictionary(service => service.Id, service => service.Title));
     }
 
-    public async Task<ProviderDashboardResponse?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken)
+    public async Task<ProviderDashboardProfile?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken)
     {
         var row = await db.Providers
             .AsNoTracking()
             .Where(provider => provider.UserId == userId && provider.Status != ProviderStatus.Removed)
             .Select(provider => new
             {
+                provider.Id,
                 provider.Status,
                 HasAbout = provider.About != null,
                 CategoryCount = provider.Categories.Count,
@@ -387,11 +388,13 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
         }
 
         var missing = PublishChecklist.Missing(row.HasAbout, row.CategoryCount, row.HasServiceArea, row.ServiceCount, row.HasContactPhone);
-        return new ProviderDashboardResponse(
+        return new ProviderDashboardProfile(
+            row.Id,
             row.Status,
             PublishChecklist.Completeness(missing, row.HasAvailability),
             PublishChecklist.NextStep(missing, row.Status, row.HasAvailability),
             row.MeiStatus,
-            AvailableTodayRule.IsOn(row.AvailableToday, row.AvailableTodaySetAt, now, row.TimeZone));
+            AvailableTodayRule.IsOn(row.AvailableToday, row.AvailableTodaySetAt, now, row.TimeZone),
+            row.TimeZone);
     }
 }
