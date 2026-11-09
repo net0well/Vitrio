@@ -1,4 +1,5 @@
 import 'cancellation_reason.dart';
+import 'city_time.dart';
 import 'order_party.dart';
 
 final class OrderCancellation {
@@ -8,7 +9,7 @@ final class OrderCancellation {
         by: OrderParty.fromJson(json['by']),
         reason: CancellationReason.fromJson(json['reason']),
         details: json['details'] as String?,
-        at: DateTime.parse(json['at'] as String),
+        at: parseCityTime(json['at'] as String),
       );
 
   final OrderParty by;

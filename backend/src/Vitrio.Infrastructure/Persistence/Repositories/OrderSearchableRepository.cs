@@ -104,6 +104,7 @@ internal sealed class OrderSearchableRepository(
                 ProviderName = db.Providers.Where(provider => provider.Id == order.ProviderId).Select(provider => provider.DisplayName).First(),
                 order.Status,
                 order.CreatedAt,
+                order.Place.TimeZoneId,
                 order.Schedule
             })
             .ToListAsync(cancellationToken);
@@ -116,7 +117,7 @@ internal sealed class OrderSearchableRepository(
                 row.CategoryId,
                 row.ProviderName,
                 row.Status,
-                row.CreatedAt,
+                CityInstant.In(row.CreatedAt, row.TimeZoneId),
                 row.Schedule is null ? null : ServiceTimeResponse.From(row.Schedule)))
             .ToList();
         return new OrderCustomerPage(items, rows.Count > take);

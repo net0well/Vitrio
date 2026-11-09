@@ -1394,11 +1394,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get requestQuoteChangeAddress => 'Alterar';
 
   @override
-  String get requestQuoteAddAddress => 'Adicionar endereço';
+  String get requestQuoteAddAddress => 'Adicionar';
 
   @override
-  String get requestQuoteNoAddress =>
-      'Cadastre o endereço onde o serviço vai ser feito.';
+  String get requestQuoteNoAddress => 'Nenhum endereço cadastrado.';
 
   @override
   String get requestQuoteAddressPrivacy =>
@@ -1727,4 +1726,8 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get responseTime1d => '~1 dia';
+
+  @override
+  String get requestQuoteAddressRequired =>
+      'Adicione o endereço onde o serviço vai ser feito.';
 }

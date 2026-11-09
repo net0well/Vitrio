@@ -705,8 +705,8 @@
   "requestQuotePeriodOver": "Esse período de hoje já acabou.",
   "requestQuoteWhere": "Onde?",
   "requestQuoteChangeAddress": "Alterar",
-  "requestQuoteAddAddress": "Adicionar endereço",
-  "requestQuoteNoAddress": "Cadastre o endereço onde o serviço vai ser feito.",
+  "requestQuoteAddAddress": "Adicionar",
+  "requestQuoteNoAddress": "Nenhum endereço cadastrado.",
   "requestQuoteAddressPrivacy": "O endereço completo só é enviado ao profissional depois que você aceitar o orçamento.",
   "requestQuotePhone": "Seu celular",
   "requestQuotePhoneHint": "O profissional usa para falar com você depois que você aceitar o orçamento.",
@@ -1014,5 +1014,6 @@
   "responseTime30min": "~30 min",
   "responseTime1h": "~1 h",
   "responseTime3h": "~3 h",
-  "responseTime1d": "~1 dia"
+  "responseTime1d": "~1 dia",
+  "requestQuoteAddressRequired": "Adicione o endereço onde o serviço vai ser feito."
 }

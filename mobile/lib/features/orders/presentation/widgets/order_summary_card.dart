@@ -11,6 +11,7 @@ import '../../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../../core/presentation/clock.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../provider/presentation/provider_queries.dart';
+import '../../domain/city_time.dart';
 import '../../domain/customer_order_summary.dart';
 import '../../domain/order_status.dart';
 import '../order_labels.dart';
@@ -27,7 +28,7 @@ class OrderSummaryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final c = context.vitrio;
-    final now = ref.watch(clockProvider)();
+    final now = cityNow(ref.watch(clockProvider)(), order.cityOffset);
     final category = ref.watch(serviceCategoriesProvider).value?.where((candidate) => candidate.id == order.categoryId).firstOrNull;
     final tones = [(c.plumSoft, c.plum), (c.amberSoft, c.amberInk), (c.greenSoft, c.green), (c.infoSoft, c.info)];
     final (boxColor, iconColor) = tones[order.categoryId % tones.length];

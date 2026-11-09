@@ -1,3 +1,4 @@
+import 'city_time.dart';
 import 'quote_type.dart';
 import 'service_time.dart';
 
@@ -21,8 +22,8 @@ final class OrderQuote {
         materialIncluded: json['materialIncluded'] == true,
         materialDetails: json['materialDetails'] as String?,
         message: json['message'] as String?,
-        sentAt: DateTime.parse(json['sentAt'] as String),
-        validUntil: DateTime.parse(json['validUntil'] as String),
+        sentAt: parseCityTime(json['sentAt'] as String),
+        validUntil: parseCityTime(json['validUntil'] as String),
         version: json['version'] as int,
       );
 

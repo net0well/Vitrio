@@ -14,7 +14,7 @@ final _time = DateFormat('HH:mm', 'pt_BR');
 
 String formatQuoteAmount(double amount) => _money.format(amount);
 
-String formatTime(DateTime instant) => _time.format(instant.toLocal());
+String formatTime(DateTime cityTime) => _time.format(cityTime);
 
 String weekdayShort(AppLocalizations l10n, DateTime day) => switch (day.weekday) {
       DateTime.monday => l10n.weekdayMonShort,
@@ -39,10 +39,8 @@ String relativeDay(AppLocalizations l10n, DateTime day, DateTime today) {
   };
 }
 
-String relativeMoment(AppLocalizations l10n, DateTime instant, DateTime now) {
-  final local = instant.toLocal();
-  return l10n.orderDayAndTime(relativeDay(l10n, local, now), _time.format(local));
-}
+String relativeMoment(AppLocalizations l10n, DateTime cityTime, DateTime cityNow) =>
+    l10n.orderDayAndTime(relativeDay(l10n, cityTime, cityNow), _time.format(cityTime));
 
 String capitalized(String text) => text.isEmpty ? text : '${text[0].toUpperCase()}${text.substring(1)}';
 

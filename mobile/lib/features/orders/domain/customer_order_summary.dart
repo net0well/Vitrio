@@ -1,3 +1,4 @@
+import 'city_time.dart';
 import 'order_status.dart';
 import 'service_time.dart';
 
@@ -9,6 +10,7 @@ final class CustomerOrderSummary {
     required this.providerName,
     required this.status,
     required this.createdAt,
+    this.cityOffset = Duration.zero,
     this.schedule,
   });
 
@@ -20,7 +22,8 @@ final class CustomerOrderSummary {
       categoryId: json['categoryId'] as int,
       providerName: json['providerName'] as String,
       status: OrderStatus.fromJson(json['status']),
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: parseCityTime(json['createdAt'] as String),
+      cityOffset: parseCityOffset(json['createdAt'] as String),
       schedule: schedule == null ? null : ServiceTime.fromJson(schedule),
     );
   }
@@ -31,5 +34,6 @@ final class CustomerOrderSummary {
   final String providerName;
   final OrderStatus status;
   final DateTime createdAt;
+  final Duration cityOffset;
   final ServiceTime? schedule;
 }

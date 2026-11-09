@@ -1,4 +1,5 @@
 import '../../../core/network/json_body.dart';
+import 'city_time.dart';
 import 'order_action.dart';
 import 'order_cancellation.dart';
 import 'order_decline.dart';
@@ -29,6 +30,7 @@ final class CustomerOrder {
     required this.photos,
     required this.photosRemoved,
     required this.allowedActions,
+    this.cityOffset = Duration.zero,
     this.quote,
     this.schedule,
     this.completedAt,
@@ -54,13 +56,14 @@ final class CustomerOrder {
       preferredPeriod: PreferredPeriod.fromJson(json['preferredPeriod']),
       neighborhood: json['neighborhood'] as String,
       cityName: json['cityName'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      respondBy: DateTime.parse(json['respondBy'] as String),
+      createdAt: parseCityTime(json['createdAt'] as String),
+      respondBy: parseCityTime(json['respondBy'] as String),
+      cityOffset: parseCityOffset(json['createdAt'] as String),
       provider: OrderProviderCard.fromJson(jsonObject(json['provider'])),
       quote: quote == null ? null : OrderQuote.fromJson(quote),
       schedule: schedule == null ? null : ServiceTime.fromJson(schedule),
       rescheduleCount: json['rescheduleCount'] as int? ?? 0,
-      completedAt: completedAt == null ? null : DateTime.parse(completedAt),
+      completedAt: completedAt == null ? null : parseCityTime(completedAt),
       completedBy: json['completedBy'] == null ? null : OrderParty.fromJson(json['completedBy']),
       decline: decline == null ? null : OrderDecline.fromJson(decline),
       cancellation: cancellation == null ? null : OrderCancellation.fromJson(cancellation),
@@ -93,6 +96,7 @@ final class CustomerOrder {
   final List<OrderPhoto> photos;
   final bool photosRemoved;
   final List<OrderAction> allowedActions;
+  final Duration cityOffset;
 
   bool allows(OrderAction action) => allowedActions.contains(action);
 }

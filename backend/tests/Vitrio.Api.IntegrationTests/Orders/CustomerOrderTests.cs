@@ -33,6 +33,19 @@ public sealed class CustomerOrderTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task CreateOrder_AnswersTheTimesInTheTimeZoneOfTheOrderCity()
+    {
+        var scenario = await factory.StartOrderScenarioAsync(_client);
+        var tomorrow = factory.Tomorrow();
+
+        var order = await _client.CreateOrderOkAsync(scenario, tomorrow);
+
+        var cityOffset = TimeSpan.FromHours(-3);
+        Assert.Equal((cityOffset, cityOffset), (order.CreatedAt.Offset, order.RespondBy.Offset));
+        Assert.Equal((18, 0), (order.RespondBy.Hour, order.RespondBy.Minute));
+    }
+
+    [Fact]
     public async Task CreateOrder_ForAServiceOfTheProvider_UsesTheServiceTitle()
     {
         var scenario = await factory.StartOrderScenarioAsync(_client);

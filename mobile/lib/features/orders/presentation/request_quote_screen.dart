@@ -219,7 +219,7 @@ class _RequestQuoteScreenState extends ConsumerState<RequestQuoteScreen> {
       if (title < _titleLength.min || title > _titleLength.max) 'title': l10n.requestQuoteSummaryInvalid,
       if (description < _descriptionLength.min || description > _descriptionLength.max) 'description': l10n.requestQuoteDescriptionInvalid,
       if (_period == null || _preferredDay == null || _isOver(_period!)) 'period': l10n.requestQuoteChoosePeriod,
-      if (address == null) 'address': l10n.requestQuoteNoAddress,
+      if (address == null) 'address': l10n.requestQuoteAddressRequired,
       if (_needsPhone && _phone.text.replaceAll(RegExp(r'\D'), '').length < _minPhoneDigits) 'phone': l10n.requestQuotePhoneInvalid,
     };
   }
@@ -445,6 +445,7 @@ class _RequestQuoteScreenState extends ConsumerState<RequestQuoteScreen> {
               autofillHints: const [AutofillHints.telephoneNumber],
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ()+-]'))],
               error: errors['phone'] ?? fieldError(_problem, 'phoneNumber'),
+              onChanged: (_) => setState(() {}),
             ),
           ],
         ],

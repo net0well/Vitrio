@@ -6,6 +6,6 @@ public sealed record OrderCancellationResponse(OrderParty By, CancellationReason
 {
     public static OrderCancellationResponse? For(Order order, OrderParty viewer) =>
         order is { CancelledBy: { } by, CancellationReason: { } reason, CancelledAt: { } at }
-            ? new OrderCancellationResponse(by, reason, by == viewer ? order.CancellationDetails : null, at)
+            ? new OrderCancellationResponse(by, reason, by == viewer ? order.CancellationDetails : null, CityInstant.In(at, order.Place.TimeZoneId))
             : null;
 }

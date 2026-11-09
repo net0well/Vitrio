@@ -35,6 +35,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../provider/presentation/provider_queries.dart';
 import '../../search/domain/provider_listing.dart';
 import '../../search/presentation/search_filters_controller.dart';
+import '../domain/city_time.dart';
 import '../domain/customer_order.dart';
 import '../domain/order_action.dart';
 import '../domain/order_party.dart';
@@ -120,7 +121,7 @@ class _OrderBodyState extends ConsumerState<_OrderBody> {
     final l10n = AppLocalizations.of(context);
     final c = context.vitrio;
     final order = widget.order;
-    final now = ref.watch(clockProvider)();
+    final now = cityNow(ref.watch(clockProvider)(), order.cityOffset);
     final quote = order.quote;
     final schedule = order.schedule;
     final declined = order.status.offersSuggestions;
@@ -203,7 +204,7 @@ class _OrderBodyState extends ConsumerState<_OrderBody> {
           const SizedBox(height: VitrioSpace.sp14),
           VitrioNotice(message: l10n.orderPaymentNote, tone: VitrioBadgeTone.brand, icon: VitrioIconName.info),
         ],
-        if (order.allows(OrderAction.cancel) && order.status != OrderStatus.scheduled) ...[
+        if (order.allows(OrderAction.cancel) && order.status == OrderStatus.sent) ...[
           const SizedBox(height: VitrioSpace.sp12),
           VitrioButton(label: l10n.cancelOrderConfirm, variant: VitrioButtonVariant.ghost, onPressed: _busy ? null : _cancel),
         ],
@@ -211,10 +212,7 @@ class _OrderBodyState extends ConsumerState<_OrderBody> {
     );
   }
 
-  String _moment(AppLocalizations l10n, DateTime instant) {
-    final local = instant.toLocal();
-    return l10n.orderDayAndTime(shortDate(l10n, local), formatTime(local));
-  }
+  String _moment(AppLocalizations l10n, DateTime cityTime) => l10n.orderDayAndTime(shortDate(l10n, cityTime), formatTime(cityTime));
 
   (String, String?, bool)? _closingTitle(AppLocalizations l10n, CustomerOrder order, DateTime now) {
     final cancellation = order.cancellation;

@@ -13,14 +13,14 @@ public sealed record OrderQuoteResponse(
     DateTimeOffset ValidUntil,
     int Version)
 {
-    public static OrderQuoteResponse From(Quote quote, DateTimeOffset validUntil) => new(
+    public static OrderQuoteResponse From(Quote quote, DateTimeOffset validUntil, string timeZoneId) => new(
         quote.Type,
         quote.Amount.Reais,
         ServiceTimeResponse.From(quote.Schedule),
         quote.MaterialIncluded,
         quote.MaterialDetails,
         quote.Message,
-        quote.SentAt,
-        validUntil,
+        CityInstant.In(quote.SentAt, timeZoneId),
+        CityInstant.In(validUntil, timeZoneId),
         quote.Version);
 }

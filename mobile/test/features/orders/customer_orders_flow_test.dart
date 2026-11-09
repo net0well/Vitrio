@@ -155,7 +155,7 @@ void main() {
   });
 
   testWidgets('periods of today that already ended cannot be chosen', (tester) async {
-    final harness = await signedIn(tester, now: DateTime(2026, 10, 28, 19));
+    final harness = await signedIn(tester, now: DateTime.utc(2026, 10, 28, 19));
     await open(harness, tester, '/request-quote/${samplePublicProviderWithServiceIds.id}');
 
     await tapText(tester, 'Hoje');

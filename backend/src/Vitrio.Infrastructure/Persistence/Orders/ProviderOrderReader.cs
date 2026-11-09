@@ -73,6 +73,7 @@ internal sealed class ProviderOrderReader(AppDbContext db, IPrivateMediaStorage 
                 order.CustomerDisplayName,
                 order.Contact!.FullName,
                 order.Place.Neighborhood,
+                order.Place.TimeZoneId,
                 order.Place.Latitude,
                 order.Place.Longitude,
                 order.PreferredDay,
@@ -113,6 +114,7 @@ internal sealed class ProviderOrderReader(AppDbContext db, IPrivateMediaStorage 
                 order.CustomerDisplayName,
                 order.Contact!.FullName,
                 order.Place.Neighborhood,
+                order.Place.TimeZoneId,
                 order.Schedule,
                 order.Quote!.Schedule,
                 order.QuoteValidUntil,
@@ -159,10 +161,10 @@ internal sealed class ProviderOrderReader(AppDbContext db, IPrivateMediaStorage 
         DistanceKm(origin, row.Latitude, row.Longitude),
         row.PreferredDay,
         row.PreferredPeriod,
-        row.CreatedAt,
-        row.RespondBy,
+        CityInstant.In(row.CreatedAt, row.TimeZoneId),
+        CityInstant.In(row.RespondBy, row.TimeZoneId),
         row.Schedule is null ? null : ServiceTimeResponse.From(row.Schedule),
-        row.QuoteValidUntil,
+        CityInstant.In(row.QuoteValidUntil, row.TimeZoneId),
         row.CancelledBy,
         row.PhotoCount);
 
@@ -184,7 +186,7 @@ internal sealed class ProviderOrderReader(AppDbContext db, IPrivateMediaStorage 
             row.Title,
             CustomerName(row.DisplayName, row.FullName, row.Status, row.AddressReleasedAt, row.PersonalDataErasedAt, row.Schedule, now),
             row.Neighborhood,
-            kind == AgendaItemKind.Quoted ? row.QuoteValidUntil : null);
+            kind == AgendaItemKind.Quoted ? CityInstant.In(row.QuoteValidUntil, row.TimeZoneId) : null);
     }
 
     private static string CustomerName(
@@ -223,6 +225,7 @@ internal sealed class ProviderOrderReader(AppDbContext db, IPrivateMediaStorage 
         string DisplayName,
         string? FullName,
         string Neighborhood,
+        string TimeZoneId,
         double Latitude,
         double Longitude,
         DateOnly PreferredDay,
@@ -243,6 +246,7 @@ internal sealed class ProviderOrderReader(AppDbContext db, IPrivateMediaStorage 
         string DisplayName,
         string? FullName,
         string Neighborhood,
+        string TimeZoneId,
         ServiceSchedule? Schedule,
         ServiceSchedule? QuoteSchedule,
         DateTimeOffset? QuoteValidUntil,

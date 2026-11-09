@@ -11,7 +11,7 @@ import 'package:vitrio/features/orders/domain/preferred_period.dart';
 import 'package:vitrio/features/orders/domain/quote_type.dart';
 import 'package:vitrio/features/orders/domain/service_time.dart';
 
-final sampleNow = DateTime(2026, 10, 28, 10);
+final sampleNow = DateTime.utc(2026, 10, 28, 10);
 
 const sampleOrderId = '0199a0c4-0000-7000-8000-0000000000a1';
 

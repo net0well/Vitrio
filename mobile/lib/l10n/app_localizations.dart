@@ -2605,13 +2605,13 @@ abstract class AppLocalizations {
   /// No description provided for @requestQuoteAddAddress.
   ///
   /// In pt, this message translates to:
-  /// **'Adicionar endereço'**
+  /// **'Adicionar'**
   String get requestQuoteAddAddress;
 
   /// No description provided for @requestQuoteNoAddress.
   ///
   /// In pt, this message translates to:
-  /// **'Cadastre o endereço onde o serviço vai ser feito.'**
+  /// **'Nenhum endereço cadastrado.'**
   String get requestQuoteNoAddress;
 
   /// No description provided for @requestQuoteAddressPrivacy.
@@ -3147,6 +3147,12 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'~1 dia'**
   String get responseTime1d;
+
+  /// No description provided for @requestQuoteAddressRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicione o endereço onde o serviço vai ser feito.'**
+  String get requestQuoteAddressRequired;
 }
 
 class _AppLocalizationsDelegate
