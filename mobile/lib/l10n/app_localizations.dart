@@ -2175,6 +2175,978 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Não conseguimos atualizar seus favoritos. Tente de novo.'**
   String get favoriteFailed;
+
+  /// No description provided for @commonBack.
+  ///
+  /// In pt, this message translates to:
+  /// **'Voltar'**
+  String get commonBack;
+
+  /// No description provided for @weekdaySunShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'dom'**
+  String get weekdaySunShort;
+
+  /// No description provided for @weekdayMonShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'seg'**
+  String get weekdayMonShort;
+
+  /// No description provided for @weekdayTueShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'ter'**
+  String get weekdayTueShort;
+
+  /// No description provided for @weekdayWedShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'qua'**
+  String get weekdayWedShort;
+
+  /// No description provided for @weekdayThuShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'qui'**
+  String get weekdayThuShort;
+
+  /// No description provided for @weekdayFriShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'sex'**
+  String get weekdayFriShort;
+
+  /// No description provided for @weekdaySatShort.
+  ///
+  /// In pt, this message translates to:
+  /// **'sáb'**
+  String get weekdaySatShort;
+
+  /// No description provided for @orderToday.
+  ///
+  /// In pt, this message translates to:
+  /// **'hoje'**
+  String get orderToday;
+
+  /// No description provided for @orderTomorrow.
+  ///
+  /// In pt, this message translates to:
+  /// **'amanhã'**
+  String get orderTomorrow;
+
+  /// No description provided for @orderYesterday.
+  ///
+  /// In pt, this message translates to:
+  /// **'ontem'**
+  String get orderYesterday;
+
+  /// No description provided for @orderDayAndTime.
+  ///
+  /// In pt, this message translates to:
+  /// **'{day}, {time}'**
+  String orderDayAndTime(String day, String time);
+
+  /// No description provided for @orderPeriodMorning.
+  ///
+  /// In pt, this message translates to:
+  /// **'Manhã'**
+  String get orderPeriodMorning;
+
+  /// No description provided for @orderPeriodAfternoon.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tarde'**
+  String get orderPeriodAfternoon;
+
+  /// No description provided for @orderPeriodEvening.
+  ///
+  /// In pt, this message translates to:
+  /// **'Noite'**
+  String get orderPeriodEvening;
+
+  /// No description provided for @orderPeriodMorningHours.
+  ///
+  /// In pt, this message translates to:
+  /// **'7h–12h'**
+  String get orderPeriodMorningHours;
+
+  /// No description provided for @orderPeriodAfternoonHours.
+  ///
+  /// In pt, this message translates to:
+  /// **'12h–18h'**
+  String get orderPeriodAfternoonHours;
+
+  /// No description provided for @orderPeriodEveningHours.
+  ///
+  /// In pt, this message translates to:
+  /// **'18h–22h'**
+  String get orderPeriodEveningHours;
+
+  /// No description provided for @orderPeriodMorningPhrase.
+  ///
+  /// In pt, this message translates to:
+  /// **'{day} de manhã'**
+  String orderPeriodMorningPhrase(String day);
+
+  /// No description provided for @orderPeriodAfternoonPhrase.
+  ///
+  /// In pt, this message translates to:
+  /// **'{day} à tarde'**
+  String orderPeriodAfternoonPhrase(String day);
+
+  /// No description provided for @orderPeriodEveningPhrase.
+  ///
+  /// In pt, this message translates to:
+  /// **'{day} à noite'**
+  String orderPeriodEveningPhrase(String day);
+
+  /// No description provided for @orderStatusSent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguardando orçamento'**
+  String get orderStatusSent;
+
+  /// No description provided for @orderStatusQuoted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orçamento recebido'**
+  String get orderStatusQuoted;
+
+  /// No description provided for @orderStatusScheduled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Agendado'**
+  String get orderStatusScheduled;
+
+  /// No description provided for @orderStatusDeclined.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recusado'**
+  String get orderStatusDeclined;
+
+  /// No description provided for @orderStatusExpired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem resposta'**
+  String get orderStatusExpired;
+
+  /// No description provided for @orderStatusQuoteDeclined.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orçamento recusado'**
+  String get orderStatusQuoteDeclined;
+
+  /// No description provided for @orderStatusQuoteExpired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orçamento vencido'**
+  String get orderStatusQuoteExpired;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelado'**
+  String get orderStatusCancelled;
+
+  /// No description provided for @orderStatusCompleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Concluído'**
+  String get orderStatusCompleted;
+
+  /// No description provided for @orderStatusPaymentConfirmed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pagamento confirmado'**
+  String get orderStatusPaymentConfirmed;
+
+  /// No description provided for @orderStatusPaymentDisputed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pagamento contestado'**
+  String get orderStatusPaymentDisputed;
+
+  /// No description provided for @orderStatusPaymentVoided.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pagamento anulado'**
+  String get orderStatusPaymentVoided;
+
+  /// No description provided for @orderDeclineNoAvailability.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem horário disponível'**
+  String get orderDeclineNoAvailability;
+
+  /// No description provided for @orderDeclineOutsideArea.
+  ///
+  /// In pt, this message translates to:
+  /// **'Fora da minha área'**
+  String get orderDeclineOutsideArea;
+
+  /// No description provided for @orderDeclineNotMyService.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não faço esse serviço'**
+  String get orderDeclineNotMyService;
+
+  /// No description provided for @orderReasonOther.
+  ///
+  /// In pt, this message translates to:
+  /// **'Outro'**
+  String get orderReasonOther;
+
+  /// No description provided for @orderCancelResolvedAnotherWay.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resolvi de outro jeito'**
+  String get orderCancelResolvedAnotherWay;
+
+  /// No description provided for @orderCancelTimeNoLongerWorks.
+  ///
+  /// In pt, this message translates to:
+  /// **'O horário não serve mais'**
+  String get orderCancelTimeNoLongerWorks;
+
+  /// No description provided for @orderCancelNewTimeDoesNotWork.
+  ///
+  /// In pt, this message translates to:
+  /// **'O novo horário não serve'**
+  String get orderCancelNewTimeDoesNotWork;
+
+  /// No description provided for @orderCancelFoundAnotherProfessional.
+  ///
+  /// In pt, this message translates to:
+  /// **'Achei outro profissional'**
+  String get orderCancelFoundAnotherProfessional;
+
+  /// No description provided for @orderCancelUnforeseen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Imprevisto'**
+  String get orderCancelUnforeseen;
+
+  /// No description provided for @orderCancelCannotMakeIt.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não consigo chegar no horário'**
+  String get orderCancelCannotMakeIt;
+
+  /// No description provided for @orderCancelCustomerAskedToCancel.
+  ///
+  /// In pt, this message translates to:
+  /// **'O cliente pediu para cancelar'**
+  String get orderCancelCustomerAskedToCancel;
+
+  /// No description provided for @orderCancelAccountDeleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta excluída'**
+  String get orderCancelAccountDeleted;
+
+  /// No description provided for @orderCancelAccountSuspended.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conta suspensa'**
+  String get orderCancelAccountSuspended;
+
+  /// No description provided for @requestQuoteTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedir orçamento'**
+  String get requestQuoteTitle;
+
+  /// No description provided for @requestQuoteService.
+  ///
+  /// In pt, this message translates to:
+  /// **'Qual serviço?'**
+  String get requestQuoteService;
+
+  /// No description provided for @requestQuoteChooseService.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha o serviço.'**
+  String get requestQuoteChooseService;
+
+  /// No description provided for @requestQuoteSummary.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resuma o que precisa'**
+  String get requestQuoteSummary;
+
+  /// No description provided for @requestQuoteSummaryPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ex.: Chuveiro desarmando o disjuntor'**
+  String get requestQuoteSummaryPlaceholder;
+
+  /// No description provided for @requestQuoteSummaryInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resuma em 5 a 80 caracteres.'**
+  String get requestQuoteSummaryInvalid;
+
+  /// No description provided for @requestQuoteDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Descreva o que precisa'**
+  String get requestQuoteDescription;
+
+  /// No description provided for @requestQuoteDescriptionPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ex.: a tomada da cozinha parou de funcionar depois de uma queda de energia.'**
+  String get requestQuoteDescriptionPlaceholder;
+
+  /// No description provided for @requestQuoteDescriptionHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quanto mais detalhes, mais preciso o orçamento.'**
+  String get requestQuoteDescriptionHint;
+
+  /// No description provided for @requestQuoteDescriptionInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'Descreva em 20 a 500 caracteres.'**
+  String get requestQuoteDescriptionInvalid;
+
+  /// No description provided for @requestQuotePhotos.
+  ///
+  /// In pt, this message translates to:
+  /// **'Fotos'**
+  String get requestQuotePhotos;
+
+  /// No description provided for @requestQuoteOptional.
+  ///
+  /// In pt, this message translates to:
+  /// **'(opcional)'**
+  String get requestQuoteOptional;
+
+  /// No description provided for @requestQuoteAddPhoto.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar'**
+  String get requestQuoteAddPhoto;
+
+  /// No description provided for @requestQuoteRemovePhoto.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover foto'**
+  String get requestQuoteRemovePhoto;
+
+  /// No description provided for @requestQuotePhotoFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos enviar a foto. Tente de novo.'**
+  String get requestQuotePhotoFailed;
+
+  /// No description provided for @requestQuoteWhen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quando você precisa?'**
+  String get requestQuoteWhen;
+
+  /// No description provided for @requestQuoteDay.
+  ///
+  /// In pt, this message translates to:
+  /// **'Dia'**
+  String get requestQuoteDay;
+
+  /// No description provided for @requestQuoteToday.
+  ///
+  /// In pt, this message translates to:
+  /// **'Hoje'**
+  String get requestQuoteToday;
+
+  /// No description provided for @requestQuoteTomorrow.
+  ///
+  /// In pt, this message translates to:
+  /// **'Amanhã'**
+  String get requestQuoteTomorrow;
+
+  /// No description provided for @requestQuotePickDate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolher data'**
+  String get requestQuotePickDate;
+
+  /// No description provided for @requestQuotePeriod.
+  ///
+  /// In pt, this message translates to:
+  /// **'Período'**
+  String get requestQuotePeriod;
+
+  /// No description provided for @requestQuoteChoosePeriod.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha o período.'**
+  String get requestQuoteChoosePeriod;
+
+  /// No description provided for @requestQuotePeriodOver.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esse período de hoje já acabou.'**
+  String get requestQuotePeriodOver;
+
+  /// No description provided for @requestQuoteWhere.
+  ///
+  /// In pt, this message translates to:
+  /// **'Onde?'**
+  String get requestQuoteWhere;
+
+  /// No description provided for @requestQuoteChangeAddress.
+  ///
+  /// In pt, this message translates to:
+  /// **'Alterar'**
+  String get requestQuoteChangeAddress;
+
+  /// No description provided for @requestQuoteAddAddress.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar endereço'**
+  String get requestQuoteAddAddress;
+
+  /// No description provided for @requestQuoteNoAddress.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cadastre o endereço onde o serviço vai ser feito.'**
+  String get requestQuoteNoAddress;
+
+  /// No description provided for @requestQuoteAddressPrivacy.
+  ///
+  /// In pt, this message translates to:
+  /// **'O endereço completo só é enviado ao profissional depois que você aceitar o orçamento.'**
+  String get requestQuoteAddressPrivacy;
+
+  /// No description provided for @requestQuotePhone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu celular'**
+  String get requestQuotePhone;
+
+  /// No description provided for @requestQuotePhoneHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'O profissional usa para falar com você depois que você aceitar o orçamento.'**
+  String get requestQuotePhoneHint;
+
+  /// No description provided for @requestQuotePhoneInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe o celular com DDD.'**
+  String get requestQuotePhoneInvalid;
+
+  /// No description provided for @requestQuoteSend.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviar pedido'**
+  String get requestQuoteSend;
+
+  /// No description provided for @requestQuoteFree.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedir orçamento é grátis e sem compromisso.'**
+  String get requestQuoteFree;
+
+  /// No description provided for @addressSheetTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Onde vai ser o serviço?'**
+  String get addressSheetTitle;
+
+  /// No description provided for @addressNew.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novo endereço'**
+  String get addressNew;
+
+  /// No description provided for @addressCep.
+  ///
+  /// In pt, this message translates to:
+  /// **'CEP'**
+  String get addressCep;
+
+  /// No description provided for @addressNumber.
+  ///
+  /// In pt, this message translates to:
+  /// **'Número'**
+  String get addressNumber;
+
+  /// No description provided for @addressComplement.
+  ///
+  /// In pt, this message translates to:
+  /// **'Complemento (opcional)'**
+  String get addressComplement;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nome do endereço'**
+  String get addressLabel;
+
+  /// No description provided for @addressLabelPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ex.: Casa, Trabalho'**
+  String get addressLabelPlaceholder;
+
+  /// No description provided for @addressLabelDefault.
+  ///
+  /// In pt, this message translates to:
+  /// **'Casa'**
+  String get addressLabelDefault;
+
+  /// No description provided for @addressSave.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar endereço'**
+  String get addressSave;
+
+  /// No description provided for @addressSummary.
+  ///
+  /// In pt, this message translates to:
+  /// **'{label} · {neighborhood}'**
+  String addressSummary(String label, String neighborhood);
+
+  /// No description provided for @addressCity.
+  ///
+  /// In pt, this message translates to:
+  /// **'{city}, {state}'**
+  String addressCity(String city, String state);
+
+  /// No description provided for @orderScreenTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu pedido'**
+  String get orderScreenTitle;
+
+  /// No description provided for @orderSentLine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviado {when} · {neighborhood} · {preference}'**
+  String orderSentLine(String when, String neighborhood, String preference);
+
+  /// No description provided for @orderChatWith.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conversar com {name} pelo WhatsApp'**
+  String orderChatWith(String name);
+
+  /// No description provided for @orderProgress.
+  ///
+  /// In pt, this message translates to:
+  /// **'Andamento'**
+  String get orderProgress;
+
+  /// No description provided for @orderStepSent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido enviado'**
+  String get orderStepSent;
+
+  /// No description provided for @orderStepQuoted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orçamento recebido'**
+  String get orderStepQuoted;
+
+  /// No description provided for @orderStepScheduled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Serviço agendado'**
+  String get orderStepScheduled;
+
+  /// No description provided for @orderStepCompleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Serviço concluído'**
+  String get orderStepCompleted;
+
+  /// No description provided for @orderStepWaitingQuote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Responde até {time}'**
+  String orderStepWaitingQuote(String time);
+
+  /// No description provided for @orderStepWaitingYou.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguardando sua resposta'**
+  String get orderStepWaitingYou;
+
+  /// No description provided for @orderStepConfirmWhenDone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Confirme quando terminar'**
+  String get orderStepConfirmWhenDone;
+
+  /// No description provided for @orderStepDone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Concluída'**
+  String get orderStepDone;
+
+  /// No description provided for @orderStepCurrent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Etapa atual'**
+  String get orderStepCurrent;
+
+  /// No description provided for @orderStepPending.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pendente'**
+  String get orderStepPending;
+
+  /// No description provided for @orderQuoteFrom.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orçamento de {name}'**
+  String orderQuoteFrom(String name);
+
+  /// No description provided for @orderQuoteValidUntil.
+  ///
+  /// In pt, this message translates to:
+  /// **'Válido até {when}'**
+  String orderQuoteValidUntil(String when);
+
+  /// No description provided for @orderQuoteVisit.
+  ///
+  /// In pt, this message translates to:
+  /// **'Visita {when}'**
+  String orderQuoteVisit(String when);
+
+  /// No description provided for @orderQuoteTechnicalVisit.
+  ///
+  /// In pt, this message translates to:
+  /// **'Valor da visita técnica'**
+  String get orderQuoteTechnicalVisit;
+
+  /// No description provided for @orderQuoteMaterialIncluded.
+  ///
+  /// In pt, this message translates to:
+  /// **'Material incluso'**
+  String get orderQuoteMaterialIncluded;
+
+  /// No description provided for @orderQuoteMaterialIncludedWhat.
+  ///
+  /// In pt, this message translates to:
+  /// **'Material incluso ({what})'**
+  String orderQuoteMaterialIncludedWhat(String what);
+
+  /// No description provided for @orderQuoteMaterialNotIncluded.
+  ///
+  /// In pt, this message translates to:
+  /// **'Material por sua conta'**
+  String get orderQuoteMaterialNotIncluded;
+
+  /// No description provided for @orderQuoteAccept.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aceitar orçamento'**
+  String get orderQuoteAccept;
+
+  /// No description provided for @orderQuoteDecline.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recusar'**
+  String get orderQuoteDecline;
+
+  /// No description provided for @orderQuoteAddressNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ao aceitar, {name} recebe seu endereço completo.'**
+  String orderQuoteAddressNote(String name);
+
+  /// No description provided for @orderScheduledTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Serviço agendado'**
+  String get orderScheduledTitle;
+
+  /// No description provided for @orderScheduledWhen.
+  ///
+  /// In pt, this message translates to:
+  /// **'{day}\n{range}'**
+  String orderScheduledWhen(String day, String range);
+
+  /// No description provided for @orderScheduledBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} já recebeu seu endereço completo. Valor combinado: {amount}.'**
+  String orderScheduledBody(String name, String amount);
+
+  /// No description provided for @orderScheduledCancel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar'**
+  String get orderScheduledCancel;
+
+  /// No description provided for @orderComplete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Serviço concluído'**
+  String get orderComplete;
+
+  /// No description provided for @orderCompleteFrom.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você poderá marcar como concluído a partir das {time}.'**
+  String orderCompleteFrom(String time);
+
+  /// No description provided for @orderRescheduled.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} mudou o horário para {when}.'**
+  String orderRescheduled(String name, String when);
+
+  /// No description provided for @orderPaymentNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'O pagamento é combinado direto com o profissional. O Vitrio não cobra taxa de você.'**
+  String get orderPaymentNote;
+
+  /// No description provided for @orderDeclinedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} não pode atender agora'**
+  String orderDeclinedTitle(String name);
+
+  /// No description provided for @orderExpiredTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} não respondeu a tempo'**
+  String orderExpiredTitle(String name);
+
+  /// No description provided for @orderDeclinedReason.
+  ///
+  /// In pt, this message translates to:
+  /// **'Motivo: {reason}.'**
+  String orderDeclinedReason(String reason);
+
+  /// No description provided for @orderKeptForOthers.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu pedido continua guardado. Peça para outro profissional com um toque.'**
+  String get orderKeptForOthers;
+
+  /// No description provided for @orderSuggestionsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Outros {professionals} perto de você'**
+  String orderSuggestionsTitle(String professionals);
+
+  /// No description provided for @orderSuggestionsFallback.
+  ///
+  /// In pt, this message translates to:
+  /// **'profissionais'**
+  String get orderSuggestionsFallback;
+
+  /// No description provided for @orderSuggestionsMore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver mais {professionals}'**
+  String orderSuggestionsMore(String professionals);
+
+  /// No description provided for @orderRequestThis.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedir para este'**
+  String get orderRequestThis;
+
+  /// No description provided for @orderCancelledTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido cancelado'**
+  String get orderCancelledTitle;
+
+  /// No description provided for @orderCancelledByYou.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você cancelou. Motivo: {reason}.'**
+  String orderCancelledByYou(String reason);
+
+  /// No description provided for @orderCancelledByProvider.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} cancelou. Motivo: {reason}.'**
+  String orderCancelledByProvider(String name, String reason);
+
+  /// No description provided for @orderCancelledBySystem.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelado pelo Vitrio. Motivo: {reason}.'**
+  String orderCancelledBySystem(String reason);
+
+  /// No description provided for @orderCompletedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Serviço concluído'**
+  String get orderCompletedTitle;
+
+  /// No description provided for @orderCompletedOn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Concluído em {when}.'**
+  String orderCompletedOn(String when);
+
+  /// No description provided for @orderQuoteDeclinedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você recusou o orçamento'**
+  String get orderQuoteDeclinedTitle;
+
+  /// No description provided for @orderQuoteExpiredTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'O orçamento venceu sem resposta'**
+  String get orderQuoteExpiredTitle;
+
+  /// No description provided for @orderPhotosRemoved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Fotos removidas'**
+  String get orderPhotosRemoved;
+
+  /// No description provided for @orderLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos carregar o pedido. Verifique a conexão e tente de novo.'**
+  String get orderLoadError;
+
+  /// No description provided for @orderQuoteChanged.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} mudou o orçamento. Confira o novo valor antes de aceitar.'**
+  String orderQuoteChanged(String name);
+
+  /// No description provided for @cancelOrderTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar o pedido?'**
+  String get cancelOrderTitle;
+
+  /// No description provided for @cancelOrderSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} vê o motivo que você escolher, nunca o que você escrever.'**
+  String cancelOrderSubtitle(String name);
+
+  /// No description provided for @cancelOrderReasons.
+  ///
+  /// In pt, this message translates to:
+  /// **'Motivo'**
+  String get cancelOrderReasons;
+
+  /// No description provided for @cancelOrderDetailsOptional.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quer contar mais? (opcional)'**
+  String get cancelOrderDetailsOptional;
+
+  /// No description provided for @cancelOrderDetailsRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conte o motivo'**
+  String get cancelOrderDetailsRequired;
+
+  /// No description provided for @cancelOrderDetailsPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conte o que aconteceu.'**
+  String get cancelOrderDetailsPlaceholder;
+
+  /// No description provided for @cancelOrderChooseReason.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha um motivo.'**
+  String get cancelOrderChooseReason;
+
+  /// No description provided for @cancelOrderConfirm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar pedido'**
+  String get cancelOrderConfirm;
+
+  /// No description provided for @ordersOpenTab.
+  ///
+  /// In pt, this message translates to:
+  /// **'Em andamento'**
+  String get ordersOpenTab;
+
+  /// No description provided for @ordersClosedTab.
+  ///
+  /// In pt, this message translates to:
+  /// **'Finalizados'**
+  String get ordersClosedTab;
+
+  /// No description provided for @ordersClosedEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum pedido finalizado ainda.'**
+  String get ordersClosedEmpty;
+
+  /// No description provided for @ordersSignedOut.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre para pedir orçamentos e acompanhar seus pedidos.'**
+  String get ordersSignedOut;
+
+  /// No description provided for @ordersLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos carregar seus pedidos. Verifique a conexão e tente de novo.'**
+  String get ordersLoadError;
+
+  /// No description provided for @ordersSentMeta.
+  ///
+  /// In pt, this message translates to:
+  /// **'{provider} · enviado {when}'**
+  String ordersSentMeta(String provider, String when);
+
+  /// No description provided for @ordersScheduledMeta.
+  ///
+  /// In pt, this message translates to:
+  /// **'{provider} · {when}'**
+  String ordersScheduledMeta(String provider, String when);
+
+  /// No description provided for @homeLastOrder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu último pedido'**
+  String get homeLastOrder;
+
+  /// No description provided for @responseTime15min.
+  ///
+  /// In pt, this message translates to:
+  /// **'~15 min'**
+  String get responseTime15min;
+
+  /// No description provided for @responseTime30min.
+  ///
+  /// In pt, this message translates to:
+  /// **'~30 min'**
+  String get responseTime30min;
+
+  /// No description provided for @responseTime1h.
+  ///
+  /// In pt, this message translates to:
+  /// **'~1 h'**
+  String get responseTime1h;
+
+  /// No description provided for @responseTime3h.
+  ///
+  /// In pt, this message translates to:
+  /// **'~3 h'**
+  String get responseTime3h;
+
+  /// No description provided for @responseTime1d.
+  ///
+  /// In pt, this message translates to:
+  /// **'~1 dia'**
+  String get responseTime1d;
 }
 
 class _AppLocalizationsDelegate

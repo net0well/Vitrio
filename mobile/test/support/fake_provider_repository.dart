@@ -22,7 +22,7 @@ const jaboticabalCity = CitySummary(ibgeCode: 3524303, name: 'Jaboticabal', stat
 
 final class FakeProviderRepository implements ProviderRepository {
   static const _categories = [
-    ServiceCategory(id: 1, slug: 'eletrica', name: 'Elétrica', icon: 'bolt'),
+    ServiceCategory(id: 1, slug: 'eletrica', name: 'Elétrica', icon: 'bolt', professionalPlural: 'Eletricistas'),
     ServiceCategory(id: 2, slug: 'hidraulica', name: 'Hidráulica', icon: 'droplet'),
   ];
 

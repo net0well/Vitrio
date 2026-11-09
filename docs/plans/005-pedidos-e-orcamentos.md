@@ -124,6 +124,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 9: app do cliente
 
+**Situação:** pronto. Pedir orçamento (aberto pelo "Pedir orçamento" do perfil, ao lado do WhatsApp, e por "Pedir para este" com o pedido anterior e as cópias das fotos), Seu pedido (linha do tempo, card do orçamento com a versão no aceite, serviço agendado com "Cancelar" e "Serviço concluído" liberado a partir do início, horário ajustado, recusado ou sem resposta com até 3 sugestões e "Ver mais" na Busca filtrada pela categoria, e os encerramentos), a folha de cancelamento, Pedidos (Em andamento e Finalizados, com convite para entrar sem conta) e o card "Seu último pedido" da Início. O app não tinha endereços nem pedia celular: a folha de endereço (escolher um salvo ou cadastrar CEP, número, complemento e nome) e o campo de celular em Pedir orçamento, que salva na conta antes do envio, seguem os componentes do design system, porque esses estados não têm prancheta. Diferença de componente: a nota "Pedir orçamento é grátis e sem compromisso." fica acima do botão, como no `ActionBar` do design system, e não abaixo, como na prancheta. O `VitrioQuoteCard` passou a quebrar o selo de validade para a linha de baixo quando não cabe, e o `VitrioBadge` corta o texto com reticências em vez de estourar. 10 testes de widget das telas.
+
 1. Pedir orçamento (com o título, o celular antes do primeiro pedido e o preenchimento por "Pedir para este").
 2. Acompanhar pedido em todos os status, pedido recusado com sugestões e a folha de cancelamento.
 3. Pedidos (Em andamento e Finalizados) e o card "Seu último pedido" da Início.

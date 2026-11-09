@@ -45,7 +45,7 @@ class VitrioBadge extends StatelessWidget {
             IconTheme(data: IconThemeData(size: 14, color: foreground), child: icon!),
             const SizedBox(width: VitrioSpace.sp6),
           ],
-          Text(label, style: VitrioText.caption.copyWith(color: foreground)),
+          Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: VitrioText.caption.copyWith(color: foreground))),
         ],
       ),
     );

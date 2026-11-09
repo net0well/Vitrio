@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_colors.dart';
 import '../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
@@ -58,22 +59,26 @@ class PublicProviderScreen extends ConsumerWidget {
               ),
             ],
           ),
-          bottomNavigationBar: value.whatsAppPhone == null
-              ? null
-              : VitrioActionBar(
-                  children: [
-                    VitrioButton(
-                      label: l10n.providerWhatsAppAction,
-                      variant: VitrioButtonVariant.secondary,
-                      leadingIcon: VitrioIconName.message,
-                      leadingIconColor: context.vitrio.green,
-                      onPressed: () => launchUrl(
-                        Uri.parse('https://wa.me/${value.whatsAppPhone!.replaceAll(RegExp(r'\D'), '')}'),
-                        mode: LaunchMode.externalApplication,
-                      ),
-                    ),
-                  ],
+          bottomNavigationBar: VitrioActionBar(
+            children: [
+              if (value.whatsAppPhone != null)
+                VitrioButton(
+                  label: l10n.providerWhatsAppAction,
+                  variant: VitrioButtonVariant.secondary,
+                  leadingIcon: VitrioIconName.message,
+                  leadingIconColor: context.vitrio.green,
+                  onPressed: () => launchUrl(
+                    Uri.parse('https://wa.me/${value.whatsAppPhone!.replaceAll(RegExp(r'\D'), '')}'),
+                    mode: LaunchMode.externalApplication,
+                  ),
                 ),
+              VitrioButton(
+                label: l10n.requestQuoteTitle,
+                trailingIcon: VitrioIconName.arrowRight,
+                onPressed: () => RequestQuoteRoute(providerId: value.id).push<void>(context),
+              ),
+            ],
+          ),
         ),
       );
     }

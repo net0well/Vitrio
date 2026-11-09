@@ -41,6 +41,8 @@ GoRouter router(Ref ref) {
   };
 
   const providerPrefix = '/provider-';
+  const requestQuotePrefix = '/request-quote/';
+  const orderPrefix = '/orders/';
   final startsAsProvider = ref.read(appModeStoreProvider).mode == AppMode.provider && hasShowcase();
 
   final router = GoRouter(
@@ -61,7 +63,11 @@ GoRouter router(Ref ref) {
         return locationPermissionLocation;
       }
 
-      if (!signedIn.value && (protectedLocations.contains(location) || location.startsWith(providerPrefix))) {
+      final protectedLocation = protectedLocations.contains(location) ||
+          location.startsWith(providerPrefix) ||
+          location.startsWith(requestQuotePrefix) ||
+          location.startsWith(orderPrefix);
+      if (!signedIn.value && protectedLocation) {
         return signInLocation;
       }
 

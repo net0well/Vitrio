@@ -21,6 +21,7 @@ List<RouteBase> get $appRoutes => [
   $providerOnboardingRoute,
   $providerShellRoute,
   $publicProviderRoute,
+  $requestQuoteRoute,
   $shareLinkRoute,
   $signInRoute,
   $signUpRoute,
@@ -190,6 +191,13 @@ RouteBase get $clientShellRoute => StatefulShellRouteData.$route(
           path: '/orders',
           hasOverriddenOnExit: false,
           factory: $OrdersRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: ':id',
+              hasOverriddenOnExit: false,
+              factory: $OrderRoute._fromState,
+            ),
+          ],
         ),
       ],
     ),
@@ -255,6 +263,30 @@ mixin $OrdersRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/orders');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $OrderRoute on GoRouteData {
+  static OrderRoute _fromState(GoRouterState state) =>
+      OrderRoute(id: state.pathParameters['id']!);
+
+  OrderRoute get _self => this as OrderRoute;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/orders/${Uri.encodeComponent(_self.id)}');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -621,6 +653,40 @@ mixin $PublicProviderRoute on GoRouteData {
   @override
   String get location =>
       GoRouteData.$location('/providers/${Uri.encodeComponent(_self.id)}');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $requestQuoteRoute => GoRouteData.$route(
+  path: '/request-quote/:providerId',
+  hasOverriddenOnExit: false,
+  factory: $RequestQuoteRoute._fromState,
+);
+
+mixin $RequestQuoteRoute on GoRouteData {
+  static RequestQuoteRoute _fromState(GoRouterState state) => RequestQuoteRoute(
+    providerId: state.pathParameters['providerId']!,
+    from: state.uri.queryParameters['from'],
+  );
+
+  RequestQuoteRoute get _self => this as RequestQuoteRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/request-quote/${Uri.encodeComponent(_self.providerId)}',
+    queryParams: {if (_self.from != null) 'from': _self.from},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

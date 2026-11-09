@@ -55,13 +55,14 @@ class VitrioQuoteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: VitrioSpace.sp10,
+            runSpacing: VitrioSpace.sp8,
             children: [
-              Expanded(child: Text(title, style: VitrioText.bodyStrong.copyWith(color: c.ink))),
-              if (validity != null) ...[
-                const SizedBox(width: VitrioSpace.sp10),
-                Flexible(child: VitrioBadge(label: validity!, tone: VitrioBadgeTone.warning)),
-              ],
+              Text(title, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
+              if (validity != null) VitrioBadge(label: validity!, tone: VitrioBadgeTone.warning),
             ],
           ),
           const SizedBox(height: VitrioSpace.sp8),

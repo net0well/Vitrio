@@ -1,9 +1,10 @@
 import 'price_unit.dart';
 
 final class ProviderService {
-  const ProviderService({required this.title, this.description, this.priceFrom, this.unit = PriceUnit.perService, this.onQuote = false});
+  const ProviderService({required this.title, this.id, this.description, this.priceFrom, this.unit = PriceUnit.perService, this.onQuote = false});
 
   factory ProviderService.fromJson(Map<String, Object?> json) => ProviderService(
+        id: json['id'] as String?,
         title: json['title'] as String,
         description: json['description'] as String?,
         priceFrom: (json['priceFrom'] as num?)?.toDouble(),
@@ -11,6 +12,7 @@ final class ProviderService {
         onQuote: json['onQuote'] == true,
       );
 
+  final String? id;
   final String title;
   final String? description;
   final double? priceFrom;

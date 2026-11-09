@@ -1165,4 +1165,566 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get favoriteFailed =>
       'Não conseguimos atualizar seus favoritos. Tente de novo.';
+
+  @override
+  String get commonBack => 'Voltar';
+
+  @override
+  String get weekdaySunShort => 'dom';
+
+  @override
+  String get weekdayMonShort => 'seg';
+
+  @override
+  String get weekdayTueShort => 'ter';
+
+  @override
+  String get weekdayWedShort => 'qua';
+
+  @override
+  String get weekdayThuShort => 'qui';
+
+  @override
+  String get weekdayFriShort => 'sex';
+
+  @override
+  String get weekdaySatShort => 'sáb';
+
+  @override
+  String get orderToday => 'hoje';
+
+  @override
+  String get orderTomorrow => 'amanhã';
+
+  @override
+  String get orderYesterday => 'ontem';
+
+  @override
+  String orderDayAndTime(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String get orderPeriodMorning => 'Manhã';
+
+  @override
+  String get orderPeriodAfternoon => 'Tarde';
+
+  @override
+  String get orderPeriodEvening => 'Noite';
+
+  @override
+  String get orderPeriodMorningHours => '7h–12h';
+
+  @override
+  String get orderPeriodAfternoonHours => '12h–18h';
+
+  @override
+  String get orderPeriodEveningHours => '18h–22h';
+
+  @override
+  String orderPeriodMorningPhrase(String day) {
+    return '$day de manhã';
+  }
+
+  @override
+  String orderPeriodAfternoonPhrase(String day) {
+    return '$day à tarde';
+  }
+
+  @override
+  String orderPeriodEveningPhrase(String day) {
+    return '$day à noite';
+  }
+
+  @override
+  String get orderStatusSent => 'Aguardando orçamento';
+
+  @override
+  String get orderStatusQuoted => 'Orçamento recebido';
+
+  @override
+  String get orderStatusScheduled => 'Agendado';
+
+  @override
+  String get orderStatusDeclined => 'Recusado';
+
+  @override
+  String get orderStatusExpired => 'Sem resposta';
+
+  @override
+  String get orderStatusQuoteDeclined => 'Orçamento recusado';
+
+  @override
+  String get orderStatusQuoteExpired => 'Orçamento vencido';
+
+  @override
+  String get orderStatusCancelled => 'Cancelado';
+
+  @override
+  String get orderStatusCompleted => 'Concluído';
+
+  @override
+  String get orderStatusPaymentConfirmed => 'Pagamento confirmado';
+
+  @override
+  String get orderStatusPaymentDisputed => 'Pagamento contestado';
+
+  @override
+  String get orderStatusPaymentVoided => 'Pagamento anulado';
+
+  @override
+  String get orderDeclineNoAvailability => 'Sem horário disponível';
+
+  @override
+  String get orderDeclineOutsideArea => 'Fora da minha área';
+
+  @override
+  String get orderDeclineNotMyService => 'Não faço esse serviço';
+
+  @override
+  String get orderReasonOther => 'Outro';
+
+  @override
+  String get orderCancelResolvedAnotherWay => 'Resolvi de outro jeito';
+
+  @override
+  String get orderCancelTimeNoLongerWorks => 'O horário não serve mais';
+
+  @override
+  String get orderCancelNewTimeDoesNotWork => 'O novo horário não serve';
+
+  @override
+  String get orderCancelFoundAnotherProfessional => 'Achei outro profissional';
+
+  @override
+  String get orderCancelUnforeseen => 'Imprevisto';
+
+  @override
+  String get orderCancelCannotMakeIt => 'Não consigo chegar no horário';
+
+  @override
+  String get orderCancelCustomerAskedToCancel =>
+      'O cliente pediu para cancelar';
+
+  @override
+  String get orderCancelAccountDeleted => 'Conta excluída';
+
+  @override
+  String get orderCancelAccountSuspended => 'Conta suspensa';
+
+  @override
+  String get requestQuoteTitle => 'Pedir orçamento';
+
+  @override
+  String get requestQuoteService => 'Qual serviço?';
+
+  @override
+  String get requestQuoteChooseService => 'Escolha o serviço.';
+
+  @override
+  String get requestQuoteSummary => 'Resuma o que precisa';
+
+  @override
+  String get requestQuoteSummaryPlaceholder =>
+      'Ex.: Chuveiro desarmando o disjuntor';
+
+  @override
+  String get requestQuoteSummaryInvalid => 'Resuma em 5 a 80 caracteres.';
+
+  @override
+  String get requestQuoteDescription => 'Descreva o que precisa';
+
+  @override
+  String get requestQuoteDescriptionPlaceholder =>
+      'Ex.: a tomada da cozinha parou de funcionar depois de uma queda de energia.';
+
+  @override
+  String get requestQuoteDescriptionHint =>
+      'Quanto mais detalhes, mais preciso o orçamento.';
+
+  @override
+  String get requestQuoteDescriptionInvalid =>
+      'Descreva em 20 a 500 caracteres.';
+
+  @override
+  String get requestQuotePhotos => 'Fotos';
+
+  @override
+  String get requestQuoteOptional => '(opcional)';
+
+  @override
+  String get requestQuoteAddPhoto => 'Adicionar';
+
+  @override
+  String get requestQuoteRemovePhoto => 'Remover foto';
+
+  @override
+  String get requestQuotePhotoFailed =>
+      'Não conseguimos enviar a foto. Tente de novo.';
+
+  @override
+  String get requestQuoteWhen => 'Quando você precisa?';
+
+  @override
+  String get requestQuoteDay => 'Dia';
+
+  @override
+  String get requestQuoteToday => 'Hoje';
+
+  @override
+  String get requestQuoteTomorrow => 'Amanhã';
+
+  @override
+  String get requestQuotePickDate => 'Escolher data';
+
+  @override
+  String get requestQuotePeriod => 'Período';
+
+  @override
+  String get requestQuoteChoosePeriod => 'Escolha o período.';
+
+  @override
+  String get requestQuotePeriodOver => 'Esse período de hoje já acabou.';
+
+  @override
+  String get requestQuoteWhere => 'Onde?';
+
+  @override
+  String get requestQuoteChangeAddress => 'Alterar';
+
+  @override
+  String get requestQuoteAddAddress => 'Adicionar endereço';
+
+  @override
+  String get requestQuoteNoAddress =>
+      'Cadastre o endereço onde o serviço vai ser feito.';
+
+  @override
+  String get requestQuoteAddressPrivacy =>
+      'O endereço completo só é enviado ao profissional depois que você aceitar o orçamento.';
+
+  @override
+  String get requestQuotePhone => 'Seu celular';
+
+  @override
+  String get requestQuotePhoneHint =>
+      'O profissional usa para falar com você depois que você aceitar o orçamento.';
+
+  @override
+  String get requestQuotePhoneInvalid => 'Informe o celular com DDD.';
+
+  @override
+  String get requestQuoteSend => 'Enviar pedido';
+
+  @override
+  String get requestQuoteFree => 'Pedir orçamento é grátis e sem compromisso.';
+
+  @override
+  String get addressSheetTitle => 'Onde vai ser o serviço?';
+
+  @override
+  String get addressNew => 'Novo endereço';
+
+  @override
+  String get addressCep => 'CEP';
+
+  @override
+  String get addressNumber => 'Número';
+
+  @override
+  String get addressComplement => 'Complemento (opcional)';
+
+  @override
+  String get addressLabel => 'Nome do endereço';
+
+  @override
+  String get addressLabelPlaceholder => 'Ex.: Casa, Trabalho';
+
+  @override
+  String get addressLabelDefault => 'Casa';
+
+  @override
+  String get addressSave => 'Salvar endereço';
+
+  @override
+  String addressSummary(String label, String neighborhood) {
+    return '$label · $neighborhood';
+  }
+
+  @override
+  String addressCity(String city, String state) {
+    return '$city, $state';
+  }
+
+  @override
+  String get orderScreenTitle => 'Seu pedido';
+
+  @override
+  String orderSentLine(String when, String neighborhood, String preference) {
+    return 'Enviado $when · $neighborhood · $preference';
+  }
+
+  @override
+  String orderChatWith(String name) {
+    return 'Conversar com $name pelo WhatsApp';
+  }
+
+  @override
+  String get orderProgress => 'Andamento';
+
+  @override
+  String get orderStepSent => 'Pedido enviado';
+
+  @override
+  String get orderStepQuoted => 'Orçamento recebido';
+
+  @override
+  String get orderStepScheduled => 'Serviço agendado';
+
+  @override
+  String get orderStepCompleted => 'Serviço concluído';
+
+  @override
+  String orderStepWaitingQuote(String time) {
+    return 'Responde até $time';
+  }
+
+  @override
+  String get orderStepWaitingYou => 'Aguardando sua resposta';
+
+  @override
+  String get orderStepConfirmWhenDone => 'Confirme quando terminar';
+
+  @override
+  String get orderStepDone => 'Concluída';
+
+  @override
+  String get orderStepCurrent => 'Etapa atual';
+
+  @override
+  String get orderStepPending => 'Pendente';
+
+  @override
+  String orderQuoteFrom(String name) {
+    return 'Orçamento de $name';
+  }
+
+  @override
+  String orderQuoteValidUntil(String when) {
+    return 'Válido até $when';
+  }
+
+  @override
+  String orderQuoteVisit(String when) {
+    return 'Visita $when';
+  }
+
+  @override
+  String get orderQuoteTechnicalVisit => 'Valor da visita técnica';
+
+  @override
+  String get orderQuoteMaterialIncluded => 'Material incluso';
+
+  @override
+  String orderQuoteMaterialIncludedWhat(String what) {
+    return 'Material incluso ($what)';
+  }
+
+  @override
+  String get orderQuoteMaterialNotIncluded => 'Material por sua conta';
+
+  @override
+  String get orderQuoteAccept => 'Aceitar orçamento';
+
+  @override
+  String get orderQuoteDecline => 'Recusar';
+
+  @override
+  String orderQuoteAddressNote(String name) {
+    return 'Ao aceitar, $name recebe seu endereço completo.';
+  }
+
+  @override
+  String get orderScheduledTitle => 'Serviço agendado';
+
+  @override
+  String orderScheduledWhen(String day, String range) {
+    return '$day\n$range';
+  }
+
+  @override
+  String orderScheduledBody(String name, String amount) {
+    return '$name já recebeu seu endereço completo. Valor combinado: $amount.';
+  }
+
+  @override
+  String get orderScheduledCancel => 'Cancelar';
+
+  @override
+  String get orderComplete => 'Serviço concluído';
+
+  @override
+  String orderCompleteFrom(String time) {
+    return 'Você poderá marcar como concluído a partir das $time.';
+  }
+
+  @override
+  String orderRescheduled(String name, String when) {
+    return '$name mudou o horário para $when.';
+  }
+
+  @override
+  String get orderPaymentNote =>
+      'O pagamento é combinado direto com o profissional. O Vitrio não cobra taxa de você.';
+
+  @override
+  String orderDeclinedTitle(String name) {
+    return '$name não pode atender agora';
+  }
+
+  @override
+  String orderExpiredTitle(String name) {
+    return '$name não respondeu a tempo';
+  }
+
+  @override
+  String orderDeclinedReason(String reason) {
+    return 'Motivo: $reason.';
+  }
+
+  @override
+  String get orderKeptForOthers =>
+      'Seu pedido continua guardado. Peça para outro profissional com um toque.';
+
+  @override
+  String orderSuggestionsTitle(String professionals) {
+    return 'Outros $professionals perto de você';
+  }
+
+  @override
+  String get orderSuggestionsFallback => 'profissionais';
+
+  @override
+  String orderSuggestionsMore(String professionals) {
+    return 'Ver mais $professionals';
+  }
+
+  @override
+  String get orderRequestThis => 'Pedir para este';
+
+  @override
+  String get orderCancelledTitle => 'Pedido cancelado';
+
+  @override
+  String orderCancelledByYou(String reason) {
+    return 'Você cancelou. Motivo: $reason.';
+  }
+
+  @override
+  String orderCancelledByProvider(String name, String reason) {
+    return '$name cancelou. Motivo: $reason.';
+  }
+
+  @override
+  String orderCancelledBySystem(String reason) {
+    return 'Cancelado pelo Vitrio. Motivo: $reason.';
+  }
+
+  @override
+  String get orderCompletedTitle => 'Serviço concluído';
+
+  @override
+  String orderCompletedOn(String when) {
+    return 'Concluído em $when.';
+  }
+
+  @override
+  String get orderQuoteDeclinedTitle => 'Você recusou o orçamento';
+
+  @override
+  String get orderQuoteExpiredTitle => 'O orçamento venceu sem resposta';
+
+  @override
+  String get orderPhotosRemoved => 'Fotos removidas';
+
+  @override
+  String get orderLoadError =>
+      'Não conseguimos carregar o pedido. Verifique a conexão e tente de novo.';
+
+  @override
+  String orderQuoteChanged(String name) {
+    return '$name mudou o orçamento. Confira o novo valor antes de aceitar.';
+  }
+
+  @override
+  String get cancelOrderTitle => 'Cancelar o pedido?';
+
+  @override
+  String cancelOrderSubtitle(String name) {
+    return '$name vê o motivo que você escolher, nunca o que você escrever.';
+  }
+
+  @override
+  String get cancelOrderReasons => 'Motivo';
+
+  @override
+  String get cancelOrderDetailsOptional => 'Quer contar mais? (opcional)';
+
+  @override
+  String get cancelOrderDetailsRequired => 'Conte o motivo';
+
+  @override
+  String get cancelOrderDetailsPlaceholder => 'Conte o que aconteceu.';
+
+  @override
+  String get cancelOrderChooseReason => 'Escolha um motivo.';
+
+  @override
+  String get cancelOrderConfirm => 'Cancelar pedido';
+
+  @override
+  String get ordersOpenTab => 'Em andamento';
+
+  @override
+  String get ordersClosedTab => 'Finalizados';
+
+  @override
+  String get ordersClosedEmpty => 'Nenhum pedido finalizado ainda.';
+
+  @override
+  String get ordersSignedOut =>
+      'Entre para pedir orçamentos e acompanhar seus pedidos.';
+
+  @override
+  String get ordersLoadError =>
+      'Não conseguimos carregar seus pedidos. Verifique a conexão e tente de novo.';
+
+  @override
+  String ordersSentMeta(String provider, String when) {
+    return '$provider · enviado $when';
+  }
+
+  @override
+  String ordersScheduledMeta(String provider, String when) {
+    return '$provider · $when';
+  }
+
+  @override
+  String get homeLastOrder => 'Seu último pedido';
+
+  @override
+  String get responseTime15min => '~15 min';
+
+  @override
+  String get responseTime30min => '~30 min';
+
+  @override
+  String get responseTime1h => '~1 h';
+
+  @override
+  String get responseTime3h => '~3 h';
+
+  @override
+  String get responseTime1d => '~1 dia';
 }
