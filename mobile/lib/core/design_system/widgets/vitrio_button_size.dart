@@ -1,1 +1,1 @@
-enum VitrioButtonSize { lg, md, sm }
+enum VitrioButtonSize { lg, decision, md, sm }

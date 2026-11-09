@@ -118,6 +118,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 8: widgets do design system
 
+**Situação:** pronto. `VitrioSegmented<T>` e `VitrioChoiceList<T>` usam o mesmo `VitrioOption<T>`; `VitrioOrderTimeline` recebe `VitrioTimelineStep`s com `stateLabel` para o leitor de tela; `VitrioQuoteCard` usa `VitrioQuoteRow` e o tamanho novo de botão `decision` (52, raio `lg`), que o componente define e que serve também ao card de serviço agendado; `VitrioCalendar` recebe os textos por `VitrioCalendarLabels` (mês, dias da semana, setas, legenda e o anúncio de cada dia) e as marcas por dia (`VitrioCalendarMark`), com semana começando no domingo como a prancheta. Onde a prancheta usa uma cor fora dos tokens (borda da etapa pendente), vale o token do componente (`line-strong`). Ícone `phone` copiado do design system. 12 testes de widget e o guia Flutter atualizado.
+
 1. `VitrioSegmented`, `VitrioOrderTimeline`, `VitrioQuoteCard`, `VitrioCalendar`, `VitrioChoiceList` e o ícone `phone`, com testes de widget e o guia Flutter atualizado.
 
 ## Recorte 9: app do cliente
