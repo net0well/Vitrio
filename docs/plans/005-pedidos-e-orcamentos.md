@@ -112,6 +112,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 7: página de compartilhar
 
+**Situação:** pronto. `SharePage.Render` preenche os marcadores numa passada só, com a mesma expressão do renderizador dos e-mails, e falha se o modelo pedir um marcador sem valor. Teste de integração com o título "Eletricista {{place}}" na página `/p/{id}`.
+
 1. Substituição numa passada só e o teste do título com `{{place}}`.
 
 ## Recorte 8: widgets do design system
