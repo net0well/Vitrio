@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Vitrio.Application.Abstractions;
 using Vitrio.Application.Accounts.Services;
 using Vitrio.Application.Locations.Services;
 using Vitrio.Application.Orders.Services;
@@ -31,6 +32,8 @@ public static class DependencyInjection
         services.AddScoped<ICustomerOrderViewService, CustomerOrderViewService>();
         services.AddScoped<IProviderOrderService, ProviderOrderService>();
         services.AddScoped<IProviderOrderViewService, ProviderOrderViewService>();
+        services.AddScoped<IProviderStatsService, ProviderStatsService>();
+        services.AddScoped<IAccountDeletionBlocker, ScheduledOrdersBlockDeletion>();
         return services;
     }
 }

@@ -35,4 +35,20 @@ public interface IOrderSearchableRepository
         DateTimeOffset nextMonthStart,
         DateTimeOffset now,
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<TimeSpan>> ListResponseDelaysAsync(Guid providerId, DateTimeOffset since, int take, CancellationToken cancellationToken);
+
+    Task<int> CountServicesDoneAsync(Guid providerId, CancellationToken cancellationToken);
+
+    Task<int> CountLateCancellationsAsync(Guid providerId, DateTimeOffset since, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> ListProvidersWithOrdersBetweenAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken);
+
+    Task<bool> HasScheduledForUserAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> ListProcessingPhotoIdsAsync(Guid orderId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<PendingOrderPhoto>> ListPhotosProcessingSinceAsync(DateTimeOffset createdBefore, CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<string>> ListPendingUploadKeysAsync(CancellationToken cancellationToken);
 }

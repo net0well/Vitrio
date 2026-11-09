@@ -33,6 +33,13 @@ public static class OrderApi
     public static DateTimeOffset LocalTime(DateOnly date, int hour) =>
         CityTime.ToUtc(date, new TimeOnly(hour, 0), CityTime.Zone(TimeZone));
 
+    public static (DateOnly Date, TimeOnly Start) CityTimeOf(DateTimeOffset instant)
+    {
+        var local = CityTime.ToLocal(instant, CityTime.Zone(TimeZone));
+        var start = new TimeOnly(local.Hour, local.Minute >= 30 ? 30 : 0);
+        return (DateOnly.FromDateTime(local.DateTime), start);
+    }
+
     public static async Task<OrderScenario> StartOrderScenarioAsync(this ApiFactory factory, HttpClient client, int categoryId = 1)
     {
         var spot = SearchApi.NextSpot();

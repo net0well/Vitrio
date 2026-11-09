@@ -10,7 +10,7 @@ using SkiaSharp;
 using Vitrio.Api.IntegrationTests.Accounts;
 using Vitrio.Api.IntegrationTests.Infrastructure;
 using Vitrio.Application.Abstractions;
-using Vitrio.Application.Providers.CleanUpUploads;
+using Vitrio.Application.Common.CleanUpUploads;
 using Vitrio.Application.Providers.Common;
 using Vitrio.Domain.Providers;
 using Vitrio.Infrastructure.Persistence;

@@ -332,12 +332,12 @@ public sealed class Provider : AggregateRoot
         return Result.Success();
     }
 
-    public void UpdateResponseTime(string? bucket, int sampleSize)
+    public void UpdateResponseTime(IReadOnlyCollection<TimeSpan> responseDelays)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(sampleSize);
+        var bucket = ProviderStats.ResponseTimeBucket(responseDelays);
         var changed = ResponseTimeBucket != bucket;
         ResponseTimeBucket = bucket;
-        ResponseSampleSize = sampleSize;
+        ResponseSampleSize = responseDelays.Count;
         if (changed)
         {
             Raise(new ProviderStatsUpdated(Id));

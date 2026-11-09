@@ -374,13 +374,6 @@ public sealed class ProviderOrderTests(ApiFactory factory)
         Assert.Equal(HttpStatusCode.Forbidden, notProvider.StatusCode);
     }
 
-    private static (DateOnly Date, TimeOnly Start) CityTimeOf(DateTimeOffset instant)
-    {
-        var local = Domain.Common.CityTime.ToLocal(instant, Domain.Common.CityTime.Zone(OrderApi.TimeZone));
-        var start = new TimeOnly(local.Hour, local.Minute >= 30 ? 30 : 0);
-        return (DateOnly.FromDateTime(local.DateTime), start);
-    }
-
     private Task<DateTimeOffset?> FirstResponseAtAsync(Guid orderId) =>
         factory.QueryAsync(db => db.Orders.Where(order => order.Id == orderId).Select(order => order.FirstResponseAt)
             .SingleAsync(TestContext.Current.CancellationToken));

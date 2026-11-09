@@ -1,5 +1,6 @@
 using Mediator;
-using Vitrio.Application.Providers.CleanUpUploads;
+using Vitrio.Application.Common.CleanUpUploads;
+using Vitrio.Application.Orders.ProcessOrderPhoto;
 using Vitrio.Application.Providers.ProcessAvatar;
 using Vitrio.Application.Providers.ProcessPhoto;
 
@@ -12,6 +13,9 @@ public sealed class PhotoJobs(ISender sender)
 
     public async Task ProcessAvatarAsync(Guid providerId, string uploadKey, CancellationToken cancellationToken) =>
         JobResults.EnsureSucceeded(await sender.Send(new ProcessAvatarCommand(providerId, uploadKey), cancellationToken));
+
+    public async Task ProcessOrderPhotoAsync(Guid orderId, Guid photoId, CancellationToken cancellationToken) =>
+        JobResults.EnsureSucceeded(await sender.Send(new ProcessOrderPhotoCommand(orderId, photoId), cancellationToken));
 
     public async Task CleanUpUploadsAsync(CancellationToken cancellationToken) =>
         JobResults.EnsureSucceeded(await sender.Send(new CleanUpUploadsCommand(), cancellationToken));

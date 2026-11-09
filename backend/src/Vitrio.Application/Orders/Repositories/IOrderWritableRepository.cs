@@ -14,5 +14,25 @@ public interface IOrderWritableRepository
 
     Task<int> CountWaitingForCustomerAsync(Guid customerId, int categoryId, CancellationToken cancellationToken);
 
+    Task<IReadOnlyList<Guid>> ListDueToExpireAsync(
+        DateTimeOffset now,
+        IReadOnlyCollection<Guid> excluded,
+        int take,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> ListScheduledEndedBeforeAsync(
+        DateTimeOffset endedBefore,
+        IReadOnlyCollection<Guid> excluded,
+        int take,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> ListWithPersonalDataEndedBeforeAsync(
+        DateTimeOffset endedBefore,
+        IReadOnlyCollection<Guid> excluded,
+        int take,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Order>> ListAwaitingAnswerForUserAsync(Guid userId, CancellationToken cancellationToken);
+
     void Add(Order order);
 }

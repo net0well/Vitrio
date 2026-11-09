@@ -7,4 +7,5 @@ public static class OrderAudit
     public const string ContactRead = "order.contact_read";
     public const string Rescheduled = "order.rescheduled";
     public const string LateCancellation = "order.late_cancellation";
+    public const string PersonalDataErased = "order.personal_data_erased";
 }

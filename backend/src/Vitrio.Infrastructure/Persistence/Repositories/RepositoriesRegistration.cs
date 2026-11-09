@@ -39,6 +39,7 @@ internal static class RepositoriesRegistration
         services.AddScoped<IOrderWritableRepository, OrderWritableRepository>();
         services.AddScoped<IOrderSearchableRepository, OrderSearchableRepository>();
         services.AddScoped<ProviderOrderReader>();
+        services.AddScoped<OrderUpkeepReader>();
         services.AddScoped<IIdempotencyKeySearchableRepository, IdempotencyKeySearchableRepository>();
         return services;
     }

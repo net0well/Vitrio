@@ -21,8 +21,9 @@ public sealed class Order : AggregateRoot
     private static readonly TimeSpan MinimumNotice = TimeSpan.FromHours(1);
     private static readonly TimeSpan LateCancellationWindow = TimeSpan.FromHours(2);
     private static readonly TimeSpan ContactWindowAfterService = TimeSpan.FromDays(7);
-    private static readonly TimeSpan AutomaticCompletionAfter = TimeSpan.FromDays(7);
-    private static readonly TimeSpan PersonalDataKeptFor = TimeSpan.FromDays(90);
+
+    public static readonly TimeSpan AutomaticCompletionAfter = TimeSpan.FromDays(7);
+    public static readonly TimeSpan PersonalDataKeptFor = TimeSpan.FromDays(90);
 
     private readonly List<OrderPhoto> _photos = [];
 
@@ -398,7 +399,13 @@ public sealed class Order : AggregateRoot
     }
 
     public bool WasCancelledLate =>
-        CancelledBy == OrderParty.Provider && Schedule is not null && CancelledAt is { } at && Schedule.StartsAt - at < LateCancellationWindow;
+        CancelledBy == OrderParty.Provider && Schedule is not null && CancelledAt is { } at && IsLateCancellation(Schedule.StartsAt, at);
+
+    public static bool IsLateCancellation(DateTimeOffset scheduledStart, DateTimeOffset cancelledAt) =>
+        scheduledStart - cancelledAt < LateCancellationWindow;
+
+    public static TimeSpan ResponseDelay(DateTimeOffset createdAt, DateTimeOffset? firstResponseAt, DateTimeOffset respondBy) =>
+        (firstResponseAt ?? respondBy) - createdAt;
 
     public bool IsContactVisibleToProvider(DateTimeOffset now) =>
         IsContactVisible(AddressReleasedAt, Status, PersonalDataErasedAt, Schedule?.EndsAt, now);

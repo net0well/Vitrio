@@ -114,12 +114,12 @@ Regras de dependência (verificadas por teste de arquitetura):
 Vitrio.Application/
   Abstractions/          IUnitOfWork, ICurrentUser, IAuditLog, IObjectStorage, IPushSender, IEmailSender, ICnpjLookup, ICepLookup
   Events/                IDomainEventHandler<T> e os handlers de evento (notificações, dados derivados, cache)
-  Common/                PagedResult, behaviors (log, validação, idempotência), chaves de idempotência
+  Common/                PagedResult, behaviors (log, validação, idempotência), chaves de idempotência, limpeza de uploads
   Accounts/              Register, VerifyEmail, ResendCode, SignIn, RefreshToken, SignOut, ForgotPassword, ResetPassword, ChangePassword, Sessions, GetMe, UpdateMe, DeleteAccount, Addresses
   Locations/             LocateCity, SearchCities, GetCity, LookupCep, LoadCities
-  Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e das fotos
+  Providers/             ListCategories, CreateProvider, UpdateProvider, SetServiceArea, SetProviderServices, fotos, VerifyMei, PublishProvider, PauseProvider, SetAvailableToday, GetPublicProvider, jobs do MEI e do processamento das fotos
   Search/                SearchProviders, GetHome
-  Orders/                CreateOrder, CopyOrderPhotos, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, RescheduleOrder, CancelOrder, CompleteOrder, ListOrders, GetOrder, GetOrderSuggestions, GetProviderAgenda, ExpireOrders, CompleteForgottenOrders, EraseOrderPersonalData, handlers dos números derivados do prestador e do cancelamento na exclusão de conta
+  Orders/                CreateOrder, CopyOrderPhotos, SendQuote, DeclineOrder, AcceptQuote, DeclineQuote, RescheduleOrder, CancelOrder, CompleteOrder, ListOrders, GetOrder, GetOrderSuggestions, GetProviderAgenda, ExpireOrders, CompleteForgottenOrders, EraseOrderPersonalData, ProcessOrderPhoto, RecalculateProviderStats, handlers dos números derivados do prestador, das fotos do pedido e do cancelamento na exclusão de conta
   Payments/              ConfirmPayment, VoidPaymentConfirmation, DisputePayment, GetEarningsSummary
   Reviews/               CreateReview, UpdateReview, ReplyToReview, ListProviderReviews
   Reports/               CreateReport, Moderation
@@ -314,8 +314,8 @@ Sem GPS, com a cidade escolhida:
 | Lembretes | 5 min | Lembrete de serviço, de confirmar pagamento e convite para avaliar, respeitando o silêncio noturno |
 | Revalidar selo MEI | Diário, em lotes | Revalida quem passou de 30 dias; `Pending` com mais de 3 dias vira `Failed` |
 | Nota e média da categoria | Diário | Recalcula `m` de cada categoria e a nota de todos os prestadores |
-| Tempo de resposta | Diário | Recalcula quem teve pedido saindo da janela de 90 dias |
-| Limpar uploads órfãos | Diário | Apaga uploads não confirmados em 24 h |
+| Tempo de resposta e cancelamentos tardios | Diário | Recalcula quem teve pedido ou cancelamento tardio saindo da janela de 90 dias |
+| Limpar uploads órfãos | 1 h | Põe de novo na fila as fotos (da vitrine e de pedidos) paradas há 10 min e apaga uploads não confirmados em 24 h |
 | Limpar chaves de idempotência | Diário | Apaga chaves com mais de 24 h |
 | Limpar notificações | Diário | Apaga notificações com mais de 90 dias |
 | Anonimizar contas excluídas | Diário | Conclui a anonimização em até 30 dias |

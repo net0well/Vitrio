@@ -10,4 +10,7 @@ internal sealed class HangfirePhotoProcessingQueue(IBackgroundJobClient jobs) : 
 
     public void EnqueueAvatar(Guid providerId, string uploadKey) =>
         jobs.Enqueue<PhotoJobs>(photo => photo.ProcessAvatarAsync(providerId, uploadKey, CancellationToken.None));
+
+    public void EnqueueOrderPhoto(Guid orderId, Guid photoId) =>
+        jobs.Enqueue<PhotoJobs>(photo => photo.ProcessOrderPhotoAsync(orderId, photoId, CancellationToken.None));
 }

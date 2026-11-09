@@ -15,7 +15,8 @@ internal sealed class OrderSearchableRepository(
     AppDbContext db,
     PublicMedia media,
     IPrivateMediaStorage privateMedia,
-    ProviderOrderReader providerOrders) : IOrderSearchableRepository
+    ProviderOrderReader providerOrders,
+    OrderUpkeepReader upkeep) : IOrderSearchableRepository
 {
     private static readonly OrderStatus[] OpenStatuses = [OrderStatus.Sent, OrderStatus.Quoted, OrderStatus.Scheduled];
 
@@ -46,6 +47,30 @@ internal sealed class OrderSearchableRepository(
         DateTimeOffset now,
         CancellationToken cancellationToken) =>
         providerOrders.GetNumbersAsync(providerId, monthStart, nextMonthStart, now, cancellationToken);
+
+    public Task<IReadOnlyList<TimeSpan>> ListResponseDelaysAsync(Guid providerId, DateTimeOffset since, int take, CancellationToken cancellationToken) =>
+        upkeep.ListResponseDelaysAsync(providerId, since, take, cancellationToken);
+
+    public Task<int> CountServicesDoneAsync(Guid providerId, CancellationToken cancellationToken) =>
+        upkeep.CountServicesDoneAsync(providerId, cancellationToken);
+
+    public Task<int> CountLateCancellationsAsync(Guid providerId, DateTimeOffset since, CancellationToken cancellationToken) =>
+        upkeep.CountLateCancellationsAsync(providerId, since, cancellationToken);
+
+    public Task<IReadOnlyList<Guid>> ListProvidersWithOrdersBetweenAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken) =>
+        upkeep.ListProvidersWithOrdersBetweenAsync(from, to, cancellationToken);
+
+    public Task<bool> HasScheduledForUserAsync(Guid userId, CancellationToken cancellationToken) =>
+        upkeep.HasScheduledForUserAsync(userId, cancellationToken);
+
+    public Task<IReadOnlyList<Guid>> ListProcessingPhotoIdsAsync(Guid orderId, CancellationToken cancellationToken) =>
+        upkeep.ListProcessingPhotoIdsAsync(orderId, cancellationToken);
+
+    public Task<IReadOnlyList<PendingOrderPhoto>> ListPhotosProcessingSinceAsync(DateTimeOffset createdBefore, CancellationToken cancellationToken) =>
+        upkeep.ListPhotosProcessingSinceAsync(createdBefore, cancellationToken);
+
+    public Task<IReadOnlyCollection<string>> ListPendingUploadKeysAsync(CancellationToken cancellationToken) =>
+        upkeep.ListPendingUploadKeysAsync(cancellationToken);
 
     public async Task<OrderCustomerView?> GetCustomerViewAsync(Guid orderId, Guid customerId, DateTimeOffset now, CancellationToken cancellationToken)
     {

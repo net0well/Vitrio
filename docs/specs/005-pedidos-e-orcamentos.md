@@ -109,6 +109,8 @@ Aprovadas pelo usuário em 2026-11-06. As pranchetas são atualizadas (ou criada
 - A tela Responder pedido consulta a agenda do dia escolhido (`from = to = date`) para o aviso de horário sobreposto.
 - Fotos do pedido são lidas por URL assinada de 10 min presente no `orderView`, só para cliente e prestador do pedido.
 - Horários vão como `date` (`AAAA-MM-DD`) e `start`/`end` (`HH:mm`) no fuso da cidade do pedido.
+- `responseTime` no perfil e na busca: `15min`, `30min`, `1h`, `3h` ou `1d` (a faixa da mediana); nulo com menos de 5 pedidos na amostra ou mediana acima de 1 dia. O app mostra "~15 min", "~30 min", "~1 h", "~3 h" e "~1 dia".
+- `DELETE /me` com pedido `Scheduled` (como cliente ou prestador): 409 `order.scheduled_blocks_deletion`.
 
 ## Authorization
 

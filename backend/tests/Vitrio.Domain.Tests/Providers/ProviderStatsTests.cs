@@ -13,7 +13,7 @@ public sealed class ProviderStatsTests
     {
         var provider = NewProvider();
 
-        provider.UpdateResponseTime("15min", 6);
+        provider.UpdateResponseTime(Minutes(5, 8, 10, 12, 14, 30));
 
         Assert.Equal("15min", provider.ResponseTimeBucket);
         Assert.Equal(6, provider.ResponseSampleSize);
@@ -25,10 +25,10 @@ public sealed class ProviderStatsTests
     public void UpdateResponseTime_WhenOnlyTheSampleGrows_RaisesNothing()
     {
         var provider = NewProvider();
-        provider.UpdateResponseTime("1h", 5);
+        provider.UpdateResponseTime(Minutes(40, 45, 50, 55, 60));
         provider.ClearDomainEvents();
 
-        provider.UpdateResponseTime("1h", 7);
+        provider.UpdateResponseTime(Minutes(40, 45, 50, 50, 55, 60, 60));
 
         Assert.Equal(7, provider.ResponseSampleSize);
         Assert.Empty(provider.DomainEvents);
@@ -66,6 +66,8 @@ public sealed class ProviderStatsTests
 
         Assert.Throws<ArgumentOutOfRangeException>(() => provider.UpdateCompletedOrders(count));
     }
+
+    private static TimeSpan[] Minutes(params int[] values) => [.. values.Select(value => TimeSpan.FromMinutes(value))];
 
     private Provider NewProvider() =>
         Provider.Create(Guid.NewGuid(), DisplayName.Create("Carlos Eletricista").Value, "Eletricista", PhoneNumber.Create("16 99123-4567").Value, _clock).Value;

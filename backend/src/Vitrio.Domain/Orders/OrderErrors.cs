@@ -102,4 +102,7 @@ public static class OrderErrors
 
     public static readonly Error CompleteBeforeStart =
         Error.Conflict("order.complete_before_start", "Você poderá marcar como concluído a partir do horário agendado.");
+
+    public static readonly Error ScheduledOrderBlocksDeletion =
+        Error.Conflict("order.scheduled_blocks_deletion", "Você tem um serviço agendado. Conclua ou cancele o serviço antes de excluir a conta.");
 }
