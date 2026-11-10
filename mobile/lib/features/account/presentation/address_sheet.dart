@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design_system/tokens/vitrio_colors.dart';
@@ -14,8 +13,12 @@ import '../../../core/design_system/widgets/vitrio_notice.dart';
 import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
+import '../../../core/presentation/brazilian_format.dart';
+import '../../../core/presentation/mask_input_formatter.dart';
 import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../location/data/location_providers.dart';
+import '../../location/domain/cep_address.dart';
 import '../data/address_providers.dart';
 import '../domain/new_address.dart';
 import '../domain/saved_address.dart';
@@ -42,11 +45,21 @@ class AddressSheet extends ConsumerStatefulWidget {
 }
 
 class _AddressSheetState extends ConsumerState<AddressSheet> {
+  static const _cepDigits = 8;
+
   late bool _adding = widget.addresses.isEmpty;
   late final TextEditingController _label = TextEditingController();
-  final _cep = TextEditingController();
+  late final TextEditingController _cep = TextEditingController()..addListener(_lookUpCep);
+  final _street = TextEditingController();
   final _number = TextEditingController();
   final _complement = TextEditingController();
+  final _neighborhood = TextEditingController();
+  final _city = TextEditingController();
+  CepAddress? _found;
+  String? _lookedUpCep;
+  bool _searching = false;
+  bool _cepNotFound = false;
+  bool _showErrors = false;
   bool _busy = false;
   ProblemDetails? _problem;
 
@@ -62,12 +75,74 @@ class _AddressSheetState extends ConsumerState<AddressSheet> {
   void dispose() {
     _label.dispose();
     _cep.dispose();
+    _street.dispose();
     _number.dispose();
     _complement.dispose();
+    _neighborhood.dispose();
+    _city.dispose();
     super.dispose();
   }
 
+  static String _digits(String text) => text.replaceAll(RegExp(r'\D'), '');
+
+  Future<void> _lookUpCep() async {
+    final cep = _digits(_cep.text);
+    if (cep.length != _cepDigits) {
+      if (_found != null || _cepNotFound || _lookedUpCep != null) {
+        setState(() {
+          _found = null;
+          _lookedUpCep = null;
+          _cepNotFound = false;
+        });
+      }
+
+      return;
+    }
+
+    if (cep == _lookedUpCep) {
+      return;
+    }
+
+    setState(() {
+      _lookedUpCep = cep;
+      _searching = true;
+      _cepNotFound = false;
+    });
+    final result = await ref.read(citiesRepositoryProvider).lookupCep(cep);
+    if (!mounted || _digits(_cep.text) != cep) {
+      return;
+    }
+
+    final l10n = AppLocalizations.of(context);
+    setState(() {
+      _searching = false;
+      switch (result) {
+        case ApiSuccess(:final data):
+          _found = data;
+          _street.text = data.street ?? '';
+          _neighborhood.text = data.neighborhood ?? '';
+          _city.text = l10n.addressCity(data.city.name, data.city.state);
+        case ApiFailure(:final problem):
+          _found = null;
+          _cepNotFound = problem.status == 404;
+          _problem = problem.status == 404 ? null : problem;
+      }
+    });
+  }
+
+  Map<String, String> _validate(AppLocalizations l10n) => {
+        if (_street.text.trim().isEmpty) 'street': l10n.addressStreetRequired,
+        if (_number.text.trim().isEmpty) 'number': l10n.addressNumberRequired,
+        if (_neighborhood.text.trim().isEmpty) 'neighborhood': l10n.addressNeighborhoodRequired,
+      };
+
   Future<void> _save() async {
+    final found = _found;
+    if (found == null || _validate(AppLocalizations.of(context)).isNotEmpty) {
+      setState(() => _showErrors = true);
+      return;
+    }
+
     setState(() {
       _busy = true;
       _problem = null;
@@ -77,9 +152,13 @@ class _AddressSheetState extends ConsumerState<AddressSheet> {
     final result = await ref.read(addressRepositoryProvider).add(
           NewAddress(
             label: _label.text.trim(),
-            cep: _cep.text.trim(),
+            cep: _digits(_cep.text),
             number: _number.text.trim(),
             complement: complement.isEmpty ? null : complement,
+            street: _street.text.trim(),
+            neighborhood: _neighborhood.text.trim(),
+            state: found.city.state,
+            cityIbgeCode: found.city.ibgeCode,
           ),
         );
     if (!mounted) {
@@ -102,6 +181,8 @@ class _AddressSheetState extends ConsumerState<AddressSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final c = context.vitrio;
+    final found = _found;
+    final errors = _showErrors ? _validate(l10n) : const <String, String>{};
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(VitrioSpace.sp20, 0, VitrioSpace.sp20, MediaQuery.viewInsetsOf(context).bottom + VitrioSpace.sp24),
       child: Column(
@@ -134,32 +215,71 @@ class _AddressSheetState extends ConsumerState<AddressSheet> {
               label: l10n.addressCep,
               controller: _cep,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')), LengthLimitingTextInputFormatter(9)],
-              error: fieldError(_problem, 'cep'),
+              inputFormatters: const [MaskInputFormatter(cepText)],
+              placeholder: l10n.providerCepPlaceholder,
+              hint: _searching ? l10n.addressCepSearching : (found == null ? l10n.addressCepHint : null),
+              error: fieldError(_problem, 'cep') ?? (_cepNotFound ? l10n.addressCepNotFound : null),
               autofillHints: const [AutofillHints.postalCode],
             ),
-            const SizedBox(height: VitrioSpace.sp14),
-            VitrioTextField(
-              label: l10n.addressNumber,
-              controller: _number,
-              keyboardType: TextInputType.text,
-              error: fieldError(_problem, 'number'),
-            ),
-            const SizedBox(height: VitrioSpace.sp14),
-            VitrioTextField(label: l10n.addressComplement, controller: _complement, error: fieldError(_problem, 'complement')),
-            const SizedBox(height: VitrioSpace.sp14),
-            VitrioTextField(
-              label: l10n.addressLabel,
-              controller: _label,
-              placeholder: l10n.addressLabelPlaceholder,
-              error: fieldError(_problem, 'label'),
-            ),
+            if (found != null) ...[
+              const SizedBox(height: VitrioSpace.sp14),
+              VitrioTextField(
+                label: l10n.addressStreetLabel,
+                controller: _street,
+                enabled: (found.street ?? '').isEmpty,
+                textCapitalization: TextCapitalization.words,
+                error: errors['street'] ?? fieldError(_problem, 'street'),
+                onChanged: (_) => setState(() {}),
+              ),
+              const SizedBox(height: VitrioSpace.sp14),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: VitrioTextField(
+                      label: l10n.addressNumber,
+                      controller: _number,
+                      keyboardType: TextInputType.text,
+                      error: errors['number'] ?? fieldError(_problem, 'number'),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ),
+                  const SizedBox(width: VitrioSpace.sp12),
+                  Expanded(
+                    flex: 2,
+                    child: VitrioTextField(
+                      label: l10n.addressComplement,
+                      controller: _complement,
+                      error: fieldError(_problem, 'complement'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: VitrioSpace.sp14),
+              VitrioTextField(
+                label: l10n.addressNeighborhoodLabel,
+                controller: _neighborhood,
+                enabled: (found.neighborhood ?? '').isEmpty,
+                textCapitalization: TextCapitalization.words,
+                error: errors['neighborhood'] ?? fieldError(_problem, 'neighborhood'),
+                onChanged: (_) => setState(() {}),
+              ),
+              const SizedBox(height: VitrioSpace.sp14),
+              VitrioTextField(label: l10n.addressCityLabel, controller: _city, enabled: false),
+              const SizedBox(height: VitrioSpace.sp14),
+              VitrioTextField(
+                label: l10n.addressLabel,
+                controller: _label,
+                placeholder: l10n.addressLabelPlaceholder,
+                error: fieldError(_problem, 'label'),
+              ),
+            ],
             if (_problem != null && !_problem!.isValidation) ...[
               const SizedBox(height: VitrioSpace.sp14),
               VitrioNotice(message: problemMessage(l10n, _problem!)),
             ],
             const SizedBox(height: VitrioSpace.sp20),
-            VitrioButton(label: l10n.addressSave, onPressed: _save, busy: _busy),
+            VitrioButton(label: l10n.addressSave, onPressed: found == null ? null : _save, busy: _busy),
           ],
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vitrio/core/design_system/widgets/vitrio_text_field.dart';
 import 'package:vitrio/core/network/api_result.dart';
 import 'package:vitrio/features/auth/domain/me.dart';
+import 'package:vitrio/features/location/domain/cep_address.dart';
 import 'package:vitrio/features/location/domain/device_permission.dart';
 import 'package:vitrio/features/orders/domain/order_action.dart';
 import 'package:vitrio/features/orders/domain/order_status.dart';
@@ -11,6 +12,7 @@ import 'package:vitrio/features/orders/domain/service_time.dart';
 
 import '../../support/fake_account_repository.dart';
 import '../../support/fake_address_repository.dart';
+import '../../support/fake_cities_repository.dart';
 import '../../support/fake_device_location.dart';
 import '../../support/fake_orders_repository.dart';
 import '../../support/fake_provider_repository.dart';
@@ -47,12 +49,14 @@ void main() {
     FakeAccountRepository? account,
     Map<String, Object> preferences = const {'welcome_seen': true},
     FakeDeviceLocation? device,
+    FakeCitiesRepository? cities,
   }) {
     phone(tester);
     return pumpVitrio(
       tester,
       preferences: preferences,
       device: device,
+      cities: cities,
       account: (account ?? FakeAccountRepository())..meResult = ApiSuccess(me),
       tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
       provider: provider,
@@ -94,6 +98,78 @@ void main() {
     await tester.enterText(field, value);
     await tester.pumpAndSettle();
   }
+
+  Future<void> typeCep(WidgetTester tester, String cep) async {
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'CEP'), cep);
+    await tester.pumpAndSettle();
+  }
+
+  String fieldText(WidgetTester tester, String label) =>
+      tester.widget<VitrioTextField>(find.widgetWithText(VitrioTextField, label)).controller.text;
+
+  testWidgets('a new address fills the street, the neighborhood and the city from the CEP', (tester) async {
+    final addresses = FakeAddressRepository();
+    final cities = FakeCitiesRepository()
+      ..cepAddress = const CepAddress(cep: '14870180', street: 'Avenida Marechal Deodoro', neighborhood: 'Centro', city: jaboticabalCity);
+    final harness = await signedIn(tester, addresses: addresses, cities: cities);
+    await open(harness, tester, '/request-quote/${samplePublicProviderWithServiceIds.id}');
+
+    await tapText(tester, 'Adicionar');
+    expect(find.text('Digite o CEP para preencher o endereço.'), findsOneWidget);
+    await typeCep(tester, '14870180');
+
+    expect(fieldText(tester, 'CEP'), '14870-180');
+    expect(fieldText(tester, 'Rua'), 'Avenida Marechal Deodoro');
+    expect(fieldText(tester, 'Bairro'), 'Centro');
+    expect(fieldText(tester, 'Cidade'), 'Jaboticabal, SP');
+    expect(tester.widget<VitrioTextField>(find.widgetWithText(VitrioTextField, 'Rua')).enabled, isFalse);
+
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Número'), '45');
+    await tapText(tester, 'Salvar endereço');
+
+    final added = addresses.added.single;
+    expect(added.cep, '14870180');
+    expect(added.street, 'Avenida Marechal Deodoro');
+    expect(added.neighborhood, 'Centro');
+    expect(added.number, '45');
+    expect(added.state, 'SP');
+    expect(added.cityIbgeCode, jaboticabalCity.ibgeCode);
+  });
+
+  testWidgets('a CEP of the whole city asks for the street and the neighborhood', (tester) async {
+    final addresses = FakeAddressRepository();
+    final cities = FakeCitiesRepository()..cepAddress = const CepAddress(cep: '14870000', city: jaboticabalCity);
+    final harness = await signedIn(tester, addresses: addresses, cities: cities);
+    await open(harness, tester, '/request-quote/${samplePublicProviderWithServiceIds.id}');
+
+    await tapText(tester, 'Adicionar');
+    await typeCep(tester, '14870000');
+    expect(tester.widget<VitrioTextField>(find.widgetWithText(VitrioTextField, 'Rua')).enabled, isTrue);
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Número'), '45');
+    await tapText(tester, 'Salvar endereço');
+
+    expect(find.text('Informe a rua.'), findsOneWidget);
+    expect(find.text('Informe o bairro.'), findsOneWidget);
+    expect(addresses.added, isEmpty);
+
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Rua'), 'Rua Rui Barbosa');
+    await tester.enterText(find.widgetWithText(VitrioTextField, 'Bairro'), 'Centro');
+    await tapText(tester, 'Salvar endereço');
+
+    expect(addresses.added.single.street, 'Rua Rui Barbosa');
+    expect(addresses.added.single.neighborhood, 'Centro');
+  });
+
+  testWidgets('a CEP that does not exist says so and keeps the form closed', (tester) async {
+    final harness = await signedIn(tester, addresses: FakeAddressRepository(), cities: FakeCitiesRepository()..cepAddress = null);
+    await open(harness, tester, '/request-quote/${samplePublicProviderWithServiceIds.id}');
+
+    await tapText(tester, 'Adicionar');
+    await typeCep(tester, '99999999');
+
+    expect(find.text('Não encontramos este CEP. Confira os 8 números.'), findsOneWidget);
+    expect(find.widgetWithText(VitrioTextField, 'Rua'), findsNothing);
+  });
 
   testWidgets('request quote sends the chosen service, day, period and saved address', (tester) async {
     final orders = FakeOrdersRepository()..createdResult = sampleOrder(status: OrderStatus.sent, withQuote: false, actions: const [OrderAction.cancel]);

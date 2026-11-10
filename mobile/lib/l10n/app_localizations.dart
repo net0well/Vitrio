@@ -3771,6 +3771,60 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Não conseguimos carregar a agenda. Verifique a conexão e tente de novo.'**
   String get agendaLoadError;
+
+  /// No description provided for @addressCepHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Digite o CEP para preencher o endereço.'**
+  String get addressCepHint;
+
+  /// No description provided for @addressCepSearching.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscando o endereço…'**
+  String get addressCepSearching;
+
+  /// No description provided for @addressCepNotFound.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não encontramos este CEP. Confira os 8 números.'**
+  String get addressCepNotFound;
+
+  /// No description provided for @addressStreetLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Rua'**
+  String get addressStreetLabel;
+
+  /// No description provided for @addressNeighborhoodLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Bairro'**
+  String get addressNeighborhoodLabel;
+
+  /// No description provided for @addressCityLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cidade'**
+  String get addressCityLabel;
+
+  /// No description provided for @addressStreetRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe a rua.'**
+  String get addressStreetRequired;
+
+  /// No description provided for @addressNeighborhoodRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe o bairro.'**
+  String get addressNeighborhoodRequired;
+
+  /// No description provided for @addressNumberRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe o número.'**
+  String get addressNumberRequired;
 }
 
 class _AppLocalizationsDelegate

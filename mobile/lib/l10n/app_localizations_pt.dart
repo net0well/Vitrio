@@ -2153,4 +2153,32 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get agendaLoadError =>
       'Não conseguimos carregar a agenda. Verifique a conexão e tente de novo.';
+
+  @override
+  String get addressCepHint => 'Digite o CEP para preencher o endereço.';
+
+  @override
+  String get addressCepSearching => 'Buscando o endereço…';
+
+  @override
+  String get addressCepNotFound =>
+      'Não encontramos este CEP. Confira os 8 números.';
+
+  @override
+  String get addressStreetLabel => 'Rua';
+
+  @override
+  String get addressNeighborhoodLabel => 'Bairro';
+
+  @override
+  String get addressCityLabel => 'Cidade';
+
+  @override
+  String get addressStreetRequired => 'Informe a rua.';
+
+  @override
+  String get addressNeighborhoodRequired => 'Informe o bairro.';
+
+  @override
+  String get addressNumberRequired => 'Informe o número.';
 }

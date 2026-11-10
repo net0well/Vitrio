@@ -1442,5 +1442,14 @@
     }
   },
   "agendaEmptyDay": "Nenhum serviço neste dia.",
-  "agendaLoadError": "Não conseguimos carregar a agenda. Verifique a conexão e tente de novo."
+  "agendaLoadError": "Não conseguimos carregar a agenda. Verifique a conexão e tente de novo.",
+  "addressCepHint": "Digite o CEP para preencher o endereço.",
+  "addressCepSearching": "Buscando o endereço…",
+  "addressCepNotFound": "Não encontramos este CEP. Confira os 8 números.",
+  "addressStreetLabel": "Rua",
+  "addressNeighborhoodLabel": "Bairro",
+  "addressCityLabel": "Cidade",
+  "addressStreetRequired": "Informe a rua.",
+  "addressNeighborhoodRequired": "Informe o bairro.",
+  "addressNumberRequired": "Informe o número."
 }
