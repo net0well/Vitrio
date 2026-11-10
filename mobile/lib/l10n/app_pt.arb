@@ -1015,5 +1015,384 @@
   "responseTime1h": "~1 h",
   "responseTime3h": "~3 h",
   "responseTime1d": "~1 dia",
-  "requestQuoteAddressRequired": "Adicione o endereço onde o serviço vai ser feito."
+  "requestQuoteAddressRequired": "Adicione o endereço onde o serviço vai ser feito.",
+  "providerOrdersNewTab": "Novos",
+  "providerOrdersNewTabCount": "Novos · {count}",
+  "@providerOrdersNewTabCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "providerOrdersOngoingEmpty": "Nenhum pedido em andamento.",
+  "providerOrdersClosedEmpty": "Nenhum pedido finalizado ainda.",
+  "providerNewOrderBadge": "Novo · {service}",
+  "@providerNewOrderBadge": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "orderAgoMinutes": "há {count} min",
+  "@orderAgoMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderAgoHours": "há {count} h",
+  "@orderAgoHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderAgoDays": "{count, plural, =1{há 1 dia} other{há {count} dias}}",
+  "@orderAgoDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderPreferenceLine": "{day} · {period} ({hours})",
+  "@orderPreferenceLine": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "orderRespondBy": "Responda até {when}",
+  "@orderRespondBy": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "orderPhotosAttached": "{count, plural, =1{1 foto anexada} other{{count} fotos anexadas}}",
+  "@orderPhotosAttached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "providerSendQuote": "Enviar orçamento",
+  "providerSeeAllOrders": "Ver todos",
+  "providerStatusQuoted": "Aguardando · válido até {when}",
+  "@providerStatusQuoted": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "providerStatusScheduled": "Agendado · {when}",
+  "@providerStatusScheduled": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "providerStatusDeclined": "Recusado por você",
+  "providerStatusExpired": "Venceu sem resposta",
+  "providerStatusCancelledByCustomer": "Cancelado pelo cliente",
+  "providerStatusCancelledByYou": "Cancelado por você",
+  "providerStatusCancelledBySystem": "Cancelado pelo Vitrio",
+  "respondTitle": "Responder pedido",
+  "respondMemberSince": "No Vitrio desde {month} · {count, plural, =1{1 pedido} other{{count} pedidos}}",
+  "@respondMemberSince": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "respondWhen": "Quando",
+  "respondWhere": "Onde",
+  "respondAddressLocked": "Endereço completo liberado quando {name} aceitar.",
+  "@respondAddressLocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "respondYourQuote": "Seu orçamento",
+  "respondQuoteType": "Tipo de orçamento",
+  "quoteTypeFixedPrice": "Valor fechado",
+  "quoteTypeTechnicalVisit": "Visita técnica",
+  "respondPriceFixed": "Valor do serviço",
+  "respondPriceVisit": "Valor da visita técnica",
+  "respondPriceInvalid": "Informe um valor entre R$ 1,00 e R$ 100.000,00.",
+  "respondDay": "Dia da visita",
+  "respondStart": "Início",
+  "respondDuration": "Duração",
+  "respondRange": "Das {start} às {end}",
+  "@respondRange": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "respondOverlap": "Você já tem um serviço das {start} às {end} nesse dia.",
+  "@respondOverlap": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "respondMaterial": "Material incluso",
+  "respondMaterialYours": "Você leva o material",
+  "respondMaterialCustomer": "{name} compra o material",
+  "@respondMaterialCustomer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "respondMaterialWhat": "Qual material",
+  "respondMaterialPlaceholder": "Ex.: disjuntor 40 A e conectores",
+  "respondMessage": "Mensagem para {name}",
+  "@respondMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "respondMessagePlaceholder": "Explique o que está incluso e o que você vai fazer.",
+  "respondNote": "{name} recebe uma notificação e aceita pelo app.",
+  "@respondNote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "respondReplaceNote": "Você já enviou um orçamento de {amount}. O novo substitui o anterior e a validade recomeça.",
+  "@respondReplaceNote": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHours": "{hours} h",
+  "@durationHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHoursMinutes": "{hours} h {minutes}",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "declineOrderTitle": "Recusar o pedido?",
+  "declineOrderSubtitle": "{name} vê o motivo junto de “{provider} não pode atender agora” e recebe sugestões de outros profissionais.",
+  "@declineOrderSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "declineOrderDetails": "Explique em poucas palavras",
+  "declineOrderPlaceholder": "{name} vai ler este texto.",
+  "@declineOrderPlaceholder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "declineOrderHint": "Sem telefone, e-mail ou link.",
+  "declineOrderDetailsRequired": "Conte o motivo em poucas palavras.",
+  "declineOrderConfirm": "Recusar pedido",
+  "providerOrderTitle": "Pedido",
+  "providerOrderMeta": "{service} · pedido enviado {when}",
+  "@providerOrderMeta": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "providerAgreedValue": "Valor combinado: {amount}.",
+  "@providerAgreedValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "providerMaterialIncluded": "Material incluso ({what}).",
+  "@providerMaterialIncluded": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "providerMaterialIncludedPlain": "Material incluso.",
+  "providerReschedule": "Ajustar horário",
+  "providerCompleteFrom": "Você pode marcar como concluído a partir das {time} de {day}.",
+  "@providerCompleteFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "providerCustomerSection": "Cliente",
+  "providerCall": "Ligar",
+  "providerAddressSection": "Endereço",
+  "providerOpenMap": "Abrir no mapa",
+  "providerContactVisibleUntil": "Endereço e contato visíveis até {day}.",
+  "@providerContactVisibleUntil": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "providerContactHidden": "O endereço e o contato não aparecem mais neste pedido.",
+  "providerOrderSection": "Pedido",
+  "providerCustomerAsked": "{name} pediu: {preference}",
+  "@providerCustomerAsked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "preference": {
+        "type": "String"
+      }
+    }
+  },
+  "providerQuoteSentTitle": "Orçamento enviado",
+  "providerQuoteWaiting": "{name} pode aceitar até {when}.",
+  "@providerQuoteWaiting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "providerReplaceQuote": "Substituir orçamento",
+  "providerDeclinedTitle": "Você recusou o pedido",
+  "providerExpiredTitle": "O pedido venceu sem resposta",
+  "providerQuoteDeclinedTitle": "{name} recusou o orçamento",
+  "@providerQuoteDeclinedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "providerQuoteExpiredTitle": "O orçamento venceu sem resposta",
+  "providerCancelledByCustomer": "{name} cancelou. Motivo: {reason}.",
+  "@providerCancelledByCustomer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "rescheduleTitle": "Ajustar horário",
+  "rescheduleCurrent": "Horário atual",
+  "rescheduleNew": "Novo horário",
+  "rescheduleDay": "Dia",
+  "rescheduleRemaining": "{count, plural, =1{Você ainda pode ajustar este pedido mais 1 vez.} other{Você ainda pode ajustar este pedido mais {count} vezes.}}",
+  "@rescheduleRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rescheduleNote": "{name} recebe um aviso com o novo horário e pode cancelar se não servir.",
+  "@rescheduleNote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rescheduleSave": "Salvar novo horário",
+  "rescheduleNone": "Você já ajustou o horário deste pedido 2 vezes.",
+  "orderPhotoLabel": "Foto {index} do pedido",
+  "@orderPhotoLabel": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "providerRescheduled": "Novo horário salvo. {name} recebe um aviso.",
+  "@providerRescheduled": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "providerOrderCompleted": "Serviço marcado como concluído.",
+  "providerOrderCancelled": "Pedido cancelado."
 }

@@ -15,19 +15,25 @@ import 'order_labels.dart';
 typedef CancelChoice = ({CancellationReason reason, String? details});
 
 class CancelOrderSheet extends StatefulWidget {
-  const CancelOrderSheet({super.key, required this.providerFirstName});
+  const CancelOrderSheet({super.key, required this.otherFirstName, this.reasons = CancellationReason.customerReasons});
 
   static const maxDetails = 200;
 
-  final String providerFirstName;
+  final String otherFirstName;
+  final List<CancellationReason> reasons;
 
-  static Future<CancelChoice?> show(BuildContext context, {required String providerFirstName}) => showModalBottomSheet<CancelChoice>(
+  static Future<CancelChoice?> show(
+    BuildContext context, {
+    required String otherFirstName,
+    List<CancellationReason> reasons = CancellationReason.customerReasons,
+  }) =>
+      showModalBottomSheet<CancelChoice>(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
         useRootNavigator: true,
         showDragHandle: true,
-        builder: (_) => CancelOrderSheet(providerFirstName: providerFirstName),
+        builder: (_) => CancelOrderSheet(otherFirstName: otherFirstName, reasons: reasons),
       );
 
   @override
@@ -74,7 +80,7 @@ class _CancelOrderSheetState extends State<CancelOrderSheet> {
           Semantics(header: true, child: Text(l10n.cancelOrderTitle, style: VitrioText.title.copyWith(color: c.ink))),
           const SizedBox(height: VitrioSpace.sp6),
           Text(
-            l10n.cancelOrderSubtitle(widget.providerFirstName),
+            l10n.cancelOrderSubtitle(widget.otherFirstName),
             style: VitrioText.body.copyWith(height: 1.5, color: c.ink2),
           ),
           const SizedBox(height: VitrioSpace.sp16),
@@ -86,7 +92,7 @@ class _CancelOrderSheetState extends State<CancelOrderSheet> {
               _error = null;
             }),
             options: [
-              for (final reason in CancellationReason.customerReasons)
+              for (final reason in widget.reasons)
                 VitrioOption(value: reason, label: cancellationReasonLabel(l10n, reason)),
             ],
           ),

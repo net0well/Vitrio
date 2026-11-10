@@ -14,6 +14,7 @@ import 'package:vitrio/features/favorites/data/favorites_providers.dart';
 import 'package:vitrio/features/location/data/location_providers.dart';
 import 'package:vitrio/features/orders/data/orders_providers.dart';
 import 'package:vitrio/features/provider/data/provider_providers.dart';
+import 'package:vitrio/features/provider_orders/data/provider_orders_providers.dart';
 import 'package:vitrio/features/search/data/search_providers.dart';
 
 import 'fake_account_repository.dart';
@@ -25,6 +26,7 @@ import 'fake_favorites_repository.dart';
 import 'fake_orders_repository.dart';
 import 'fake_photo_picker.dart';
 import 'fake_photo_storage.dart';
+import 'fake_provider_orders_repository.dart';
 import 'fake_provider_repository.dart';
 import 'fake_search_repository.dart';
 import 'memory_token_store.dart';
@@ -43,6 +45,7 @@ final class VitrioHarness {
     required this.favorites,
     required this.orders,
     required this.addresses,
+    required this.providerOrders,
   });
 
   final ProviderContainer container;
@@ -57,6 +60,7 @@ final class VitrioHarness {
   final FakeFavoritesRepository favorites;
   final FakeOrdersRepository orders;
   final FakeAddressRepository addresses;
+  final FakeProviderOrdersRepository providerOrders;
 
   void go(String location) => container.read(routerProvider).go(location);
 }
@@ -74,6 +78,7 @@ Future<VitrioHarness> pumpVitrio(
   FakeFavoritesRepository? favorites,
   FakeOrdersRepository? orders,
   FakeAddressRepository? addresses,
+  FakeProviderOrdersRepository? providerOrders,
   DateTime? now,
   bool settle = true,
 }) async {
@@ -90,6 +95,7 @@ Future<VitrioHarness> pumpVitrio(
   final harnessFavorites = favorites ?? FakeFavoritesRepository();
   final harnessOrders = orders ?? FakeOrdersRepository();
   final harnessAddresses = addresses ?? FakeAddressRepository();
+  final harnessProviderOrders = providerOrders ?? FakeProviderOrdersRepository();
   final container = ProviderContainer(
     overrides: [
       appConfigProvider.overrideWithValue(AppConfig.forFlavor(Flavor.dev)),
@@ -106,6 +112,7 @@ Future<VitrioHarness> pumpVitrio(
       favoritesRepositoryProvider.overrideWithValue(harnessFavorites),
       ordersRepositoryProvider.overrideWithValue(harnessOrders),
       addressRepositoryProvider.overrideWithValue(harnessAddresses),
+      providerOrdersRepositoryProvider.overrideWithValue(harnessProviderOrders),
       if (now != null) clockProvider.overrideWithValue(() => now),
     ],
   );
@@ -129,5 +136,6 @@ Future<VitrioHarness> pumpVitrio(
     favorites: harnessFavorites,
     orders: harnessOrders,
     addresses: harnessAddresses,
+    providerOrders: harnessProviderOrders,
   );
 }

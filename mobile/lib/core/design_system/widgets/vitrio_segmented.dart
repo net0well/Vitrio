@@ -75,7 +75,7 @@ class _Segment extends StatelessWidget {
             curve: Curves.easeOut,
             height: _height,
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp8),
+            padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp4),
             decoration: BoxDecoration(
               color: selected ? c.surfaceRaised : Colors.transparent,
               borderRadius: const BorderRadius.all(VitrioRadius.sm),

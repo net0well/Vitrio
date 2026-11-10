@@ -22,6 +22,8 @@ List<RouteBase> get $appRoutes => [
   $providerShellRoute,
   $publicProviderRoute,
   $requestQuoteRoute,
+  $rescheduleOrderRoute,
+  $respondOrderRoute,
   $shareLinkRoute,
   $signInRoute,
   $signUpRoute,
@@ -525,6 +527,13 @@ RouteBase get $providerShellRoute => StatefulShellRouteData.$route(
           path: '/provider-orders',
           hasOverriddenOnExit: false,
           factory: $ProviderOrdersRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: ':id',
+              hasOverriddenOnExit: false,
+              factory: $ProviderOrderRoute._fromState,
+            ),
+          ],
         ),
       ],
     ),
@@ -581,6 +590,31 @@ mixin $ProviderOrdersRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/provider-orders');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProviderOrderRoute on GoRouteData {
+  static ProviderOrderRoute _fromState(GoRouterState state) =>
+      ProviderOrderRoute(id: state.pathParameters['id']!);
+
+  ProviderOrderRoute get _self => this as ProviderOrderRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/provider-orders/${Uri.encodeComponent(_self.id)}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -686,6 +720,68 @@ mixin $RequestQuoteRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/request-quote/${Uri.encodeComponent(_self.providerId)}',
     queryParams: {if (_self.from != null) 'from': _self.from},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $rescheduleOrderRoute => GoRouteData.$route(
+  path: '/provider-reschedule/:id',
+  hasOverriddenOnExit: false,
+  factory: $RescheduleOrderRoute._fromState,
+);
+
+mixin $RescheduleOrderRoute on GoRouteData {
+  static RescheduleOrderRoute _fromState(GoRouterState state) =>
+      RescheduleOrderRoute(id: state.pathParameters['id']!);
+
+  RescheduleOrderRoute get _self => this as RescheduleOrderRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/provider-reschedule/${Uri.encodeComponent(_self.id)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $respondOrderRoute => GoRouteData.$route(
+  path: '/provider-respond/:id',
+  hasOverriddenOnExit: false,
+  factory: $RespondOrderRoute._fromState,
+);
+
+mixin $RespondOrderRoute on GoRouteData {
+  static RespondOrderRoute _fromState(GoRouterState state) =>
+      RespondOrderRoute(id: state.pathParameters['id']!);
+
+  RespondOrderRoute get _self => this as RespondOrderRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/provider-respond/${Uri.encodeComponent(_self.id)}',
   );
 
   @override

@@ -3153,6 +3153,552 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Adicione o endereço onde o serviço vai ser feito.'**
   String get requestQuoteAddressRequired;
+
+  /// No description provided for @providerOrdersNewTab.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novos'**
+  String get providerOrdersNewTab;
+
+  /// No description provided for @providerOrdersNewTabCount.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novos · {count}'**
+  String providerOrdersNewTabCount(int count);
+
+  /// No description provided for @providerOrdersOngoingEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum pedido em andamento.'**
+  String get providerOrdersOngoingEmpty;
+
+  /// No description provided for @providerOrdersClosedEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum pedido finalizado ainda.'**
+  String get providerOrdersClosedEmpty;
+
+  /// No description provided for @providerNewOrderBadge.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novo · {service}'**
+  String providerNewOrderBadge(String service);
+
+  /// No description provided for @orderAgoMinutes.
+  ///
+  /// In pt, this message translates to:
+  /// **'há {count} min'**
+  String orderAgoMinutes(int count);
+
+  /// No description provided for @orderAgoHours.
+  ///
+  /// In pt, this message translates to:
+  /// **'há {count} h'**
+  String orderAgoHours(int count);
+
+  /// No description provided for @orderAgoDays.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{há 1 dia} other{há {count} dias}}'**
+  String orderAgoDays(int count);
+
+  /// No description provided for @orderPreferenceLine.
+  ///
+  /// In pt, this message translates to:
+  /// **'{day} · {period} ({hours})'**
+  String orderPreferenceLine(String day, String period, String hours);
+
+  /// No description provided for @orderRespondBy.
+  ///
+  /// In pt, this message translates to:
+  /// **'Responda até {when}'**
+  String orderRespondBy(String when);
+
+  /// No description provided for @orderPhotosAttached.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{1 foto anexada} other{{count} fotos anexadas}}'**
+  String orderPhotosAttached(int count);
+
+  /// No description provided for @providerSendQuote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviar orçamento'**
+  String get providerSendQuote;
+
+  /// No description provided for @providerSeeAllOrders.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver todos'**
+  String get providerSeeAllOrders;
+
+  /// No description provided for @providerStatusQuoted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguardando · válido até {when}'**
+  String providerStatusQuoted(String when);
+
+  /// No description provided for @providerStatusScheduled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Agendado · {when}'**
+  String providerStatusScheduled(String when);
+
+  /// No description provided for @providerStatusDeclined.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recusado por você'**
+  String get providerStatusDeclined;
+
+  /// No description provided for @providerStatusExpired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Venceu sem resposta'**
+  String get providerStatusExpired;
+
+  /// No description provided for @providerStatusCancelledByCustomer.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelado pelo cliente'**
+  String get providerStatusCancelledByCustomer;
+
+  /// No description provided for @providerStatusCancelledByYou.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelado por você'**
+  String get providerStatusCancelledByYou;
+
+  /// No description provided for @providerStatusCancelledBySystem.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelado pelo Vitrio'**
+  String get providerStatusCancelledBySystem;
+
+  /// No description provided for @respondTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Responder pedido'**
+  String get respondTitle;
+
+  /// No description provided for @respondMemberSince.
+  ///
+  /// In pt, this message translates to:
+  /// **'No Vitrio desde {month} · {count, plural, =1{1 pedido} other{{count} pedidos}}'**
+  String respondMemberSince(String month, int count);
+
+  /// No description provided for @respondWhen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quando'**
+  String get respondWhen;
+
+  /// No description provided for @respondWhere.
+  ///
+  /// In pt, this message translates to:
+  /// **'Onde'**
+  String get respondWhere;
+
+  /// No description provided for @respondAddressLocked.
+  ///
+  /// In pt, this message translates to:
+  /// **'Endereço completo liberado quando {name} aceitar.'**
+  String respondAddressLocked(String name);
+
+  /// No description provided for @respondYourQuote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu orçamento'**
+  String get respondYourQuote;
+
+  /// No description provided for @respondQuoteType.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tipo de orçamento'**
+  String get respondQuoteType;
+
+  /// No description provided for @quoteTypeFixedPrice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Valor fechado'**
+  String get quoteTypeFixedPrice;
+
+  /// No description provided for @quoteTypeTechnicalVisit.
+  ///
+  /// In pt, this message translates to:
+  /// **'Visita técnica'**
+  String get quoteTypeTechnicalVisit;
+
+  /// No description provided for @respondPriceFixed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Valor do serviço'**
+  String get respondPriceFixed;
+
+  /// No description provided for @respondPriceVisit.
+  ///
+  /// In pt, this message translates to:
+  /// **'Valor da visita técnica'**
+  String get respondPriceVisit;
+
+  /// No description provided for @respondPriceInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'Informe um valor entre R\$ 1,00 e R\$ 100.000,00.'**
+  String get respondPriceInvalid;
+
+  /// No description provided for @respondDay.
+  ///
+  /// In pt, this message translates to:
+  /// **'Dia da visita'**
+  String get respondDay;
+
+  /// No description provided for @respondStart.
+  ///
+  /// In pt, this message translates to:
+  /// **'Início'**
+  String get respondStart;
+
+  /// No description provided for @respondDuration.
+  ///
+  /// In pt, this message translates to:
+  /// **'Duração'**
+  String get respondDuration;
+
+  /// No description provided for @respondRange.
+  ///
+  /// In pt, this message translates to:
+  /// **'Das {start} às {end}'**
+  String respondRange(String start, String end);
+
+  /// No description provided for @respondOverlap.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você já tem um serviço das {start} às {end} nesse dia.'**
+  String respondOverlap(String start, String end);
+
+  /// No description provided for @respondMaterial.
+  ///
+  /// In pt, this message translates to:
+  /// **'Material incluso'**
+  String get respondMaterial;
+
+  /// No description provided for @respondMaterialYours.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você leva o material'**
+  String get respondMaterialYours;
+
+  /// No description provided for @respondMaterialCustomer.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} compra o material'**
+  String respondMaterialCustomer(String name);
+
+  /// No description provided for @respondMaterialWhat.
+  ///
+  /// In pt, this message translates to:
+  /// **'Qual material'**
+  String get respondMaterialWhat;
+
+  /// No description provided for @respondMaterialPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ex.: disjuntor 40 A e conectores'**
+  String get respondMaterialPlaceholder;
+
+  /// No description provided for @respondMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mensagem para {name}'**
+  String respondMessage(String name);
+
+  /// No description provided for @respondMessagePlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'Explique o que está incluso e o que você vai fazer.'**
+  String get respondMessagePlaceholder;
+
+  /// No description provided for @respondNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} recebe uma notificação e aceita pelo app.'**
+  String respondNote(String name);
+
+  /// No description provided for @respondReplaceNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você já enviou um orçamento de {amount}. O novo substitui o anterior e a validade recomeça.'**
+  String respondReplaceNote(String amount);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In pt, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @durationHours.
+  ///
+  /// In pt, this message translates to:
+  /// **'{hours} h'**
+  String durationHours(int hours);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In pt, this message translates to:
+  /// **'{hours} h {minutes}'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @declineOrderTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recusar o pedido?'**
+  String get declineOrderTitle;
+
+  /// No description provided for @declineOrderSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} vê o motivo junto de “{provider} não pode atender agora” e recebe sugestões de outros profissionais.'**
+  String declineOrderSubtitle(String name, String provider);
+
+  /// No description provided for @declineOrderDetails.
+  ///
+  /// In pt, this message translates to:
+  /// **'Explique em poucas palavras'**
+  String get declineOrderDetails;
+
+  /// No description provided for @declineOrderPlaceholder.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} vai ler este texto.'**
+  String declineOrderPlaceholder(String name);
+
+  /// No description provided for @declineOrderHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem telefone, e-mail ou link.'**
+  String get declineOrderHint;
+
+  /// No description provided for @declineOrderDetailsRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conte o motivo em poucas palavras.'**
+  String get declineOrderDetailsRequired;
+
+  /// No description provided for @declineOrderConfirm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Recusar pedido'**
+  String get declineOrderConfirm;
+
+  /// No description provided for @providerOrderTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido'**
+  String get providerOrderTitle;
+
+  /// No description provided for @providerOrderMeta.
+  ///
+  /// In pt, this message translates to:
+  /// **'{service} · pedido enviado {when}'**
+  String providerOrderMeta(String service, String when);
+
+  /// No description provided for @providerAgreedValue.
+  ///
+  /// In pt, this message translates to:
+  /// **'Valor combinado: {amount}.'**
+  String providerAgreedValue(String amount);
+
+  /// No description provided for @providerMaterialIncluded.
+  ///
+  /// In pt, this message translates to:
+  /// **'Material incluso ({what}).'**
+  String providerMaterialIncluded(String what);
+
+  /// No description provided for @providerMaterialIncludedPlain.
+  ///
+  /// In pt, this message translates to:
+  /// **'Material incluso.'**
+  String get providerMaterialIncludedPlain;
+
+  /// No description provided for @providerReschedule.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajustar horário'**
+  String get providerReschedule;
+
+  /// No description provided for @providerCompleteFrom.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você pode marcar como concluído a partir das {time} de {day}.'**
+  String providerCompleteFrom(String time, String day);
+
+  /// No description provided for @providerCustomerSection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cliente'**
+  String get providerCustomerSection;
+
+  /// No description provided for @providerCall.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ligar'**
+  String get providerCall;
+
+  /// No description provided for @providerAddressSection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Endereço'**
+  String get providerAddressSection;
+
+  /// No description provided for @providerOpenMap.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir no mapa'**
+  String get providerOpenMap;
+
+  /// No description provided for @providerContactVisibleUntil.
+  ///
+  /// In pt, this message translates to:
+  /// **'Endereço e contato visíveis até {day}.'**
+  String providerContactVisibleUntil(String day);
+
+  /// No description provided for @providerContactHidden.
+  ///
+  /// In pt, this message translates to:
+  /// **'O endereço e o contato não aparecem mais neste pedido.'**
+  String get providerContactHidden;
+
+  /// No description provided for @providerOrderSection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido'**
+  String get providerOrderSection;
+
+  /// No description provided for @providerCustomerAsked.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} pediu: {preference}'**
+  String providerCustomerAsked(String name, String preference);
+
+  /// No description provided for @providerQuoteSentTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Orçamento enviado'**
+  String get providerQuoteSentTitle;
+
+  /// No description provided for @providerQuoteWaiting.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} pode aceitar até {when}.'**
+  String providerQuoteWaiting(String name, String when);
+
+  /// No description provided for @providerReplaceQuote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Substituir orçamento'**
+  String get providerReplaceQuote;
+
+  /// No description provided for @providerDeclinedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você recusou o pedido'**
+  String get providerDeclinedTitle;
+
+  /// No description provided for @providerExpiredTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'O pedido venceu sem resposta'**
+  String get providerExpiredTitle;
+
+  /// No description provided for @providerQuoteDeclinedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} recusou o orçamento'**
+  String providerQuoteDeclinedTitle(String name);
+
+  /// No description provided for @providerQuoteExpiredTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'O orçamento venceu sem resposta'**
+  String get providerQuoteExpiredTitle;
+
+  /// No description provided for @providerCancelledByCustomer.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} cancelou. Motivo: {reason}.'**
+  String providerCancelledByCustomer(String name, String reason);
+
+  /// No description provided for @rescheduleTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ajustar horário'**
+  String get rescheduleTitle;
+
+  /// No description provided for @rescheduleCurrent.
+  ///
+  /// In pt, this message translates to:
+  /// **'Horário atual'**
+  String get rescheduleCurrent;
+
+  /// No description provided for @rescheduleNew.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novo horário'**
+  String get rescheduleNew;
+
+  /// No description provided for @rescheduleDay.
+  ///
+  /// In pt, this message translates to:
+  /// **'Dia'**
+  String get rescheduleDay;
+
+  /// No description provided for @rescheduleRemaining.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{Você ainda pode ajustar este pedido mais 1 vez.} other{Você ainda pode ajustar este pedido mais {count} vezes.}}'**
+  String rescheduleRemaining(int count);
+
+  /// No description provided for @rescheduleNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'{name} recebe um aviso com o novo horário e pode cancelar se não servir.'**
+  String rescheduleNote(String name);
+
+  /// No description provided for @rescheduleSave.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar novo horário'**
+  String get rescheduleSave;
+
+  /// No description provided for @rescheduleNone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você já ajustou o horário deste pedido 2 vezes.'**
+  String get rescheduleNone;
+
+  /// No description provided for @orderPhotoLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Foto {index} do pedido'**
+  String orderPhotoLabel(int index);
+
+  /// No description provided for @providerRescheduled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novo horário salvo. {name} recebe um aviso.'**
+  String providerRescheduled(String name);
+
+  /// No description provided for @providerOrderCompleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Serviço marcado como concluído.'**
+  String get providerOrderCompleted;
+
+  /// No description provided for @providerOrderCancelled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido cancelado.'**
+  String get providerOrderCancelled;
 }
 
 class _AppLocalizationsDelegate

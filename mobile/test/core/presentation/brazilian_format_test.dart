@@ -14,4 +14,13 @@ void main() {
   });
 
   test('ratings show one decimal with a comma', () => expect(formatRating(4.9), '4,9'));
+
+  test('phones with the country code show the area code and the hyphen', () {
+    expect(formatPhone('+5516988887777'), '(16) 98888-7777');
+    expect(formatPhone('1633221100'), '(16) 3322-1100');
+  });
+
+  test('phones in an unknown shape stay as typed', () => expect(formatPhone('123'), '123'));
+
+  test('ceps get the hyphen', () => expect(formatCep('14870180'), '14870-180'));
 }

@@ -1730,4 +1730,378 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get requestQuoteAddressRequired =>
       'Adicione o endereço onde o serviço vai ser feito.';
+
+  @override
+  String get providerOrdersNewTab => 'Novos';
+
+  @override
+  String providerOrdersNewTabCount(int count) {
+    return 'Novos · $count';
+  }
+
+  @override
+  String get providerOrdersOngoingEmpty => 'Nenhum pedido em andamento.';
+
+  @override
+  String get providerOrdersClosedEmpty => 'Nenhum pedido finalizado ainda.';
+
+  @override
+  String providerNewOrderBadge(String service) {
+    return 'Novo · $service';
+  }
+
+  @override
+  String orderAgoMinutes(int count) {
+    return 'há $count min';
+  }
+
+  @override
+  String orderAgoHours(int count) {
+    return 'há $count h';
+  }
+
+  @override
+  String orderAgoDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'há $count dias',
+      one: 'há 1 dia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orderPreferenceLine(String day, String period, String hours) {
+    return '$day · $period ($hours)';
+  }
+
+  @override
+  String orderRespondBy(String when) {
+    return 'Responda até $when';
+  }
+
+  @override
+  String orderPhotosAttached(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fotos anexadas',
+      one: '1 foto anexada',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get providerSendQuote => 'Enviar orçamento';
+
+  @override
+  String get providerSeeAllOrders => 'Ver todos';
+
+  @override
+  String providerStatusQuoted(String when) {
+    return 'Aguardando · válido até $when';
+  }
+
+  @override
+  String providerStatusScheduled(String when) {
+    return 'Agendado · $when';
+  }
+
+  @override
+  String get providerStatusDeclined => 'Recusado por você';
+
+  @override
+  String get providerStatusExpired => 'Venceu sem resposta';
+
+  @override
+  String get providerStatusCancelledByCustomer => 'Cancelado pelo cliente';
+
+  @override
+  String get providerStatusCancelledByYou => 'Cancelado por você';
+
+  @override
+  String get providerStatusCancelledBySystem => 'Cancelado pelo Vitrio';
+
+  @override
+  String get respondTitle => 'Responder pedido';
+
+  @override
+  String respondMemberSince(String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pedidos',
+      one: '1 pedido',
+    );
+    return 'No Vitrio desde $month · $_temp0';
+  }
+
+  @override
+  String get respondWhen => 'Quando';
+
+  @override
+  String get respondWhere => 'Onde';
+
+  @override
+  String respondAddressLocked(String name) {
+    return 'Endereço completo liberado quando $name aceitar.';
+  }
+
+  @override
+  String get respondYourQuote => 'Seu orçamento';
+
+  @override
+  String get respondQuoteType => 'Tipo de orçamento';
+
+  @override
+  String get quoteTypeFixedPrice => 'Valor fechado';
+
+  @override
+  String get quoteTypeTechnicalVisit => 'Visita técnica';
+
+  @override
+  String get respondPriceFixed => 'Valor do serviço';
+
+  @override
+  String get respondPriceVisit => 'Valor da visita técnica';
+
+  @override
+  String get respondPriceInvalid =>
+      'Informe um valor entre R\$ 1,00 e R\$ 100.000,00.';
+
+  @override
+  String get respondDay => 'Dia da visita';
+
+  @override
+  String get respondStart => 'Início';
+
+  @override
+  String get respondDuration => 'Duração';
+
+  @override
+  String respondRange(String start, String end) {
+    return 'Das $start às $end';
+  }
+
+  @override
+  String respondOverlap(String start, String end) {
+    return 'Você já tem um serviço das $start às $end nesse dia.';
+  }
+
+  @override
+  String get respondMaterial => 'Material incluso';
+
+  @override
+  String get respondMaterialYours => 'Você leva o material';
+
+  @override
+  String respondMaterialCustomer(String name) {
+    return '$name compra o material';
+  }
+
+  @override
+  String get respondMaterialWhat => 'Qual material';
+
+  @override
+  String get respondMaterialPlaceholder => 'Ex.: disjuntor 40 A e conectores';
+
+  @override
+  String respondMessage(String name) {
+    return 'Mensagem para $name';
+  }
+
+  @override
+  String get respondMessagePlaceholder =>
+      'Explique o que está incluso e o que você vai fazer.';
+
+  @override
+  String respondNote(String name) {
+    return '$name recebe uma notificação e aceita pelo app.';
+  }
+
+  @override
+  String respondReplaceNote(String amount) {
+    return 'Você já enviou um orçamento de $amount. O novo substitui o anterior e a validade recomeça.';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String durationHours(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes';
+  }
+
+  @override
+  String get declineOrderTitle => 'Recusar o pedido?';
+
+  @override
+  String declineOrderSubtitle(String name, String provider) {
+    return '$name vê o motivo junto de “$provider não pode atender agora” e recebe sugestões de outros profissionais.';
+  }
+
+  @override
+  String get declineOrderDetails => 'Explique em poucas palavras';
+
+  @override
+  String declineOrderPlaceholder(String name) {
+    return '$name vai ler este texto.';
+  }
+
+  @override
+  String get declineOrderHint => 'Sem telefone, e-mail ou link.';
+
+  @override
+  String get declineOrderDetailsRequired =>
+      'Conte o motivo em poucas palavras.';
+
+  @override
+  String get declineOrderConfirm => 'Recusar pedido';
+
+  @override
+  String get providerOrderTitle => 'Pedido';
+
+  @override
+  String providerOrderMeta(String service, String when) {
+    return '$service · pedido enviado $when';
+  }
+
+  @override
+  String providerAgreedValue(String amount) {
+    return 'Valor combinado: $amount.';
+  }
+
+  @override
+  String providerMaterialIncluded(String what) {
+    return 'Material incluso ($what).';
+  }
+
+  @override
+  String get providerMaterialIncludedPlain => 'Material incluso.';
+
+  @override
+  String get providerReschedule => 'Ajustar horário';
+
+  @override
+  String providerCompleteFrom(String time, String day) {
+    return 'Você pode marcar como concluído a partir das $time de $day.';
+  }
+
+  @override
+  String get providerCustomerSection => 'Cliente';
+
+  @override
+  String get providerCall => 'Ligar';
+
+  @override
+  String get providerAddressSection => 'Endereço';
+
+  @override
+  String get providerOpenMap => 'Abrir no mapa';
+
+  @override
+  String providerContactVisibleUntil(String day) {
+    return 'Endereço e contato visíveis até $day.';
+  }
+
+  @override
+  String get providerContactHidden =>
+      'O endereço e o contato não aparecem mais neste pedido.';
+
+  @override
+  String get providerOrderSection => 'Pedido';
+
+  @override
+  String providerCustomerAsked(String name, String preference) {
+    return '$name pediu: $preference';
+  }
+
+  @override
+  String get providerQuoteSentTitle => 'Orçamento enviado';
+
+  @override
+  String providerQuoteWaiting(String name, String when) {
+    return '$name pode aceitar até $when.';
+  }
+
+  @override
+  String get providerReplaceQuote => 'Substituir orçamento';
+
+  @override
+  String get providerDeclinedTitle => 'Você recusou o pedido';
+
+  @override
+  String get providerExpiredTitle => 'O pedido venceu sem resposta';
+
+  @override
+  String providerQuoteDeclinedTitle(String name) {
+    return '$name recusou o orçamento';
+  }
+
+  @override
+  String get providerQuoteExpiredTitle => 'O orçamento venceu sem resposta';
+
+  @override
+  String providerCancelledByCustomer(String name, String reason) {
+    return '$name cancelou. Motivo: $reason.';
+  }
+
+  @override
+  String get rescheduleTitle => 'Ajustar horário';
+
+  @override
+  String get rescheduleCurrent => 'Horário atual';
+
+  @override
+  String get rescheduleNew => 'Novo horário';
+
+  @override
+  String get rescheduleDay => 'Dia';
+
+  @override
+  String rescheduleRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Você ainda pode ajustar este pedido mais $count vezes.',
+      one: 'Você ainda pode ajustar este pedido mais 1 vez.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rescheduleNote(String name) {
+    return '$name recebe um aviso com o novo horário e pode cancelar se não servir.';
+  }
+
+  @override
+  String get rescheduleSave => 'Salvar novo horário';
+
+  @override
+  String get rescheduleNone =>
+      'Você já ajustou o horário deste pedido 2 vezes.';
+
+  @override
+  String orderPhotoLabel(int index) {
+    return 'Foto $index do pedido';
+  }
+
+  @override
+  String providerRescheduled(String name) {
+    return 'Novo horário salvo. $name recebe um aviso.';
+  }
+
+  @override
+  String get providerOrderCompleted => 'Serviço marcado como concluído.';
+
+  @override
+  String get providerOrderCancelled => 'Pedido cancelado.';
 }

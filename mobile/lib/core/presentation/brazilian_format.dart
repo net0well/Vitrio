@@ -18,3 +18,18 @@ String formatDistance(double km) => switch (km) {
     };
 
 String formatRating(double score) => _oneDecimal.format(score);
+
+String formatPhone(String phone) {
+  final digits = phone.replaceAll(RegExp(r'\D'), '');
+  final local = digits.length > 11 && digits.startsWith('55') ? digits.substring(2) : digits;
+  return switch (local.length) {
+    11 => '(${local.substring(0, 2)}) ${local.substring(2, 7)}-${local.substring(7)}',
+    10 => '(${local.substring(0, 2)}) ${local.substring(2, 6)}-${local.substring(6)}',
+    _ => phone,
+  };
+}
+
+String formatCep(String cep) {
+  final digits = cep.replaceAll(RegExp(r'\D'), '');
+  return digits.length == 8 ? '${digits.substring(0, 5)}-${digits.substring(5)}' : cep;
+}

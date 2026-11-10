@@ -18,6 +18,8 @@ import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../core/design_system/widgets/vitrio_section_header.dart';
 import '../../../core/design_system/widgets/vitrio_switch_row.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../provider_orders/presentation/decline_order_flow.dart';
+import '../../provider_orders/presentation/widgets/new_order_card.dart';
 import '../domain/provider_dashboard.dart';
 import '../domain/provider_profile.dart';
 import '../domain/provider_status.dart';
@@ -78,37 +80,55 @@ class _Dashboard extends ConsumerWidget {
             children: [
               _ProfileCard(profile: profile, dashboard: dashboard),
               const SizedBox(height: VitrioSpace.sp24),
-              VitrioSectionHeader(l10n.providerNewOrders),
-              const SizedBox(height: VitrioSpace.sp12),
-              Container(
-                padding: const EdgeInsets.all(VitrioSpace.sp16),
-                decoration: BoxDecoration(
-                  color: c.surfaceRaised,
-                  borderRadius: const BorderRadius.all(VitrioRadius.card),
-                  border: Border.all(color: c.lineSoft),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.providerNoOrders, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
-                    const SizedBox(height: VitrioSpace.sp4),
-                    Text(
-                      published ? l10n.providerNoOrdersShare : l10n.providerNoOrdersPublish,
-                      style: VitrioText.meta.copyWith(color: c.inkMuted),
-                    ),
-                    if (published) ...[
-                      const SizedBox(height: VitrioSpace.sp12),
-                      VitrioButton(
-                        label: l10n.providerShare,
-                        variant: VitrioButtonVariant.secondary,
-                        size: VitrioButtonSize.md,
-                        leadingIcon: VitrioIconName.share,
-                        onPressed: () => shareProviderProfile(context, ref, profile.id),
-                      ),
-                    ],
-                  ],
-                ),
+              VitrioSectionHeader(
+                l10n.providerNewOrders,
+                count: dashboard.newOrders > 0 ? dashboard.newOrders : null,
+                actionLabel: dashboard.newOrders > 0 ? l10n.providerSeeAllOrders : null,
+                onAction: () => const ProviderOrdersRoute().go(context),
               ),
+              if (dashboard.latestNewOrders.isEmpty) ...[
+                const SizedBox(height: VitrioSpace.sp12),
+                Container(
+                  padding: const EdgeInsets.all(VitrioSpace.sp16),
+                  decoration: BoxDecoration(
+                    color: c.surfaceRaised,
+                    borderRadius: const BorderRadius.all(VitrioRadius.card),
+                    border: Border.all(color: c.lineSoft),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.providerNoOrders, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
+                      const SizedBox(height: VitrioSpace.sp4),
+                      Text(
+                        published ? l10n.providerNoOrdersShare : l10n.providerNoOrdersPublish,
+                        style: VitrioText.meta.copyWith(color: c.inkMuted),
+                      ),
+                      if (published) ...[
+                        const SizedBox(height: VitrioSpace.sp12),
+                        VitrioButton(
+                          label: l10n.providerShare,
+                          variant: VitrioButtonVariant.secondary,
+                          size: VitrioButtonSize.md,
+                          leadingIcon: VitrioIconName.share,
+                          onPressed: () => shareProviderProfile(context, ref, profile.id),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+              for (final (index, order) in dashboard.latestNewOrders.indexed) ...[
+                const SizedBox(height: VitrioSpace.sp12),
+                NewOrderCard(
+                  order: order,
+                  highlighted: index == 0,
+                  newBadge: index == 0,
+                  showDeadline: false,
+                  onDecline: () => declineFromList(context, ref, order),
+                  onRespond: () => RespondOrderRoute(id: order.id).push<void>(context),
+                ),
+              ],
             ],
           ),
         ),
@@ -196,11 +216,11 @@ class _Header extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _Metric(value: '0', label: l10n.providerMetricNewOrders, highlight: true)),
+              Expanded(child: _Metric(value: '${dashboard.newOrders}', label: l10n.providerMetricNewOrders, highlight: true)),
               const SizedBox(width: VitrioSpace.sp10),
               Expanded(child: _Metric(value: '–', label: l10n.providerMetricRating)),
               const SizedBox(width: VitrioSpace.sp10),
-              Expanded(child: _Metric(value: '0', label: l10n.providerMetricServicesMonth)),
+              Expanded(child: _Metric(value: '${dashboard.servicesThisMonth}', label: l10n.providerMetricServicesMonth)),
             ],
           ),
         ],
