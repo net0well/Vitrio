@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vitrio/features/provider/presentation/mask_input_formatter.dart';
-import 'package:vitrio/features/provider/presentation/provider_labels.dart';
+import 'package:vitrio/core/presentation/brazilian_format.dart';
+import 'package:vitrio/core/presentation/mask_input_formatter.dart';
 
 void main() {
   String typed(String Function(String) mask, String text) =>

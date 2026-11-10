@@ -41,7 +41,7 @@ class OrderContactSections extends StatelessWidget {
     if (address.complement case final String complement when complement.isNotEmpty) complement,
   ].join(', ');
 
-  static String _cityLine(OrderAddress address) => '${address.neighborhood}, ${address.cityName}, ${address.state} · ${formatCep(address.cep)}';
+  static String _cityLine(OrderAddress address) => '${address.neighborhood}, ${address.cityName}, ${address.state} · ${cepText(address.cep)}';
 
   static Future<void> _open(Uri uri) => launchUrl(uri, mode: LaunchMode.externalApplication);
 
@@ -90,7 +90,7 @@ class OrderContactSections extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(customer.name, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
-                        if (phone != null) ...[const SizedBox(height: 2), Text(formatPhone(phone), style: VitrioText.meta.copyWith(color: c.inkMuted))],
+                        if (phone != null) ...[const SizedBox(height: 2), Text(phoneText(phone), style: VitrioText.meta.copyWith(color: c.inkMuted))],
                       ],
                     ),
                   ),

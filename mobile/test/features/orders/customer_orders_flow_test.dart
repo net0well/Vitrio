@@ -150,7 +150,7 @@ void main() {
     await fill(tester, 'O profissional usa para falar com você depois que você aceitar o orçamento.', '16 99123-4567');
     await tapText(tester, 'Enviar pedido');
 
-    expect(account.updatedPhones, ['16 99123-4567']);
+    expect(account.updatedPhones, ['(16) 99123-4567']);
     expect(orders.created.single.serviceId, isNull);
   });
 

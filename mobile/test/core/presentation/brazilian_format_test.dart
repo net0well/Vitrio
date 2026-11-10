@@ -16,11 +16,19 @@ void main() {
   test('ratings show one decimal with a comma', () => expect(formatRating(4.9), '4,9'));
 
   test('phones with the country code show the area code and the hyphen', () {
-    expect(formatPhone('+5516988887777'), '(16) 98888-7777');
-    expect(formatPhone('1633221100'), '(16) 3322-1100');
+    expect(phoneText('+5516988887777'), '(16) 98888-7777');
+    expect(phoneText('16988887777'), '(16) 98888-7777');
   });
 
-  test('phones in an unknown shape stay as typed', () => expect(formatPhone('123'), '123'));
+  test('phones are masked while typed', () {
+    expect(phoneText('1'), '(1');
+    expect(phoneText('16'), '(16');
+    expect(phoneText('169'), '(16) 9');
+    expect(phoneText('1699814'), '(16) 99814');
+    expect(phoneText('16998147'), '(16) 99814-7');
+    expect(phoneText('169981471439'), '(16) 99814-7143');
+    expect(phoneText(null), '');
+  });
 
-  test('ceps get the hyphen', () => expect(formatCep('14870180'), '14870-180'));
+  test('ceps get the hyphen', () => expect(cepText('14870180'), '14870-180'));
 }

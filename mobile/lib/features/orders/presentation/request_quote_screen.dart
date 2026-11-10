@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/routes.dart';
@@ -30,6 +29,7 @@ import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
 import '../../../core/presentation/brazilian_format.dart';
 import '../../../core/presentation/clock.dart';
+import '../../../core/presentation/mask_input_formatter.dart';
 import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../account/domain/saved_address.dart';
@@ -65,7 +65,7 @@ class _RequestQuoteScreenState extends ConsumerState<RequestQuoteScreen> {
   static const _maxDaysAhead = 30;
   static const _titleLength = (min: 5, max: 80);
   static const _descriptionLength = (min: 20, max: 500);
-  static const _minPhoneDigits = 10;
+  static const _minPhoneDigits = 11;
   static const _otherService = '';
 
   final _title = TextEditingController();
@@ -443,7 +443,7 @@ class _RequestQuoteScreenState extends ConsumerState<RequestQuoteScreen> {
               hint: l10n.requestQuotePhoneHint,
               keyboardType: TextInputType.phone,
               autofillHints: const [AutofillHints.telephoneNumber],
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ()+-]'))],
+              inputFormatters: const [MaskInputFormatter(phoneText)],
               error: errors['phone'] ?? fieldError(_problem, 'phoneNumber'),
               onChanged: (_) => setState(() {}),
             ),

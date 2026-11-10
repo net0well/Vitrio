@@ -5,7 +5,9 @@ import '../../../core/design_system/tokens/vitrio_space.dart';
 import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/network/problem_details.dart';
+import '../../../core/presentation/brazilian_format.dart';
 import '../../../core/presentation/form_page.dart';
+import '../../../core/presentation/mask_input_formatter.dart';
 import '../../../core/presentation/problem_message.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/data/auth_providers.dart';
@@ -29,7 +31,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.initState();
     final me = ref.read(sessionControllerProvider).value;
     _name = TextEditingController(text: me?.displayName);
-    _phone = TextEditingController(text: me?.phoneNumber);
+    _phone = TextEditingController(text: phoneText(me?.phoneNumber));
   }
 
   @override
@@ -84,6 +86,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           label: l10n.profilePhone,
           controller: _phone,
           keyboardType: TextInputType.phone,
+          inputFormatters: const [MaskInputFormatter(phoneText)],
           autofillHints: const [AutofillHints.telephoneNumber],
           placeholder: l10n.profilePhoneHint,
           error: fieldError(_problem, 'phoneNumber'),
