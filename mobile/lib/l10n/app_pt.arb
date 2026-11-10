@@ -331,8 +331,6 @@
   "homeSeeAll": "Ver todas",
   "homeMore": "Mais",
   "tabAgenda": "Agenda",
-  "providerOrdersEmpty": "Você ainda não recebeu pedidos. Quando um cliente pedir orçamento, ele aparece aqui.",
-  "providerAgendaEmpty": "Nenhum serviço agendado. Quando um cliente aceitar seu orçamento, o serviço aparece aqui.",
   "providerNewOrders": "Novos pedidos",
   "providerNoOrders": "Nenhum pedido novo por enquanto.",
   "providerNoOrdersShare": "Compartilhe seu perfil para chegar aos primeiros clientes.",
@@ -1394,5 +1392,55 @@
     }
   },
   "providerOrderCompleted": "Serviço marcado como concluído.",
-  "providerOrderCancelled": "Pedido cancelado."
+  "providerOrderCancelled": "Pedido cancelado.",
+  "agendaSubtitle": "Seus serviços e os orçamentos que aguardam resposta.",
+  "agendaPreviousMonth": "Mês anterior",
+  "agendaNextMonth": "Próximo mês",
+  "agendaScheduled": "Agendado",
+  "agendaQuoted": "Aguardando o cliente",
+  "agendaDone": "Feito",
+  "agendaScheduledSection": "Agendados",
+  "agendaQuotedSection": "Aguardando o cliente",
+  "agendaDoneSection": "Feitos",
+  "agendaDayTitle": "{weekday}, {day} de {month}",
+  "@agendaDayTitle": {
+    "placeholders": {
+      "weekday": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "agendaDayLabel": "{weekday}, {day} de {month}{count, plural, =0{} =1{, 1 item} other{, {count} itens}}",
+  "@agendaDayLabel": {
+    "placeholders": {
+      "weekday": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agendaUntil": "até {time}",
+  "@agendaUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "agendaEmptyDay": "Nenhum serviço neste dia.",
+  "agendaLoadError": "Não conseguimos carregar a agenda. Verifique a conexão e tente de novo."
 }

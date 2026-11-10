@@ -749,14 +749,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get tabAgenda => 'Agenda';
 
   @override
-  String get providerOrdersEmpty =>
-      'Você ainda não recebeu pedidos. Quando um cliente pedir orçamento, ele aparece aqui.';
-
-  @override
-  String get providerAgendaEmpty =>
-      'Nenhum serviço agendado. Quando um cliente aceitar seu orçamento, o serviço aparece aqui.';
-
-  @override
   String get providerNewOrders => 'Novos pedidos';
 
   @override
@@ -2104,4 +2096,61 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get providerOrderCancelled => 'Pedido cancelado.';
+
+  @override
+  String get agendaSubtitle =>
+      'Seus serviços e os orçamentos que aguardam resposta.';
+
+  @override
+  String get agendaPreviousMonth => 'Mês anterior';
+
+  @override
+  String get agendaNextMonth => 'Próximo mês';
+
+  @override
+  String get agendaScheduled => 'Agendado';
+
+  @override
+  String get agendaQuoted => 'Aguardando o cliente';
+
+  @override
+  String get agendaDone => 'Feito';
+
+  @override
+  String get agendaScheduledSection => 'Agendados';
+
+  @override
+  String get agendaQuotedSection => 'Aguardando o cliente';
+
+  @override
+  String get agendaDoneSection => 'Feitos';
+
+  @override
+  String agendaDayTitle(String weekday, int day, String month) {
+    return '$weekday, $day de $month';
+  }
+
+  @override
+  String agendaDayLabel(String weekday, int day, String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: ', $count itens',
+      one: ', 1 item',
+      zero: '',
+    );
+    return '$weekday, $day de $month$_temp0';
+  }
+
+  @override
+  String agendaUntil(String time) {
+    return 'até $time';
+  }
+
+  @override
+  String get agendaEmptyDay => 'Nenhum serviço neste dia.';
+
+  @override
+  String get agendaLoadError =>
+      'Não conseguimos carregar a agenda. Verifique a conexão e tente de novo.';
 }

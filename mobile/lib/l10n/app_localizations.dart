@@ -1462,18 +1462,6 @@ abstract class AppLocalizations {
   /// **'Agenda'**
   String get tabAgenda;
 
-  /// No description provided for @providerOrdersEmpty.
-  ///
-  /// In pt, this message translates to:
-  /// **'Você ainda não recebeu pedidos. Quando um cliente pedir orçamento, ele aparece aqui.'**
-  String get providerOrdersEmpty;
-
-  /// No description provided for @providerAgendaEmpty.
-  ///
-  /// In pt, this message translates to:
-  /// **'Nenhum serviço agendado. Quando um cliente aceitar seu orçamento, o serviço aparece aqui.'**
-  String get providerAgendaEmpty;
-
   /// No description provided for @providerNewOrders.
   ///
   /// In pt, this message translates to:
@@ -3699,6 +3687,90 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Pedido cancelado.'**
   String get providerOrderCancelled;
+
+  /// No description provided for @agendaSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seus serviços e os orçamentos que aguardam resposta.'**
+  String get agendaSubtitle;
+
+  /// No description provided for @agendaPreviousMonth.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mês anterior'**
+  String get agendaPreviousMonth;
+
+  /// No description provided for @agendaNextMonth.
+  ///
+  /// In pt, this message translates to:
+  /// **'Próximo mês'**
+  String get agendaNextMonth;
+
+  /// No description provided for @agendaScheduled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Agendado'**
+  String get agendaScheduled;
+
+  /// No description provided for @agendaQuoted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguardando o cliente'**
+  String get agendaQuoted;
+
+  /// No description provided for @agendaDone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Feito'**
+  String get agendaDone;
+
+  /// No description provided for @agendaScheduledSection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Agendados'**
+  String get agendaScheduledSection;
+
+  /// No description provided for @agendaQuotedSection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aguardando o cliente'**
+  String get agendaQuotedSection;
+
+  /// No description provided for @agendaDoneSection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Feitos'**
+  String get agendaDoneSection;
+
+  /// No description provided for @agendaDayTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'{weekday}, {day} de {month}'**
+  String agendaDayTitle(String weekday, int day, String month);
+
+  /// No description provided for @agendaDayLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'{weekday}, {day} de {month}{count, plural, =0{} =1{, 1 item} other{, {count} itens}}'**
+  String agendaDayLabel(String weekday, int day, String month, int count);
+
+  /// No description provided for @agendaUntil.
+  ///
+  /// In pt, this message translates to:
+  /// **'até {time}'**
+  String agendaUntil(String time);
+
+  /// No description provided for @agendaEmptyDay.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum serviço neste dia.'**
+  String get agendaEmptyDay;
+
+  /// No description provided for @agendaLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não conseguimos carregar a agenda. Verifique a conexão e tente de novo.'**
+  String get agendaLoadError;
 }
 
 class _AppLocalizationsDelegate

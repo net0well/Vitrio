@@ -2,46 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vitrio/core/design_system/widgets/vitrio_button.dart';
 import 'package:vitrio/core/design_system/widgets/vitrio_text_field.dart';
-import 'package:vitrio/core/network/api_result.dart';
 import 'package:vitrio/features/orders/domain/order_action.dart';
 import 'package:vitrio/features/orders/domain/order_party.dart';
 import 'package:vitrio/features/orders/domain/order_status.dart';
 import 'package:vitrio/features/orders/domain/quote_type.dart';
-import 'package:vitrio/features/provider/domain/provider_status.dart';
 import 'package:vitrio/features/provider_orders/domain/agenda_item.dart';
 import 'package:vitrio/features/provider_orders/domain/agenda_item_kind.dart';
 import 'package:vitrio/features/provider_orders/domain/provider_order_tab.dart';
 
-import '../../support/fake_account_repository.dart';
 import '../../support/fake_provider_orders_repository.dart';
-import '../../support/fake_provider_repository.dart';
-import '../../support/memory_token_store.dart';
+import '../../support/pump_provider_mode.dart';
 import '../../support/pump_vitrio.dart';
-import '../../support/sample_account.dart';
 import '../../support/sample_order.dart';
-import '../../support/sample_provider.dart';
 import '../../support/sample_provider_order.dart';
 
 void main() {
-  FakeProviderRepository publishedProvider() => FakeProviderRepository()
-    ..seedComplete()
-    ..status = ProviderStatus.published;
-
-  Future<VitrioHarness> asProvider(WidgetTester tester, {FakeProviderOrdersRepository? orders, FakeProviderRepository? provider}) {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 2.6;
-    addTearDown(tester.view.reset);
-    return pumpVitrio(
-      tester,
-      preferences: const {'welcome_seen': true, 'location_mode': 'nearMe', 'app_mode': 'provider'},
-      account: FakeAccountRepository()..meResult = const ApiSuccess(sampleProviderMe),
-      provider: provider ?? publishedProvider(),
-      tokens: MemoryTokenStore()..tokens = sampleSession.tokens,
-      providerOrders: orders,
-      now: sampleNow,
-    );
-  }
-
   Future<void> open(VitrioHarness harness, WidgetTester tester, String location) async {
     harness.go(location);
     await tester.pumpAndSettle();
@@ -83,7 +58,7 @@ void main() {
         sampleProviderOrderSummary(),
         sampleProviderOrderSummary(id: 'second', title: 'Instalar 4 luminárias na sala'),
       ];
-    await asProvider(tester, provider: provider);
+    await pumpProviderMode(tester, provider: provider);
 
     expect(find.text('7'), findsOneWidget);
     expect(find.text('Novos pedidos'), findsOneWidget);
@@ -99,7 +74,7 @@ void main() {
 
   testWidgets('sending a quote posts the type, amount, day, start, duration, material and message', (tester) async {
     final orders = FakeProviderOrdersRepository()..orders[sampleProviderOrderId] = sampleProviderOrder();
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-respond/$sampleProviderOrderId');
 
     expect(find.text('Responder pedido'), findsOneWidget);
@@ -132,7 +107,7 @@ void main() {
 
   testWidgets('sending a quote without a valid amount shows the amount error and sends nothing', (tester) async {
     final orders = FakeProviderOrdersRepository()..orders[sampleProviderOrderId] = sampleProviderOrder();
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-respond/$sampleProviderOrderId');
 
     await tester.tap(find.widgetWithText(VitrioButton, 'Enviar orçamento'));
@@ -158,7 +133,7 @@ void main() {
           neighborhood: 'Centro',
         ),
       );
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-respond/$sampleProviderOrderId');
 
     await reveal(tester, 'Você já tem um serviço das 14:30 às 15:30 nesse dia.');
@@ -169,7 +144,7 @@ void main() {
     final orders = FakeProviderOrdersRepository()
       ..orders[sampleProviderOrderId] = sampleProviderOrder(status: OrderStatus.declined, actions: const [])
       ..lists[ProviderOrderTab.fresh]!.add(sampleProviderOrderSummary());
-    final harness = await asProvider(tester, orders: orders, provider: publishedProvider()..newOrders = 1);
+    final harness = await pumpProviderMode(tester, orders: orders, provider: publishedProvider()..newOrders = 1);
     await open(harness, tester, '/provider-orders');
 
     expect(find.text('Novos · 1'), findsOneWidget);
@@ -203,7 +178,7 @@ void main() {
         quote: sampleQuote,
         released: true,
       );
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-orders/$sampleProviderOrderId');
 
     expect(find.text('Serviço agendado'), findsOneWidget);
@@ -231,7 +206,7 @@ void main() {
         quote: sampleQuote,
         released: true,
       );
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-orders/$sampleProviderOrderId');
 
     await tapText(tester, 'Cancelar pedido');
@@ -254,7 +229,7 @@ void main() {
         quote: sampleQuote,
         released: true,
       );
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-orders/$sampleProviderOrderId');
 
     await tapText(tester, 'Ajustar horário');
@@ -278,7 +253,7 @@ void main() {
       sampleProviderOrderSummary(id: 'cancelled', status: OrderStatus.cancelled, cancelledBy: OrderParty.customer),
       sampleProviderOrderSummary(id: 'declined', status: OrderStatus.declined),
     ]);
-    final harness = await asProvider(tester, orders: orders);
+    final harness = await pumpProviderMode(tester, orders: orders);
     await open(harness, tester, '/provider-orders');
 
     expect(find.text('Nenhum pedido novo por enquanto.'), findsOneWidget);

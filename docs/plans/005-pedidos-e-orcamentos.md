@@ -140,6 +140,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 
 ## Recorte 11: Agenda
 
+**Situação:** pronto. A aba Agenda usa o `VitrioCalendar` com as marcas cheia (agendado), vazada (orçamento aguardando o cliente) e neutra (feito), lê a agenda do mês visível (`/provider/agenda` do primeiro ao último dia) e mostra abaixo os itens do dia escolhido em "Agendados", "Aguardando o cliente" e "Feitos"; cada item abre o pedido na aba Pedidos. Abre no dia de hoje do aparelho; no emulador, que fica em UTC, isso pode ser o dia seguinte ao da cidade à noite. As telas sem barra de topo (Pedidos e Agenda) acertam a cor dos ícones da barra de status, porque o Painel deixa os ícones claros. 4 testes de widget; no emulador, com os pedidos da conta de teste, as marcas, a lista do dia e a troca de mês; dali saiu a coluna da hora, que quebrava "até 15:00" em duas linhas.
+
 1. Agenda em calendário com as marcas, a lista do dia e a navegação entre meses.
 
 ## Recorte 12: fechamento
