@@ -19,7 +19,7 @@ Contratar pelo Vitrio precisa ser simples para o cliente e justo para o prestado
 - Prazo para o prestador responder (`RespondBy`): o fim do período pedido, no fuso da cidade do pedido, limitado a 48 h depois do envio.
 - Cliente acompanha o pedido (Acompanhar pedido): linha do tempo (Pedido enviado, Orçamento recebido, Serviço agendado, Serviço concluído), card do orçamento com "Aceitar orçamento" e "Recusar", card "Serviço agendado" com "Cancelar" e "Serviço concluído", e o aviso de que o pagamento é combinado direto com o profissional.
 - O botão de conversa ao lado do prestador abre o WhatsApp dele só quando o botão de WhatsApp está ligado na vitrine (mesma regra do perfil público); sem isso, não aparece.
-- Pedido recusado ou vencido sem resposta mostra o motivo (na recusa) e até 3 prestadores da mesma categoria perto do endereço do pedido, sem o que recusou ou deixou vencer. "Ver mais" abre a Busca filtrada pela categoria; "Pedir para este" abre Pedir orçamento já preenchido com o mesmo pedido, inclusive as fotos (copiadas para o pedido novo; o cliente pode tirar ou adicionar antes de enviar).
+- Pedido recusado ou vencido sem resposta mostra o motivo (na recusa) e até 3 prestadores da mesma categoria perto do endereço do pedido, sem o que recusou ou deixou vencer e sem a vitrine do próprio cliente. "Ver mais" abre a Busca filtrada pela categoria; "Pedir para este" abre Pedir orçamento já preenchido com o mesmo pedido, inclusive as fotos (copiadas para o pedido novo; o cliente pode tirar ou adicionar antes de enviar).
 - Lista Pedidos do cliente, com as abas Em andamento (`Sent`, `Quoted`, `Scheduled`) e Finalizados (os demais).
 - Início do cliente logado: o card "Seu último pedido" mostra o pedido em aberto mais recente com o status; sem pedido em aberto, some.
 - Até a spec 007, "Serviço concluído" não leva à avaliação: o pedido mostra "Serviço concluído" na linha do tempo e nada mais.
@@ -74,6 +74,12 @@ Aprovadas pelo usuário em 2026-11-09, depois do teste no aparelho:
 
 - Telas do prestador (Responder pedido, Ajustar horário, detalhe do pedido e folha de recusa): onde a prancheta diz "a cliente" ou "ela", o app usa o primeiro nome do cliente ("Bruno recebe uma notificação e aceita pelo app.", "Endereço completo liberado quando Bruno aceitar."), porque o app não sabe o gênero de quem pediu.
 - Pedidos do prestador, aba Em andamento: o selo do orçamento é "Aguardando · válido até qua 11/11, 13:00", em vez de "Aguardando a cliente · válido até ...", para caber numa linha.
+
+Pedidos do usuário em 2026-11-09, depois de usar o app no aparelho:
+
+- Novo endereço (folha de Pedir orçamento): o CEP tem máscara e, com os 8 números, o app busca o endereço e preenche rua, bairro e cidade; rua e bairro só ficam editáveis quando o CEP não os traz (CEP geral da cidade), e aí são obrigatórios. Número e complemento ficam lado a lado, como no endereço base da vitrine.
+- Celular: os campos de celular (Pedir orçamento, Editar dados e o contato da vitrine) formatam enquanto a pessoa digita, como "(16) 99814-7143", e a conta e o detalhe do pedido mostram o celular nesse formato.
+- Própria vitrine no modo cliente: a busca, os favoritos e o perfil público marcam a vitrine da própria conta com o selo "Você"; o perfil não oferece "Pedir orçamento" nem WhatsApp e mostra "Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo." com "Editar minha vitrine"; abrir Pedir orçamento da própria vitrine mostra o mesmo aviso.
 
 ## Domain Model
 
