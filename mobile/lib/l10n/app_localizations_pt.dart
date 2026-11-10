@@ -2181,4 +2181,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get addressNumberRequired => 'Informe o número.';
+
+  @override
+  String get providerOwnBadge => 'Você';
+
+  @override
+  String get providerOwnShowcaseNote =>
+      'Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo.';
+
+  @override
+  String get providerOwnShowcaseEdit => 'Editar minha vitrine';
 }

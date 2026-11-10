@@ -155,6 +155,12 @@ internal sealed class ProviderListingSql
             Add("excluded", excluded);
             _conditions.Add("p.id <> @excluded");
         }
+
+        if (criteria.ExcludedUserId is { } excludedUser)
+        {
+            Add("excluded_user", excludedUser);
+            _conditions.Add("p.user_id <> @excluded_user");
+        }
     }
 
     private string Source()

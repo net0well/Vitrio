@@ -45,7 +45,8 @@ public sealed class GetOrderSuggestionsQueryHandler(
             MaxSuggestions,
             clock.UtcNow)
         {
-            ExcludedProviderId = order.ProviderId
+            ExcludedProviderId = order.ProviderId,
+            ExcludedUserId = currentUser.Id,
         };
         return Result<IReadOnlyList<ProviderSearchItem>>.Success(await listings.SearchAsync(criteria, cancellationToken));
     }

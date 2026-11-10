@@ -32,6 +32,7 @@ import '../domain/public_photo.dart';
 import '../domain/public_provider.dart';
 import 'provider_labels.dart';
 import 'provider_queries.dart';
+import 'provider_step.dart';
 import 'widgets/service_price_row.dart';
 
 class PublicProviderScreen extends ConsumerWidget {
@@ -43,13 +44,14 @@ class PublicProviderScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final provider = ref.watch(publicProviderProvider(providerId));
+    final own = ref.watch(ownProviderIdProvider) == providerId;
     if (provider case AsyncData(value: final PublicProvider value)) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Scaffold(
           body: Stack(
             children: [
-              _Profile(provider: value),
+              _Profile(provider: value, own: own),
               Positioned(
                 top: 0,
                 left: 0,
@@ -59,7 +61,18 @@ class PublicProviderScreen extends ConsumerWidget {
               ),
             ],
           ),
-          bottomNavigationBar: VitrioActionBar(
+          bottomNavigationBar: own
+              ? VitrioActionBar(
+                  note: l10n.providerOwnShowcaseNote,
+                  children: [
+                    VitrioButton(
+                      label: l10n.providerOwnShowcaseEdit,
+                      variant: VitrioButtonVariant.secondary,
+                      onPressed: () => const ProviderEditRoute(step: ProviderStep.about).push<void>(context),
+                    ),
+                  ],
+                )
+              : VitrioActionBar(
             children: [
               if (value.whatsAppPhone != null)
                 VitrioButton(
@@ -106,12 +119,13 @@ class PublicProviderScreen extends ConsumerWidget {
 }
 
 class _Profile extends StatelessWidget {
-  const _Profile({required this.provider});
+  const _Profile({required this.provider, required this.own});
 
   static const _coverHeight = 150.0;
   static const _avatarSize = 96.0;
 
   final PublicProvider provider;
+  final bool own;
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +199,7 @@ class _Profile extends StatelessWidget {
                 spacing: VitrioSpace.sp8,
                 runSpacing: VitrioSpace.sp8,
                 children: [
+                  if (own) VitrioBadge(label: l10n.providerOwnBadge),
                   if (provider.meiVerified)
                     VitrioBadge(label: l10n.providerBadgeMei, tone: VitrioBadgeTone.verified, icon: const VitrioIcon(VitrioIconName.shieldCheck)),
                   if (provider.availableToday) VitrioBadge(label: l10n.providerBadgeToday, dot: true, dotColor: c.green),

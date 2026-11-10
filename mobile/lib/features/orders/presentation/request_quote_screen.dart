@@ -16,6 +16,7 @@ import '../../../core/design_system/widgets/vitrio_button.dart';
 import '../../../core/design_system/widgets/vitrio_button_size.dart';
 import '../../../core/design_system/widgets/vitrio_button_variant.dart';
 import '../../../core/design_system/widgets/vitrio_chip.dart';
+import '../../../core/design_system/widgets/vitrio_empty_state.dart';
 import '../../../core/design_system/widgets/vitrio_icon.dart';
 import '../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../core/design_system/widgets/vitrio_notice.dart';
@@ -288,6 +289,23 @@ class _RequestQuoteScreenState extends ConsumerState<RequestQuoteScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final c = context.vitrio;
+    if (ref.watch(ownProviderIdProvider) == widget.providerId) {
+      return Scaffold(
+        appBar: VitrioTopBar(title: l10n.requestQuoteTitle),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp20),
+            child: VitrioEmptyState(
+              icon: VitrioIconName.user,
+              message: l10n.providerOwnShowcaseNote,
+              actionLabel: l10n.commonBack,
+              onAction: () => Navigator.of(context).maybePop(),
+            ),
+          ),
+        ),
+      );
+    }
+
     final provider = ref.watch(publicProviderProvider(widget.providerId));
     final addresses = ref.watch(savedAddressesProvider);
     final address = _address ?? addresses.value?.firstOrNull;

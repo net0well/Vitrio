@@ -15,4 +15,6 @@ public sealed record ProviderListingCriteria(
     DateTimeOffset Now)
 {
     public Guid? ExcludedProviderId { get; init; }
+
+    public Guid? ExcludedUserId { get; init; }
 }

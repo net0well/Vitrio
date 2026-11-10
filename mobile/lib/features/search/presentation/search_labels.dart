@@ -50,9 +50,11 @@ String listingMeta(AppLocalizations l10n, ProviderListing listing) => [
 
 List<VitrioBadge> listingBadges(
   AppLocalizations l10n,
-  ProviderListing listing,
-) =>
+  ProviderListing listing, {
+  bool own = false,
+}) =>
     [
+      if (own) VitrioBadge(label: l10n.providerOwnBadge),
       if (listing.meiVerified) VitrioBadge(label: l10n.providerBadgeMei, tone: VitrioBadgeTone.verified),
       if (listing.availableToday) VitrioBadge(label: l10n.providerBadgeToday),
       if (listing.isNew) VitrioBadge(label: l10n.providerNew, tone: VitrioBadgeTone.warning),

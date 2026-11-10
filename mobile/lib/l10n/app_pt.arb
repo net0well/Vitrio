@@ -1451,5 +1451,8 @@
   "addressCityLabel": "Cidade",
   "addressStreetRequired": "Informe a rua.",
   "addressNeighborhoodRequired": "Informe o bairro.",
-  "addressNumberRequired": "Informe o número."
+  "addressNumberRequired": "Informe o número.",
+  "providerOwnBadge": "Você",
+  "providerOwnShowcaseNote": "Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo.",
+  "providerOwnShowcaseEdit": "Editar minha vitrine"
 }

@@ -186,6 +186,25 @@ public sealed class CustomerOrderActionTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Suggestions_ForACustomerWhoIsAlsoAProvider_LeaveOutTheirOwnShowcase()
+    {
+        var scenario = await factory.StartOrderScenarioAsync(_client);
+        var other = await factory.PublishAsync(_client, new SearchableProvider(scenario.Spot.Offset(2)) { DisplayName = "Rogério Alves" });
+        var own = await factory.PublishAsync(_client, new SearchableProvider(scenario.Spot.Offset(-2)) { DisplayName = "Mariana Souza" });
+        await factory.QueryAsync(db => db.Database.ExecuteSqlAsync(
+            $"update providers set user_id = {scenario.Customer.Id} where id = {own.Id}",
+            TestContext.Current.CancellationToken));
+        var declined = await factory.SeedOrderAsync(
+            scenario,
+            order => order.Decline(DeclineReason.OutsideArea, null, factory.ClockAgo(TimeSpan.Zero)).ShouldSucceed());
+
+        var suggestions = await (await _client.SendAsAsync(HttpMethod.Get, $"{Route}/{declined}/suggestions", scenario.Customer.AccessToken))
+            .Content.ReadApiAsync<List<ProviderSearchItem>>();
+
+        Assert.Equal([other.Id], suggestions.Select(item => item.Id));
+    }
+
+    [Fact]
     public async Task DeclinedOrder_ShowsTheReasonToTheCustomer()
     {
         var scenario = await factory.StartOrderScenarioAsync(_client);

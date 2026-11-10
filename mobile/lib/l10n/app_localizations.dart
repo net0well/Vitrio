@@ -3825,6 +3825,24 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Informe o número.'**
   String get addressNumberRequired;
+
+  /// No description provided for @providerOwnBadge.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você'**
+  String get providerOwnBadge;
+
+  /// No description provided for @providerOwnShowcaseNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo.'**
+  String get providerOwnShowcaseNote;
+
+  /// No description provided for @providerOwnShowcaseEdit.
+  ///
+  /// In pt, this message translates to:
+  /// **'Editar minha vitrine'**
+  String get providerOwnShowcaseEdit;
 }
 
 class _AppLocalizationsDelegate
