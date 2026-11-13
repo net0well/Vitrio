@@ -33,3 +33,24 @@ const samplePublicProvider = PublicProvider(
   shareUrl: 'https://vitrio.app/p/0199a0c4-0000-7000-8000-00000000c0de',
   whatsAppPhone: '+5516991234567',
 );
+
+const samplePublicProviderWithServiceIds = PublicProvider(
+  id: '0199a0c4-0000-7000-8000-00000000c0de',
+  displayName: 'Carlos Eletricista',
+  headline: 'Eletricista',
+  about: 'Eletricista há 12 anos, faço instalações e reparos residenciais com garantia.',
+  city: jaboticabalCity,
+  neighborhoods: ['Centro'],
+  radiusKm: 15,
+  categories: [],
+  services: [ProviderService(id: 'service-1', title: 'Troca de chuveiro', priceFrom: 80)],
+  availability: [],
+  handlesEmergencies: false,
+  meiVerified: true,
+  availableToday: true,
+  isNew: true,
+  photos: [],
+  shareUrl: 'https://vitrio.app/p/0199a0c4-0000-7000-8000-00000000c0de',
+  whatsAppPhone: '+5516991234567',
+  responseTime: '15min',
+);

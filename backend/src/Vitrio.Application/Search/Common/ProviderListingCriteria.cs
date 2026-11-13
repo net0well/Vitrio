@@ -12,4 +12,9 @@ public sealed record ProviderListingCriteria(
     SearchSort Sort,
     int Skip,
     int Take,
-    DateTimeOffset Now);
+    DateTimeOffset Now)
+{
+    public Guid? ExcludedProviderId { get; init; }
+
+    public Guid? ExcludedUserId { get; init; }
+}

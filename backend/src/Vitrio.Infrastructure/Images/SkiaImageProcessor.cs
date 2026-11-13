@@ -49,6 +49,19 @@ internal sealed class SkiaImageProcessor : IImageProcessor
         return Encode(square, Quality);
     }
 
+    public Result<byte[]> ProcessOrderPhoto(Stream image, string? declaredContentType)
+    {
+        var decoded = Decode(image, declaredContentType);
+        if (decoded.IsFailure)
+        {
+            return decoded.Error!;
+        }
+
+        using var source = decoded.Value;
+        using var full = Fit(source, FullSize);
+        return Encode(full, Quality);
+    }
+
     private static Result<SKBitmap> Decode(Stream image, string? declaredContentType)
     {
         using var data = SKData.Create(image);

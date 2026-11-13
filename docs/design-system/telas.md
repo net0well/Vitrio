@@ -27,11 +27,11 @@ O pagamento é combinado entre cliente e prestador fora do app. **Só o prestado
 | Status | Quem move | O cliente vê | O prestador vê | Próxima ação |
 | --- | --- | --- | --- | --- |
 | Enviado | Cliente envia | "Aguardando orçamento" | Card "Novo" no Painel | Prestador: Enviar orçamento ou Recusar |
-| Recusado | Prestador | "Carlos não pode atender agora" + sugestões de outros | Some da lista | Fim |
-| Expirado | Sistema (48 h sem resposta) | "Sem resposta" + sugestões | Some da lista | Fim |
+| Recusado | Prestador, com motivo | "Carlos não pode atender agora" + motivo + até 3 sugestões com "Pedir para este" | Finalizados | Fim |
+| Expirado | Sistema (sem resposta até o fim do período pedido, no máximo 48 h) | "Sem resposta" + sugestões | Finalizados | Fim |
 | Orçamento enviado | Prestador | `QuoteCard` com valor, horário e validade | "Aguardando cliente" | Cliente: Aceitar ou Recusar |
 | Orçamento recusado | Cliente | Pedido arquivado | Aviso | Fim |
-| Agendado | Cliente aceita | Data, horário, valor combinado; endereço liberado ao prestador | Agenda + endereço completo (até 7 dias após o horário) | Qualquer um: Cancelar; ao terminar, Serviço concluído. Sem ação de ninguém, o pedido é concluído sozinho 7 dias após o horário |
+| Agendado | Cliente aceita | Data, horário, valor combinado; endereço liberado ao prestador | Agenda + endereço completo, nome e celular (até 7 dias após o horário) | Qualquer um: Cancelar; prestador: Ajustar horário (até 2 vezes, com aviso ao cliente); a partir do início, Serviço concluído. Sem ação de ninguém, o pedido é concluído sozinho 7 dias após o horário |
 | Cancelado | Cliente ou prestador, com motivo | Motivo | Motivo | Fim |
 | Concluído | Quem marcar primeiro; o outro é avisado | "Serviço concluído" + convite para avaliar | "Confirme o pagamento" | Prestador: Confirmar pagamento; Cliente: Avaliar |
 | Pagamento confirmado | Só o prestador | `PaymentReceipt` (valor, meio, data) + "Não reconheço este pagamento" | Registro no histórico e no faturamento do mês | Cliente: Avaliar, se ainda não avaliou |
@@ -41,6 +41,8 @@ Regras que aparecem na interface:
 
 - O orçamento vale 48 h ou até 1 h antes do horário proposto, o que vier primeiro (`Badge` warning "Válido até qui 29/10, 13:00").
 - O endereço completo do cliente só vai para o prestador quando o orçamento é aceito.
+- O pedido novo mostra ao prestador até quando responder ("Responda até hoje, 22:00"): o fim do período pedido, no máximo 48 h.
+- Um orçamento cujo horário cruza outro serviço agendado é permitido; a tela avisa "Você já tem um serviço das 15:00 às 16:00 nesse dia".
 - A confirmação de pagamento traz o valor do orçamento já preenchido; se o prestador mudar o valor, "Motivo da diferença" vira obrigatório (ex.: material extra).
 - Meios de pagamento: Pix, Dinheiro, Cartão de débito, Cartão de crédito, Transferência, Outro.
 - A avaliação fica disponível de Concluído até 30 dias depois, só para quem contratou pelo app. Uma avaliação por pedido; pode ser editada em até 7 dias. O prestador pode responder uma vez.
@@ -69,9 +71,11 @@ Regras que aparecem na interface:
 | Perfil do prestador | prototipada | capa `hero`, `Avatar`, `Badge`, métricas, serviços e preços, fotos, `ReviewCard`, `ActionBar` | perfil sem fotos, sem avaliações ("Novo no Vitrio") |
 | Galeria de trabalhos | a desenhar | grade 3×, visualizador em tela cheia | — |
 | Todas as avaliações | a desenhar | resumo de notas, filtros por nota, `ReviewCard` | vazio |
-| Pedir orçamento | prototipada | `Chip`, `TextArea`, fotos, `SegmentedControl`, períodos, `ActionBar` | erro de envio, sem endereço salvo |
-| Pedidos | a desenhar | abas Em andamento / Finalizados, cards de pedido com `Badge` de status | vazio |
-| Detalhe do pedido | prototipada (até Agendado) | `StatusTimeline`, `QuoteCard`, `PaymentReceipt` | todos os status da tabela acima |
+| Pedir orçamento | prototipada | `Chip` do serviço, `TextField` "Resuma o que precisa", `TextArea` (0/500), fotos, `SegmentedControl` do dia, períodos, endereço, `ActionBar` | erro de envio, sem endereço salvo, sem celular na conta, período de hoje que já acabou, pedido preenchido por "Pedir para este" |
+| Pedidos | prototipada | `SegmentedControl` Em andamento / Finalizados, cards com o ícone da categoria, título, prestador, data e `Badge` de status, `BottomNav` | carregando, vazio ("Você ainda não fez nenhum pedido." + "Buscar profissionais"), erro |
+| Detalhe do pedido | prototipada (até Agendado) | `StatusTimeline`, `QuoteCard` com "Válido até …", card "Serviço agendado" com "Cancelar" (`Button` danger) e "Serviço concluído", WhatsApp do prestador quando ativo, `PaymentReceipt` | todos os status da tabela acima; horário ajustado pelo prestador |
+| Pedido recusado ou sem resposta | prototipada | card com o motivo, até 3 prestadores compactos com "Pedir para este", "Ver mais eletricistas", `BottomNav` | sem sugestões (só "Ver mais"), fotos já removidas |
+| Cancelar pedido (folha) | prototipada | motivos em lista de escolha única (seleção suave), `TextArea` até 200 (obrigatório em "Outro"), `Button` danger "Cancelar pedido" e "Voltar" | erro de envio |
 | Avaliar serviço | prototipada | `RatingInput`, `Chip` soft, `TextArea`, fotos, `Switch`, `ActionBar` | editar avaliação existente |
 | Conta sem login | prototipada | card `hero` com a assinatura escura, "Peça orçamentos e ofereça seus serviços" e "O Vitrio é grátis para todo mundo."; `Button` primary "Entrar" e secondary "Criar conta" | — |
 | Conta | a desenhar | dados, endereços, notificações, privacidade, excluir conta, trocar de modo | — |
@@ -87,9 +91,12 @@ Regras que aparecem na interface:
 | Onboarding 3 · Fotos e preços | a desenhar | upload de fotos, lista de serviços com "a partir de" ou "Sob orçamento" | — |
 | Onboarding 4 · Revisar e publicar | a desenhar | prévia do `ProviderCard` e do perfil, `ActionBar` "Publicar" | campos obrigatórios faltando |
 | Painel | prototipada | cabeçalho `hero` com `Switch` de disponibilidade e métricas, progresso do perfil, cards de pedido | sem pedidos |
-| Pedidos | a desenhar | abas Novos / Em andamento / Finalizados | vazio por aba |
-| Responder pedido | prototipada | resumo do pedido, `SegmentedControl`, `TextField` de valor, dia e horário, `Switch` de material, `TextArea`, `ActionBar` | pedido expirado |
-| Agenda | a desenhar | lista por dia com horário, cliente, bairro e status | dia livre |
+| Pedidos | prototipada | `SegmentedControl` Novos / Em andamento / Finalizados; Novos com os cards do Painel (prazo de resposta, "Recusar" e "Enviar orçamento"); os demais com título, cliente, bairro e `Badge` de status; `BottomNav` | carregando, vazio por aba, erro |
+| Responder pedido | prototipada | resumo do pedido, `SegmentedControl`, `TextField` de valor, dia, início e duração, aviso de horário sobreposto, `Switch` de material com "Qual material", `TextArea`, `ActionBar` | pedido expirado, orçamento já enviado (substituir) |
+| Recusar pedido (folha) | prototipada | motivos em lista de escolha única, `TextArea` até 200 em "Outro" (sem telefone, e-mail ou link), `Button` danger "Recusar pedido" e "Voltar" | texto com contato recusado |
+| Pedido agendado | prototipada | card "Serviço agendado" com "Ajustar horário" e "Serviço concluído" (com a explicação antes do início), cliente com "Ligar" e "WhatsApp", endereço com "Abrir no mapa" e até quando fica visível, o pedido, "Cancelar pedido" (`Button` danger), `BottomNav` | antes e depois do início, endereço expirado, cancelado |
+| Ajustar horário | prototipada | resumo com o horário atual, dia, início e duração, aviso de horário sobreposto, ajustes restantes, `ActionBar` "Salvar novo horário" | sem ajustes restantes, início com menos de 1 h |
+| Agenda | prototipada | `Calendar` do mês com marcas (agendado, aguardando o cliente, feito) e legenda, lista do dia escolhido em Agendados, Aguardando o cliente e Feitos, `BottomNav` | dia livre ("Nenhum serviço neste dia."), carregando, erro |
 | Confirmar pagamento | a desenhar | `TextField` de valor (prefixo R$), `PaymentMethodPicker`, data, motivo da diferença, `ActionBar` "Confirmar recebimento" | valor diferente do orçamento |
 | Minhas avaliações | a desenhar | resumo, `ReviewCard` com "Responder" | vazio |
 | Editar perfil | a desenhar | mesmas seções do onboarding | — |
@@ -109,6 +116,7 @@ O push que aparece na tela bloqueada é genérico (sem nome, valor ou endereço)
 | Novo pedido | Prestador | Você recebeu um novo pedido | Novo pedido de Mariana: Chuveiro desarmando o disjuntor |
 | Orçamento recebido | Cliente | Você recebeu um orçamento | Carlos enviou um orçamento de R$ 180,00 |
 | Orçamento aceito | Prestador | Seu orçamento foi aceito | Mariana aceitou seu orçamento para amanhã, 14:00 |
+| Horário ajustado | Cliente | O horário de um serviço mudou | Carlos mudou o horário para sex 30/10, 09:00 |
 | Lembrete | Ambos | Você tem um serviço em 1 hora | Seu serviço com Carlos é em 1 hora |
 | Serviço concluído | O outro lado | Um serviço foi marcado como concluído | Carlos marcou o serviço como concluído |
 | Confirme o pagamento | Prestador | Confirme o pagamento de um serviço | Confirme o pagamento do serviço de Mariana |
@@ -128,6 +136,9 @@ O push que aparece na tela bloqueada é genérico (sem nome, valor ou endereço)
 | Pedido enviado | Pedir orçamento é grátis e sem compromisso. |
 | Pagamento (cliente) | O pagamento é combinado direto com o profissional. O Vitrio não cobra taxa de você. |
 | Confirmar pagamento | O cliente verá esse registro no pedido. Confira valor e forma antes de confirmar. |
+| Pedido recusado (cliente) | Carlos não pode atender agora. Motivo: Sem horário disponível. |
+| Ajustar horário | A Mariana recebe um aviso com o novo horário e pode cancelar se não servir. |
+| Cancelar pedido | O Carlos vê o motivo que você escolher, nunca o que você escrever. |
 | Contestar | Não reconheço este pagamento |
 | Avaliação pública | Sua avaliação aparece no perfil com seu primeiro nome. |
 | Selo MEI | CNPJ ativo e optante pelo MEI. O selo já aparece no seu perfil. |

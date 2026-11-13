@@ -22,4 +22,19 @@ internal sealed class UnitOfWork(AppDbContext db) : IUnitOfWork
             throw new UniqueConstraintException("The data already exists.", exception);
         }
     }
+
+    public async Task<bool> TrySaveChangesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await db.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // The rejected entities stay tracked as modified and would fail every later save in this scope.
+            db.ChangeTracker.Clear();
+            return false;
+        }
+    }
 }

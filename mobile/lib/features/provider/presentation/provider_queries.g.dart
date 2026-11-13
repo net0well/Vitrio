@@ -91,6 +91,47 @@ final class ProviderDashboardProvider
 
 String _$providerDashboardHash() => r'e22a83956577df809709af1402d40361a6c3acab';
 
+@ProviderFor(ownProviderId)
+final ownProviderIdProvider = OwnProviderIdProvider._();
+
+final class OwnProviderIdProvider
+    extends $FunctionalProvider<String?, String?, String?>
+    with $Provider<String?> {
+  OwnProviderIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ownProviderIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ownProviderIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String? create(Ref ref) {
+    return ownProviderId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$ownProviderIdHash() => r'38a52d895e864ee582caa433a405bf24dcb92a67';
+
 @ProviderFor(providerPhotos)
 final providerPhotosProvider = ProviderPhotosProvider._();
 

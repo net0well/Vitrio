@@ -77,15 +77,15 @@ void main() {
     expect(find.text('Mostrando profissionais de Jaboticabal, SP.'), findsOneWidget);
   });
 
-  testWidgets('the empty orders tab leads to search', (tester) async {
+  testWidgets('the orders tab without an account invites to sign in', (tester) async {
     await pumpApp(tester, preferences: returning);
 
     await tester.tap(find.text('Pedidos'));
     await tester.pumpAndSettle();
-    expect(find.text('Você ainda não fez nenhum pedido. Que tal começar pela busca?'), findsOneWidget);
+    expect(find.text('Entre para pedir orçamentos e acompanhar seus pedidos.'), findsOneWidget);
 
-    await tester.tap(find.text('Buscar profissionais'));
+    await tester.tap(find.text('Entrar'));
     await tester.pumpAndSettle();
-    expect(find.text('O que você procura?'), findsOneWidget);
+    expect(find.text('Que bom te ver de novo'), findsOneWidget);
   });
 }

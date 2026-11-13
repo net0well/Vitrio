@@ -17,12 +17,13 @@ import 'package:vitrio/features/provider/domain/public_provider.dart';
 import 'package:vitrio/features/provider/domain/service_area.dart';
 import 'package:vitrio/features/provider/domain/service_area_draft.dart';
 import 'package:vitrio/features/provider/domain/service_category.dart';
+import 'package:vitrio/features/provider_orders/domain/provider_order_summary.dart';
 
 const jaboticabalCity = CitySummary(ibgeCode: 3524303, name: 'Jaboticabal', state: 'SP');
 
 final class FakeProviderRepository implements ProviderRepository {
   static const _categories = [
-    ServiceCategory(id: 1, slug: 'eletrica', name: 'Elétrica', icon: 'bolt'),
+    ServiceCategory(id: 1, slug: 'eletrica', name: 'Elétrica', icon: 'bolt', professionalPlural: 'Eletricistas'),
     ServiceCategory(id: 2, slug: 'hidraulica', name: 'Hidráulica', icon: 'droplet'),
   ];
 
@@ -38,6 +39,9 @@ final class FakeProviderRepository implements ProviderRepository {
   ServiceAreaDraft? area;
   List<ProviderService> services = [];
   bool availableToday = false;
+  int newOrders = 0;
+  int servicesThisMonth = 0;
+  List<ProviderOrderSummary> latestNewOrders = const [];
   PublicProvider? published;
   final List<String> calls = [];
 
@@ -163,6 +167,9 @@ final class FakeProviderRepository implements ProviderRepository {
         profileCompleteness: _profile.missing.isEmpty ? 83 : 33,
         nextStep: _profile.missing.isEmpty ? (status == ProviderStatus.published ? 'availability' : 'publish') : _profile.missing.first,
         availableToday: availableToday,
+        newOrders: newOrders,
+        servicesThisMonth: servicesThisMonth,
+        latestNewOrders: latestNewOrders,
       ));
 
   @override

@@ -10,13 +10,15 @@ public interface IProviderSearchableRepository
 
     Task<ProviderPrivateResponse?> GetPrivateAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken);
 
-    Task<ProviderDashboardResponse?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken);
+    Task<ProviderDashboardProfile?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken);
 
     Task<ProviderPublicSnapshot?> GetPublicSnapshotAsync(Guid providerId, CancellationToken cancellationToken);
 
     Task<Guid?> FindIdByUserAsync(Guid userId, CancellationToken cancellationToken);
 
     Task<Guid?> FindPublishedOwnerAsync(Guid providerId, CancellationToken cancellationToken);
+
+    Task<ProviderOrderTarget?> FindOrderTargetAsync(Guid providerId, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<ProviderPhotoResponse>?> ListOwnPhotosAsync(Guid userId, CancellationToken cancellationToken);
 

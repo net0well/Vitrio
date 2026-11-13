@@ -4,7 +4,7 @@ Conjunto próprio do Vitrio: grade 24×24, traço 2px, pontas e junções arredo
 
 - Navegação: `home`, `search`, `orders`, `user`, `chart`, `calendar`
 - Ações: `chevron-left`, `chevron-right`, `chevron-down`, `arrow-right`, `sliders`, `check`, `x`, `plus`, `send`, `share`, `heart`, `flag`
-- Informação: `pin`, `clock`, `info`, `lock`, `bell`, `shield-check`, `star`, `message`, `camera`, `image`
+- Informação: `pin`, `clock`, `info`, `lock`, `bell`, `shield-check`, `star`, `message`, `phone` (ligar), `camera`, `image`
 - Pagamento: `wallet`, `qr` (Pix), `cash` (dinheiro), `card` (cartões), `transfer` (transferência)
 - Categorias: `bolt` (elétrica), `droplet` (hidráulica), `brick` (pedreiro), `roller` (pintura), `broom` (diarista), `leaf` (jardinagem), `wrench` (montagem e reparos), `grid` (mais categorias)
 

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../app/routes.dart';
 import '../../../core/design_system/tokens/vitrio_colors.dart';
 import '../../../core/design_system/tokens/vitrio_radius.dart';
 import '../../../core/design_system/tokens/vitrio_space.dart';
@@ -31,24 +32,27 @@ import '../domain/public_photo.dart';
 import '../domain/public_provider.dart';
 import 'provider_labels.dart';
 import 'provider_queries.dart';
+import 'provider_step.dart';
 import 'widgets/service_price_row.dart';
 
 class PublicProviderScreen extends ConsumerWidget {
-  const PublicProviderScreen({super.key, required this.providerId});
+  const PublicProviderScreen({super.key, required this.providerId, this.preview = false});
 
   final String providerId;
+  final bool preview;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final provider = ref.watch(publicProviderProvider(providerId));
+    final own = !preview && ref.watch(ownProviderIdProvider) == providerId;
     if (provider case AsyncData(value: final PublicProvider value)) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Scaffold(
           body: Stack(
             children: [
-              _Profile(provider: value),
+              _Profile(provider: value, own: own),
               Positioned(
                 top: 0,
                 left: 0,
@@ -58,22 +62,37 @@ class PublicProviderScreen extends ConsumerWidget {
               ),
             ],
           ),
-          bottomNavigationBar: value.whatsAppPhone == null
-              ? null
-              : VitrioActionBar(
+          bottomNavigationBar: own
+              ? VitrioActionBar(
+                  note: l10n.providerOwnShowcaseNote,
                   children: [
                     VitrioButton(
-                      label: l10n.providerWhatsAppAction,
+                      label: l10n.providerOwnShowcaseEdit,
                       variant: VitrioButtonVariant.secondary,
-                      leadingIcon: VitrioIconName.message,
-                      leadingIconColor: context.vitrio.green,
-                      onPressed: () => launchUrl(
-                        Uri.parse('https://wa.me/${value.whatsAppPhone!.replaceAll(RegExp(r'\D'), '')}'),
-                        mode: LaunchMode.externalApplication,
-                      ),
+                      onPressed: () => const ProviderEditRoute(step: ProviderStep.about).push<void>(context),
                     ),
                   ],
+                )
+              : VitrioActionBar(
+            children: [
+              if (value.whatsAppPhone != null)
+                VitrioButton(
+                  label: l10n.providerWhatsAppAction,
+                  variant: VitrioButtonVariant.secondary,
+                  leadingIcon: VitrioIconName.message,
+                  leadingIconColor: context.vitrio.green,
+                  onPressed: () => launchUrl(
+                    Uri.parse('https://wa.me/${value.whatsAppPhone!.replaceAll(RegExp(r'\D'), '')}'),
+                    mode: LaunchMode.externalApplication,
+                  ),
                 ),
+              VitrioButton(
+                label: l10n.requestQuoteTitle,
+                trailingIcon: VitrioIconName.arrowRight,
+                onPressed: () => RequestQuoteRoute(providerId: value.id).push<void>(context),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -101,12 +120,13 @@ class PublicProviderScreen extends ConsumerWidget {
 }
 
 class _Profile extends StatelessWidget {
-  const _Profile({required this.provider});
+  const _Profile({required this.provider, required this.own});
 
   static const _coverHeight = 150.0;
   static const _avatarSize = 96.0;
 
   final PublicProvider provider;
+  final bool own;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +152,7 @@ class _Profile extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            _Cover(height: _coverHeight + top, top: top, provider: provider),
+            _Cover(height: _coverHeight + top, top: top, provider: provider, own: own),
             PositionedDirectional(
               start: VitrioSpace.sp20,
               bottom: -_avatarSize / 2,
@@ -180,6 +200,7 @@ class _Profile extends StatelessWidget {
                 spacing: VitrioSpace.sp8,
                 runSpacing: VitrioSpace.sp8,
                 children: [
+                  if (own) VitrioBadge(label: l10n.providerOwnBadge),
                   if (provider.meiVerified)
                     VitrioBadge(label: l10n.providerBadgeMei, tone: VitrioBadgeTone.verified, icon: const VitrioIcon(VitrioIconName.shieldCheck)),
                   if (provider.availableToday) VitrioBadge(label: l10n.providerBadgeToday, dot: true, dotColor: c.green),
@@ -246,11 +267,12 @@ class _Profile extends StatelessWidget {
 }
 
 class _Cover extends StatelessWidget {
-  const _Cover({required this.height, required this.top, required this.provider});
+  const _Cover({required this.height, required this.top, required this.provider, required this.own});
 
   final double height;
   final double top;
   final PublicProvider provider;
+  final bool own;
 
   @override
   Widget build(BuildContext context) {
@@ -288,8 +310,10 @@ class _Cover extends StatelessWidget {
                 top: top + VitrioSpace.sp16,
                 child: Row(
                   children: [
-                    FavoriteButton(providerId: provider.id, saved: provider.isFavorite),
-                    const SizedBox(width: VitrioSpace.sp10),
+                    if (!own) ...[
+                      FavoriteButton(providerId: provider.id, saved: provider.isFavorite),
+                      const SizedBox(width: VitrioSpace.sp10),
+                    ],
                     VitrioIconButton(
                       icon: VitrioIconName.share,
                       label: l10n.providerShare,

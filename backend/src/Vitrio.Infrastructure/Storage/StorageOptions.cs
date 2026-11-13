@@ -29,6 +29,9 @@ public sealed class StorageOptions
     public string PublicBucket { get; set; } = "vitrio-public";
 
     [Required]
+    public string PrivateBucket { get; set; } = "vitrio-private";
+
+    [Required]
     [Url]
     public string PublicBaseUrl { get; set; } = string.Empty;
 

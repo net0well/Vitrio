@@ -29,6 +29,7 @@ final class PublicProvider {
     this.reviewCount,
     this.whatsAppPhone,
     this.distanceKm,
+    this.responseTime,
   });
 
   factory PublicProvider.fromJson(Map<String, Object?> json) {
@@ -55,6 +56,7 @@ final class PublicProvider {
       isNew: json['isNew'] != false,
       whatsAppPhone: json['whatsAppPhone'] as String?,
       distanceKm: (json['distanceKm'] as num?)?.toDouble(),
+      responseTime: json['responseTime'] as String?,
       photos: _list(json['firstPhotos'], PublicPhoto.fromJson),
       shareUrl: json['shareUrl'] as String,
       isFavorite: json['isFavorite'] == true,
@@ -81,6 +83,7 @@ final class PublicProvider {
   final bool isNew;
   final String? whatsAppPhone;
   final double? distanceKm;
+  final String? responseTime;
   final bool isFavorite;
   final List<PublicPhoto> photos;
   final String shareUrl;

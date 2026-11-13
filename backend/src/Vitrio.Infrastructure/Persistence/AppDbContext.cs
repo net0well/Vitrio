@@ -5,8 +5,10 @@ using Vitrio.Domain.Accounts;
 using Vitrio.Domain.Auditing;
 using Vitrio.Domain.Categories;
 using Vitrio.Domain.Favorites;
+using Vitrio.Domain.Orders;
 using Vitrio.Domain.Providers;
 using Vitrio.Infrastructure.Persistence.Cities;
+using Vitrio.Infrastructure.Persistence.Idempotency;
 using Vitrio.Infrastructure.Persistence.Outbox;
 using Vitrio.Infrastructure.Persistence.Protection;
 
@@ -38,6 +40,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
 
     public DbSet<Favorite> Favorites => Set<Favorite>();
 
+    public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<OrderPhoto> OrderPhotos => Set<OrderPhoto>();
+
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
@@ -45,6 +51,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options), IDataP
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     public DbSet<OutboxDelivery> OutboxDeliveries => Set<OutboxDelivery>();
+
+    public DbSet<IdempotencyKeyRecord> IdempotencyKeys => Set<IdempotencyKeyRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

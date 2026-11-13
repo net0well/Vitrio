@@ -2,7 +2,7 @@
 
 Botão de ação. `primary` (plum) é a ação principal e aparece no máximo uma vez por tela.
 
-- Variantes: `primary`, `secondary` (contornado, para a alternativa: Recusar, Remarcar), `ghost` (link de ação: Ver todas), `danger` (Cancelar pedido), `accent` e `on-hero` (só sobre superfície `hero`).
+- Variantes: `primary`, `secondary` (contornado, para a alternativa: Recusar, Ajustar horário), `ghost` (link de ação: Ver todas), `danger` (Cancelar pedido), `accent` e `on-hero` (só sobre superfície `hero`).
 - `size="lg"` (56px) na barra de ação e nas telas de marca; `md` (44px) dentro de cards.
 - Rótulo com verbo no infinitivo, sentence case: "Enviar pedido", "Aceitar orçamento", "Confirmar recebimento".
 - `trailingIcon="arrow-right"` ou `"send"` no botão principal; o ícone ganha `plum-accent`.

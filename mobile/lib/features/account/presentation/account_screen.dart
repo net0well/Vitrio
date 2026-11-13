@@ -15,6 +15,7 @@ import '../../../core/design_system/widgets/vitrio_list_card.dart';
 import '../../../core/design_system/widgets/vitrio_list_row.dart';
 import '../../../core/design_system/widgets/vitrio_top_bar.dart';
 import '../../../core/design_system/widgets/vitrio_wordmark.dart';
+import '../../../core/presentation/brazilian_format.dart';
 import '../../../core/presentation/free_for_everyone_line.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/domain/me.dart';
@@ -116,7 +117,7 @@ class _SignedIn extends ConsumerWidget {
                     Text(me.displayName, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
                     const SizedBox(height: 2),
                     Text(me.email, style: VitrioText.meta.copyWith(color: c.inkMuted)),
-                    if (me.phoneNumber case final phone?) Text(phone, style: VitrioText.meta.copyWith(color: c.inkMuted)),
+                    if (me.phoneNumber case final phone?) Text(phoneText(phone), style: VitrioText.meta.copyWith(color: c.inkMuted)),
                   ],
                 ),
               ),

@@ -7,4 +7,6 @@ public interface IImageProcessor
     Result<ProcessedPhoto> ProcessPhoto(Stream image, string? declaredContentType);
 
     Result<byte[]> ProcessAvatar(Stream image, string? declaredContentType);
+
+    Result<byte[]> ProcessOrderPhoto(Stream image, string? declaredContentType);
 }

@@ -479,7 +479,7 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 
 | Componente do sistema | Widget no app | Observação |
 | --- | --- | --- |
-| `Button` | `VitrioButton(variant:, size:)` | Variantes primary, secondary, ghost, danger, accent e on-hero; tamanhos lg (56), md (44) e sm (36); `trailingIcon` em `plumAccent` no primary; `busy` mostra o progresso |
+| `Button` | `VitrioButton(variant:, size:)` | Variantes primary, secondary, ghost, danger, accent e on-hero; tamanhos lg (56), decision (52, raio `lg`, nos cards de decisão como o orçamento e o serviço agendado), md (44) e sm (36); `trailingIcon` em `plumAccent` no primary; `busy` mostra o progresso |
 | `IconButton` | `VitrioIconButton(variant:)` | surface, soft, solid e glass (sobre `hero`); 44px; `label` vira o `tooltip` acessível; `dot` mostra o ponto de notificação |
 | `Chip` | `VitrioChip` | `Semantics(selected:)`, `AnimatedContainer` 180ms |
 | `Badge` | `VitrioBadge` | Exemplo acima |
@@ -487,18 +487,19 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 | `Rating` / `RatingInput` | `VitrioRating` / `VitrioRatingInput` | Semântica "Nota 4,9 de 5" |
 | `SearchField` | `VitrioSearchField` | `TextField` + botão de envio de 40px; variante ativa (Busca) com borda `plum`, texto em negrito e botão "Limpar busca" (`onClear`) no lugar do envio |
 | `TextField` / `TextArea` | `VitrioTextField` | Rótulo visível acima da caixa, dica ou erro abaixo, contador com `maxLength`; `maxLines` diferente de 1 vira TextArea; `prefix: 'R\$'` usa a fonte de números |
-| `SegmentedControl` | `VitrioSegmented` | `SegmentedButton` não tem o visual de trilho |
+| `SegmentedControl` | `VitrioSegmented<T>` | `SegmentedButton` não tem o visual de trilho; recebe `label` do grupo e `VitrioOption`s; cada opção com `Semantics(selected:)` |
 | `Switch` | `VitrioSwitchRow` (e `VitrioSwitch`) | Linha inteira tocável com rótulo e descrição; `onHero` para o cabeçalho do Painel |
 | `CategoryTile` | `VitrioCategoryTile` | Grade de 4 colunas; `more` para o último tile |
 | `ProviderCard` | `VitrioProviderCard` | Toda a área é tocável (`InkWell`); `VitrioProviderCard.compact` (Início, "Bem avaliados") sem preço nem botão, com avatar de 48px |
 | `ReviewCard` | `ReviewCard` | Resposta do prestador em `surfaceInset` |
-| `StatusTimeline` | `OrderTimeline` | Recebe a lista de etapas do pedido |
-| `QuoteCard` | `QuoteCard` | Único card com `shadow-md` na tela |
+| `StatusTimeline` | `VitrioOrderTimeline` | Recebe `VitrioTimelineStep`s (`done`, `current`, `pending`) com `stateLabel` opcional para o leitor de tela |
+| `QuoteCard` | `VitrioQuoteCard` | Único card com `shadow-md` na tela; selo de validade em `warning`, linhas `VitrioQuoteRow` (ícone `plum`, ou `green` quando `positive`) e botões `decision` |
 | `PaymentMethodPicker` | `PaymentMethodPicker` | `Semantics(inMutuallyExclusiveGroup: true)` |
 | `PaymentReceipt` | `PaymentReceiptCard` | Borda 1.5 `green` |
 | `BottomNav` | `NavigationBar` | `navigationBarTheme` acima |
 | `TopBar` | `VitrioTopBar` | Voltar redondo de 44px, título em `label` 17px, `trailing` opcional; usado como `appBar` do `Scaffold` |
 | `ActionBar` | `VitrioActionBar` | `bottomNavigationBar` com `note` opcional e erro do formulário acima do botão; sobe junto com o teclado; nunca junto com `NavigationBar` |
 | `HeroCard` | `VitrioHeroCard` | Fundo `hero`, selo `lime` com ponto, ícone decorativo a 30% com traço 1.2 |
+| `Calendar` | `VitrioCalendar` | Grade do mês com `marks` por dia (agendado, aguardando o cliente, feito), dia escolhido e hoje; cada dia com `Semantics(selected:, label:)`; setas com `VitrioIconButton` |
 
-Padrões do sistema montados com os tokens: `VitrioSectionHeader` (título de seção com link "Ver todas"), `VitrioListCard` e `VitrioListRow` (listas em card, como "Serviços e preços"), `VitrioNotice` (faixa de aviso e erro), `VitrioStar` (estrela de nota preenchida), `VitrioAddPhotoTile` (tracejado de "Adicionar foto") e `VitrioShadow` (sombras `sm`, `md` e `lg` nos dois temas).
+Padrões do sistema montados com os tokens: `VitrioChoiceList<T>` (motivos de recusa e de cancelamento: escolha única no padrão de seleção suave, linhas de 52px com o círculo de rádio e `Semantics(inMutuallyExclusiveGroup:, checked:)`), `VitrioSectionHeader` (título de seção com contador opcional, como em "Novos pedidos 3", e link "Ver todas"), `VitrioListCard` e `VitrioListRow` (listas em card, como "Serviços e preços"), `VitrioNotice` (faixa de aviso e erro), `VitrioStar` (estrela de nota preenchida), `VitrioAddPhotoTile` (tracejado de "Adicionar foto") e `VitrioShadow` (sombras `sm`, `md` e `lg` nos dois temas).

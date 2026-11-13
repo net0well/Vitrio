@@ -82,7 +82,7 @@ builder.Services.AddMediator((Mediator.MediatorOptions options) =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
     options.Assemblies = [typeof(Vitrio.Application.DependencyInjection)];
-    options.PipelineBehaviors = [typeof(LoggingBehavior<,>), typeof(ValidationBehavior<,>)];
+    options.PipelineBehaviors = [typeof(LoggingBehavior<,>), typeof(ValidationBehavior<,>), typeof(IdempotencyBehavior<,>)];
 });
 
 builder.Services.AddHttpContextAccessor();

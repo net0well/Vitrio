@@ -44,6 +44,7 @@ class VitrioButton extends StatelessWidget {
     };
     final (double height, Radius radius, TextStyle text, double padding) = switch (size) {
       VitrioButtonSize.lg => (VitrioSpace.cta, VitrioRadius.xl, VitrioText.labelLg, VitrioSpace.sp20),
+      VitrioButtonSize.decision => (52, VitrioRadius.lg, VitrioText.bodyStrong, VitrioSpace.sp16),
       VitrioButtonSize.md => (VitrioSpace.tap, VitrioRadius.md, VitrioText.label, VitrioSpace.sp16),
       VitrioButtonSize.sm => (36, VitrioRadius.sm, VitrioText.meta, VitrioSpace.sp12),
     };

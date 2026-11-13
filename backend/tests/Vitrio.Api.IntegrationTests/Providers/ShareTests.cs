@@ -53,6 +53,22 @@ public sealed class ShareTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task SharePage_WithAPlaceholderInTheHeadline_ShowsItAsTyped()
+    {
+        var accessToken = await factory.SignInAsProviderAsync(_client, "Carlos Eletricista");
+        await _client.CompleteAsync(accessToken);
+        var renamed = await _client.SendJsonAsAsync(HttpMethod.Patch, ProviderApi.Provider, accessToken, new { headline = "Eletricista {{place}}" });
+        await _client.SendAsAsync(HttpMethod.Post, $"{ProviderApi.Provider}/publish", accessToken);
+        var id = (await _client.GetProviderAsync(accessToken)).Id;
+
+        var html = await _client.GetStringAsync($"/p/{id}", TestContext.Current.CancellationToken);
+
+        Assert.True(renamed.IsSuccessStatusCode, $"{(int)renamed.StatusCode}");
+        Assert.Contains("<meta property=\"og:title\" content=\"Carlos Eletricista · Eletricista {{place}}\">", html, StringComparison.Ordinal);
+        Assert.DoesNotContain("Eletricista Jaboticabal", html, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task SharePage_OfADraftOrUnknownShowcase_SaysItIsNotAvailable()
     {
         var accessToken = await factory.SignInAsProviderAsync(_client);

@@ -43,6 +43,7 @@ Os nomes abaixo são os do `record`; o nome estável, o conteúdo e os demais co
 | `OrderDeclined`, `OrderExpired` | Cliente | Pedido não atendido | Orders |
 | `QuoteExpired` | Os dois | Orçamento expirado | Orders |
 | `OrderCancelled` | O outro lado (os dois, quando o motivo é suspensão ou exclusão de conta) | Pedido cancelado | Orders |
+| `OrderRescheduled` | Cliente | Horário ajustado | Orders |
 | Lembrete 1 h | Os dois | Lembrete | Reminders |
 | `OrderCompleted` | O outro lado (os dois, quando `CompletedBy = System`) | Serviço concluído | Orders |
 | Lembrete de confirmação | Prestador | Confirme o pagamento | Reminders |

@@ -27,6 +27,9 @@ Future<ProviderDashboard> providerDashboard(Ref ref) async {
 }
 
 @riverpod
+String? ownProviderId(Ref ref) => ref.watch(providerControllerProvider).value?.id;
+
+@riverpod
 Future<List<ProviderPhoto>> providerPhotos(Ref ref) async => switch (await ref.read(providerRepositoryProvider).photos()) {
       ApiSuccess(:final data) => data,
       ApiFailure(:final problem) => throw problem,

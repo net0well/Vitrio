@@ -21,6 +21,8 @@ import '../../../../core/design_system/widgets/vitrio_switch_row.dart';
 import '../../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../../core/network/api_result.dart';
 import '../../../../core/network/problem_details.dart';
+import '../../../../core/presentation/brazilian_format.dart';
+import '../../../../core/presentation/mask_input_formatter.dart';
 import '../../../../core/presentation/problem_message.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../location/data/location_providers.dart';
@@ -29,9 +31,7 @@ import '../../domain/mei_check.dart';
 import '../../domain/mei_status.dart';
 import '../../domain/profile_changes.dart';
 import '../../domain/service_area_draft.dart';
-import '../mask_input_formatter.dart';
 import '../provider_controller.dart';
-import '../provider_labels.dart';
 import '../provider_queries.dart';
 import '../provider_step.dart';
 import '../widgets/provider_step_page.dart';
@@ -403,6 +403,7 @@ class _ShowcaseStepState extends ConsumerState<ShowcaseStep> {
           icon: VitrioIconName.message,
           iconColor: c.green,
           keyboardType: TextInputType.phone,
+          inputFormatters: const [MaskInputFormatter(phoneText)],
           placeholder: l10n.providerPhonePlaceholder,
           hint: l10n.providerContactPhoneHint,
           error: fieldError(_problem, 'contactPhone'),

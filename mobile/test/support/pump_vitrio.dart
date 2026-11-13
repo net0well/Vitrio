@@ -6,20 +6,27 @@ import 'package:vitrio/app/app_config.dart';
 import 'package:vitrio/app/flavor.dart';
 import 'package:vitrio/app/router.dart';
 import 'package:vitrio/core/network/network_providers.dart';
+import 'package:vitrio/core/presentation/clock.dart';
 import 'package:vitrio/core/storage/preferences.dart';
+import 'package:vitrio/features/account/data/address_providers.dart';
 import 'package:vitrio/features/auth/data/auth_providers.dart';
 import 'package:vitrio/features/favorites/data/favorites_providers.dart';
 import 'package:vitrio/features/location/data/location_providers.dart';
+import 'package:vitrio/features/orders/data/orders_providers.dart';
 import 'package:vitrio/features/provider/data/provider_providers.dart';
+import 'package:vitrio/features/provider_orders/data/provider_orders_providers.dart';
 import 'package:vitrio/features/search/data/search_providers.dart';
 
 import 'fake_account_repository.dart';
+import 'fake_address_repository.dart';
 import 'fake_auth_repository.dart';
 import 'fake_cities_repository.dart';
 import 'fake_device_location.dart';
 import 'fake_favorites_repository.dart';
+import 'fake_orders_repository.dart';
 import 'fake_photo_picker.dart';
 import 'fake_photo_storage.dart';
+import 'fake_provider_orders_repository.dart';
 import 'fake_provider_repository.dart';
 import 'fake_search_repository.dart';
 import 'memory_token_store.dart';
@@ -36,6 +43,9 @@ final class VitrioHarness {
     required this.photos,
     required this.search,
     required this.favorites,
+    required this.orders,
+    required this.addresses,
+    required this.providerOrders,
   });
 
   final ProviderContainer container;
@@ -48,6 +58,9 @@ final class VitrioHarness {
   final FakePhotoStorage photos;
   final FakeSearchRepository search;
   final FakeFavoritesRepository favorites;
+  final FakeOrdersRepository orders;
+  final FakeAddressRepository addresses;
+  final FakeProviderOrdersRepository providerOrders;
 
   void go(String location) => container.read(routerProvider).go(location);
 }
@@ -63,6 +76,10 @@ Future<VitrioHarness> pumpVitrio(
   FakeProviderRepository? provider,
   FakeSearchRepository? search,
   FakeFavoritesRepository? favorites,
+  FakeOrdersRepository? orders,
+  FakeAddressRepository? addresses,
+  FakeProviderOrdersRepository? providerOrders,
+  DateTime? now,
   bool settle = true,
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
@@ -76,6 +93,9 @@ Future<VitrioHarness> pumpVitrio(
   final harnessPhotos = FakePhotoStorage();
   final harnessSearch = search ?? FakeSearchRepository();
   final harnessFavorites = favorites ?? FakeFavoritesRepository();
+  final harnessOrders = orders ?? FakeOrdersRepository();
+  final harnessAddresses = addresses ?? FakeAddressRepository();
+  final harnessProviderOrders = providerOrders ?? FakeProviderOrdersRepository();
   final container = ProviderContainer(
     overrides: [
       appConfigProvider.overrideWithValue(AppConfig.forFlavor(Flavor.dev)),
@@ -90,6 +110,10 @@ Future<VitrioHarness> pumpVitrio(
       photoPickerProvider.overrideWithValue(FakePhotoPicker()),
       searchRepositoryProvider.overrideWithValue(harnessSearch),
       favoritesRepositoryProvider.overrideWithValue(harnessFavorites),
+      ordersRepositoryProvider.overrideWithValue(harnessOrders),
+      addressRepositoryProvider.overrideWithValue(harnessAddresses),
+      providerOrdersRepositoryProvider.overrideWithValue(harnessProviderOrders),
+      if (now != null) clockProvider.overrideWithValue(() => now),
     ],
   );
   addTearDown(container.dispose);
@@ -110,5 +134,8 @@ Future<VitrioHarness> pumpVitrio(
     photos: harnessPhotos,
     search: harnessSearch,
     favorites: harnessFavorites,
+    orders: harnessOrders,
+    addresses: harnessAddresses,
+    providerOrders: harnessProviderOrders,
   );
 }

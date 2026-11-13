@@ -25,6 +25,7 @@ enum VitrioIconName {
   lock('lock'),
   message('message'),
   orders('orders'),
+  phone('phone'),
   pin('pin'),
   plus('plus'),
   qr('qr'),

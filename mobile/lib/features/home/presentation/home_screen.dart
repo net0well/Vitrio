@@ -22,6 +22,9 @@ import '../../location/domain/location_state.dart';
 import '../../location/presentation/city_picker_sheet.dart';
 import '../../location/presentation/location_controller.dart';
 import '../../location/presentation/location_pill.dart';
+import '../../orders/domain/customer_order_summary.dart';
+import '../../orders/presentation/customer_orders_controller.dart';
+import '../../orders/presentation/widgets/order_summary_card.dart';
 import '../../provider/presentation/provider_queries.dart';
 import '../../search/domain/home_feed.dart';
 import '../../search/domain/search_filters.dart';
@@ -220,6 +223,13 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
+                if (me != null)
+                  if (ref.watch(latestOpenOrderProvider).value case final CustomerOrderSummary order) ...[
+                    const SizedBox(height: 26),
+                    VitrioSectionHeader(l10n.homeLastOrder),
+                    const SizedBox(height: VitrioSpace.sp12),
+                    OrderSummaryCard(order: order, onTap: () => OrderRoute(id: order.id).go(context)),
+                  ],
               ],
             ),
           ),

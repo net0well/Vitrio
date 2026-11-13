@@ -16,6 +16,7 @@ internal static class StorageRegistration
         services.AddSingleton<StorageClients>();
         services.AddSingleton<PublicMedia>();
         services.AddSingleton<IObjectStorage, S3ObjectStorage>();
+        services.AddSingleton<IPrivateMediaStorage, S3PrivateMediaStorage>();
         services.AddSingleton<IImageProcessor, SkiaImageProcessor>();
         services.AddHostedService<StorageBucketsInitializer>();
         return services;

@@ -149,6 +149,18 @@ internal sealed class ProviderListingSql
             Add("max_price", maxPrice);
             _conditions.Add("p.search_service_price_cents <= @max_price");
         }
+
+        if (criteria.ExcludedProviderId is { } excluded)
+        {
+            Add("excluded", excluded);
+            _conditions.Add("p.id <> @excluded");
+        }
+
+        if (criteria.ExcludedUserId is { } excludedUser)
+        {
+            Add("excluded_user", excludedUser);
+            _conditions.Add("p.user_id <> @excluded_user");
+        }
     }
 
     private string Source()

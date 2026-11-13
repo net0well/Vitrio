@@ -333,13 +333,41 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
             .Select(provider => (Guid?)provider.UserId)
             .SingleOrDefaultAsync(cancellationToken);
 
-    public async Task<ProviderDashboardResponse?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken)
+    public async Task<ProviderOrderTarget?> FindOrderTargetAsync(Guid providerId, CancellationToken cancellationToken)
+    {
+        var row = await db.Providers
+            .AsNoTracking()
+            .Where(provider => provider.Id == providerId)
+            .Select(provider => new
+            {
+                provider.Id,
+                provider.UserId,
+                provider.Status,
+                OwnerActive = db.Users.Any(user => user.Id == provider.UserId && user.Status == UserStatus.Active),
+                PrimaryCategoryId = provider.Categories.Where(category => category.IsPrimary).Select(category => (int?)category.CategoryId).FirstOrDefault(),
+                Services = provider.Services.Select(service => new { service.Id, service.Title }).ToList()
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return row is null
+            ? null
+            : new ProviderOrderTarget(
+                row.Id,
+                row.UserId,
+                row.Status,
+                row.OwnerActive,
+                row.PrimaryCategoryId,
+                row.Services.ToDictionary(service => service.Id, service => service.Title));
+    }
+
+    public async Task<ProviderDashboardProfile?> GetDashboardAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken)
     {
         var row = await db.Providers
             .AsNoTracking()
             .Where(provider => provider.UserId == userId && provider.Status != ProviderStatus.Removed)
             .Select(provider => new
             {
+                provider.Id,
                 provider.Status,
                 HasAbout = provider.About != null,
                 CategoryCount = provider.Categories.Count,
@@ -360,11 +388,13 @@ internal sealed class ProviderSearchableRepository(AppDbContext db, PublicMedia 
         }
 
         var missing = PublishChecklist.Missing(row.HasAbout, row.CategoryCount, row.HasServiceArea, row.ServiceCount, row.HasContactPhone);
-        return new ProviderDashboardResponse(
+        return new ProviderDashboardProfile(
+            row.Id,
             row.Status,
             PublishChecklist.Completeness(missing, row.HasAvailability),
             PublishChecklist.NextStep(missing, row.Status, row.HasAvailability),
             row.MeiStatus,
-            AvailableTodayRule.IsOn(row.AvailableToday, row.AvailableTodaySetAt, now, row.TimeZone));
+            AvailableTodayRule.IsOn(row.AvailableToday, row.AvailableTodaySetAt, now, row.TimeZone),
+            row.TimeZone);
     }
 }

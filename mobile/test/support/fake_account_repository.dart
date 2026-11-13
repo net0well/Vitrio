@@ -8,12 +8,16 @@ final class FakeAccountRepository implements AccountRepository {
   ApiResult<Me> meResult = const ApiFailure(ProblemDetails(status: 401, code: 'unauthorized'));
   List<ConnectedSession> connected = const [];
   final List<String> revoked = [];
+  final List<String?> updatedPhones = [];
 
   @override
   Future<ApiResult<Me>> me() async => meResult;
 
   @override
-  Future<ApiResult<Me>> updateMe({String? displayName, String? phoneNumber}) async => meResult;
+  Future<ApiResult<Me>> updateMe({String? displayName, String? phoneNumber}) async {
+    updatedPhones.add(phoneNumber);
+    return meResult;
+  }
 
   @override
   Future<ApiResult<List<ConnectedSession>>> sessions() async => ApiSuccess(connected);

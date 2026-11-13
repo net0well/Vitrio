@@ -5,4 +5,6 @@ public interface IPhotoProcessingQueue
     void EnqueuePhoto(Guid providerId, Guid photoId);
 
     void EnqueueAvatar(Guid providerId, string uploadKey);
+
+    void EnqueueOrderPhoto(Guid orderId, Guid photoId);
 }

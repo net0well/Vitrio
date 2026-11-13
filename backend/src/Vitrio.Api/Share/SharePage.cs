@@ -1,12 +1,13 @@
 using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 using System.Text.Unicode;
 using Vitrio.Application.Providers.Common;
 
 namespace Vitrio.Api.Share;
 
-public static class SharePage
+public static partial class SharePage
 {
     private static readonly HtmlEncoder Html = HtmlEncoder.Create(UnicodeRanges.All);
     private static readonly string Wordmark = Load("Vitrio.Share.vitrio-wordmark.svg").Trim();
@@ -18,24 +19,26 @@ public static class SharePage
     {
         if (!page.Found)
         {
-            return Missing.Replace("{{playStore}}", Encode(page.PlayStoreUrl), StringComparison.Ordinal);
+            return Fill(Missing, new(StringComparer.Ordinal) { ["playStore"] = Encode(page.PlayStoreUrl) });
         }
 
         var title = $"{page.DisplayName} · {page.Headline}";
         var image = page.ImageUrl is null
             ? string.Empty
             : $"<meta property=\"og:image\" content=\"{Encode(page.ImageUrl)}\">\n  <img class=\"photo\" src=\"{Encode(page.ImageUrl)}\" alt=\"\">";
-        return Found
-            .Replace("{{title}}", Encode(title), StringComparison.Ordinal)
-            .Replace("{{titleAttribute}}", Encode(title), StringComparison.Ordinal)
-            .Replace("{{description}}", Encode($"{page.Headline} em {page.Place}. {page.RatingText}. Peça orçamento pelo Vitrio."), StringComparison.Ordinal)
-            .Replace("{{url}}", Encode(page.Url!), StringComparison.Ordinal)
-            .Replace("{{image}}", image, StringComparison.Ordinal)
-            .Replace("{{name}}", Encode(page.DisplayName!), StringComparison.Ordinal)
-            .Replace("{{headline}}", Encode(page.Headline!), StringComparison.Ordinal)
-            .Replace("{{place}}", Encode(page.Place!), StringComparison.Ordinal)
-            .Replace("{{rating}}", Encode(page.RatingText!), StringComparison.Ordinal)
-            .Replace("{{playStore}}", Encode(page.PlayStoreUrl), StringComparison.Ordinal);
+        return Fill(Found, new(StringComparer.Ordinal)
+        {
+            ["title"] = Encode(title),
+            ["titleAttribute"] = Encode(title),
+            ["description"] = Encode($"{page.Headline} em {page.Place}. {page.RatingText}. Peça orçamento pelo Vitrio."),
+            ["url"] = Encode(page.Url!),
+            ["image"] = image,
+            ["name"] = Encode(page.DisplayName!),
+            ["headline"] = Encode(page.Headline!),
+            ["place"] = Encode(page.Place!),
+            ["rating"] = Encode(page.RatingText!),
+            ["playStore"] = Encode(page.PlayStoreUrl)
+        });
     }
 
     public static string ContentSecurityPolicy(SharePageResponse page)
@@ -48,6 +51,12 @@ public static class SharePage
 
     private static string Encode(string value) => Html.Encode(value);
 
+    // One pass over the template: a value that contains another placeholder is never filled again.
+    private static string Fill(string template, Dictionary<string, string> values) =>
+        Placeholder().Replace(template, match => values.TryGetValue(match.Groups[1].Value, out var value)
+            ? value
+            : throw new InvalidOperationException($"The share page has no value for '{match.Groups[1].Value}'."));
+
     private static string WithBrand(string template) => template
         .Replace("{{wordmark}}", Wordmark, StringComparison.Ordinal)
         .Replace("{{icon}}", Icon, StringComparison.Ordinal);
@@ -59,4 +68,7 @@ public static class SharePage
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
+
+    [GeneratedRegex(@"\{\{(\w+)\}\}")]
+    private static partial Regex Placeholder();
 }
