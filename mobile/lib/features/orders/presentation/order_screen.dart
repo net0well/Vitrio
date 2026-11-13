@@ -447,13 +447,6 @@ class _ScheduledCard extends StatelessWidget {
             l10n.orderScheduledBody(order.provider.firstName, order.quote == null ? '' : formatQuoteAmount(order.quote!.amount)),
             style: VitrioText.body.copyWith(height: 1.5, color: c.ink2),
           ),
-          if (!canComplete) ...[
-            const SizedBox(height: VitrioSpace.sp8),
-            Text(
-              l10n.orderCompleteFrom(schedule.start),
-              style: VitrioText.weighted(VitrioText.caption, 600).copyWith(color: c.inkMuted),
-            ),
-          ],
           const SizedBox(height: VitrioSpace.sp16),
           Row(
             children: [
@@ -479,6 +472,13 @@ class _ScheduledCard extends StatelessWidget {
               ),
             ],
           ),
+          if (!canComplete) ...[
+            const SizedBox(height: VitrioSpace.sp10),
+            Text(
+              l10n.orderCompleteFrom(schedule.start),
+              style: VitrioText.weighted(VitrioText.caption, 600).copyWith(height: 1.5, color: c.inkMuted),
+            ),
+          ],
         ],
       ),
     );
