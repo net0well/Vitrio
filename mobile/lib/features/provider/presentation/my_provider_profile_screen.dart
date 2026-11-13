@@ -88,7 +88,7 @@ class MyProviderProfileScreen extends ConsumerWidget {
                           label: l10n.providerViewPublic,
                           variant: VitrioButtonVariant.secondary,
                           size: VitrioButtonSize.md,
-                          onPressed: () => PublicProviderRoute(id: profile.id).push<void>(context),
+                          onPressed: () => PublicProviderRoute(id: profile.id, preview: true).push<void>(context),
                         ),
                       ),
                       const SizedBox(width: VitrioSpace.sp10),

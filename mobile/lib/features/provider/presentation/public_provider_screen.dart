@@ -36,15 +36,16 @@ import 'provider_step.dart';
 import 'widgets/service_price_row.dart';
 
 class PublicProviderScreen extends ConsumerWidget {
-  const PublicProviderScreen({super.key, required this.providerId});
+  const PublicProviderScreen({super.key, required this.providerId, this.preview = false});
 
   final String providerId;
+  final bool preview;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final provider = ref.watch(publicProviderProvider(providerId));
-    final own = ref.watch(ownProviderIdProvider) == providerId;
+    final own = !preview && ref.watch(ownProviderIdProvider) == providerId;
     if (provider case AsyncData(value: final PublicProvider value)) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

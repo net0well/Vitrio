@@ -48,6 +48,17 @@ void main() {
     expect(find.bySemanticsLabel('Salvar nos favoritos'), findsNothing);
   });
 
+  testWidgets('the preview of the own showcase shows it the way customers see it', (tester) async {
+    final harness = await asClientWithShowcase(tester);
+
+    harness.go('/providers/${samplePublicProvider.id}?preview=true');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Você'), findsNothing);
+    expect(find.text('Pedir orçamento'), findsOneWidget);
+    expect(find.text('WhatsApp'), findsOneWidget);
+  });
+
   testWidgets('search marks the own showcase among the results', (tester) async {
     final search = FakeSearchRepository()
       ..listings = [
