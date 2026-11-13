@@ -83,7 +83,7 @@ void main() {
     await pumpUntil(tester, find.text('Passo 3 de 4'));
 
     await tester.tap(find.bySemanticsLabel('Adicionar foto'));
-    await pumpUntil(tester, find.text('Processando'));
+    await pumpUntil(tester, find.bySemanticsLabel('Apagar foto'));
     await pumpUntil(tester, find.text('Processando'), absent: true);
     final addService = find.text('Adicionar serviço');
     await tester.scrollUntilVisible(addService, 200, scrollable: find.byType(Scrollable).first);
