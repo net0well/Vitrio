@@ -10,9 +10,8 @@ import '../../../core/design_system/widgets/vitrio_option.dart';
 import '../../../core/design_system/widgets/vitrio_text_field.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/cancellation_reason.dart';
+import 'cancel_choice.dart';
 import 'order_labels.dart';
-
-typedef CancelChoice = ({CancellationReason reason, String? details});
 
 class CancelOrderSheet extends StatefulWidget {
   const CancelOrderSheet({super.key, required this.otherFirstName, this.reasons = CancellationReason.customerReasons});
