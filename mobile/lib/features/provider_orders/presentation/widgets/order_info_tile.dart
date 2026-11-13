@@ -17,7 +17,7 @@ class OrderInfoTile extends StatelessWidget {
     return MergeSemantics(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp12, vertical: VitrioSpace.sp10),
-        decoration: BoxDecoration(color: c.surface, borderRadius: const BorderRadius.all(VitrioRadius.md)),
+        decoration: BoxDecoration(color: c.surfaceInset, borderRadius: const BorderRadius.all(VitrioRadius.md)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
