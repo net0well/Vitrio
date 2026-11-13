@@ -45,6 +45,7 @@ void main() {
     expect(find.text('Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo.'), findsOneWidget);
     expect(find.text('Editar minha vitrine'), findsOneWidget);
     expect(find.text('Pedir orçamento'), findsNothing);
+    expect(find.bySemanticsLabel('Salvar nos favoritos'), findsNothing);
   });
 
   testWidgets('search marks the own showcase among the results', (tester) async {

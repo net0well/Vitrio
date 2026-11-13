@@ -151,7 +151,7 @@ class _Profile extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            _Cover(height: _coverHeight + top, top: top, provider: provider),
+            _Cover(height: _coverHeight + top, top: top, provider: provider, own: own),
             PositionedDirectional(
               start: VitrioSpace.sp20,
               bottom: -_avatarSize / 2,
@@ -266,11 +266,12 @@ class _Profile extends StatelessWidget {
 }
 
 class _Cover extends StatelessWidget {
-  const _Cover({required this.height, required this.top, required this.provider});
+  const _Cover({required this.height, required this.top, required this.provider, required this.own});
 
   final double height;
   final double top;
   final PublicProvider provider;
+  final bool own;
 
   @override
   Widget build(BuildContext context) {
@@ -308,8 +309,10 @@ class _Cover extends StatelessWidget {
                 top: top + VitrioSpace.sp16,
                 child: Row(
                   children: [
-                    FavoriteButton(providerId: provider.id, saved: provider.isFavorite),
-                    const SizedBox(width: VitrioSpace.sp10),
+                    if (!own) ...[
+                      FavoriteButton(providerId: provider.id, saved: provider.isFavorite),
+                      const SizedBox(width: VitrioSpace.sp10),
+                    ],
                     VitrioIconButton(
                       icon: VitrioIconName.share,
                       label: l10n.providerShare,
