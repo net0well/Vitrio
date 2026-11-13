@@ -1,6 +1,6 @@
 # Plano: Pedidos e orçamentos
 
-**Status:** Em andamento
+**Status:** Concluído
 **Spec:** [005-pedidos-e-orcamentos](../specs/005-pedidos-e-orcamentos.md) (Approved)
 **Arquitetura:** Clean Architecture com Controllers ([03-arquitetura.md](../03-arquitetura.md))
 **Camadas afetadas:**
@@ -145,6 +145,8 @@ Todos na branch `feat/pedidos-e-orcamentos`, em vários commits. O PR só abre q
 1. Agenda em calendário com as marcas, a lista do dia e a navegação entre meses.
 
 ## Recorte 12: fechamento
+
+**Situação:** pronto. Revisão de back: `/arch-check` conforme (sem ciclos, referências na direção da Clean Architecture, Jobs só com a Application, 25 testes de arquitetura); `/code-review` sem achados a corrigir (idempotência, filtro de dono nas consultas, janela do contato, fotos privadas, concorrência e rate limit conferidos); `/security-scan` nas 6 camadas sem achados (só o informativo de que repetir a criação do pedido devolve URLs de foto assinadas na primeira vez). 701 testes do backend passando, `dotnet format` sem pendências e 71 verificações endpoint por endpoint na API local (33 + 38, sucesso e erro, 401, 403 e 404). A spec não manda e-mail. A revisão tirou a própria vitrine das sugestões de outros profissionais (`ExcludedUserId` na busca). Revisão de front: as cores das pranchetas de pedidos são todas tokens (as que não são — fundo das fotos de exemplo e o trilho do `Switch` desligado — seguem o componente); as células Quando/Onde passaram a `surface-inset`; um `typedef` foi para o próprio arquivo; cada tela do cliente e do prestador conferida no emulador contra a prancheta; duas diferenças aprovadas (nota do `ActionBar` acima do botão em Pedir orçamento e a frase de quando concluir abaixo dos botões no card do cliente). Pedidos do usuário durante o teste: endereço preenchido pelo CEP, máscara de celular e a própria vitrine marcada "Você" sem pedir orçamento para si (a prévia de Meu perfil continua como o cliente vê). 125 testes de widget e os 4 fluxos de integração no emulador (localização, conta, prestador e busca) passando; os de conta e prestador foram ajustados ao celular formatado e à foto que termina de processar antes de a tela mostrar "Processando".
 
 1. Revisão de back: `/code-review`, `/security-scan` e `/arch-check`; cada endpoint testado na API local, com os casos de sucesso e de erro.
 2. Revisão de front: cada tela no emulador, por captura, contra as pranchetas aprovadas e o design system; código do app contra os padrões.

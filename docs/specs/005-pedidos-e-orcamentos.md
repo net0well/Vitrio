@@ -79,7 +79,7 @@ Pedidos do usuário em 2026-11-09, depois de usar o app no aparelho:
 
 - Novo endereço (folha de Pedir orçamento): o CEP tem máscara e, com os 8 números, o app busca o endereço e preenche rua, bairro e cidade; rua e bairro só ficam editáveis quando o CEP não os traz (CEP geral da cidade), e aí são obrigatórios. Número e complemento ficam lado a lado, como no endereço base da vitrine.
 - Celular: os campos de celular (Pedir orçamento, Editar dados e o contato da vitrine) formatam enquanto a pessoa digita, como "(16) 99814-7143", e a conta e o detalhe do pedido mostram o celular nesse formato.
-- Própria vitrine no modo cliente: a busca, os favoritos e o perfil público marcam a vitrine da própria conta com o selo "Você"; o perfil não oferece "Pedir orçamento" nem WhatsApp e mostra "Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo." com "Editar minha vitrine"; abrir Pedir orçamento da própria vitrine mostra o mesmo aviso.
+- Própria vitrine no modo cliente: a busca, os favoritos e o perfil público marcam a vitrine da própria conta com o selo "Você"; o perfil não oferece "Pedir orçamento" nem WhatsApp e mostra "Esta é a sua vitrine. Você não pode pedir orçamento para você mesmo." com "Editar minha vitrine"; abrir Pedir orçamento da própria vitrine mostra o mesmo aviso. A prévia "Ver como os clientes veem", em Meu perfil, continua mostrando o perfil exatamente como o cliente vê.
 
 Aprovadas pelo usuário em 2026-11-13, na revisão de front:
 
