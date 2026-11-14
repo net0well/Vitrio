@@ -40,8 +40,8 @@ class AgendaItemCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: VitrioSpace.sp16, vertical: VitrioSpace.sp14),
           child: Row(
             children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: _timeWidth),
+              SizedBox(
+                width: _timeWidth,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
