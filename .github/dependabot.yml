@@ -7,6 +7,16 @@ updates:
     groups:
       dotnet:
         patterns: ["*"]
+    # O backend está no .NET 10: a versão maior seguinte desses pacotes traz as bibliotecas do runtime novo por cima do ASP.NET Core 10.
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Npgsql.EntityFrameworkCore.PostgreSQL*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: pub
     directory: /mobile
