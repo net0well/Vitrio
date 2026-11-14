@@ -32,13 +32,17 @@ class VitrioAvatar extends StatelessWidget {
   final VitrioAvatarTone? tone;
   final bool onHero;
 
+  // Same rule as the initials the API sends, so a person never shows two different avatars.
+  static const _surnameParticles = {'da', 'das', 'de', 'di', 'do', 'dos', 'du', 'e'};
+
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
     if (parts.isEmpty) {
       return '';
     }
 
-    return (parts.first[0] + (parts.length > 1 ? parts.last[0] : '')).toUpperCase();
+    final surname = parts.skip(1).where((part) => !_surnameParticles.contains(part.toLowerCase())).firstOrNull;
+    return (parts.first[0] + (surname?[0] ?? '')).toUpperCase();
   }
 
   @override
