@@ -246,7 +246,7 @@ class _Metric extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value, style: VitrioText.title.copyWith(color: highlight ? c.lime : c.onHero)),
+            Text(value, style: VitrioText.headline.copyWith(color: highlight ? c.lime : c.onHero)),
             const SizedBox(height: 2),
             Text(label, style: VitrioText.weighted(VitrioText.caption, 600).copyWith(color: c.onHeroMuted)),
           ],

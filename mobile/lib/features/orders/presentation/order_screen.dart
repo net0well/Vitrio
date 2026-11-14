@@ -440,7 +440,7 @@ class _ScheduledCard extends StatelessWidget {
           const SizedBox(height: VitrioSpace.sp12),
           Text(
             l10n.orderScheduledWhen(_day(l10n, schedule.date), serviceRange(schedule)),
-            style: VitrioText.title.copyWith(color: c.ink),
+            style: VitrioText.headline.copyWith(color: c.ink),
           ),
           const SizedBox(height: VitrioSpace.sp8),
           Text(

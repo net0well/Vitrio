@@ -8,6 +8,7 @@ void main() {
       variations?.where((variation) => variation.axis == tag).map((variation) => variation.value).firstOrNull;
 
   test('display styles follow the font size on the optical size axis', () {
+    expect(axis(VitrioText.headline.fontVariations, 'opsz'), 24);
     expect(axis(VitrioText.title.fontVariations, 'opsz'), 22);
     expect(axis(VitrioText.section.fontVariations, 'opsz'), 19);
     expect(axis(VitrioText.priceLg.fontVariations, 'opsz'), 36);

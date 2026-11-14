@@ -73,7 +73,7 @@ class ScheduledServiceCard extends StatelessWidget {
           const SizedBox(height: VitrioSpace.sp12),
           Text(
             l10n.orderScheduledWhen(dayOption(l10n, schedule.date, now), serviceRange(schedule)),
-            style: VitrioText.title.copyWith(color: c.ink),
+            style: VitrioText.headline.copyWith(color: c.ink),
           ),
           if (summary.isNotEmpty) ...[
             const SizedBox(height: VitrioSpace.sp8),

@@ -296,6 +296,7 @@ abstract final class VitrioText {
 
   static final displayXl = _style(displayFamily, 34, 37, 800, -0.8);
   static final display = _style(displayFamily, 30, 33, 700, -0.7);
+  static final headline = _style(displayFamily, 24, 29, 700, -0.4);
   static final title = _style(displayFamily, 22, 26, 700, -0.4);
   static final section = _style(displayFamily, 19, 24, 700, -0.3);
   static final priceLg = _style(displayFamily, 36, 40, 800, -1);
