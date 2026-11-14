@@ -56,7 +56,7 @@ flutter:
         - asset: assets/fonts/PlusJakartaSans-Variable.ttf
 ```
 
-Os arquivos são o subconjunto latino, que cobre todo o português. Em fontes variáveis o peso precisa do eixo `wght`, por isso cada estilo define `fontWeight` e `fontVariations`.
+Os arquivos são o subconjunto latino, que cobre todo o português. Em fontes variáveis o peso precisa do eixo `wght`, por isso cada estilo define `fontWeight` e `fontVariations`. A Bricolage Grotesque também tem o eixo de tamanho óptico `opsz` (12 a 96, padrão 96): o navegador o ajusta sozinho ao tamanho do texto, e o Flutter não, então os estilos da Bricolage passam `opsz` igual ao tamanho da fonte. Sem isso, todo título sai com o corte de 96, mais estreito que nas pranchetas. Para trocar o tamanho de um estilo, use `VitrioText.sized(estilo, tamanho)`, que acerta o eixo; para trocar o peso, `VitrioText.weighted`.
 
 ## Cores
 
@@ -266,16 +266,33 @@ abstract final class VitrioText {
   static const displayFamily = 'BricolageGrotesque';
   static const sansFamily = 'PlusJakartaSans';
 
+  static const _opticalSizes = (min: 12.0, max: 96.0);
+
   static TextStyle _style(String family, double size, double lineHeight, int weight, [double spacing = 0]) {
     return TextStyle(
       fontFamily: family,
       fontSize: size,
       height: lineHeight / size,
       fontWeight: FontWeight.values[weight ~/ 100 - 1],
-      fontVariations: [FontVariation('wght', weight.toDouble())],
+      fontVariations: _variations(family, size, weight),
       letterSpacing: spacing,
     );
   }
+
+  static List<FontVariation> _variations(String? family, double size, int weight) => [
+        FontVariation('wght', weight.toDouble()),
+        if (family == displayFamily) FontVariation('opsz', size.clamp(_opticalSizes.min, _opticalSizes.max)),
+      ];
+
+  static TextStyle weighted(TextStyle style, int weight) => style.copyWith(
+        fontWeight: FontWeight.values[weight ~/ 100 - 1],
+        fontVariations: _variations(style.fontFamily, style.fontSize ?? 14, weight),
+      );
+
+  static TextStyle sized(TextStyle style, double size) => style.copyWith(
+        fontSize: size,
+        fontVariations: _variations(style.fontFamily, size, style.fontWeight?.value ?? 400),
+      );
 
   static final displayXl = _style(displayFamily, 34, 37, 800, -0.8);
   static final display = _style(displayFamily, 30, 33, 700, -0.7);

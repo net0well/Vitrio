@@ -6,20 +6,33 @@ abstract final class VitrioText {
   static const displayFamily = 'BricolageGrotesque';
   static const sansFamily = 'PlusJakartaSans';
 
+  static const _opticalSizes = (min: 12.0, max: 96.0);
+
   static TextStyle _style(String family, double size, double lineHeight, int weight, [double spacing = 0]) {
     return TextStyle(
       fontFamily: family,
       fontSize: size,
       height: lineHeight / size,
       fontWeight: FontWeight.values[weight ~/ 100 - 1],
-      fontVariations: [FontVariation('wght', weight.toDouble())],
+      fontVariations: _variations(family, size, weight),
       letterSpacing: spacing,
     );
   }
 
+  // The display font has an optical size axis that browsers follow automatically; without it Flutter draws every size with the 96pt cut.
+  static List<FontVariation> _variations(String? family, double size, int weight) => [
+        FontVariation('wght', weight.toDouble()),
+        if (family == displayFamily) FontVariation('opsz', size.clamp(_opticalSizes.min, _opticalSizes.max)),
+      ];
+
   static TextStyle weighted(TextStyle style, int weight) => style.copyWith(
         fontWeight: FontWeight.values[weight ~/ 100 - 1],
-        fontVariations: [FontVariation('wght', weight.toDouble())],
+        fontVariations: _variations(style.fontFamily, style.fontSize ?? 14, weight),
+      );
+
+  static TextStyle sized(TextStyle style, double size) => style.copyWith(
+        fontSize: size,
+        fontVariations: _variations(style.fontFamily, size, style.fontWeight?.value ?? 400),
       );
 
   static final displayXl = _style(displayFamily, 34, 37, 800, -0.8);

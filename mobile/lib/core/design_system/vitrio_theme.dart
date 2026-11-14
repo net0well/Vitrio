@@ -45,7 +45,7 @@ ThemeData vitrioTheme(Brightness brightness) {
       surfaceTintColor: Colors.transparent,
       centerTitle: true,
       toolbarHeight: VitrioSpace.tap,
-      titleTextStyle: VitrioText.label.copyWith(fontSize: 17, color: c.ink),
+      titleTextStyle: VitrioText.sized(VitrioText.label, 17).copyWith(color: c.ink),
     ),
     fontFamily: VitrioText.sansFamily,
     textTheme: VitrioText.textTheme(c),
