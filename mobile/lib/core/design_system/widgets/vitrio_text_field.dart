@@ -129,7 +129,7 @@ class VitrioTextField extends StatelessWidget {
                 padding: const EdgeInsetsDirectional.only(start: VitrioSpace.sp14, end: VitrioSpace.sp8),
                 child: Center(
                   widthFactor: 1,
-                  child: Text(prefix, style: VitrioText.price.copyWith(fontSize: 20, color: c.inkMuted)),
+                  child: Text(prefix, style: VitrioText.sized(VitrioText.price, 20).copyWith(color: c.inkMuted)),
                 ),
               ),
               _ => null,

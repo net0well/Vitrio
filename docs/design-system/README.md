@@ -48,7 +48,7 @@ O tema escuro existe para quem usa o sistema escuro do celular. Cada token já t
 
 Duas famílias, ambas OFL e incluídas como arquivos variáveis em `fonts/`:
 
-- **Bricolage Grotesque** (`display`) para títulos e números: `display-xl`, `display`, `title`, `section`, `price-lg`, `price`.
+- **Bricolage Grotesque** (`display`) para títulos e números: `display-xl`, `display`, `headline`, `title`, `section`, `price-lg`, `price`.
 - **Plus Jakarta Sans** (`sans`) para todo o resto: `label-lg`, `body-strong`, `label`, `body`, `meta`, `caption`, `micro`.
 
 Regras:

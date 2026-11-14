@@ -64,7 +64,7 @@ class VitrioTopBar extends StatelessWidget implements PreferredSizeWidget {
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: VitrioText.label.copyWith(fontSize: 17, color: c.ink),
+                            style: VitrioText.sized(VitrioText.label, 17).copyWith(color: c.ink),
                           ),
                         ),
                   ),

@@ -59,7 +59,8 @@ void main() {
     await pumpUntil(tester, find.widgetWithText(FilledButton, 'Salvar'));
     await tester.enterText(find.byType(TextField).at(1), '(16) 99123-4567');
     await tester.tap(find.widgetWithText(FilledButton, 'Salvar'));
-    await pumpUntil(tester, find.textContaining('(16) 99123-4567'));
+    await pumpUntil(tester, find.text('Aparelhos conectados'));
+    expect(find.textContaining('(16) 99123-4567'), findsOneWidget);
 
     await tester.tap(find.text('Aparelhos conectados'));
     await pumpUntil(tester, find.textContaining('Este aparelho'));

@@ -181,7 +181,7 @@ class _Profile extends StatelessWidget {
                   Flexible(
                     child: Semantics(
                       header: true,
-                      child: Text(provider.displayName, style: VitrioText.title.copyWith(fontSize: 26, color: c.ink)),
+                      child: Text(provider.displayName, style: VitrioText.sized(VitrioText.title, 26).copyWith(color: c.ink)),
                     ),
                   ),
                   if (provider.meiVerified) ...[
@@ -495,7 +495,7 @@ class _Reviews extends StatelessWidget {
             )
           : Row(
               children: [
-                Text(rating.toStringAsFixed(1).replaceAll('.', ','), style: VitrioText.priceLg.copyWith(fontSize: 42, color: c.ink)),
+                Text(rating.toStringAsFixed(1).replaceAll('.', ','), style: VitrioText.sized(VitrioText.priceLg, 42).copyWith(color: c.ink)),
                 const SizedBox(width: VitrioSpace.sp16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

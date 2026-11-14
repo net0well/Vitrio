@@ -29,6 +29,7 @@ class VitrioQuoteCard extends StatelessWidget {
   });
 
   static const _declineWidth = 104.0;
+  static const _validityShare = 2 / 3;
 
   final String title;
   final String price;
@@ -55,15 +56,19 @@ class VitrioQuoteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: VitrioSpace.sp10,
-            runSpacing: VitrioSpace.sp8,
-            children: [
-              Text(title, style: VitrioText.bodyStrong.copyWith(color: c.ink)),
-              if (validity != null) VitrioBadge(label: validity!, tone: VitrioBadgeTone.warning),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) => Row(
+              children: [
+                Expanded(child: Text(title, style: VitrioText.bodyStrong.copyWith(color: c.ink))),
+                if (validity != null) ...[
+                  const SizedBox(width: VitrioSpace.sp10),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: constraints.maxWidth * _validityShare),
+                    child: VitrioBadge(label: validity!, tone: VitrioBadgeTone.warning),
+                  ),
+                ],
+              ],
+            ),
           ),
           const SizedBox(height: VitrioSpace.sp8),
           Text(price, style: VitrioText.priceLg.copyWith(color: c.ink)),
