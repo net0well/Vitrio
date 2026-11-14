@@ -504,6 +504,7 @@ Use os SVGs de `assets/icons/` com `flutter_svg` e recolora com `ColorFilter.mod
 | `Rating` / `RatingInput` | `VitrioRating` / `VitrioRatingInput` | Semântica "Nota 4,9 de 5" |
 | `SearchField` | `VitrioSearchField` | `TextField` + botão de envio de 40px; variante ativa (Busca) com borda `plum`, texto em negrito e botão "Limpar busca" (`onClear`) no lugar do envio |
 | `TextField` / `TextArea` | `VitrioTextField` | Rótulo visível acima da caixa, dica ou erro abaixo, contador com `maxLength`; `maxLines` diferente de 1 vira TextArea; `prefix: 'R\$'` usa a fonte de números |
+| `Select` | `VitrioSelectField<T>` | `DropdownButton` sem sublinhado dentro da caixa do `TextField`; recebe `label` e `VitrioOption`s; a lista abre em `surfaceRaised` com foco `plumSoft` |
 | `SegmentedControl` | `VitrioSegmented<T>` | `SegmentedButton` não tem o visual de trilho; recebe `label` do grupo e `VitrioOption`s; cada opção com `Semantics(selected:)` |
 | `Switch` | `VitrioSwitchRow` (e `VitrioSwitch`) | Linha inteira tocável com rótulo e descrição; `onHero` para o cabeçalho do Painel |
 | `CategoryTile` | `VitrioCategoryTile` | Grade de 4 colunas; `more` para o último tile |

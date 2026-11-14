@@ -7,11 +7,11 @@ import '../../../../core/design_system/widgets/vitrio_badge_tone.dart';
 import '../../../../core/design_system/widgets/vitrio_icon_name.dart';
 import '../../../../core/design_system/widgets/vitrio_notice.dart';
 import '../../../../core/design_system/widgets/vitrio_option.dart';
+import '../../../../core/design_system/widgets/vitrio_select_field.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/agenda_item.dart';
 import '../provider_order_labels.dart';
 import '../schedule_slots.dart';
-import 'order_select_field.dart';
 
 class ScheduleFields extends StatelessWidget {
   const ScheduleFields({
@@ -51,7 +51,7 @@ class ScheduleFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        OrderSelectField<DateTime>(
+        VitrioSelectField<DateTime>(
           label: dayLabel,
           value: day,
           options: [for (final option in days) VitrioOption(value: option, label: dayOption(l10n, option, today))],
@@ -62,7 +62,7 @@ class ScheduleFields extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: OrderSelectField<int>(
+              child: VitrioSelectField<int>(
                 label: l10n.respondStart,
                 value: start,
                 options: [for (final option in starts) VitrioOption(value: option, label: clockLabel(option))],
@@ -71,7 +71,7 @@ class ScheduleFields extends StatelessWidget {
             ),
             const SizedBox(width: VitrioSpace.sp10),
             Expanded(
-              child: OrderSelectField<int>(
+              child: VitrioSelectField<int>(
                 label: l10n.respondDuration,
                 value: duration,
                 options: [for (final option in durations) VitrioOption(value: option, label: durationLabel(l10n, option))],

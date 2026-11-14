@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/design_system/tokens/vitrio_colors.dart';
-import '../../../../core/design_system/tokens/vitrio_radius.dart';
-import '../../../../core/design_system/tokens/vitrio_space.dart';
-import '../../../../core/design_system/tokens/vitrio_text.dart';
-import '../../../../core/design_system/widgets/vitrio_icon.dart';
-import '../../../../core/design_system/widgets/vitrio_icon_name.dart';
-import '../../../../core/design_system/widgets/vitrio_option.dart';
+import '../tokens/vitrio_colors.dart';
+import '../tokens/vitrio_radius.dart';
+import '../tokens/vitrio_space.dart';
+import '../tokens/vitrio_text.dart';
+import 'vitrio_icon.dart';
+import 'vitrio_icon_name.dart';
+import 'vitrio_option.dart';
 
-class OrderSelectField<T> extends StatelessWidget {
-  const OrderSelectField({super.key, required this.label, required this.value, required this.options, required this.onChanged});
+class VitrioSelectField<T> extends StatelessWidget {
+  const VitrioSelectField({super.key, required this.label, required this.value, required this.options, required this.onChanged});
 
   final String label;
   final T value;
